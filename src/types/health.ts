@@ -17,8 +17,12 @@ export interface HealthRecordForm {
   stoolPassed: boolean;
   stoolCount: number;
   vomiting: boolean;
+  vomitCount: number;
   constipation: boolean;
+  recordedBy: string;
 }
+
+export const RECORDER_OPTIONS = ['Umair', 'Shaharyar', 'Affan', 'Fahad', 'Shahwar'] as const;
 
 export interface AppointmentForm {
   date: string;
@@ -42,7 +46,9 @@ export function dbToHealthForm(r: HealthRecord): HealthRecordForm {
     stoolPassed: r.stool_passed,
     stoolCount: r.stool_count,
     vomiting: r.vomiting,
+    vomitCount: (r as any).vomit_count ?? 0,
     constipation: r.constipation,
+    recordedBy: (r as any).recorded_by ?? '',
   };
 }
 

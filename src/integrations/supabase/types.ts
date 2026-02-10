@@ -58,9 +58,11 @@ export type Database = {
           food_description: string | null
           food_taken: boolean
           id: string
+          recorded_by: string
           stool_count: number
           stool_passed: boolean
           updated_at: string
+          vomit_count: number
           vomiting: boolean
           weight: number
         }
@@ -74,9 +76,11 @@ export type Database = {
           food_description?: string | null
           food_taken?: boolean
           id?: string
+          recorded_by?: string
           stool_count?: number
           stool_passed?: boolean
           updated_at?: string
+          vomit_count?: number
           vomiting?: boolean
           weight?: number
         }
@@ -90,9 +94,11 @@ export type Database = {
           food_description?: string | null
           food_taken?: boolean
           id?: string
+          recorded_by?: string
           stool_count?: number
           stool_passed?: boolean
           updated_at?: string
+          vomit_count?: number
           vomiting?: boolean
           weight?: number
         }
