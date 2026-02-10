@@ -29,9 +29,12 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<AppointmentForm>(emptyAppt);
 
-  const upcoming = getUpcoming();
-  const appointmentDates = appointments.map(a => parseISO(a.date));
+  const today = new Date();
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const todayAppointments = appointments.filter(a => a.date === todayStr);
+  const upcoming = appointments.filter(a => a.date > todayStr);
   const dayAppointments = appointments.filter(a => isSameDay(parseISO(a.date), selectedDate));
+  const appointmentDates = appointments.map(a => parseISO(a.date));
 
   const update = <K extends keyof AppointmentForm>(key: K, value: string) => {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -70,6 +73,42 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
 
   return (
     <div className="space-y-4 pb-4">
+      {/* Today's Appointments */}
+      <div>
+        <div className="flex items-center justify-between px-1 mb-2">
+          <h3 className="text-sm font-semibold">Today — {format(today, 'MMM d')}</h3>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="gap-1.5 text-xs"><Plus className="h-3.5 w-3.5" /> Add</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[360px]">
+              <DialogHeader><DialogTitle>New Appointment</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label className="text-xs">Date</Label><Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" /></div>
+                  <div><Label className="text-xs">Time</Label><Input type="time" value={form.time} onChange={e => update('time', e.target.value)} className="mt-1" /></div>
+                </div>
+                <div><Label className="text-xs">Doctor Name</Label><Input value={form.doctorName} onChange={e => update('doctorName', e.target.value)} placeholder="Dr. Smith" className="mt-1" maxLength={100} /></div>
+                <div><Label className="text-xs">Address</Label><Input value={form.address} onChange={e => update('address', e.target.value)} placeholder="Clinic address" className="mt-1" maxLength={300} /></div>
+                <div><Label className="text-xs">Reason</Label><Input value={form.reason} onChange={e => update('reason', e.target.value)} placeholder="Check-up, follow-up..." className="mt-1" maxLength={200} /></div>
+                <div><Label className="text-xs">Notes (optional)</Label><Textarea value={form.description} onChange={e => update('description', e.target.value)} placeholder="Additional notes..." className="mt-1 min-h-[60px]" maxLength={500} /></div>
+                <Button onClick={handleAdd} className="w-full">Save Appointment</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+        {todayAppointments.length === 0 ? (
+          <p className="px-1 text-sm text-muted-foreground">No appointments today.</p>
+        ) : (
+          <div className="space-y-2">
+            {todayAppointments.map(appt => (
+              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Calendar */}
       <Card className="border-none shadow-sm">
         <CardContent className="flex justify-center p-3">
           <Calendar
@@ -79,7 +118,7 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             components={{
-              DayContent: ({ date, ...props }) => {
+              DayContent: ({ date }) => {
                 const key = format(date, 'yyyy-MM-dd');
                 const count = appointmentCountByDate[key];
                 return (
@@ -98,44 +137,24 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-sm font-medium">{format(selectedDate, 'EEEE, MMM d')}</h3>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="gap-1.5 text-xs"><Plus className="h-3.5 w-3.5" /> Add</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[360px]">
-            <DialogHeader><DialogTitle>New Appointment</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div><Label className="text-xs">Date</Label><Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" /></div>
-                <div><Label className="text-xs">Time</Label><Input type="time" value={form.time} onChange={e => update('time', e.target.value)} className="mt-1" /></div>
-              </div>
-              <div><Label className="text-xs">Doctor Name</Label><Input value={form.doctorName} onChange={e => update('doctorName', e.target.value)} placeholder="Dr. Smith" className="mt-1" maxLength={100} /></div>
-              <div><Label className="text-xs">Address</Label><Input value={form.address} onChange={e => update('address', e.target.value)} placeholder="Clinic address" className="mt-1" maxLength={300} /></div>
-              <div><Label className="text-xs">Reason</Label><Input value={form.reason} onChange={e => update('reason', e.target.value)} placeholder="Check-up, follow-up..." className="mt-1" maxLength={200} /></div>
-              <div><Label className="text-xs">Notes (optional)</Label><Textarea value={form.description} onChange={e => update('description', e.target.value)} placeholder="Additional notes..." className="mt-1 min-h-[60px]" maxLength={500} /></div>
-              <Button onClick={handleAdd} className="w-full">Save Appointment</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {dayAppointments.length === 0 ? (
-        <p className="px-1 text-sm text-muted-foreground">No appointments on this day.</p>
-      ) : (
-        <div className="space-y-2">
-          {dayAppointments.map(appt => (
-            <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
-          ))}
+      {/* Selected day appointments (when not today) */}
+      {!isSameDay(selectedDate, today) && dayAppointments.length > 0 && (
+        <div>
+          <h3 className="mb-2 px-1 text-sm font-medium">{format(selectedDate, 'EEEE, MMM d')}</h3>
+          <div className="space-y-2">
+            {dayAppointments.map(appt => (
+              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
+            ))}
+          </div>
         </div>
       )}
 
+      {/* Upcoming (excluding today) */}
       {upcoming.length > 0 && (
         <div>
           <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">Upcoming</h3>
           <div className="space-y-2">
-            {upcoming.slice(0, 5).map(appt => (
+            {upcoming.map(appt => (
               <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} showDate />
             ))}
           </div>
