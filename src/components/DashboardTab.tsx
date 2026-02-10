@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { HealthRecord, DateRange } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { format, subDays, parseISO } from 'date-fns';
 import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban } from 'lucide-react';
 
@@ -17,26 +17,23 @@ const rangeOptions: { label: string; value: DateRange }[] = [
 
 export function DashboardTab({ records }: DashboardTabProps) {
   const [range, setRange] = useState<DateRange>('7');
-
   const latest = records[0] || null;
 
   const filteredRecords = useMemo(() => {
     const days = range === '7' ? 7 : 30;
     const cutoff = format(subDays(new Date(), days), 'yyyy-MM-dd');
-    return records
-      .filter(r => r.date >= cutoff)
-      .sort((a, b) => a.date.localeCompare(b.date));
+    return records.filter(r => r.date >= cutoff).sort((a, b) => a.date.localeCompare(b.date));
   }, [records, range]);
 
   const chartData = useMemo(() => {
     return filteredRecords.map(r => ({
       date: format(parseISO(r.date), 'MMM d'),
-      feedBags: r.feedBags,
-      weight: r.weight,
-      systolic: r.bpSystolic,
-      diastolic: r.bpDiastolic,
-      stoolCount: r.stoolPassed ? r.stoolCount : 0,
-      food: r.foodTaken ? 1 : 0,
+      feedBags: r.feed_bags,
+      weight: Number(r.weight),
+      systolic: r.bp_systolic,
+      diastolic: r.bp_diastolic,
+      stoolCount: r.stool_passed ? r.stool_count : 0,
+      food: r.food_taken ? 1 : 0,
       vomit: r.vomiting ? 1 : 0,
       constipation: r.constipation ? 1 : 0,
     }));
@@ -44,30 +41,26 @@ export function DashboardTab({ records }: DashboardTabProps) {
 
   return (
     <div className="space-y-4 pb-4">
-      {/* Today's Summary */}
       {latest && (
         <div className="grid grid-cols-2 gap-3">
-          <SummaryCard icon={<Droplets className="h-4 w-4" />} label="Feed Bags" value={String(latest.feedBags)} />
+          <SummaryCard icon={<Droplets className="h-4 w-4" />} label="Feed Bags" value={String(latest.feed_bags)} />
           <SummaryCard icon={<Weight className="h-4 w-4" />} label="Weight" value={`${latest.weight} kg`} />
-          <SummaryCard icon={<Heart className="h-4 w-4" />} label="BP" value={`${latest.bpSystolic}/${latest.bpDiastolic}`} />
-          <SummaryCard icon={<CircleDot className="h-4 w-4" />} label="Stool" value={latest.stoolPassed ? String(latest.stoolCount) : 'No'} />
-          <SummaryCard icon={<Utensils className="h-4 w-4" />} label="Food" value={latest.foodTaken ? 'Yes' : 'No'} />
+          <SummaryCard icon={<Heart className="h-4 w-4" />} label="BP" value={`${latest.bp_systolic}/${latest.bp_diastolic}`} />
+          <SummaryCard icon={<CircleDot className="h-4 w-4" />} label="Stool" value={latest.stool_passed ? String(latest.stool_count) : 'No'} />
+          <SummaryCard icon={<Utensils className="h-4 w-4" />} label="Food" value={latest.food_taken ? 'Yes' : 'No'} />
           <SummaryCard icon={<AlertTriangle className="h-4 w-4" />} label="Vomiting" value={latest.vomiting ? 'Yes' : 'No'} />
           <SummaryCard icon={<Ban className="h-4 w-4" />} label="Constipation" value={latest.constipation ? 'Yes' : 'No'} />
           <SummaryCard icon={<Activity className="h-4 w-4" />} label="Last Entry" value={format(parseISO(latest.date), 'MMM d')} />
         </div>
       )}
 
-      {/* Range Selector */}
       <div className="flex gap-2">
         {rangeOptions.map(opt => (
           <button
             key={opt.value}
             onClick={() => setRange(opt.value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              range === opt.value
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground'
+              range === opt.value ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
             }`}
           >
             {opt.label}
@@ -76,14 +69,9 @@ export function DashboardTab({ records }: DashboardTabProps) {
       </div>
 
       {chartData.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No data yet. Start by adding a daily record.
-          </CardContent>
-        </Card>
+        <Card><CardContent className="py-12 text-center text-muted-foreground">No data yet. Start by adding a daily record.</CardContent></Card>
       ) : (
         <div className="space-y-4">
-          {/* Weight */}
           <ChartCard title="Weight (kg)">
             <ChartContainer config={{ weight: { label: 'Weight', color: 'hsl(var(--chart-weight))' } }} className="h-[180px] w-full">
               <LineChart data={chartData}>
@@ -96,7 +84,6 @@ export function DashboardTab({ records }: DashboardTabProps) {
             </ChartContainer>
           </ChartCard>
 
-          {/* Feed Bags */}
           <ChartCard title="Feed Bags / Day">
             <ChartContainer config={{ feedBags: { label: 'Bags', color: 'hsl(var(--chart-feed))' } }} className="h-[180px] w-full">
               <BarChart data={chartData}>
@@ -109,12 +96,8 @@ export function DashboardTab({ records }: DashboardTabProps) {
             </ChartContainer>
           </ChartCard>
 
-          {/* Blood Pressure */}
           <ChartCard title="Blood Pressure">
-            <ChartContainer config={{
-              systolic: { label: 'Systolic', color: 'hsl(var(--chart-bp-sys))' },
-              diastolic: { label: 'Diastolic', color: 'hsl(var(--chart-bp-dia))' },
-            }} className="h-[180px] w-full">
+            <ChartContainer config={{ systolic: { label: 'Systolic', color: 'hsl(var(--chart-bp-sys))' }, diastolic: { label: 'Diastolic', color: 'hsl(var(--chart-bp-dia))' } }} className="h-[180px] w-full">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
@@ -126,7 +109,6 @@ export function DashboardTab({ records }: DashboardTabProps) {
             </ChartContainer>
           </ChartCard>
 
-          {/* Stool Count */}
           <ChartCard title="Stool Count / Day">
             <ChartContainer config={{ stoolCount: { label: 'Count', color: 'hsl(var(--chart-stool))' } }} className="h-[180px] w-full">
               <BarChart data={chartData}>
@@ -139,7 +121,6 @@ export function DashboardTab({ records }: DashboardTabProps) {
             </ChartContainer>
           </ChartCard>
 
-          {/* Boolean trackers */}
           <ChartCard title="Food / Vomiting / Constipation">
             <ChartContainer config={{
               food: { label: 'Food', color: 'hsl(var(--chart-food))' },
@@ -167,9 +148,7 @@ function SummaryCard({ icon, label, value }: { icon: React.ReactNode; label: str
   return (
     <Card className="border-none shadow-sm">
       <CardContent className="flex items-center gap-3 p-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-          {icon}
-        </div>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</div>
         <div>
           <p className="text-xs text-muted-foreground">{label}</p>
           <p className="text-sm font-semibold">{value}</p>
@@ -185,9 +164,7 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
       <CardHeader className="px-4 pb-2 pt-4">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="px-2 pb-4">
-        {children}
-      </CardContent>
+      <CardContent className="px-2 pb-4">{children}</CardContent>
     </Card>
   );
 }

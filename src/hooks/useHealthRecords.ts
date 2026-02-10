@@ -1,46 +1,60 @@
 import { useState, useEffect, useCallback } from 'react';
-import { HealthRecord } from '@/types/health';
-
-const STORAGE_KEY = 'health-records';
-
-function loadRecords(): HealthRecord[] {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveRecords(records: HealthRecord[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-}
+import { supabase } from '@/integrations/supabase/client';
+import { HealthRecord, HealthRecordForm } from '@/types/health';
+import { toast } from 'sonner';
 
 export function useHealthRecords() {
-  const [records, setRecords] = useState<HealthRecord[]>(loadRecords);
+  const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    saveRecords(records);
-  }, [records]);
+  const fetchRecords = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('health_records')
+      .select('*')
+      .order('date', { ascending: false });
+    if (error) {
+      toast.error('Failed to load records');
+      console.error(error);
+    } else {
+      setRecords(data ?? []);
+    }
+    setLoading(false);
+  }, []);
 
-  const addRecord = useCallback((record: Omit<HealthRecord, 'id' | 'createdAt'>) => {
-    const newRecord: HealthRecord = {
-      ...record,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setRecords(prev => {
-      const filtered = prev.filter(r => r.date !== record.date);
-      return [...filtered, newRecord].sort((a, b) => b.date.localeCompare(a.date));
+  useEffect(() => { fetchRecords(); }, [fetchRecords]);
+
+  const addRecord = useCallback(async (form: HealthRecordForm) => {
+    // Upsert by date — delete existing record for that date first
+    await supabase.from('health_records').delete().eq('date', form.date);
+    const { error } = await supabase.from('health_records').insert({
+      date: form.date,
+      feed_bags: form.feedBags,
+      weight: form.weight,
+      bp_systolic: form.bpSystolic,
+      bp_diastolic: form.bpDiastolic,
+      food_taken: form.foodTaken,
+      food_description: form.foodDescription,
+      stool_passed: form.stoolPassed,
+      stool_count: form.stoolCount,
+      vomiting: form.vomiting,
+      constipation: form.constipation,
     });
-  }, []);
+    if (error) {
+      toast.error('Failed to save record');
+      console.error(error);
+    } else {
+      await fetchRecords();
+    }
+  }, [fetchRecords]);
 
-  const updateRecord = useCallback((id: string, updates: Partial<HealthRecord>) => {
-    setRecords(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
-  }, []);
-
-  const deleteRecord = useCallback((id: string) => {
-    setRecords(prev => prev.filter(r => r.id !== id));
+  const deleteRecord = useCallback(async (id: string) => {
+    const { error } = await supabase.from('health_records').delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to delete');
+      console.error(error);
+    } else {
+      setRecords(prev => prev.filter(r => r.id !== id));
+    }
   }, []);
 
   const getLatestRecord = useCallback(() => {
@@ -51,5 +65,5 @@ export function useHealthRecords() {
     return records.find(r => r.date === date) || null;
   }, [records]);
 
-  return { records, addRecord, updateRecord, deleteRecord, getLatestRecord, getRecordByDate };
+  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate };
 }

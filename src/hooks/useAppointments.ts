@@ -1,56 +1,59 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Appointment } from '@/types/health';
-
-const STORAGE_KEY = 'appointments';
-
-function loadAppointments(): Appointment[] {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveAppointments(appointments: Appointment[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(appointments));
-}
+import { supabase } from '@/integrations/supabase/client';
+import { Appointment, AppointmentForm } from '@/types/health';
+import { toast } from 'sonner';
 
 export function useAppointments() {
-  const [appointments, setAppointments] = useState<Appointment[]>(loadAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    saveAppointments(appointments);
-  }, [appointments]);
-
-  const addAppointment = useCallback((appt: Omit<Appointment, 'id' | 'createdAt'>) => {
-    const newAppt: Appointment = {
-      ...appt,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setAppointments(prev => [...prev, newAppt].sort((a, b) => {
-      const dateComp = a.date.localeCompare(b.date);
-      return dateComp !== 0 ? dateComp : a.time.localeCompare(b.time);
-    }));
+  const fetchAppointments = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select('*')
+      .order('date', { ascending: true });
+    if (error) {
+      toast.error('Failed to load appointments');
+      console.error(error);
+    } else {
+      setAppointments(data ?? []);
+    }
+    setLoading(false);
   }, []);
 
-  const updateAppointment = useCallback((id: string, updates: Partial<Appointment>) => {
-    setAppointments(prev => prev.map(a => a.id === id ? { ...a, ...updates } : a));
-  }, []);
+  useEffect(() => { fetchAppointments(); }, [fetchAppointments]);
 
-  const deleteAppointment = useCallback((id: string) => {
-    setAppointments(prev => prev.filter(a => a.id !== id));
-  }, []);
+  const addAppointment = useCallback(async (form: AppointmentForm) => {
+    const { error } = await supabase.from('appointments').insert({
+      date: form.date,
+      time: form.time,
+      doctor_name: form.doctorName,
+      address: form.address,
+      reason: form.reason,
+      description: form.description,
+    });
+    if (error) {
+      toast.error('Failed to save appointment');
+      console.error(error);
+    } else {
+      await fetchAppointments();
+    }
+  }, [fetchAppointments]);
 
-  const getAppointmentsForDate = useCallback((date: string) => {
-    return appointments.filter(a => a.date === date);
-  }, [appointments]);
+  const deleteAppointment = useCallback(async (id: string) => {
+    const { error } = await supabase.from('appointments').delete().eq('id', id);
+    if (error) {
+      toast.error('Failed to delete');
+      console.error(error);
+    } else {
+      setAppointments(prev => prev.filter(a => a.id !== id));
+    }
+  }, []);
 
   const getUpcoming = useCallback(() => {
     const today = new Date().toISOString().split('T')[0];
-    return appointments.filter(a => a.date >= today).sort((a, b) => a.date.localeCompare(b.date));
+    return appointments.filter(a => a.date >= today);
   }, [appointments]);
 
-  return { appointments, addAppointment, updateAppointment, deleteAppointment, getAppointmentsForDate, getUpcoming };
+  return { appointments, loading, addAppointment, deleteAppointment, getUpcoming };
 }
