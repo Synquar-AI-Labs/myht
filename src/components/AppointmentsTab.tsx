@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Appointment, AppointmentForm } from '@/types/health';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -52,16 +52,49 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
     }
   };
 
+  // Count appointments per date
+  const appointmentCountByDate = appointments.reduce<Record<string, number>>((acc, a) => {
+    acc[a.date] = (acc[a.date] || 0) + 1;
+    return acc;
+  }, {});
+
   const modifiers = { appointment: appointmentDates };
   const modifiersStyles = {
-    appointment: { fontWeight: 700, textDecoration: 'underline', textDecorationColor: 'hsl(var(--primary))', textUnderlineOffset: '4px' } as React.CSSProperties,
+    appointment: {
+      backgroundColor: 'hsl(var(--primary))',
+      color: 'hsl(var(--primary-foreground))',
+      borderRadius: '9999px',
+      fontWeight: 700,
+    } as React.CSSProperties,
   };
 
   return (
     <div className="space-y-4 pb-4">
       <Card className="border-none shadow-sm">
         <CardContent className="flex justify-center p-3">
-          <Calendar mode="single" selected={selectedDate} onSelect={handleDateSelect} modifiers={modifiers} modifiersStyles={modifiersStyles} />
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            modifiers={modifiers}
+            modifiersStyles={modifiersStyles}
+            components={{
+              DayContent: ({ date, ...props }) => {
+                const key = format(date, 'yyyy-MM-dd');
+                const count = appointmentCountByDate[key];
+                return (
+                  <div className="relative flex items-center justify-center w-full h-full">
+                    <span>{date.getDate()}</span>
+                    {count && (
+                      <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground">
+                        {count}
+                      </span>
+                    )}
+                  </div>
+                );
+              },
+            }}
+          />
         </CardContent>
       </Card>
 
