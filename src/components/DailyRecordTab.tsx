@@ -137,24 +137,22 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           </div>
         </CardHeader>
         <CardContent className="space-y-4 px-4 pb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs text-muted-foreground">Date</Label>
-              <Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Recorded By</Label>
-              <Select value={form.recordedBy} onValueChange={v => update('recordedBy', v)}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select name" />
-                </SelectTrigger>
-                <SelectContent>
-                  {RECORDER_OPTIONS.map(name => (
-                    <SelectItem key={name} value={name}>{name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Date</Label>
+            <Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" />
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Recorded By</Label>
+            <Select value={form.recordedBy} onValueChange={v => update('recordedBy', v)}>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select name" />
+              </SelectTrigger>
+              <SelectContent>
+                {RECORDER_OPTIONS.map(name => (
+                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
