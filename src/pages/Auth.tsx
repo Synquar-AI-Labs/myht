@@ -9,8 +9,8 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
 export default function Auth() {
-  const [email, setEmail] = useState('user@test.com');
-  const [password, setPassword] = useState('abc123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -62,11 +62,11 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Email</Label>
-              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1" readOnly />
+              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1" placeholder="Enter your email" />
             </div>
             <div>
               <Label>Password</Label>
-              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1" readOnly />
+              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1" placeholder="Enter your password" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
