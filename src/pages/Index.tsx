@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
+import { useAuth } from '@/hooks/useAuth';
 import { DashboardTab } from '@/components/DashboardTab';
 import { DailyRecordTab } from '@/components/DailyRecordTab';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
-import { BarChart3, ClipboardList, CalendarDays, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BarChart3, ClipboardList, CalendarDays, Heart, LogOut } from 'lucide-react';
 
 type Tab = 'dashboard' | 'record' | 'calendar';
 
@@ -18,13 +20,19 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<Tab>('record');
   const healthRecords = useHealthRecords();
   const appointmentsData = useAppointments();
+  const { signOut } = useAuth();
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Heart className="h-5 w-5 text-primary" />
-          <h1 className="text-lg">Health Tracker</h1>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2">
+            <Heart className="h-5 w-5 text-primary" />
+            <h1 className="text-lg">Health Tracker</h1>
+          </div>
+          <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </header>
 

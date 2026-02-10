@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { HealthRecord, HealthRecordForm } from '@/types/health';
 import { toast } from 'sonner';
+import { healthRecordSchema } from '@/lib/validation';
 
 export function useHealthRecords() {
   const [records, setRecords] = useState<HealthRecord[]>([]);
@@ -24,6 +25,11 @@ export function useHealthRecords() {
   useEffect(() => { fetchRecords(); }, [fetchRecords]);
 
   const addRecord = useCallback(async (form: HealthRecordForm) => {
+    const parsed = healthRecordSchema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0]?.message || 'Invalid input');
+      return;
+    }
     // Upsert by date — delete existing record for that date first
     await supabase.from('health_records').delete().eq('date', form.date);
     const { error } = await supabase.from('health_records').insert({
