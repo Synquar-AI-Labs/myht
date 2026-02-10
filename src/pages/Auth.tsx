@@ -29,8 +29,8 @@ export default function Auth() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error && error.message === 'Invalid login credentials') {
-        // Account doesn't exist yet — create it
+      if (error && (error.message === 'Invalid login credentials' || error.message === 'Email not confirmed')) {
+        // Account doesn't exist or wasn't confirmed — recreate it
         const { error: signUpError } = await supabase.auth.signUp({ email, password });
         if (signUpError) throw signUpError;
         // Auto-confirm is on, so sign in immediately
