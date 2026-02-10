@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Appointment, AppointmentForm } from '@/types/health';
 import { toast } from 'sonner';
+import { appointmentSchema } from '@/lib/validation';
 
 export function useAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -24,6 +25,11 @@ export function useAppointments() {
   useEffect(() => { fetchAppointments(); }, [fetchAppointments]);
 
   const addAppointment = useCallback(async (form: AppointmentForm) => {
+    const parsed = appointmentSchema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0]?.message || 'Invalid input');
+      return;
+    }
     const { error } = await supabase.from('appointments').insert({
       date: form.date,
       time: form.time,
