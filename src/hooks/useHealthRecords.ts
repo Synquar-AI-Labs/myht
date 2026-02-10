@@ -37,8 +37,10 @@ export function useHealthRecords() {
       stool_passed: form.stoolPassed,
       stool_count: form.stoolCount,
       vomiting: form.vomiting,
+      vomit_count: form.vomitCount,
       constipation: form.constipation,
-    });
+      recorded_by: form.recordedBy,
+    } as any);
     if (error) {
       toast.error('Failed to save record');
       console.error(error);
