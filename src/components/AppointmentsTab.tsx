@@ -73,6 +73,20 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
 
   return (
     <div className="space-y-4 pb-4">
+      {/* Today's Appointments */}
+      <div>
+        <h3 className="text-sm font-semibold px-1 mb-2">Today — {format(today, 'MMM d')}</h3>
+        {todayAppointments.length === 0 ? (
+          <p className="px-1 text-sm text-muted-foreground">No appointments today.</p>
+        ) : (
+          <div className="space-y-2">
+            {todayAppointments.map(appt => (
+              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Calendar */}
       <Card className="border-none shadow-sm">
         <CardContent className="p-3">
