@@ -73,20 +73,6 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
 
   return (
     <div className="space-y-4 pb-4">
-      {/* Today's Appointments */}
-      <div>
-        <h3 className="text-sm font-semibold px-1 mb-2">Today — {format(today, 'MMM d')}</h3>
-        {todayAppointments.length === 0 ? (
-          <p className="px-1 text-sm text-muted-foreground">No appointments today.</p>
-        ) : (
-          <div className="space-y-2">
-            {todayAppointments.map(appt => (
-              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Calendar */}
       <Card className="border-none shadow-sm">
         <CardContent className="p-3">
@@ -140,17 +126,6 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
         </CardContent>
       </Card>
 
-      {/* Selected day appointments (when not today) */}
-      {!isSameDay(selectedDate, today) && dayAppointments.length > 0 && (
-        <div>
-          <h3 className="mb-2 px-1 text-sm font-medium">{format(selectedDate, 'EEEE, MMM d')}</h3>
-          <div className="space-y-2">
-            {dayAppointments.map(appt => (
-              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Upcoming (excluding today) */}
       {upcoming.length > 0 && (
