@@ -151,18 +151,29 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
         const label = isSelectedToday
           ? 'Upcoming'
           : `Appointments — ${format(selectedDate, 'EEEE, MMM d')}`;
-        return filtered.length > 0 ? (
+        return (
           <div>
-            <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">{label}</h3>
-            <div className="space-y-2">
-              {filtered.map(appt => (
-                <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} showDate />
-              ))}
+            <div className="flex items-center justify-between mb-2 px-1">
+              <h3 className="text-sm font-medium text-muted-foreground">{label}</h3>
+              {!isSelectedToday && (
+                <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedDate(today)}>
+                  Show All
+                </Button>
+              )}
             </div>
+            {filtered.length > 0 ? (
+              <div className="space-y-2">
+                {filtered.map(appt => (
+                  <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} showDate />
+                ))}
+              </div>
+            ) : !isSelectedToday ? (
+              <p className="px-1 text-sm text-muted-foreground">No appointments on {format(selectedDate, 'MMM d')}.</p>
+            ) : (
+              <p className="px-1 text-sm text-muted-foreground">No upcoming appointments.</p>
+            )}
           </div>
-        ) : !isSelectedToday ? (
-          <p className="px-1 text-sm text-muted-foreground">No appointments on {format(selectedDate, 'MMM d')}.</p>
-        ) : null;
+        );
       })()}
     </div>
   );
