@@ -141,17 +141,29 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
       </Card>
 
 
-      {/* Upcoming (excluding today) */}
-      {upcoming.length > 0 && (
-        <div>
-          <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">Upcoming</h3>
-          <div className="space-y-2">
-            {upcoming.map(appt => (
-              <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} showDate />
-            ))}
+      {/* Upcoming / Filtered by selected date */}
+      {(() => {
+        const selectedStr = format(selectedDate, 'yyyy-MM-dd');
+        const isSelectedToday = isSameDay(selectedDate, today);
+        const filtered = isSelectedToday
+          ? upcoming
+          : upcoming.filter(a => a.date === selectedStr);
+        const label = isSelectedToday
+          ? 'Upcoming'
+          : `Appointments — ${format(selectedDate, 'EEEE, MMM d')}`;
+        return filtered.length > 0 ? (
+          <div>
+            <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">{label}</h3>
+            <div className="space-y-2">
+              {filtered.map(appt => (
+                <AppointmentCard key={appt.id} appt={appt} onDelete={deleteAppointment} showDate />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        ) : !isSelectedToday ? (
+          <p className="px-1 text-sm text-muted-foreground">No appointments on {format(selectedDate, 'MMM d')}.</p>
+        ) : null;
+      })()}
     </div>
   );
 }
