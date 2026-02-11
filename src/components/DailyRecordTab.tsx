@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { HealthRecord, HealthRecordForm, dbToHealthForm, RECORDER_OPTIONS } from '@/types/health';
+import { MedicineTracker } from '@/components/MedicineTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -208,6 +209,9 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           </Button>
         </CardContent>
       </Card>
+
+      {/* Medicine Tracker */}
+      <MedicineTracker viewDate={viewDate} />
 
       {/* Past entries list */}
       <div>

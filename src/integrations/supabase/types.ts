@@ -104,6 +104,65 @@ export type Database = {
         }
         Relationships: []
       }
+      medicine_logs: {
+        Row: {
+          am_pm: string
+          created_at: string
+          date: string
+          hour: number
+          id: string
+          medicine_id: string
+          recorded_by: string
+        }
+        Insert: {
+          am_pm?: string
+          created_at?: string
+          date: string
+          hour?: number
+          id?: string
+          medicine_id: string
+          recorded_by?: string
+        }
+        Update: {
+          am_pm?: string
+          created_at?: string
+          date?: string
+          hour?: number
+          id?: string
+          medicine_id?: string
+          recorded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medicine_logs_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medicines: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          schedule_note: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          schedule_note?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          schedule_note?: string
+        }
+        Relationships: []
+      }
       reminder_settings: {
         Row: {
           appointment_reminder_days: number
