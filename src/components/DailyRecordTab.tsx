@@ -211,14 +211,20 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <Label className="text-xs text-muted-foreground">Constipation</Label>
             <Switch checked={form.constipation} onCheckedChange={v => update('constipation', v)} />
           </div>
-          <div>
-            <Label className="text-xs text-muted-foreground">Misc Notes</Label>
-            <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes..." className="min-h-[60px] text-sm mt-1" maxLength={1000} />
-          </div>
           <Button onClick={handleSubmit} className="w-full gap-2" disabled={saving}>
             <Plus className="h-4 w-4" />
             {saving ? 'Saving...' : editingId ? 'Update Record' : 'Save Entry'}
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* Misc Notes */}
+      <Card className="border-none shadow-sm">
+        <CardHeader className="px-4 pb-2 pt-4">
+          <CardTitle className="text-base">Misc Notes</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4">
+          <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes or observations..." className="min-h-[80px] text-sm" maxLength={1000} />
         </CardContent>
       </Card>
 
