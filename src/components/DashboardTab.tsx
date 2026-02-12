@@ -4,7 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { format, subDays, parseISO } from 'date-fns';
-import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban, ShowerHead } from 'lucide-react';
+import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban, ShowerHead, CalendarIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 interface DashboardTabProps {
   records: HealthRecord[];
@@ -13,17 +17,26 @@ interface DashboardTabProps {
 const rangeOptions: { label: string; value: DateRange }[] = [
   { label: '7 Days', value: '7' },
   { label: '30 Days', value: '30' },
+  { label: 'Custom', value: 'custom' },
 ];
 
 export function DashboardTab({ records }: DashboardTabProps) {
   const [range, setRange] = useState<DateRange>('7');
+  const [customFrom, setCustomFrom] = useState<Date | undefined>();
+  const [customTo, setCustomTo] = useState<Date | undefined>();
   const latest = records[0] || null;
 
   const filteredRecords = useMemo(() => {
+    if (range === 'custom') {
+      if (!customFrom || !customTo) return [];
+      const from = format(customFrom, 'yyyy-MM-dd');
+      const to = format(customTo, 'yyyy-MM-dd');
+      return records.filter(r => r.date >= from && r.date <= to).sort((a, b) => a.date.localeCompare(b.date));
+    }
     const days = range === '7' ? 7 : 30;
     const cutoff = format(subDays(new Date(), days), 'yyyy-MM-dd');
     return records.filter(r => r.date >= cutoff).sort((a, b) => a.date.localeCompare(b.date));
-  }, [records, range]);
+  }, [records, range, customFrom, customTo]);
 
   const chartData = useMemo(() => {
     return filteredRecords.map(r => ({
@@ -40,8 +53,56 @@ export function DashboardTab({ records }: DashboardTabProps) {
     }));
   }, [filteredRecords]);
 
+  const summaryData = useMemo(() => [
+    { name: 'Food', count: chartData.reduce((s, d) => s + d.food, 0) },
+    { name: 'Vomiting', count: chartData.reduce((s, d) => s + d.vomit, 0) },
+    { name: 'Constipation', count: chartData.reduce((s, d) => s + d.constipation, 0) },
+  ], [chartData]);
+
   return (
     <div className="space-y-4 pb-4">
+      {/* Range selector at top */}
+      <div className="flex gap-2 flex-wrap">
+        {rangeOptions.map(opt => (
+          <button
+            key={opt.value}
+            onClick={() => setRange(opt.value)}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              range === opt.value ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {range === 'custom' && (
+        <div className="flex gap-2 flex-wrap">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn('w-[150px] justify-start text-left font-normal', !customFrom && 'text-muted-foreground')}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {customFrom ? format(customFrom, 'MMM d, yyyy') : 'From'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={customFrom} onSelect={setCustomFrom} initialFocus className="p-3 pointer-events-auto" />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={cn('w-[150px] justify-start text-left font-normal', !customTo && 'text-muted-foreground')}>
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {customTo ? format(customTo, 'MMM d, yyyy') : 'To'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={customTo} onSelect={setCustomTo} initialFocus className="p-3 pointer-events-auto" />
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
+
       {latest && (
         <div className="grid grid-cols-2 gap-3">
           <SummaryCard icon={<Droplets className="h-4 w-4" />} label="Feed Bags" value={String(latest.feed_bags)} />
@@ -55,20 +116,6 @@ export function DashboardTab({ records }: DashboardTabProps) {
           <SummaryCard icon={<Activity className="h-4 w-4" />} label="Last Entry" value={format(parseISO(latest.date), 'MMM d')} />
         </div>
       )}
-
-      <div className="flex gap-2">
-        {rangeOptions.map(opt => (
-          <button
-            key={opt.value}
-            onClick={() => setRange(opt.value)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              range === opt.value ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
 
       {chartData.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">No data yet. Start by adding a daily record.</CardContent></Card>
@@ -135,7 +182,7 @@ export function DashboardTab({ records }: DashboardTabProps) {
             </ChartContainer>
           </ChartCard>
 
-          <ChartCard title="Food / Vomiting / Constipation">
+          <ChartCard title="Food / Vomiting / Constipation (per day)">
             <ChartContainer config={{
               food: { label: 'Food', color: 'hsl(var(--chart-food))' },
               vomit: { label: 'Vomit', color: 'hsl(var(--chart-vomit))' },
@@ -149,6 +196,20 @@ export function DashboardTab({ records }: DashboardTabProps) {
                 <Bar dataKey="food" fill="hsl(var(--chart-food))" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="vomit" fill="hsl(var(--chart-vomit))" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="constipation" fill="hsl(var(--chart-constipation))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          </ChartCard>
+
+          <ChartCard title="Summary: Food / Vomiting / Constipation (total days)">
+            <ChartContainer config={{
+              count: { label: 'Days', color: 'hsl(var(--chart-food))' },
+            }} className="h-[180px] w-full">
+              <BarChart data={summaryData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="hsl(var(--chart-food))" />
               </BarChart>
             </ChartContainer>
           </ChartCard>
