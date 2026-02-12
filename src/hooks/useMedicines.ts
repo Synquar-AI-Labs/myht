@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { medicineSchema, medicineLogSchema } from '@/lib/validation';
 
 export interface Medicine {
   id: string;
@@ -61,13 +62,17 @@ export function useMedicines(viewDate: string) {
   }, [fetchLogs]);
 
   const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; am_pm: string; recorded_by: string }) => {
-    if (!log.recorded_by) { toast.error('Please select who is recording'); return; }
+    const parsed = medicineLogSchema.safeParse({ ...log, date: viewDate });
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0]?.message || 'Invalid input');
+      return;
+    }
     const { error } = await supabase.from('medicine_logs' as any).insert({
       date: viewDate,
-      medicine_id: log.medicine_id,
-      hour: log.hour,
-      am_pm: log.am_pm,
-      recorded_by: log.recorded_by,
+      medicine_id: parsed.data.medicine_id,
+      hour: parsed.data.hour,
+      am_pm: parsed.data.am_pm,
+      recorded_by: parsed.data.recorded_by,
     } as any);
     if (error) {
       toast.error('Failed to add medicine log');
@@ -101,8 +106,12 @@ export function useMedicines(viewDate: string) {
   }, [fetchLogs]);
 
   const addNewMedicine = useCallback(async (name: string, scheduleNote: string) => {
-    if (!name.trim()) { toast.error('Medicine name is required'); return; }
-    const { error } = await supabase.from('medicines' as any).insert({ name: name.trim(), schedule_note: scheduleNote.trim() } as any);
+    const parsed = medicineSchema.safeParse({ name, schedule_note: scheduleNote });
+    if (!parsed.success) {
+      toast.error(parsed.error.errors[0]?.message || 'Invalid input');
+      return;
+    }
+    const { error } = await supabase.from('medicines' as any).insert({ name: parsed.data.name, schedule_note: parsed.data.schedule_note } as any);
     if (error) {
       toast.error('Failed to add medicine');
       console.error(error);
