@@ -9,6 +9,7 @@ export type DateRange = '7' | '30' | 'custom';
 export interface HealthRecordForm {
   date: string;
   feedBags: number;
+  flushCount: number;
   weight: number;
   bpSystolic: number;
   bpDiastolic: number;
@@ -20,6 +21,7 @@ export interface HealthRecordForm {
   vomitCount: number;
   constipation: boolean;
   recordedBy: string;
+  miscNotes: string;
 }
 
 export const RECORDER_OPTIONS = ['Umair', 'Shaharyar', 'Affan', 'Fahad', 'Shahwar'] as const;
@@ -38,6 +40,7 @@ export function dbToHealthForm(r: HealthRecord): HealthRecordForm {
   return {
     date: r.date,
     feedBags: r.feed_bags,
+    flushCount: (r as any).flush_count ?? 0,
     weight: Number(r.weight),
     bpSystolic: r.bp_systolic,
     bpDiastolic: r.bp_diastolic,
@@ -49,6 +52,7 @@ export function dbToHealthForm(r: HealthRecord): HealthRecordForm {
     vomitCount: (r as any).vomit_count ?? 0,
     constipation: r.constipation,
     recordedBy: (r as any).recorded_by ?? '',
+    miscNotes: (r as any).misc_notes ?? '',
   };
 }
 

@@ -12,6 +12,7 @@ export const appointmentSchema = z.object({
 export const healthRecordSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format'),
   feedBags: z.number().int().min(0).max(100),
+  flushCount: z.number().int().min(0).max(100),
   weight: z.number().min(0).max(500),
   bpSystolic: z.number().int().min(0).max(400),
   bpDiastolic: z.number().int().min(0).max(400),
@@ -23,4 +24,5 @@ export const healthRecordSchema = z.object({
   vomitCount: z.number().int().min(0).max(100),
   constipation: z.boolean(),
   recordedBy: z.string().trim().min(1, 'Recorder is required').max(50, 'Name too long'),
+  miscNotes: z.string().max(1000, 'Notes too long').default(''),
 });
