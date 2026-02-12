@@ -35,6 +35,7 @@ export function useHealthRecords() {
     const { error } = await supabase.from('health_records').insert({
       date: form.date,
       feed_bags: form.feedBags,
+      flush_count: form.flushCount,
       weight: form.weight,
       bp_systolic: form.bpSystolic,
       bp_diastolic: form.bpDiastolic,
@@ -46,6 +47,7 @@ export function useHealthRecords() {
       vomit_count: form.vomitCount,
       constipation: form.constipation,
       recorded_by: form.recordedBy,
+      misc_notes: form.miscNotes,
     } as any);
     if (error) {
       toast.error('Failed to save record');

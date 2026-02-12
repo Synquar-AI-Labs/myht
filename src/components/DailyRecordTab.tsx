@@ -22,10 +22,10 @@ interface DailyRecordTabProps {
 
 const emptyForm: HealthRecordForm = {
   date: format(new Date(), 'yyyy-MM-dd'),
-  feedBags: 0, weight: 0, bpSystolic: 0, bpDiastolic: 0,
+  feedBags: 0, flushCount: 0, weight: 0, bpSystolic: 0, bpDiastolic: 0,
   foodTaken: false, foodDescription: '', stoolPassed: false,
   stoolCount: 0, vomiting: false, vomitCount: 0, constipation: false,
-  recordedBy: '',
+  recordedBy: '', miscNotes: '',
 };
 
 export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate }: DailyRecordTabProps) {
@@ -110,6 +110,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           <CardContent className="px-4 pb-4 space-y-2 text-sm">
             <div className="grid grid-cols-2 gap-2">
               <div><span className="text-muted-foreground">Feed Bags:</span> {viewRecord.feed_bags}</div>
+              <div><span className="text-muted-foreground">Flushes:</span> {(viewRecord as any).flush_count ?? 0}</div>
               <div><span className="text-muted-foreground">Weight:</span> {viewRecord.weight} kg</div>
               <div><span className="text-muted-foreground">BP:</span> {viewRecord.bp_systolic}/{viewRecord.bp_diastolic}</div>
               <div><span className="text-muted-foreground">Food Taken:</span> {viewRecord.food_taken ? 'Yes' : 'No'}</div>
@@ -121,6 +122,9 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
               <div><span className="text-muted-foreground">Constipation:</span> {viewRecord.constipation ? 'Yes' : 'No'}</div>
               {(viewRecord as any).recorded_by && (
                 <div><span className="text-muted-foreground">Recorded by:</span> {(viewRecord as any).recorded_by}</div>
+              )}
+              {(viewRecord as any).misc_notes && (
+                <div className="col-span-2"><span className="text-muted-foreground">Notes:</span> {(viewRecord as any).misc_notes}</div>
               )}
             </div>
           </CardContent>
@@ -159,6 +163,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <div>
               <Label className="text-xs text-muted-foreground">Feed Bags</Label>
               <Input type="number" min={0} value={form.feedBags || ''} onChange={e => update('feedBags', Number(e.target.value))} placeholder="0" className="mt-1" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">No. of Flushes</Label>
+              <Input type="number" min={0} value={form.flushCount || ''} onChange={e => update('flushCount', Number(e.target.value))} placeholder="0" className="mt-1" />
             </div>
             <div>
               <Label className="text-xs text-muted-foreground">Weight (kg)</Label>
@@ -202,6 +210,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           <div className="flex items-center justify-between">
             <Label className="text-xs text-muted-foreground">Constipation</Label>
             <Switch checked={form.constipation} onCheckedChange={v => update('constipation', v)} />
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Misc Notes</Label>
+            <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes..." className="min-h-[60px] text-sm mt-1" maxLength={1000} />
           </div>
           <Button onClick={handleSubmit} className="w-full gap-2" disabled={saving}>
             <Plus className="h-4 w-4" />
