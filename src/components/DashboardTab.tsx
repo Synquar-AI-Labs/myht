@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { format, subDays, parseISO } from 'date-fns';
-import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban } from 'lucide-react';
+import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban, ShowerHead } from 'lucide-react';
 
 interface DashboardTabProps {
   records: HealthRecord[];
@@ -29,6 +29,7 @@ export function DashboardTab({ records }: DashboardTabProps) {
     return filteredRecords.map(r => ({
       date: format(parseISO(r.date), 'MMM d'),
       feedBags: r.feed_bags,
+      flushes: (r as any).flush_count ?? 0,
       weight: Number(r.weight),
       systolic: r.bp_systolic,
       diastolic: r.bp_diastolic,
@@ -44,6 +45,7 @@ export function DashboardTab({ records }: DashboardTabProps) {
       {latest && (
         <div className="grid grid-cols-2 gap-3">
           <SummaryCard icon={<Droplets className="h-4 w-4" />} label="Feed Bags" value={String(latest.feed_bags)} />
+          <SummaryCard icon={<ShowerHead className="h-4 w-4" />} label="Flushes" value={String((latest as any).flush_count ?? 0)} />
           <SummaryCard icon={<Weight className="h-4 w-4" />} label="Weight" value={`${latest.weight} kg`} />
           <SummaryCard icon={<Heart className="h-4 w-4" />} label="BP" value={`${latest.bp_systolic}/${latest.bp_diastolic}`} />
           <SummaryCard icon={<CircleDot className="h-4 w-4" />} label="Stool" value={latest.stool_passed ? String(latest.stool_count) : 'No'} />
@@ -92,6 +94,18 @@ export function DashboardTab({ records }: DashboardTabProps) {
                 <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="feedBags" fill="hsl(var(--chart-feed))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          </ChartCard>
+
+          <ChartCard title="Flushes / Day">
+            <ChartContainer config={{ flushes: { label: 'Flushes', color: 'hsl(var(--chart-stool))' } }} className="h-[180px] w-full">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="flushes" fill="hsl(var(--chart-stool))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ChartContainer>
           </ChartCard>
