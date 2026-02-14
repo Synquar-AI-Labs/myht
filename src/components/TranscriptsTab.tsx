@@ -82,7 +82,21 @@ export function TranscriptsTab() {
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+
+      // Pick a supported mime type
+      let mimeType = 'audio/webm;codecs=opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/webm';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'audio/mp4';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = ''; // let browser pick default
+          }
+        }
+      }
+
+      const options: MediaRecorderOptions = mimeType ? { mimeType } : {};
+      const mediaRecorder = new MediaRecorder(stream, options);
       chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -91,18 +105,23 @@ export function TranscriptsTab() {
 
       mediaRecorder.onstop = async () => {
         stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        if (blob.size > 0) {
-          // Save locally first so user has a backup
-          setProcessingStep('saving');
-          saveRecordingLocally(blob, title);
-          toast({ title: 'Recording saved', description: 'A backup copy has been downloaded to your device.' });
-          await processAudio(blob, title, recordedBy || 'Unknown');
+        const actualType = mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunksRef.current, { type: actualType });
+
+        if (blob.size === 0) {
+          toast({ title: 'Error', description: 'Recording was empty. Please try again.', variant: 'destructive' });
+          return;
         }
+
+        // Save locally first so user has a backup
+        setProcessingStep('saving');
+        saveRecordingLocally(blob, title);
+        toast({ title: 'Recording saved', description: 'A backup copy has been downloaded to your device.' });
+        await processAudio(blob, title, recordedBy || 'Unknown');
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
+      mediaRecorder.start(1000); // collect data every second for reliability
       setRecording(true);
     } catch (err) {
       console.error('Microphone access denied:', err);
