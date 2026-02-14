@@ -16,11 +16,21 @@ export interface Transcript {
   created_at: string;
 }
 
+export type ProcessingStep = 
+  | 'recording'
+  | 'saving'
+  | 'uploading'
+  | 'transcribing'
+  | 'analyzing'
+  | 'summarizing'
+  | null;
+
 export function useTranscripts() {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState<ProcessingStep>(null);
 
   const fetchTranscripts = useCallback(async () => {
     setLoading(true);
@@ -52,6 +62,7 @@ export function useTranscripts() {
     setProcessing(true);
     try {
       // Upload audio to storage
+      setProcessingStep('uploading');
       const fileName = `${selectedDate}/${Date.now()}.webm`;
       const { error: uploadError } = await supabase.storage
         .from('audio-files')
@@ -61,7 +72,8 @@ export function useTranscripts() {
 
       const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(fileName);
 
-      // Call edge function with user's auth token
+      // Call edge function
+      setProcessingStep('transcribing');
       const formData = new FormData();
       formData.append('audio', new File([audioBlob], 'recording.webm', { type: 'audio/webm' }));
 
@@ -92,9 +104,11 @@ export function useTranscripts() {
         throw new Error(errMsg);
       }
 
+      setProcessingStep('analyzing');
       const result = await res.json();
 
       // Save to database
+      setProcessingStep('summarizing');
       const { error: insertError } = await supabase.from('audio_transcripts').insert({
         date: selectedDate,
         title: title || null,
@@ -115,6 +129,7 @@ export function useTranscripts() {
       toast({ title: 'Error', description: e.message || 'Failed to process audio', variant: 'destructive' });
     } finally {
       setProcessing(false);
+      setProcessingStep(null);
     }
   };
 
@@ -134,7 +149,9 @@ export function useTranscripts() {
     setSelectedDate,
     loading,
     processing,
+    processingStep,
     processAudio,
     deleteTranscript,
+    setProcessingStep,
   };
 }
