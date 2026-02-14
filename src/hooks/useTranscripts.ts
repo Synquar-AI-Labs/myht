@@ -61,37 +61,73 @@ export function useTranscripts() {
   const processAudio = async (audioBlob: Blob, title: string, recordedBy: string) => {
     setProcessing(true);
     try {
+      // Validate blob before proceeding
+      if (!audioBlob || audioBlob.size === 0) {
+        throw new Error('Recording is empty. Please try again.');
+      }
+
+      console.log('processAudio: blob size =', audioBlob.size, 'type =', audioBlob.type);
+
       // Upload audio to storage
       setProcessingStep('uploading');
-      const fileName = `${selectedDate}/${Date.now()}.webm`;
+      const contentType = audioBlob.type || 'audio/webm';
+      const ext = contentType.includes('mp4') || contentType.includes('mp3') ? 'mp3' : 'webm';
+      const fileName = `${selectedDate}/${Date.now()}.${ext}`;
+
+      // Convert to ArrayBuffer for more reliable upload
+      const arrayBuffer = await audioBlob.arrayBuffer();
+
       const { error: uploadError } = await supabase.storage
         .from('audio-files')
-        .upload(fileName, audioBlob, { contentType: 'audio/webm' });
+        .upload(fileName, arrayBuffer, {
+          contentType,
+          cacheControl: '3600',
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
 
       const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(fileName);
 
-      // Call edge function
+      // Call edge function with timeout
       setProcessingStep('transcribing');
+      const audioFile = new File([audioBlob], `recording.${ext}`, { type: contentType });
       const formData = new FormData();
-      formData.append('audio', new File([audioBlob], 'recording.webm', { type: 'audio/webm' }));
+      formData.append('audio', audioFile);
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
         throw new Error('You must be logged in to process audio');
       }
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe-audio`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: formData,
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 120000); // 2 min timeout
+
+      let res: Response;
+      try {
+        res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe-audio`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: formData,
+            signal: controller.signal,
+          }
+        );
+      } catch (fetchErr: any) {
+        clearTimeout(timeout);
+        if (fetchErr.name === 'AbortError') {
+          throw new Error('Processing timed out. Your recording was saved — try uploading the backup file.');
         }
-      );
+        console.error('Fetch error:', fetchErr);
+        throw new Error('Network error. Your recording was saved locally — try uploading it again.');
+      } finally {
+        clearTimeout(timeout);
+      }
 
       if (!res.ok) {
         let errMsg = 'Processing failed';
@@ -126,7 +162,11 @@ export function useTranscripts() {
       await fetchTranscripts();
     } catch (e: any) {
       console.error('processAudio error:', e);
-      toast({ title: 'Error', description: e.message || 'Failed to process audio', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: e.message || 'Failed to process audio. If you recorded, a backup was saved to your device.',
+        variant: 'destructive',
+      });
     } finally {
       setProcessing(false);
       setProcessingStep(null);
