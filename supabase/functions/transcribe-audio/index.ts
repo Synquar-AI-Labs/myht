@@ -45,19 +45,44 @@ serve(async (req) => {
       });
     }
 
-    // Validate content type before parsing
+    // Accept JSON body with audioUrl
     const contentType = req.headers.get("content-type") || "";
-    if (!contentType.includes("multipart/form-data")) {
-      return new Response(JSON.stringify({ error: "Request must be multipart/form-data" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    let audioBlob: Blob;
 
-    const formData = await req.formData();
-    const audioFile = formData.get("audio") as File;
-    if (!audioFile) {
-      return new Response(JSON.stringify({ error: "No audio file provided" }), {
+    if (contentType.includes("application/json")) {
+      // New approach: receive storage URL, fetch audio server-side
+      const { audioUrl } = await req.json();
+      if (!audioUrl) {
+        return new Response(JSON.stringify({ error: "No audioUrl provided" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      console.log("Fetching audio from URL:", audioUrl);
+      const audioRes = await fetch(audioUrl);
+      if (!audioRes.ok) {
+        console.error("Failed to fetch audio:", audioRes.status);
+        return new Response(JSON.stringify({ error: "Failed to fetch audio from storage" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const audioBuffer = await audioRes.arrayBuffer();
+      audioBlob = new Blob([audioBuffer]);
+    } else if (contentType.includes("multipart/form-data")) {
+      // Legacy: direct file upload
+      const formData = await req.formData();
+      const file = formData.get("audio") as File;
+      if (!file) {
+        return new Response(JSON.stringify({ error: "No audio file provided" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      audioBlob = file;
+    } else {
+      return new Response(JSON.stringify({ error: "Unsupported content type" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -65,7 +90,7 @@ serve(async (req) => {
 
     // Step 1: Transcribe with Whisper
     const whisperForm = new FormData();
-    whisperForm.append("file", audioFile);
+    whisperForm.append("file", new File([audioBlob], "recording.webm", { type: "audio/webm" }));
     whisperForm.append("model", "whisper-1");
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {

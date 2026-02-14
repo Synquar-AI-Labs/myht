@@ -61,20 +61,18 @@ export function useTranscripts() {
   const processAudio = async (audioBlob: Blob, title: string, recordedBy: string) => {
     setProcessing(true);
     try {
-      // Validate blob before proceeding
       if (!audioBlob || audioBlob.size === 0) {
         throw new Error('Recording is empty. Please try again.');
       }
 
       console.log('processAudio: blob size =', audioBlob.size, 'type =', audioBlob.type);
 
-      // Upload audio to storage
+      // Step 1: Upload audio to storage
       setProcessingStep('uploading');
       const contentType = audioBlob.type || 'audio/webm';
       const ext = contentType.includes('mp4') || contentType.includes('mp3') ? 'mp3' : 'webm';
       const fileName = `${selectedDate}/${Date.now()}.${ext}`;
 
-      // Convert to ArrayBuffer for more reliable upload
       const arrayBuffer = await audioBlob.arrayBuffer();
 
       const { error: uploadError } = await supabase.storage
@@ -90,12 +88,10 @@ export function useTranscripts() {
       }
 
       const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(fileName);
+      const audioUrl = urlData.publicUrl;
 
-      // Call edge function with timeout
+      // Step 2: Call edge function with the URL (not raw audio) to avoid load-failed errors
       setProcessingStep('transcribing');
-      const audioFile = new File([audioBlob], `recording.${ext}`, { type: contentType });
-      const formData = new FormData();
-      formData.append('audio', audioFile);
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
@@ -103,7 +99,7 @@ export function useTranscripts() {
       }
 
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 120000); // 2 min timeout
+      const timeout = setTimeout(() => controller.abort(), 180000); // 3 min timeout
 
       let res: Response;
       try {
@@ -113,17 +109,17 @@ export function useTranscripts() {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
             },
-            body: formData,
+            body: JSON.stringify({ audioUrl }),
             signal: controller.signal,
           }
         );
       } catch (fetchErr: any) {
         clearTimeout(timeout);
         if (fetchErr.name === 'AbortError') {
-          throw new Error('Processing timed out. Your recording was saved — try uploading the backup file.');
+          throw new Error('Processing timed out. Your recording was uploaded — try again later.');
         }
-        console.error('Fetch error:', fetchErr);
         throw new Error('Network error. Your recording was saved locally — try uploading it again.');
       } finally {
         clearTimeout(timeout);
@@ -143,12 +139,12 @@ export function useTranscripts() {
       setProcessingStep('analyzing');
       const result = await res.json();
 
-      // Save to database
+      // Step 3: Save to database
       setProcessingStep('summarizing');
       const { error: insertError } = await supabase.from('audio_transcripts').insert({
         date: selectedDate,
         title: title || null,
-        audio_url: urlData.publicUrl,
+        audio_url: audioUrl,
         transcript: result.transcript,
         summary: result.summary,
         action_items: result.action_items,
