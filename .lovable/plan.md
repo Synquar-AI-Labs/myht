@@ -1,36 +1,75 @@
 
 
-## Dashboard Enhancements
+## Audio Transcript Feature
 
-### 1. Move Date Range Selector to Top of Page
-The range selector (7 Days / 30 Days / Custom) will be moved from its current position (below the summary cards) to the very top of the dashboard, before the summary cards grid.
+A new "Transcripts" tab where you can record or upload doctor conversations, get AI-powered summaries with action items, and view the full transcript.
 
-### 2. Add "Custom" Date Range Option with From/To Pickers
-Add a "Custom" button alongside "7 Days" and "30 Days". When selected, two date pickers (From / To) appear below the selector using Popover + Calendar components. All charts and summary cards filter to the custom range.
+### How It Works
 
-### 3. Add Summary Bar Chart for Food / Vomiting / Constipation
-Add a new bar chart showing aggregate totals (sum of days) for food taken, vomiting, and constipation across the selected date range. Placed after the existing per-day Food/Vomiting/Constipation chart.
+1. You record audio directly in the app (via microphone) or upload an audio file
+2. The audio is sent to OpenAI Whisper for transcription
+3. The transcript is then sent to ChatGPT for analysis, producing:
+   - Executive summary
+   - Things to do (action items)
+   - Things to follow up on
+   - Full conversation text
+4. Everything is saved to the database -- multiple entries per day allowed
 
----
+### What Will Be Built
+
+**1. Database Table: `audio_transcripts`**
+- id, date, title (optional label), audio_url (stored in file storage), transcript (full text), summary (executive summary), action_items (JSON array), follow_ups (JSON array), recorded_by, created_at
+- RLS policies matching existing shared-access model
+- Storage bucket for audio files
+
+**2. API Key Setup**
+- You will be prompted to enter your OpenAI API key, which will be stored securely as a backend secret (`OPENAI_API_KEY`)
+
+**3. Edge Function: `transcribe-audio`**
+- Receives uploaded audio file
+- Calls OpenAI Whisper API (`/v1/audio/transcriptions`) to get the transcript
+- Calls ChatGPT (`/v1/chat/completions`) to generate: executive summary, action items, and follow-ups
+- Returns structured results to the client
+
+**4. New UI Tab: "Transcripts" (Mic icon)**
+- Added as a 4th tab in the bottom navigation
+- **Record mode**: Hold-to-record or tap-to-start/stop using the browser MediaRecorder API
+- **Upload mode**: File picker for audio files (mp3, wav, m4a, webm)
+- **Processing state**: Shows a spinner while transcribing and analyzing
+- **Transcript card**: Displays each entry with collapsible sections:
+  - Executive Summary (shown by default)
+  - Things To Do (checklist-style)
+  - Things To Follow Up (list)
+  - Full Transcript (collapsed by default)
+- **List view**: All transcripts for the selected date, with delete option
+
+**5. Hook: `useTranscripts.ts`**
+- Fetches transcripts from database
+- Handles audio upload to storage bucket
+- Calls the edge function for processing
+- CRUD operations
 
 ### Technical Details
 
-**File: `src/types/health.ts`**
-- Already updated: `DateRange = '7' | '30' | 'custom'` -- no change needed.
+**Database migration SQL:**
+- Create `audio_transcripts` table with columns: id (uuid), date (text), title (text), audio_url (text), transcript (text), summary (text), action_items (jsonb), follow_ups (jsonb), recorded_by (text), created_at (timestamptz)
+- Create storage bucket `audio-files` (public: false)
+- RLS policies: authenticated users can SELECT, INSERT, DELETE (matching existing shared model)
 
-**File: `src/components/DashboardTab.tsx`**
+**Edge function: `supabase/functions/transcribe-audio/index.ts`**
+- Reads `OPENAI_API_KEY` from environment
+- Step 1: POST audio to `https://api.openai.com/v1/audio/transcriptions` with model `whisper-1`
+- Step 2: POST transcript to `https://api.openai.com/v1/chat/completions` with model `gpt-4o-mini` and a system prompt that returns JSON with `summary`, `action_items[]`, `follow_ups[]`
+- Returns the combined result
 
-1. **Reorder layout**: Move the range selector `<div className="flex gap-2">` block above the summary cards grid.
+**New files:**
+- `src/components/TranscriptsTab.tsx` -- UI for the tab
+- `src/hooks/useTranscripts.ts` -- data hook
+- Update `src/pages/Index.tsx` -- add 4th tab with Mic icon
+- Update `supabase/config.toml` -- register the new edge function
 
-2. **Add state**: `customFrom` and `customTo` as `Date | undefined`.
-
-3. **Add "Custom" to range options**: `{ label: 'Custom', value: 'custom' }`.
-
-4. **Custom date picker UI**: When `range === 'custom'`, render a row with two Popover date pickers (From / To) using the Calendar component with `pointer-events-auto`.
-
-5. **Update filter logic**: When `range === 'custom'` and both dates are set, filter records between `customFrom` and `customTo`. Otherwise fall back to 7/30 day logic.
-
-6. **New summary chart**: Compute aggregate totals by summing `food`, `vomit`, and `constipation` from `chartData`. Render a `ChartCard` titled "Summary: Food / Vomiting / Constipation" with a BarChart showing 3 bars for the totals.
-
-**New imports needed**: `Calendar`, `Popover`, `PopoverTrigger`, `PopoverContent`, `Button`, `CalendarIcon` from lucide-react, and `cn` utility.
+**Audio recording approach:**
+- Uses browser `navigator.mediaDevices.getUserMedia()` + `MediaRecorder` API
+- Records as webm/opus (natively supported by browsers)
+- Uploads the blob to storage, then triggers the edge function
 
