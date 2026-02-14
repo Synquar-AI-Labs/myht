@@ -61,16 +61,21 @@ export function useTranscripts() {
 
       const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(fileName);
 
-      // Call edge function
+      // Call edge function with user's auth token
       const formData = new FormData();
       formData.append('audio', new File([audioBlob], 'recording.webm', { type: 'audio/webm' }));
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('You must be logged in to process audio');
+      }
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe-audio`,
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: formData,
         }
