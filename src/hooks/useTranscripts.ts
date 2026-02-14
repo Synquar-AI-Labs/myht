@@ -82,8 +82,14 @@ export function useTranscripts() {
       );
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Processing failed');
+        let errMsg = 'Processing failed';
+        try {
+          const err = await res.json();
+          errMsg = err.error || errMsg;
+        } catch {
+          errMsg = `Server error (${res.status})`;
+        }
+        throw new Error(errMsg);
       }
 
       const result = await res.json();
