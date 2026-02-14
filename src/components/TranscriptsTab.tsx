@@ -110,7 +110,7 @@ export function TranscriptsTab() {
             <input
               ref={fileInputRef}
               type="file"
-              accept="audio/*"
+              accept="audio/*,.m4a,.mp3,.wav,.aac,.caf,.mp4,video/*"
               className="hidden"
               onChange={handleFileUpload}
             />
