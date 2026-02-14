@@ -47,6 +47,45 @@ export type Database = {
         }
         Relationships: []
       }
+      audio_transcripts: {
+        Row: {
+          action_items: Json
+          audio_url: string | null
+          created_at: string
+          date: string
+          follow_ups: Json
+          id: string
+          recorded_by: string
+          summary: string
+          title: string | null
+          transcript: string
+        }
+        Insert: {
+          action_items?: Json
+          audio_url?: string | null
+          created_at?: string
+          date: string
+          follow_ups?: Json
+          id?: string
+          recorded_by?: string
+          summary: string
+          title?: string | null
+          transcript: string
+        }
+        Update: {
+          action_items?: Json
+          audio_url?: string | null
+          created_at?: string
+          date?: string
+          follow_ups?: Json
+          id?: string
+          recorded_by?: string
+          summary?: string
+          title?: string | null
+          transcript?: string
+        }
+        Relationships: []
+      }
       health_records: {
         Row: {
           bp_diastolic: number
