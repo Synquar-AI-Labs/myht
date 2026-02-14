@@ -1,63 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
-import { useTranscripts, Transcript, ProcessingStep } from '@/hooks/useTranscripts';
+import { useTranscripts, Transcript } from '@/hooks/useTranscripts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Progress } from '@/components/ui/progress';
-import { Mic, Square, Upload, Trash2, ChevronDown, ChevronRight, Loader2, Download, Check } from 'lucide-react';
+import { Mic, Square, Upload, Trash2, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { toast } from '@/hooks/use-toast';
-
-const STEPS: { key: ProcessingStep; label: string }[] = [
-  { key: 'saving', label: 'Saving recording' },
-  { key: 'uploading', label: 'Uploading audio' },
-  { key: 'transcribing', label: 'Transcribing audio' },
-  { key: 'analyzing', label: 'Analyzing conversation' },
-  { key: 'summarizing', label: 'Saving summary' },
-];
-
-function ProcessingSteps({ currentStep }: { currentStep: ProcessingStep }) {
-  const currentIndex = STEPS.findIndex((s) => s.key === currentStep);
-  const progress = currentIndex >= 0 ? ((currentIndex + 1) / STEPS.length) * 100 : 0;
-
-  return (
-    <div className="space-y-3 py-2">
-      <Progress value={progress} className="h-2" />
-      <div className="space-y-1.5">
-        {STEPS.map((step, i) => {
-          const isDone = i < currentIndex;
-          const isActive = i === currentIndex;
-          return (
-            <div key={step.key} className="flex items-center gap-2 text-sm">
-              {isDone ? (
-                <Check className="h-3.5 w-3.5 text-primary" />
-              ) : isActive ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-              ) : (
-                <div className="h-3.5 w-3.5 rounded-full border border-muted-foreground/30" />
-              )}
-              <span className={isDone ? 'text-muted-foreground' : isActive ? 'font-medium' : 'text-muted-foreground/50'}>
-                {step.label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function saveRecordingLocally(blob: Blob, title: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${title || 'recording'}-${Date.now()}.webm`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
 
 export function TranscriptsTab() {
   const {
@@ -66,10 +14,8 @@ export function TranscriptsTab() {
     setSelectedDate,
     loading,
     processing,
-    processingStep,
     processAudio,
     deleteTranscript,
-    setProcessingStep,
   } = useTranscripts();
 
   const [recording, setRecording] = useState(false);
@@ -82,21 +28,7 @@ export function TranscriptsTab() {
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      // Pick a supported mime type
-      let mimeType = 'audio/webm;codecs=opus';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'audio/webm';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'audio/mp4';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = ''; // let browser pick default
-          }
-        }
-      }
-
-      const options: MediaRecorderOptions = mimeType ? { mimeType } : {};
-      const mediaRecorder = new MediaRecorder(stream, options);
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
       chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -105,29 +37,19 @@ export function TranscriptsTab() {
 
       mediaRecorder.onstop = async () => {
         stream.getTracks().forEach((t) => t.stop());
-        const actualType = mediaRecorder.mimeType || 'audio/webm';
-        const blob = new Blob(chunksRef.current, { type: actualType });
-
-        if (blob.size === 0) {
-          toast({ title: 'Error', description: 'Recording was empty. Please try again.', variant: 'destructive' });
-          return;
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        if (blob.size > 0) {
+          await processAudio(blob, title, recordedBy || 'Unknown');
         }
-
-        // Save locally first so user has a backup
-        setProcessingStep('saving');
-        saveRecordingLocally(blob, title);
-        toast({ title: 'Recording saved', description: 'A backup copy has been downloaded to your device.' });
-        await processAudio(blob, title, recordedBy || 'Unknown');
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(1000); // collect data every second for reliability
+      mediaRecorder.start();
       setRecording(true);
     } catch (err) {
       console.error('Microphone access denied:', err);
-      toast({ title: 'Error', description: 'Microphone access denied', variant: 'destructive' });
     }
-  }, [processAudio, title, recordedBy, setProcessingStep]);
+  }, [processAudio, title, recordedBy]);
 
   const stopRecording = useCallback(() => {
     mediaRecorderRef.current?.stop();
@@ -146,6 +68,7 @@ export function TranscriptsTab() {
 
   return (
     <div className="space-y-4">
+      {/* Date picker */}
       <Input
         type="date"
         value={selectedDate}
@@ -153,10 +76,19 @@ export function TranscriptsTab() {
         className="w-full"
       />
 
+      {/* Controls */}
       <Card>
         <CardContent className="pt-4 space-y-3">
-          <Input placeholder="Title (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
-          <Input placeholder="Recorded by" value={recordedBy} onChange={(e) => setRecordedBy(e.target.value)} />
+          <Input
+            placeholder="Title (optional)"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Input
+            placeholder="Recorded by"
+            value={recordedBy}
+            onChange={(e) => setRecordedBy(e.target.value)}
+          />
           <div className="flex gap-2">
             {recording ? (
               <Button variant="destructive" onClick={stopRecording} className="flex-1">
@@ -175,12 +107,23 @@ export function TranscriptsTab() {
             >
               <Upload className="h-4 w-4 mr-1" /> Upload
             </Button>
-            <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={handleFileUpload} />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="audio/*"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
           </div>
-          {processing && <ProcessingSteps currentStep={processingStep} />}
+          {processing && (
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Transcribing & analyzing...
+            </div>
+          )}
         </CardContent>
       </Card>
 
+      {/* Transcript list */}
       {loading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -212,14 +155,18 @@ function TranscriptCard({ transcript, onDelete }: { transcript: Transcript; onDe
             <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         </div>
-        {transcript.recorded_by && <p className="text-xs text-muted-foreground">by {transcript.recorded_by}</p>}
+        {transcript.recorded_by && (
+          <p className="text-xs text-muted-foreground">by {transcript.recorded_by}</p>
+        )}
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
+        {/* Summary always visible */}
         <div>
           <p className="font-medium text-xs text-muted-foreground uppercase mb-1">Summary</p>
           <p>{transcript.summary}</p>
         </div>
 
+        {/* Things to do */}
         {transcript.action_items.length > 0 && (
           <Collapsible open={showTodo} onOpenChange={setShowTodo}>
             <CollapsibleTrigger className="flex items-center gap-1 text-xs font-medium text-primary">
@@ -236,6 +183,7 @@ function TranscriptCard({ transcript, onDelete }: { transcript: Transcript; onDe
           </Collapsible>
         )}
 
+        {/* Follow ups */}
         {transcript.follow_ups.length > 0 && (
           <Collapsible open={showFollowUp} onOpenChange={setShowFollowUp}>
             <CollapsibleTrigger className="flex items-center gap-1 text-xs font-medium text-primary">
@@ -252,6 +200,7 @@ function TranscriptCard({ transcript, onDelete }: { transcript: Transcript; onDe
           </Collapsible>
         )}
 
+        {/* Full transcript */}
         <Collapsible open={showFull} onOpenChange={setShowFull}>
           <CollapsibleTrigger className="flex items-center gap-1 text-xs font-medium text-primary">
             {showFull ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
