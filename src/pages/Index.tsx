@@ -6,14 +6,16 @@ import { DashboardTab } from '@/components/DashboardTab';
 import { DailyRecordTab } from '@/components/DailyRecordTab';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
 import { Button } from '@/components/ui/button';
-import { BarChart3, ClipboardList, CalendarDays, Heart, LogOut } from 'lucide-react';
+import { TranscriptsTab } from '@/components/TranscriptsTab';
+import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut } from 'lucide-react';
 
-type Tab = 'dashboard' | 'record' | 'calendar';
+type Tab = 'dashboard' | 'record' | 'calendar' | 'transcripts';
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
   { id: 'record', label: 'Record', icon: ClipboardList },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+  { id: 'transcripts', label: 'Transcripts', icon: Mic },
 ];
 
 const Index = () => {
@@ -40,6 +42,7 @@ const Index = () => {
         {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
+        {activeTab === 'transcripts' && <TranscriptsTab />}
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
