@@ -52,18 +52,22 @@ export function useTranscripts() {
     setProcessing(true);
     try {
       // Upload audio to storage
-      const fileName = `${selectedDate}/${Date.now()}.webm`;
+      const storageFileName = `${selectedDate}/${Date.now()}.webm`;
+      const uploadMime = audioBlob.type || 'audio/webm';
       const { error: uploadError } = await supabase.storage
         .from('audio-files')
-        .upload(fileName, audioBlob, { contentType: 'audio/webm' });
+        .upload(storageFileName, audioBlob, { contentType: uploadMime });
 
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(fileName);
+      const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(storageFileName);
 
       // Call edge function with user's auth token
       const formData = new FormData();
-      formData.append('audio', new File([audioBlob], 'recording.webm', { type: 'audio/webm' }));
+      // Preserve original file type for uploads (e.g. M4A voice memos)
+      const audioFileName = audioBlob instanceof File ? audioBlob.name : 'recording.webm';
+      const mimeType = audioBlob.type || 'audio/webm';
+      formData.append('audio', new File([audioBlob], audioFileName, { type: mimeType }));
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
