@@ -51,37 +51,52 @@ export function useTranscripts() {
   const processAudio = async (audioBlob: Blob, title: string, recordedBy: string) => {
     setProcessing(true);
     try {
-      // Upload audio to storage
-      const storageFileName = `${selectedDate}/${Date.now()}.webm`;
+      // Determine correct file extension from blob
+      const mimeExtMap: Record<string, string> = {
+        'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/m4a': 'm4a',
+        'audio/aac': 'm4a', 'audio/mpeg': 'mp3', 'audio/mp3': 'mp3',
+        'audio/wav': 'wav', 'audio/x-wav': 'wav', 'audio/webm': 'webm',
+        'audio/ogg': 'ogg', 'audio/flac': 'flac', 'video/mp4': 'mp4',
+        'audio/x-caf': 'm4a',
+      };
+      let ext = 'webm';
+      if (audioBlob instanceof File && audioBlob.name) {
+        const fileExt = audioBlob.name.split('.').pop()?.toLowerCase();
+        if (fileExt && ['flac','m4a','mp3','mp4','mpeg','mpga','oga','ogg','wav','webm'].includes(fileExt)) {
+          ext = fileExt;
+        } else {
+          ext = mimeExtMap[audioBlob.type] || 'webm';
+        }
+      } else {
+        ext = mimeExtMap[audioBlob.type] || 'webm';
+      }
+
+      // Upload audio to storage with correct extension
+      const storagePath = `${selectedDate}/${Date.now()}.${ext}`;
       const uploadMime = audioBlob.type || 'audio/webm';
       const { error: uploadError } = await supabase.storage
         .from('audio-files')
-        .upload(storageFileName, audioBlob, { contentType: uploadMime });
+        .upload(storagePath, audioBlob, { contentType: uploadMime });
 
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(storageFileName);
-
-      // Call edge function with user's auth token
-      const formData = new FormData();
-      // Preserve original file type for uploads (e.g. M4A voice memos)
-      const audioFileName = audioBlob instanceof File ? audioBlob.name : 'recording.webm';
-      const mimeType = audioBlob.type || 'audio/webm';
-      formData.append('audio', new File([audioBlob], audioFileName, { type: mimeType }));
+      const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(storagePath);
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
         throw new Error('You must be logged in to process audio');
       }
 
+      // Send storage path to edge function (avoids FormData/binary issues)
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe-audio`,
         {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
           },
-          body: formData,
+          body: JSON.stringify({ storagePath, fileName: `recording.${ext}` }),
         }
       );
 
