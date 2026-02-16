@@ -99,12 +99,14 @@ serve(async (req) => {
 
     console.log("Audio file details:", { originalName: origName, type: audioFile.type, size: audioFile.size, resolvedFileName: safeName, resolvedMime });
 
+    // Create a proper File object with correct name and MIME — Deno's FormData
+    // handles File objects more reliably than Blob + filename for multipart uploads
     const audioBytes = await audioFile.arrayBuffer();
-    const audioBlob = new Blob([audioBytes], { type: resolvedMime });
+    const properFile = new File([audioBytes], safeName, { type: resolvedMime });
 
     // Step 1: Transcribe with Whisper
     const whisperForm = new FormData();
-    whisperForm.append("file", audioBlob, safeName);
+    whisperForm.append("file", properFile);
     whisperForm.append("model", "whisper-1");
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
