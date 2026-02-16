@@ -99,20 +99,37 @@ serve(async (req) => {
 
     console.log("Audio file details:", { originalName: origName, type: audioFile.type, size: audioFile.size, resolvedFileName: safeName, resolvedMime });
 
-    // Create a proper File object with correct name and MIME — Deno's FormData
-    // handles File objects more reliably than Blob + filename for multipart uploads
-    const audioBytes = await audioFile.arrayBuffer();
-    const properFile = new File([audioBytes], safeName, { type: resolvedMime });
-
-    // Step 1: Transcribe with Whisper
-    const whisperForm = new FormData();
-    whisperForm.append("file", properFile);
-    whisperForm.append("model", "whisper-1");
+    // Manually construct multipart body to bypass Deno FormData serialization issues
+    const audioBytes = new Uint8Array(await audioFile.arrayBuffer());
+    const boundary = `----FormBoundary${Date.now()}`;
+    
+    // Build multipart body manually
+    const encoder = new TextEncoder();
+    const filePart = encoder.encode(
+      `--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="file"; filename="${safeName}"\r\n` +
+      `Content-Type: ${resolvedMime}\r\n\r\n`
+    );
+    const modelPart = encoder.encode(
+      `\r\n--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="model"\r\n\r\n` +
+      `whisper-1\r\n` +
+      `--${boundary}--\r\n`
+    );
+    
+    // Concatenate all parts
+    const body = new Uint8Array(filePart.length + audioBytes.length + modelPart.length);
+    body.set(filePart, 0);
+    body.set(audioBytes, filePart.length);
+    body.set(modelPart, filePart.length + audioBytes.length);
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-      body: whisperForm,
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "Content-Type": `multipart/form-data; boundary=${boundary}`,
+      },
+      body: body,
     });
 
     if (!whisperRes.ok) {
