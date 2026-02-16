@@ -64,8 +64,10 @@ serve(async (req) => {
     }
 
     // Step 1: Transcribe with Whisper
+    // Preserve original filename so Whisper can detect the format from the extension
+    const fileName = audioFile.name || "recording.webm";
     const whisperForm = new FormData();
-    whisperForm.append("file", audioFile);
+    whisperForm.append("file", new File([audioFile], fileName, { type: audioFile.type }), fileName);
     whisperForm.append("model", "whisper-1");
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
