@@ -63,11 +63,48 @@ serve(async (req) => {
       });
     }
 
+    // Map MIME types to proper extensions and canonical MIME types for Whisper
+    const extMimeMap: Record<string, { ext: string; mime: string }> = {
+      "audio/mp4": { ext: "m4a", mime: "audio/mp4" },
+      "audio/x-m4a": { ext: "m4a", mime: "audio/mp4" },
+      "audio/m4a": { ext: "m4a", mime: "audio/mp4" },
+      "audio/aac": { ext: "m4a", mime: "audio/mp4" },
+      "audio/mpeg": { ext: "mp3", mime: "audio/mpeg" },
+      "audio/mp3": { ext: "mp3", mime: "audio/mpeg" },
+      "audio/wav": { ext: "wav", mime: "audio/wav" },
+      "audio/x-wav": { ext: "wav", mime: "audio/wav" },
+      "audio/webm": { ext: "webm", mime: "audio/webm" },
+      "audio/ogg": { ext: "ogg", mime: "audio/ogg" },
+      "audio/flac": { ext: "flac", mime: "audio/flac" },
+      "video/mp4": { ext: "mp4", mime: "video/mp4" },
+      "audio/x-caf": { ext: "m4a", mime: "audio/mp4" },
+    };
+
+    const validExts = ["flac", "m4a", "mp3", "mp4", "mpeg", "mpga", "oga", "ogg", "wav", "webm"];
+    const origName = audioFile.name || "";
+    let ext = origName.split(".").pop()?.toLowerCase() || "";
+    let resolvedMime = audioFile.type || "audio/mpeg";
+
+    if (!ext || !validExts.includes(ext)) {
+      const mapped = extMimeMap[audioFile.type];
+      ext = mapped?.ext || "mp3";
+      resolvedMime = mapped?.mime || "audio/mpeg";
+    } else {
+      const mapped = extMimeMap[audioFile.type];
+      if (mapped) resolvedMime = mapped.mime;
+    }
+
+    // Sanitize filename: no spaces, correct extension
+    const safeName = `recording_${Date.now()}.${ext}`;
+
+    console.log("Audio file details:", { originalName: origName, type: audioFile.type, size: audioFile.size, resolvedFileName: safeName, resolvedMime });
+
+    const audioBytes = await audioFile.arrayBuffer();
+    const audioBlob = new Blob([audioBytes], { type: resolvedMime });
+
     // Step 1: Transcribe with Whisper
-    // Preserve original filename so Whisper can detect the format from the extension
-    const fileName = audioFile.name || "recording.webm";
     const whisperForm = new FormData();
-    whisperForm.append("file", new File([audioFile], fileName, { type: audioFile.type }), fileName);
+    whisperForm.append("file", audioBlob, safeName);
     whisperForm.append("model", "whisper-1");
 
     const whisperRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
