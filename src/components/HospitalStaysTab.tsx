@@ -13,6 +13,7 @@ const PERSON_COLORS: Record<string, string> = {
   Affan: '#A855F7',
   Azra: '#EC4899',
   Nayab: '#14B8A6',
+  Shaheryar: '#EAB308',
 };
 
 const TIMELINE_START = 6;
