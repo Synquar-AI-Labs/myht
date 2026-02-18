@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { startOfWeek, endOfWeek, addWeeks, eachDayOfInterval, format, isSameDay } from 'date-fns';
+import { addDays, startOfDay, eachDayOfInterval, format, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -35,16 +35,17 @@ function formatHourLong(h: number) {
 }
 
 export function HospitalStaysTab() {
-  const [weekOffset, setWeekOffset] = useState(0);
+  const DAYS_PER_PAGE = 2;
+  const [pageOffset, setPageOffset] = useState(0);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const now = new Date();
-  const baseWeekStart = startOfWeek(addWeeks(now, weekOffset), { weekStartsOn: 1 });
-  const baseWeekEnd = endOfWeek(addWeeks(now, weekOffset), { weekStartsOn: 1 });
-  const days = eachDayOfInterval({ start: baseWeekStart, end: baseWeekEnd });
+  const baseStart = addDays(startOfDay(now), pageOffset * DAYS_PER_PAGE);
+  const baseEnd = addDays(baseStart, DAYS_PER_PAGE - 1);
+  const days = eachDayOfInterval({ start: baseStart, end: baseEnd });
 
-  const { stays, isLoading, addStay, deleteStay } = useHospitalStays(baseWeekStart, baseWeekEnd);
+  const { stays, isLoading, addStay, deleteStay } = useHospitalStays(baseStart, baseEnd);
 
   const handleAddStays = (rows: Parameters<typeof addStay.mutate>[0][]) => {
     let remaining = rows.length;
@@ -76,13 +77,13 @@ export function HospitalStaysTab() {
     <div className="space-y-3">
       {/* Week navigation */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="icon" onClick={() => setWeekOffset(w => w - 1)}>
+        <Button variant="ghost" size="icon" onClick={() => setPageOffset(p => p - 1)}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <span className="text-sm font-medium">
-          {format(baseWeekStart, 'MMM d')} – {format(baseWeekEnd, 'MMM d, yyyy')}
+          {format(baseStart, 'MMM d')} – {format(baseEnd, 'MMM d, yyyy')}
         </span>
-        <Button variant="ghost" size="icon" onClick={() => setWeekOffset(w => w + 1)}>
+        <Button variant="ghost" size="icon" onClick={() => setPageOffset(p => p + 1)}>
           <ChevronRight className="h-5 w-5" />
         </Button>
       </div>
