@@ -149,6 +149,36 @@ export type Database = {
         }
         Relationships: []
       }
+      hospital_stays: {
+        Row: {
+          created_at: string
+          date: string
+          end_hour: number
+          id: string
+          is_unavailable: boolean
+          person_name: string
+          start_hour: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_hour: number
+          id?: string
+          is_unavailable?: boolean
+          person_name: string
+          start_hour: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_hour?: number
+          id?: string
+          is_unavailable?: boolean
+          person_name?: string
+          start_hour?: number
+        }
+        Relationships: []
+      }
       medicine_logs: {
         Row: {
           am_pm: string
