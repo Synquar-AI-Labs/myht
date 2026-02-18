@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { startOfWeek, endOfWeek, addWeeks, eachDayOfInterval, format, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useHospitalStays, HospitalStay } from '@/hooks/useHospitalStays';
 import { StayFormSheet } from '@/components/StayFormSheet';
 import { toast } from 'sonner';
@@ -16,15 +17,21 @@ const PERSON_COLORS: Record<string, string> = {
   Shaheryar: '#EAB308',
 };
 
-const TIMELINE_START = 6;
-const TIMELINE_HOURS = 18; // 6 AM to 12 AM
+const TIMELINE_START = 0;
+const TIMELINE_HOURS = 24;
 
-const TIME_LABELS = [6, 9, 12, 15, 18, 21];
+const TIME_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
 
 function formatHourShort(h: number) {
   if (h === 0 || h === 24) return '12a';
   if (h === 12) return '12p';
   return h < 12 ? `${h}a` : `${h - 12}p`;
+}
+
+function formatHourLong(h: number) {
+  if (h === 0 || h === 24) return '12:00 AM';
+  if (h === 12) return '12:00 PM';
+  return h < 12 ? `${h}:00 AM` : `${h - 12}:00 PM`;
 }
 
 export function HospitalStaysTab() {
@@ -39,10 +46,13 @@ export function HospitalStaysTab() {
 
   const { stays, isLoading, addStay, deleteStay } = useHospitalStays(baseWeekStart, baseWeekEnd);
 
-  const handleAddStay = (data: Parameters<typeof addStay.mutate>[0]) => {
-    addStay.mutate(data, {
-      onSuccess: () => toast.success('Stay added'),
-      onError: () => toast.error('Failed to add stay'),
+  const handleAddStays = (rows: Parameters<typeof addStay.mutate>[0][]) => {
+    let remaining = rows.length;
+    rows.forEach(row => {
+      addStay.mutate(row, {
+        onSuccess: () => { remaining--; if (remaining === 0) toast.success('Stay added'); },
+        onError: () => toast.error('Failed to add stay'),
+      });
     });
   };
 
@@ -62,6 +72,7 @@ export function HospitalStaysTab() {
     stays.filter(s => isSameDay(new Date(s.date + 'T00:00:00'), day));
 
   return (
+    <TooltipProvider delayDuration={200}>
     <div className="space-y-3">
       {/* Week navigation */}
       <div className="flex items-center justify-between">
@@ -164,25 +175,33 @@ export function HospitalStaysTab() {
                         backgroundColor: color,
                       };
 
+                  const tooltipText = `${stay.person_name}${stay.is_unavailable ? ' (Unavailable)' : ''}\n${format(new Date(stay.date + 'T00:00:00'), 'EEE, MMM d')} · ${formatHourLong(stay.start_hour)} – ${formatHourLong(stay.end_hour)}`;
+
                   return (
-                    <div
-                      key={stay.id}
-                      className="absolute h-[22px] rounded-sm flex items-center px-1 group cursor-pointer"
-                      style={barStyle}
-                    >
-                      <span
-                        className="text-[9px] font-medium truncate leading-none"
-                        style={{ color: stay.is_unavailable ? color : '#fff' }}
-                      >
-                        {stay.person_name}{stay.is_unavailable ? ' ✕' : ''}
-                      </span>
-                      <button
-                        className="ml-auto opacity-0 group-hover:opacity-100 shrink-0"
-                        onClick={(e) => { e.stopPropagation(); handleDelete(stay.id); }}
-                      >
-                        <X className="h-3 w-3" style={{ color: stay.is_unavailable ? color : '#fff' }} />
-                      </button>
-                    </div>
+                    <Tooltip key={stay.id}>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="absolute h-[22px] rounded-sm flex items-center px-1 group cursor-pointer"
+                          style={barStyle}
+                        >
+                          <span
+                            className="text-[9px] font-medium truncate leading-none"
+                            style={{ color: stay.is_unavailable ? color : '#fff' }}
+                          >
+                            {stay.person_name}{stay.is_unavailable ? ' ✕' : ''}
+                          </span>
+                          <button
+                            className="ml-auto opacity-0 group-hover:opacity-100 shrink-0"
+                            onClick={(e) => { e.stopPropagation(); handleDelete(stay.id); }}
+                          >
+                            <X className="h-3 w-3" style={{ color: stay.is_unavailable ? color : '#fff' }} />
+                          </button>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs whitespace-pre-line">
+                        {tooltipText}
+                      </TooltipContent>
+                    </Tooltip>
                   );
                 })}
                 {/* Expand row height for stacked bars */}
@@ -211,8 +230,9 @@ export function HospitalStaysTab() {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         defaultDate={selectedDate}
-        onSave={handleAddStay}
+        onSave={handleAddStays}
       />
     </div>
+    </TooltipProvider>
   );
 }
