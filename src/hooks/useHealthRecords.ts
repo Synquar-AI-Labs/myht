@@ -75,5 +75,46 @@ export function useHealthRecords() {
     return records.find(r => r.date === date) || null;
   }, [records]);
 
-  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate };
+  const updateField = useCallback(async (date: string, field: string, value: number | boolean | string, recordedBy: string) => {
+    // Map camelCase UI field names to snake_case DB columns
+    const fieldMap: Record<string, string> = {
+      feedBags: 'feed_bags',
+      flushCount: 'flush_count',
+      weight: 'weight',
+      bpSystolic: 'bp_systolic',
+      bpDiastolic: 'bp_diastolic',
+      foodTaken: 'food_taken',
+      foodDescription: 'food_description',
+      stoolPassed: 'stool_passed',
+      stoolCount: 'stool_count',
+      vomiting: 'vomiting',
+      vomitCount: 'vomit_count',
+      constipation: 'constipation',
+      miscNotes: 'misc_notes',
+    };
+    const dbField = fieldMap[field] || field;
+
+    // Check if record exists for today
+    const { data: existing } = await supabase
+      .from('health_records')
+      .select('id')
+      .eq('date', date)
+      .maybeSingle();
+
+    if (existing) {
+      const { error } = await supabase
+        .from('health_records')
+        .update({ [dbField]: value, recorded_by: recordedBy } as any)
+        .eq('id', existing.id);
+      if (error) { toast.error('Failed to update'); console.error(error); return; }
+    } else {
+      const { error } = await supabase
+        .from('health_records')
+        .insert({ date, [dbField]: value, recorded_by: recordedBy } as any);
+      if (error) { toast.error('Failed to save'); console.error(error); return; }
+    }
+    await fetchRecords();
+  }, [fetchRecords]);
+
+  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField };
 }

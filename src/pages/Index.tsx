@@ -7,10 +7,11 @@ import { DailyRecordTab } from '@/components/DailyRecordTab';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
 import { Button } from '@/components/ui/button';
 import { TranscriptsTab } from '@/components/TranscriptsTab';
-import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users } from 'lucide-react';
+import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap } from 'lucide-react';
 import { HospitalStaysTab } from '@/components/HospitalStaysTab';
+import { QuickLogTab } from '@/components/QuickLogTab';
 
-type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts';
+type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog';
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
