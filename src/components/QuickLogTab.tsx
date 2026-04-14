@@ -77,9 +77,13 @@ export function QuickLogTab() {
   }, [logs]);
 
   const chartData = useMemo(() => {
-    const endDate = subDays(new Date(), weekOffset * 7);
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ...
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // days since Monday
+    const thisMonday = subDays(today, mondayOffset);
+    const weekStart = subDays(thisMonday, weekOffset * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const date = subDays(endDate, 6 - i);
+      const date = subDays(weekStart, -i); // add i days to weekStart
       const d = format(date, 'yyyy-MM-dd');
       const r = records.find(rec => rec.date === d);
       return {
@@ -93,9 +97,13 @@ export function QuickLogTab() {
   }, [records, weekOffset]);
 
   const weekRangeLabel = useMemo(() => {
-    const endDate = subDays(new Date(), weekOffset * 7);
-    const startDate = subDays(endDate, 6);
-    return `${format(startDate, 'MMM d')} – ${format(endDate, 'MMM d')}`;
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const thisMonday = subDays(today, mondayOffset);
+    const weekStart = subDays(thisMonday, weekOffset * 7);
+    const weekEnd = subDays(weekStart, -6);
+    return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
   }, [weekOffset]);
 
   const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string) => {
