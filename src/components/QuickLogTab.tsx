@@ -192,11 +192,19 @@ export function QuickLogTab() {
 
       {/* Weekly Mini Chart */}
       <div>
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">7-Day Overview</h3>
-        <div className="rounded-xl border bg-card p-3 h-36">
+        <div className="flex items-center justify-between mb-2">
+          <button onClick={() => setWeekOffset(w => w + 1)} className="p-1 rounded hover:bg-muted">
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <h3 className="text-xs font-medium text-muted-foreground">{weekRangeLabel}</h3>
+          <button onClick={() => setWeekOffset(w => Math.max(0, w - 1))} disabled={weekOffset === 0} className="p-1 rounded hover:bg-muted disabled:opacity-30">
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="rounded-xl border bg-card p-3 h-40">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <XAxis dataKey="day" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 9, whiteSpace: 'pre-line' }} axisLine={false} tickLine={false} interval={0} />
               <Tooltip contentStyle={{ fontSize: 11 }} />
               <Bar dataKey="feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
