@@ -1,97 +1,70 @@
 
 
-# Hospital Stay Scheduling Tab
+# Quick Log Switchboard Tab
 
 ## Overview
-Add a new "Stays" tab for coordinating who is staying with Dad at the hospital. Week-view calendar with color-coded bars per person, plus the ability to mark yourself as "unavailable" (shown as striped/hatched bars).
+A new "Quick Log" tab that acts as a switchboard — a grid of tappable buttons for rapidly logging medicines, health events (feed, BP, vomit, poop, urin), and weight. Includes a today's summary strip at the top and a compact weekly mini-chart.
 
-## 1. Database Migration
+## No Database Changes
+All data writes go to existing tables: `medicine_logs`, `health_records`. No new tables needed.
 
-**New table: `hospital_stays`**
+## New Files
 
-| Column | Type | Notes |
-|--------|------|-------|
-| id | uuid | PK, default `gen_random_uuid()` |
-| person_name | text | NOT NULL |
-| date | date | NOT NULL |
-| start_hour | integer | NOT NULL, 0-23 |
-| end_hour | integer | NOT NULL, 1-24 (exclusive) |
-| is_unavailable | boolean | NOT NULL, default false |
-| created_at | timestamptz | default now() |
+### `src/components/QuickLogTab.tsx`
+The main switchboard component with these sections:
 
-- RLS enabled with authenticated user policies for SELECT, INSERT, UPDATE, DELETE (same pattern as existing tables).
+**1. Today's Summary Strip**
+A row of cards showing today's totals pulled from `health_records` (today's row) and `medicine_logs` (today's count):
+- Feeds: count | BP: latest | Vomit: count | Poop: count | Flushes: count
 
-## 2. New Files
+**2. Medicine Quick Buttons**
+A grid of buttons (3-4 per row), one per medicine from the `medicines` table. Each button shows the medicine name and schedule note. Tapping a button:
+- Shows a small bottom sheet with: recorder name picker (pre-filled if previously set), time defaulting to NOW (hour + AM/PM), and option to change the time
+- Confirm logs to `medicine_logs`
+- Button gets a subtle checkmark/badge showing how many times it was logged today
 
-### `src/hooks/useHospitalStays.ts`
-- Fetch stays for a given week (date range filter)
-- Add stay (person, date, start_hour, end_hour, is_unavailable)
-- Delete stay by id
-- Uses `@tanstack/react-query` with invalidation on mutations (same pattern as `useAppointments`)
+**3. Health Event Quick Buttons**
+A row of colored buttons: Feed, BP, Vomit, Poop, Urin, Weight, Flush. Each opens a mini popup:
+- **Feed**: number input for bag count
+- **BP**: two fields (systolic/diastolic)
+- **Vomit/Poop/Urin**: count input (defaults to 1)
+- **Weight**: number input
+- **Flush**: count input
+These update today's `health_records` row (upsert pattern matching existing `addRecord` logic — fetch current row, merge the new value, save).
 
-### `src/components/StayFormSheet.tsx`
-- Bottom drawer (Vaul `Drawer`) for adding a stay
-- Fields:
-  - **Person picker**: Select from Fahad, Shahwar, Umair, Affan, Azra, Nayab
-  - **Date**: Pre-filled from tapped day, editable
-  - **Start hour / End hour**: Select dropdowns (6 AM - 11 PM range)
-  - **Status toggle**: "Staying" (default) vs "Unavailable" -- controls `is_unavailable` boolean
-- Save button inserts row and closes sheet
+**4. Compact Weekly Mini-Chart**
+A small 7-day bar chart (reusing recharts) showing feeds, vomits, poop, flushes per day — similar to the wireframe's right-side weekly view.
 
-### `src/components/HospitalStaysTab.tsx`
-- **Week navigation**: Shows "Mon Feb 16 - Sun Feb 22" with Prev/Next buttons
-- **Grid layout**: 7 rows (Mon-Sun), each row:
-  - Left label: day name + date (e.g. "Mon 17")
-  - Right area: horizontal timeline from 6 AM to 12 AM (18 hours)
-  - Color bars positioned proportionally for each person's stay
-  - **Unavailable bars**: Same person color but with a striped/hatched CSS pattern (diagonal lines via `repeating-linear-gradient`) and a small "Unavailable" label
-  - **Staying bars**: Solid color with person's name
-- Tap on a day row opens the `StayFormSheet` with that date pre-selected
-- Tap on an existing bar shows a delete option (small X or confirm dialog)
+### `src/components/QuickLogSheet.tsx`
+A reusable bottom sheet (Vaul Drawer) for the quick-log popups:
+- Medicine mode: shows recorder picker + time (default now, editable)
+- Health mode: shows the specific input fields for the tapped metric + recorder picker
 
-### Person Color Map
-| Person | Color |
-|--------|-------|
-| Fahad | #3B82F6 (blue) |
-| Shahwar | #22C55E (green) |
-| Umair | #F97316 (orange) |
-| Affan | #A855F7 (purple) |
-| Azra | #EC4899 (pink) |
-| Nayab | #14B8A6 (teal) |
-
-### Unavailable Visual Treatment
-- Uses the person's color but with a diagonal stripe pattern:
-  ```css
-  background: repeating-linear-gradient(
-    45deg,
-    {color}33,
-    {color}33 4px,
-    {color}66 4px,
-    {color}66 8px
-  );
-  border: 1px dashed {color};
-  ```
-- Text inside reads "Unavailable" in smaller font
-
-## 3. Changes to Existing Files
-
-### `src/types/health.ts`
-- Add `STAY_PEOPLE` constant:
-  ```typescript
-  export const STAY_PEOPLE = ['Fahad', 'Shahwar', 'Umair', 'Affan', 'Azra', 'Nayab'] as const;
-  ```
+## Changes to Existing Files
 
 ### `src/pages/Index.tsx`
-- Add `'stays'` to the `Tab` union type
-- Add new tab entry with `Users` icon from lucide-react, label "Stays"
-- Render `<HospitalStaysTab />` when `activeTab === 'stays'`
-- Bottom nav now has 5 tabs
+- Add `'quicklog'` to the `Tab` union
+- Add tab entry with `Zap` icon from lucide, label "Quick Log"
+- Render `<QuickLogTab />` when active
+- 6 tabs total in bottom nav
 
-## 4. Technical Details
+### `src/hooks/useHealthRecords.ts`
+- Add an `updateField` method that fetches today's record, merges a single field update, and upserts. This avoids overwriting the entire record when the user only taps "Feed +1".
 
-- Week boundaries calculated with `date-fns` (`startOfWeek` with `weekStartsOn: 1` for Monday, `endOfWeek`, `addWeeks`, `eachDayOfInterval`)
-- Single Supabase query per week: `.select('*').gte('date', weekStart).lte('date', weekEnd)`
-- Bar positioning: `left = ((start_hour - 6) / 18) * 100%`, `width = ((end_hour - start_hour) / 18) * 100%`
-- The timeline area scrolls horizontally on narrow screens if needed
-- Multiple people on the same day stack vertically within the row (each bar on its own sub-row)
+## UI Details
+- Medicine buttons: compact rounded rectangles in a 3-column grid, showing medicine name (truncated if long) and a small badge with today's log count
+- Health buttons: larger, color-coded (Feed=blue, BP=red, Vomit=orange, Poop=brown, Urin=yellow, Weight=green, Flush=cyan)
+- The recorder name persists in localStorage so users don't re-select each time
+- Bottom sheet is minimal: just the essential fields + Save button
+
+## Technical Flow
+```text
+User taps "Hydromorphone" button
+  → Bottom sheet opens
+  → Shows: Recorder [dropdown], Time [12:30 PM] (editable)
+  → User taps Save
+  → Inserts into medicine_logs {medicine_id, hour, am_pm, recorded_by, date: today}
+  → Button badge updates to show count
+  → Sheet closes
+```
 
