@@ -207,11 +207,11 @@ export function QuickLogTab() {
             <span className="text-xs font-medium">Appointment</span>
           </button>
           <button
-            onClick={() => { setVoiceTitle(''); setVoiceFile(null); setVoiceOpen(true); }}
+            onClick={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
             className="bg-indigo-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform"
           >
-            <Upload className="h-5 w-5" />
-            <span className="text-xs font-medium">Voice Note</span>
+            <StickyNote className="h-5 w-5" />
+            <span className="text-xs font-medium">Written Note</span>
           </button>
         </div>
       </div>
@@ -313,40 +313,30 @@ export function QuickLogTab() {
         </DialogContent>
       </Dialog>
 
-      {/* Voice Note Dialog */}
-      <Dialog open={voiceOpen} onOpenChange={o => { if (!processing) setVoiceOpen(o); }}>
+      {/* Written Note Dialog */}
+      <Dialog open={noteOpen} onOpenChange={setNoteOpen}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Upload Voice Note</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1">
               <Label className="text-xs">Title (optional)</Label>
-              <Input value={voiceTitle} onChange={e => setVoiceTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
+              <Input value={noteTitle} onChange={e => setNoteTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Audio File</Label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".m4a,.mp3,.wav,.webm,.ogg,.flac,.mp4,.aac"
-                className="hidden"
-                onChange={e => { if (e.target.files?.[0]) setVoiceFile(e.target.files[0]); }}
-              />
-              <Button variant="outline" className="w-full" onClick={() => fileInputRef.current?.click()}>
-                {voiceFile ? voiceFile.name : 'Choose audio file…'}
-              </Button>
+              <Label className="text-xs">Note</Label>
+              <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Write your note here…" rows={4} />
             </div>
           </div>
           <DialogFooter>
             <Button
               className="w-full"
-              disabled={!voiceFile || processing}
+              disabled={!noteContent.trim()}
               onClick={async () => {
-                if (!voiceFile) return;
-                await processAudio(voiceFile, voiceTitle, savedRecorder || 'Unknown');
-                setVoiceOpen(false);
+                await addNote(noteTitle, noteContent, savedRecorder || 'Unknown');
+                setNoteOpen(false);
               }}
             >
-              {processing ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing…</> : 'Process & Save'}
+              Save Note
             </Button>
           </DialogFooter>
         </DialogContent>
