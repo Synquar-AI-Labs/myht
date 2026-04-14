@@ -94,44 +94,43 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
             </Select>
           </div>
 
-          {mode.type === 'medicine' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-xs text-muted-foreground">Time</Label>
-                  <div className="text-sm font-medium">{displayTime}</div>
-                </div>
-                <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditingTime(!editingTime)}>
-                  {editingTime ? 'Done' : 'Change time'}
-                </Button>
+          {/* Time display — shared across both modes */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-xs text-muted-foreground">Time</Label>
+                <div className="text-sm font-medium">{displayTime}</div>
               </div>
-              {editingTime && (
-                <div className="flex gap-3">
-                  <div className="flex-1 space-y-1">
-                    <Label className="text-xs text-muted-foreground">Hour</Label>
-                    <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                          <SelectItem key={h} value={String(h)}>{h}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <Label className="text-xs text-muted-foreground">AM/PM</Label>
-                    <Select value={amPm} onValueChange={setAmPm}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="AM">AM</SelectItem>
-                        <SelectItem value="PM">PM</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              )}
+              <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditingTime(!editingTime)}>
+                {editingTime ? 'Done' : 'Change time'}
+              </Button>
             </div>
-          )}
+            {editingTime && (
+              <div className="flex gap-3">
+                <div className="flex-1 space-y-1">
+                  <Label className="text-xs text-muted-foreground">Hour</Label>
+                  <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                        <SelectItem key={h} value={String(h)}>{h}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <Label className="text-xs text-muted-foreground">AM/PM</Label>
+                  <Select value={amPm} onValueChange={setAmPm}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AM">AM</SelectItem>
+                      <SelectItem value="PM">PM</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+          </div>
 
           {mode.type === 'health' && mode.fields.map(f => (
             <div key={f.key} className="space-y-1">
