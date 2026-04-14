@@ -236,7 +236,7 @@ export function QuickLogTab() {
 
   // ─── TABLET LANDSCAPE LAYOUT (single screen, no scroll) ───
   const tabletLayout = (
-    <div className="hidden lg:grid lg:grid-cols-[1fr_260px] lg:gap-3 lg:h-[calc(100vh-7rem)] lg:overflow-hidden">
+    <div className="hidden lg:grid lg:grid-cols-[1fr_260px] lg:gap-3 lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden">
       {/* LEFT AREA: Top row (Summary + Medicines) + Bottom (Chart) */}
       <div className="flex flex-col gap-3 overflow-hidden">
         {/* Top row: Summary/Actions + Medicines side by side */}
