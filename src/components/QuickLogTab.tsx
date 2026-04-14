@@ -1,9 +1,9 @@
-import { useState, useMemo, useRef } from 'react';
-import { format, subDays, addDays } from 'date-fns';
+import { useState, useMemo } from 'react';
+import { format, subDays } from 'date-fns';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
-import { useTranscripts } from '@/hooks/useTranscripts';
+import { useWrittenNotes } from '@/hooks/useWrittenNotes';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -45,14 +45,13 @@ export function QuickLogTab() {
   const { medicines, logs, addMedicineLog } = useMedicines(todayStr);
   const { records, updateField, getRecordByDate } = useHealthRecords();
   const { addAppointment } = useAppointments();
-  const { processAudio, processing } = useTranscripts();
+  const { addNote } = useWrittenNotes();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
-  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
-  const [voiceTitle, setVoiceTitle] = useState('');
-  const [voiceFile, setVoiceFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -208,11 +207,11 @@ export function QuickLogTab() {
             <span className="text-xs font-medium">Appointment</span>
           </button>
           <button
-            onClick={() => { setVoiceTitle(''); setVoiceFile(null); setVoiceOpen(true); }}
+            onClick={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
             className="bg-indigo-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform"
           >
-            <Upload className="h-5 w-5" />
-            <span className="text-xs font-medium">Voice Note</span>
+            <StickyNote className="h-5 w-5" />
+            <span className="text-xs font-medium">Written Note</span>
           </button>
         </div>
       </div>
@@ -314,40 +313,30 @@ export function QuickLogTab() {
         </DialogContent>
       </Dialog>
 
-      {/* Voice Note Dialog */}
-      <Dialog open={voiceOpen} onOpenChange={o => { if (!processing) setVoiceOpen(o); }}>
+      {/* Written Note Dialog */}
+      <Dialog open={noteOpen} onOpenChange={setNoteOpen}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Upload Voice Note</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1">
               <Label className="text-xs">Title (optional)</Label>
-              <Input value={voiceTitle} onChange={e => setVoiceTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
+              <Input value={noteTitle} onChange={e => setNoteTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Audio File</Label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".m4a,.mp3,.wav,.webm,.ogg,.flac,.mp4,.aac"
-                className="hidden"
-                onChange={e => { if (e.target.files?.[0]) setVoiceFile(e.target.files[0]); }}
-              />
-              <Button variant="outline" className="w-full" onClick={() => fileInputRef.current?.click()}>
-                {voiceFile ? voiceFile.name : 'Choose audio file…'}
-              </Button>
+              <Label className="text-xs">Note</Label>
+              <Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Write your note here…" rows={4} />
             </div>
           </div>
           <DialogFooter>
             <Button
               className="w-full"
-              disabled={!voiceFile || processing}
+              disabled={!noteContent.trim()}
               onClick={async () => {
-                if (!voiceFile) return;
-                await processAudio(voiceFile, voiceTitle, savedRecorder || 'Unknown');
-                setVoiceOpen(false);
+                await addNote(noteTitle, noteContent, savedRecorder || 'Unknown');
+                setNoteOpen(false);
               }}
             >
-              {processing ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing…</> : 'Process & Save'}
+              Save Note
             </Button>
           </DialogFooter>
         </DialogContent>
