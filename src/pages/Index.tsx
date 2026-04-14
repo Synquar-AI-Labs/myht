@@ -7,12 +7,14 @@ import { DailyRecordTab } from '@/components/DailyRecordTab';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
 import { Button } from '@/components/ui/button';
 import { TranscriptsTab } from '@/components/TranscriptsTab';
-import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users } from 'lucide-react';
+import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap } from 'lucide-react';
 import { HospitalStaysTab } from '@/components/HospitalStaysTab';
+import { QuickLogTab } from '@/components/QuickLogTab';
 
-type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts';
+type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog';
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'quicklog', label: 'Quick Log', icon: Zap },
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
   { id: 'record', label: 'Record', icon: ClipboardList },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
@@ -21,7 +23,7 @@ const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
 ];
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('record');
+  const [activeTab, setActiveTab] = useState<Tab>('quicklog');
   const healthRecords = useHealthRecords();
   const appointmentsData = useAppointments();
   const { signOut } = useAuth();
@@ -41,6 +43,7 @@ const Index = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pt-4 pb-20">
+        {activeTab === 'quicklog' && <QuickLogTab />}
         {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
