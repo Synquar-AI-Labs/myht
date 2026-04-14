@@ -37,6 +37,7 @@ type Props = {
 export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
   const [recorder, setRecorder] = useState(savedRecorder);
+  const [editingTime, setEditingTime] = useState(false);
 
   const now = new Date();
   const currentHour = now.getHours();
@@ -44,12 +45,15 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const [amPm, setAmPm] = useState<string>(currentHour >= 12 ? 'PM' : 'AM');
   const [fieldValues, setFieldValues] = useState<Record<string, number>>({});
 
+  const displayTime = `${hour}:00 ${amPm}`;
+
   useEffect(() => {
     if (open) {
       const n = new Date();
       const h = n.getHours();
       setHour(h > 12 ? h - 12 : h === 0 ? 12 : h);
       setAmPm(h >= 12 ? 'PM' : 'AM');
+      setEditingTime(false);
       if (mode.type === 'health') {
         const init: Record<string, number> = {};
         mode.fields.forEach(f => { init[f.key] = f.defaultValue; });
@@ -91,28 +95,41 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
           </div>
 
           {mode.type === 'medicine' && (
-            <div className="flex gap-3">
-              <div className="flex-1 space-y-1">
-                <Label className="text-xs text-muted-foreground">Hour</Label>
-                <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                      <SelectItem key={h} value={String(h)}>{h}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-xs text-muted-foreground">Time</Label>
+                  <div className="text-sm font-medium">{displayTime}</div>
+                </div>
+                <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditingTime(!editingTime)}>
+                  {editingTime ? 'Done' : 'Change time'}
+                </Button>
               </div>
-              <div className="flex-1 space-y-1">
-                <Label className="text-xs text-muted-foreground">AM/PM</Label>
-                <Select value={amPm} onValueChange={setAmPm}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {editingTime && (
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1">
+                    <Label className="text-xs text-muted-foreground">Hour</Label>
+                    <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                          <SelectItem key={h} value={String(h)}>{h}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <Label className="text-xs text-muted-foreground">AM/PM</Label>
+                    <Select value={amPm} onValueChange={setAmPm}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
