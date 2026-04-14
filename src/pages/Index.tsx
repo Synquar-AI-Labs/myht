@@ -54,7 +54,7 @@ const Index = () => {
               <h1 className="text-lg">Health Tracker</h1>
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="h-8 w-8 hidden lg:inline-flex" title="Presentation Mode">
+              <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="h-8 w-8 hidden md:inline-flex" title="Presentation Mode">
                 <Maximize className="h-4 w-4" />
               </Button>
               <Button variant="ghost" size="icon" onClick={signOut} className="h-8 w-8">
