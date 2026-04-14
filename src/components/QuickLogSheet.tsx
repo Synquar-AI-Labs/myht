@@ -48,7 +48,8 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const [fieldValues, setFieldValues] = useState<Record<string, number>>({});
 
   const displayTime = `${hour}:00 ${amPm}`;
-  const displayDate = format(new Date(selectedDate + 'T00:00'), 'EEE, MMM d');
+  const parsedDate = selectedDate ? new Date(selectedDate + 'T00:00') : null;
+  const displayDate = parsedDate && !isNaN(parsedDate.getTime()) ? format(parsedDate, 'EEE, MMM d') : '—';
 
   useEffect(() => {
     if (open) {
