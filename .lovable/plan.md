@@ -2,30 +2,26 @@
 
 ## Problem
 
-Two issues on tablets:
+From the tablet screenshot, two issues:
 
-1. **App doesn't fill the tablet screen** — the `max-w-lg` (512px) constraint caps the width on mobile/default tablet view, leaving large empty margins.
-2. **"Request Desktop Site" in Chrome doesn't trigger the dashboard layout** — when Chrome on a tablet requests the desktop site, it changes the user-agent string but the viewport width often stays the same (or becomes ~980px). The layout uses CSS `md:` breakpoints which depend on actual viewport width, so if the browser reports a narrow viewport, the mobile layout still renders.
+1. **~20% empty space at the bottom** — The dashboard grid height is set to `calc(100vh-8.5rem)`, which is too conservative. Combined with a fixed `h-[200px]` bottom row, the layout leaves a large blank area below the chart/appointments section.
 
-The root cause for issue #2: the viewport meta tag uses `width=device-width`, which on a tablet in "Desktop Site" mode may report a wider width (~980-1024px) or may not. The real fix is ensuring the layout works properly across the actual tablet viewport widths (typically 768-1024px in portrait, 1024-1366px in landscape).
-
-Since we already moved to `md:` (768px), the dashboard layout **should** activate on most tablets. The remaining issues are:
-
-- The nav bar still uses `lg:static lg:border-t-0 lg:border-b` — it should use `md:` too
-- The `max-w-lg` on the outer container caps width at 512px on screens that don't match `md:` — we should remove this cap entirely since the inner components handle their own responsive layouts
+2. **Appointment and Written Note buttons not visible** — The left column stacks: time → summary → quick actions → appointment/note buttons → recorder info. On shorter tablets, the appointment/note buttons get pushed below the visible area because the column has no scroll and uses `overflow-hidden`.
 
 ## Plan
 
-### 1. Remove `max-w-lg` width cap entirely (`src/pages/Index.tsx`)
-- Change `max-w-lg md:max-w-none` to just `max-w-none` (or remove both classes) so the app always fills available width
-- Same for the nav wrapper: `max-w-lg md:max-w-none` → remove the cap
+### 1. Use `100dvh` and reduce the offset (`src/components/QuickLogTab.tsx`)
+- Change `md:h-[calc(100vh-8.5rem)]` to `md:h-[calc(100dvh-6rem)]` — `dvh` accounts for dynamic browser chrome on tablets, and `6rem` is a tighter fit for the header + nav bar.
 
-### 2. Fix nav breakpoints (`src/pages/Index.tsx`)
-- Change `lg:static lg:border-t-0 lg:border-b` to `md:static md:border-t-0 md:border-b` so the nav docks properly on tablets
+### 2. Make the bottom row fill remaining space instead of fixed 200px
+- Change the right column from `grid-cols-[1fr_240px] gap-3 h-[200px] shrink-0` to use `flex-1 min-h-0` so it expands to fill whatever space remains after the medicine grid.
+- The bottom row should use `flex-1` instead of `h-[200px]`.
 
-### 3. Ensure consistent behavior
-- The QuickLogTab already uses `md:` breakpoints for the dashboard grid, so no changes needed there
-- The mobile layout (`md:hidden`) will only show on phones (<768px), and the dashboard grid will show on everything else
+### 3. Make the left column scrollable
+- Change the left column from `overflow-hidden` to `overflow-y-auto` so that on shorter screens, the appointment/note buttons remain accessible via scroll.
 
-These 3 small edits in `src/pages/Index.tsx` ensure the app fills the full screen on tablets in both normal and "Desktop Site" modes.
+### 4. Update Index.tsx main container offset
+- Update the main padding calculation in `Index.tsx` to match: use `md:pb-2` instead of `md:pb-4` to reclaim vertical space.
+
+All changes in two files: `src/components/QuickLogTab.tsx` and `src/pages/Index.tsx`.
 
