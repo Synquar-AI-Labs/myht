@@ -239,9 +239,9 @@ export function QuickLogTab() {
 
   // ─── TABLET LANDSCAPE LAYOUT (single screen, no scroll) ───
   const tabletLayout = (
-    <div className="hidden md:grid md:grid-cols-[260px_1fr] md:gap-3 md:h-[calc(100vh-8.5rem)] md:overflow-hidden">
+    <div className="hidden md:grid md:grid-cols-[260px_1fr] md:gap-3 md:h-[calc(100dvh-6rem)] md:overflow-hidden">
       {/* LEFT COLUMN: Time + Summary + Quick Actions + Appt/Notes + Recorder */}
-      <div className="flex flex-col gap-2 overflow-hidden">
+      <div className="flex flex-col gap-2 overflow-y-auto">
         {/* Date & Time */}
         <div className="rounded-xl border bg-card p-2 text-center">
           <div className="flex items-center justify-center gap-1.5 text-primary">
@@ -333,7 +333,7 @@ export function QuickLogTab() {
         </div>
 
         {/* Row 2: Weekly Chart + Upcoming Appointments side by side */}
-        <div className="grid grid-cols-[1fr_240px] gap-3 h-[200px] shrink-0">
+        <div className="grid grid-cols-[1fr_240px] gap-3 flex-1 min-h-0">
           {/* Weekly Chart */}
           <div className="rounded-xl border bg-card p-2 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between mb-1">

@@ -65,7 +65,7 @@ const Index = () => {
         </header>
       )}
 
-      <main className={`flex-1 overflow-y-auto md:overflow-hidden px-4 pt-4 pb-20 md:pb-4 ${isFullscreen ? 'pt-2 pb-2' : ''}`}>
+      <main className={`flex-1 overflow-y-auto md:overflow-hidden px-4 pt-4 pb-20 <main className={`flex-1 overflow-y-auto md:overflow-hidden px-4 pt-4 pb-20 md:pb-2 ${isFullscreen ? 'pt-2 pb-2' : ''}`}> ${isFullscreen ? 'pt-2 pb-2' : ''}`}>
         {activeTab === 'quicklog' && <QuickLogTab />}
         {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
