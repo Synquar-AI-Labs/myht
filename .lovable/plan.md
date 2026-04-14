@@ -1,26 +1,20 @@
 
 
-# Add Appointment & Voice Note Upload Buttons to Quick Log
+## Problem
 
-## What changes
+The dashboard layout you built is gated behind the `lg:` breakpoint (1024px+). Tablets in portrait mode (768px wide) and phones fall below this threshold and show the old mobile stacked layout instead.
 
-### `src/components/QuickLogTab.tsx`
-Add a "More Actions" section below the Medicines grid with two buttons in a 2-column layout:
+## Plan
 
-1. **Appointment** (CalendarPlus icon, purple) — opens a Dialog with the appointment form fields (date, time, doctor name, reason, address, description). Uses `useAppointments` hook's `addAppointment` method.
+**Single change in `src/components/QuickLogTab.tsx`:**
 
-2. **Voice Note** (Upload icon, indigo) — opens a Dialog with:
-   - A title input field
-   - A file upload button (accepts audio: .m4a, .mp3, .wav, .webm, .ogg, .flac, .mp4)
-   - Shows selected file name
-   - A "Process" button that calls `useTranscripts` hook's `processAudio` with the selected file
-   - Shows a spinner while processing
-   - No recording functionality — upload only
+1. Replace `hidden lg:grid lg:grid-cols-[260px_1fr] lg:gap-3 lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden` with `hidden md:grid md:grid-cols-[260px_1fr] md:gap-3 md:h-[calc(100vh-8.5rem)] md:overflow-hidden` — this activates the dashboard at **768px+** (tablets in portrait and up).
 
-### Technical details
-- Both hooks (`useAppointments`, `useTranscripts`) are imported directly into `QuickLogTab`
-- Appointment dialog reuses the same form pattern from `AppointmentsTab` but as a standalone Dialog
-- Voice note uses a hidden `<input type="file" accept="audio/*">` triggered by a button click
-- The uploaded `File` object is passed directly to `processAudio(file, title, recorderName)` — the existing hook already handles `File` objects with proper extension detection
-- No new files needed, no database changes
+2. Update all other `lg:` prefixed classes inside `tabletLayout` to use `md:` instead, so the entire dashboard grid renders on tablets.
+
+3. Update the `mobileLayout` wrapper from `lg:hidden` to `md:hidden` so it only shows on phone-sized screens (below 768px).
+
+4. In `src/pages/Index.tsx`, update the main container's `lg:overflow-hidden` and `lg:pb-4` to `md:overflow-hidden` and `md:pb-4` so the parent container also cooperates at the tablet breakpoint.
+
+This is a straightforward find-and-replace of the `lg:` breakpoint prefix to `md:` across the dashboard-related classes, ensuring the same dashboard appears on tablets, desktops, and in fullscreen mode.
 
