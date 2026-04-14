@@ -88,6 +88,7 @@ export type Database = {
       }
       health_records: {
         Row: {
+          bile_bags: number
           bp_diastolic: number
           bp_systolic: number
           constipation: boolean
@@ -95,6 +96,7 @@ export type Database = {
           date: string
           feed_bags: number
           flush_count: number
+          flush_ml: number
           food_description: string | null
           food_taken: boolean
           id: string
@@ -103,11 +105,13 @@ export type Database = {
           stool_count: number
           stool_passed: boolean
           updated_at: string
+          urine_count: number
           vomit_count: number
           vomiting: boolean
           weight: number
         }
         Insert: {
+          bile_bags?: number
           bp_diastolic?: number
           bp_systolic?: number
           constipation?: boolean
@@ -115,6 +119,7 @@ export type Database = {
           date: string
           feed_bags?: number
           flush_count?: number
+          flush_ml?: number
           food_description?: string | null
           food_taken?: boolean
           id?: string
@@ -123,11 +128,13 @@ export type Database = {
           stool_count?: number
           stool_passed?: boolean
           updated_at?: string
+          urine_count?: number
           vomit_count?: number
           vomiting?: boolean
           weight?: number
         }
         Update: {
+          bile_bags?: number
           bp_diastolic?: number
           bp_systolic?: number
           constipation?: boolean
@@ -135,6 +142,7 @@ export type Database = {
           date?: string
           feed_bags?: number
           flush_count?: number
+          flush_ml?: number
           food_description?: string | null
           food_taken?: boolean
           id?: string
@@ -143,6 +151,7 @@ export type Database = {
           stool_count?: number
           stool_passed?: boolean
           updated_at?: string
+          urine_count?: number
           vomit_count?: number
           vomiting?: boolean
           weight?: number
