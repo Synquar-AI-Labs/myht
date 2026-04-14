@@ -44,7 +44,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="mx-auto flex min-h-screen lg:max-w-none max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen max-w-lg md:max-w-none flex-col bg-background">
       {/* Header — hidden in fullscreen */}
       {!isFullscreen && (
         <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm px-4 py-3">
@@ -77,7 +77,7 @@ const Index = () => {
       {/* Nav — hidden in fullscreen */}
       {!isFullscreen && (
         <nav className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm lg:static lg:border-t-0 lg:border-b">
-          <div className="mx-auto flex max-w-lg">
+          <div className="mx-auto flex max-w-lg md:max-w-none">
             {tabs.map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
