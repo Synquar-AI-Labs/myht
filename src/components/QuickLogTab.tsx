@@ -45,14 +45,13 @@ export function QuickLogTab() {
   const { medicines, logs, addMedicineLog } = useMedicines(todayStr);
   const { records, updateField, getRecordByDate } = useHealthRecords();
   const { addAppointment } = useAppointments();
-  const { processAudio, processing } = useTranscripts();
+  const { addNote } = useWrittenNotes();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
-  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [noteOpen, setNoteOpen] = useState(false);
   const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
-  const [voiceTitle, setVoiceTitle] = useState('');
-  const [voiceFile, setVoiceFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
   const [weekOffset, setWeekOffset] = useState(0);
 
