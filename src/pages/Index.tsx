@@ -14,6 +14,7 @@ import { QuickLogTab } from '@/components/QuickLogTab';
 type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog';
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { id: 'quicklog', label: 'Quick Log', icon: Zap },
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
   { id: 'record', label: 'Record', icon: ClipboardList },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
@@ -22,7 +23,7 @@ const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
 ];
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('record');
+  const [activeTab, setActiveTab] = useState<Tab>('quicklog');
   const healthRecords = useHealthRecords();
   const appointmentsData = useAppointments();
   const { signOut } = useAuth();
