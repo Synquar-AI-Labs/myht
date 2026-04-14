@@ -236,7 +236,7 @@ export function QuickLogTab() {
 
   // ─── TABLET LANDSCAPE LAYOUT (single screen, no scroll) ───
   const tabletLayout = (
-    <div <div className="hidden lg:grid lg:grid-cols-[260px_260px_1fr] lg:gap-3 lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden">>
+    <div className="hidden lg:grid lg:grid-cols-[260px_260px_1fr] lg:gap-3 lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden">
       {/* LEFT COLUMN: Date/Time + Summary + More Actions + Recorder */}
       <div className="flex flex-col gap-2 overflow-hidden">
         {/* Date & Time */}
