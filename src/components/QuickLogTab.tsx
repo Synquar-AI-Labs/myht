@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical, ChevronLeft, ChevronRight } from 'lucide-react';
-import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
 const today = () => format(new Date(), 'yyyy-MM-dd');
@@ -201,15 +201,16 @@ export function QuickLogTab() {
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        <div className="rounded-xl border bg-card p-3 h-40">
+        <div className="rounded-xl border bg-card p-3 h-48">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
               <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Bar dataKey="feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="stool" fill="hsl(145, 35%, 45%)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="flush" fill="hsl(185, 50%, 45%)" radius={[3, 3, 0, 0]} />
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 4 }} />
+              <Bar dataKey="feeds" name="Feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="vomit" name="Vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="stool" name="Stool" fill="hsl(145, 35%, 45%)" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="flush" name="Flush (ml)" fill="hsl(185, 50%, 45%)" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
