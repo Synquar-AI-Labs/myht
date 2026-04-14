@@ -319,6 +319,10 @@ export function QuickLogTab() {
           <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1">
+              <Label className="text-xs">Recorded By</Label>
+              <Input value={savedRecorder} readOnly className="bg-muted text-xs" placeholder="Set in settings" />
+            </div>
+            <div className="space-y-1">
               <Label className="text-xs">Title (optional)</Label>
               <Input value={noteTitle} onChange={e => setNoteTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
             </div>
