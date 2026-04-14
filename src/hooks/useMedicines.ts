@@ -61,8 +61,8 @@ export function useMedicines(viewDate: string) {
     fetchLogs();
   }, [fetchLogs]);
 
-  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; am_pm: string; recorded_by: string }) => {
-    const parsed = medicineLogSchema.safeParse({ ...log, date: viewDate });
+  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; date?: string }) => {
+    const parsed = medicineLogSchema.safeParse({ ...log, date: log.date || viewDate });
     if (!parsed.success) {
       toast.error(parsed.error.errors[0]?.message || 'Invalid input');
       return;

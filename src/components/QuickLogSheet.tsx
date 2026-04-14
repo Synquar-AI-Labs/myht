@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,14 +11,14 @@ type MedicineMode = {
   type: 'medicine';
   medicineName: string;
   medicineId: string;
-  onSave: (data: { medicine_id: string; hour: number; am_pm: string; recorded_by: string }) => void;
+  onSave: (data: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; date: string }) => void;
 };
 
 type HealthMode = {
   type: 'health';
   metric: string;
   fields: HealthField[];
-  onSave: (values: Record<string, number | boolean>, recordedBy: string) => void;
+  onSave: (values: Record<string, number | boolean>, recordedBy: string, date: string) => void;
 };
 
 export interface HealthField {
@@ -43,9 +44,11 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const currentHour = now.getHours();
   const [hour, setHour] = useState(currentHour > 12 ? currentHour - 12 : currentHour === 0 ? 12 : currentHour);
   const [amPm, setAmPm] = useState<string>(currentHour >= 12 ? 'PM' : 'AM');
+  const [selectedDate, setSelectedDate] = useState(format(now, 'yyyy-MM-dd'));
   const [fieldValues, setFieldValues] = useState<Record<string, number>>({});
 
   const displayTime = `${hour}:00 ${amPm}`;
+  const displayDate = format(new Date(selectedDate + 'T00:00'), 'EEE, MMM d');
 
   useEffect(() => {
     if (open) {
@@ -53,6 +56,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
       const h = n.getHours();
       setHour(h > 12 ? h - 12 : h === 0 ? 12 : h);
       setAmPm(h >= 12 ? 'PM' : 'AM');
+      setSelectedDate(format(n, 'yyyy-MM-dd'));
       setEditingTime(false);
       if (mode.type === 'health') {
         const init: Record<string, number> = {};
@@ -66,9 +70,9 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
     if (!recorder) return;
     localStorage.setItem('ht_recorder', recorder);
     if (mode.type === 'medicine') {
-      mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: recorder });
+      mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: recorder, date: selectedDate });
     } else {
-      mode.onSave(fieldValues, recorder);
+      mode.onSave(fieldValues, recorder, selectedDate);
     }
     onOpenChange(false);
   };
@@ -94,39 +98,45 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
             </Select>
           </div>
 
-          {/* Time display — shared across both modes */}
+          {/* Date & Time display */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-xs text-muted-foreground">Time</Label>
-                <div className="text-sm font-medium">{displayTime}</div>
+                <Label className="text-xs text-muted-foreground">Date & Time</Label>
+                <div className="text-sm font-medium">{displayDate} · {displayTime}</div>
               </div>
               <Button variant="ghost" size="sm" className="text-xs" onClick={() => setEditingTime(!editingTime)}>
-                {editingTime ? 'Done' : 'Change time'}
+                {editingTime ? 'Done' : 'Change'}
               </Button>
             </div>
             {editingTime && (
-              <div className="flex gap-3">
-                <div className="flex-1 space-y-1">
-                  <Label className="text-xs text-muted-foreground">Hour</Label>
-                  <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                        <SelectItem key={h} value={String(h)}>{h}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Date</Label>
+                  <Input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
                 </div>
-                <div className="flex-1 space-y-1">
-                  <Label className="text-xs text-muted-foreground">AM/PM</Label>
-                  <Select value={amPm} onValueChange={setAmPm}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="AM">AM</SelectItem>
-                      <SelectItem value="PM">PM</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex gap-3">
+                  <div className="flex-1 space-y-1">
+                    <Label className="text-xs text-muted-foreground">Hour</Label>
+                    <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                          <SelectItem key={h} value={String(h)}>{h}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <Label className="text-xs text-muted-foreground">AM/PM</Label>
+                    <Select value={amPm} onValueChange={setAmPm}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             )}
