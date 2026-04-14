@@ -94,13 +94,16 @@ export function QuickLogTab() {
   return (
     <div className="space-y-5 pb-4">
       {/* Today's Summary */}
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {[
-          { label: 'Feeds', value: todayRecord?.feed_bags ?? 0 },
+          { label: 'Feed', value: todayRecord?.feed_bags ?? 0 },
+          { label: 'Bile', value: (todayRecord as any)?.bile_bags ?? 0 },
           { label: 'BP', value: todayRecord ? `${todayRecord.bp_systolic}/${todayRecord.bp_diastolic}` : '—' },
           { label: 'Vomit', value: todayRecord?.vomit_count ?? 0 },
           { label: 'Poop', value: todayRecord?.stool_count ?? 0 },
-          { label: 'Flush', value: todayRecord?.flush_count ?? 0 },
+          { label: 'Urine', value: (todayRecord as any)?.urine_count ?? 0 },
+          { label: 'Flush', value: `${(todayRecord as any)?.flush_ml ?? 0}ml` },
+          { label: 'Weight', value: todayRecord?.weight ? `${todayRecord.weight}kg` : '—' },
         ].map(s => (
           <div key={s.label} className="rounded-lg border bg-card p-2 text-center">
             <div className="text-[10px] text-muted-foreground">{s.label}</div>
