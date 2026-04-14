@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical, ChevronLeft, ChevronRight } from 'lucide-react';
-import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
 const today = () => format(new Date(), 'yyyy-MM-dd');
