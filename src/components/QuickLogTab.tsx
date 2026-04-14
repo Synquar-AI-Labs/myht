@@ -234,87 +234,110 @@ export function QuickLogTab() {
     </div>
   );
 
-  // ─── TABLET LANDSCAPE LAYOUT (3-column, single screen) ───
+  // ─── TABLET LANDSCAPE LAYOUT (single screen, no scroll) ───
   const tabletLayout = (
-    <div className="hidden lg:grid lg:grid-cols-[280px_1fr_260px] lg:gap-3 lg:h-full lg:overflow-hidden">
-      {/* LEFT COLUMN: Summary + Chart */}
+    <div className="hidden lg:grid lg:grid-cols-[1fr_260px] lg:gap-3 lg:h-[calc(100vh-7rem)] lg:overflow-hidden">
+      {/* LEFT AREA: Top row (Summary + Medicines) + Bottom (Chart) */}
       <div className="flex flex-col gap-3 overflow-hidden">
-        {/* Date & Time */}
-        <div className="rounded-xl border bg-card p-3 text-center">
-          <div className="flex items-center justify-center gap-1.5 text-primary">
-            <Clock className="h-4 w-4" />
-            <span className="text-lg font-bold">{currentTime}</span>
-          </div>
-          <div className="text-[10px] text-muted-foreground mt-0.5">{currentDate}</div>
-        </div>
-
-        {/* Today's Summary */}
-        <div className="rounded-xl border bg-card p-2">
-          <h3 className="text-[10px] font-medium text-muted-foreground mb-1.5 px-1">Today's Summary</h3>
-          <div className="grid grid-cols-2 gap-1.5">
-            {summaryItems.map(s => (
-              <div key={s.label} className="rounded-lg bg-muted/50 p-1.5 text-center">
-                <div className="text-[9px] text-muted-foreground">{s.label}</div>
-                <div className="text-sm font-semibold">{s.value}</div>
+        {/* Top row: Summary/Actions + Medicines side by side */}
+        <div className="flex gap-3 flex-1 min-h-0 overflow-hidden">
+          {/* Summary + Quick Actions + More */}
+          <div className="flex flex-col gap-2 w-[260px] shrink-0 overflow-hidden">
+            {/* Date & Time */}
+            <div className="rounded-xl border bg-card p-2 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-primary">
+                <Clock className="h-4 w-4" />
+                <span className="text-lg font-bold">{currentTime}</span>
               </div>
-            ))}
+              <div className="text-[10px] text-muted-foreground mt-0.5">{currentDate}</div>
+            </div>
+
+            {/* Today's Summary */}
+            <div className="rounded-xl border bg-card p-2">
+              <h3 className="text-[10px] font-medium text-muted-foreground mb-1 px-1">Today's Summary</h3>
+              <div className="grid grid-cols-2 gap-1">
+                {summaryItems.map(s => (
+                  <div key={s.label} className="rounded-lg bg-muted/50 p-1 text-center">
+                    <div className="text-[9px] text-muted-foreground">{s.label}</div>
+                    <div className="text-xs font-semibold">{s.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* More Actions */}
+            <div className="grid grid-cols-2 gap-1.5">
+              <button onClick={() => { setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' }); setApptOpen(true); }}
+                className="bg-purple-500 text-white rounded-lg p-2 flex flex-col items-center gap-0.5 active:scale-95 transition-transform">
+                <CalendarPlus className="h-4 w-4" /><span className="text-[10px] font-medium">Appointment</span>
+              </button>
+              <button onClick={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
+                className="bg-indigo-500 text-white rounded-lg p-2 flex flex-col items-center gap-0.5 active:scale-95 transition-transform">
+                <StickyNote className="h-4 w-4" /><span className="text-[10px] font-medium">Written Note</span>
+              </button>
+            </div>
+
+            {/* Recorder Info */}
+            <div className="rounded-xl border bg-card p-1.5 mt-auto">
+              <div className="text-[9px] text-muted-foreground">Logged by</div>
+              <div className="text-xs font-medium">{savedRecorder || 'Not set'}</div>
+            </div>
+          </div>
+
+          {/* Medicines */}
+          <div className="flex-1 overflow-y-auto rounded-xl border bg-card p-2">
+            <h3 className="text-[10px] font-medium text-muted-foreground mb-2 px-1">Medicines</h3>
+            <div className="grid grid-cols-4 gap-1.5">
+              {medWithCat.map(({ med, cat }) => {
+                const count = medLogCounts[med.id] || 0;
+                return (
+                  <button
+                    key={med.id}
+                    onClick={() => setSheet({ type: 'medicine', medicine: med })}
+                    className={`relative rounded-lg border p-1.5 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-background'}`}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <Pill className={`h-2.5 w-2.5 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
+                      {cat && <span className={`text-[6px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
+                    </div>
+                    <div className="text-[9px] font-medium leading-tight truncate">{med.name}</div>
+                    {med.schedule_note && <div className="text-[7px] text-muted-foreground truncate">{med.schedule_note}</div>}
+                    {count > 0 && (
+                      <Badge variant="secondary" className="absolute top-0.5 right-0.5 h-3.5 min-w-3.5 text-[8px] px-0.5 justify-center">{count}</Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Weekly Chart */}
-        <div className="flex-1 min-h-0 rounded-xl border bg-card p-2 flex flex-col">
+        {/* Weekly Chart — full width of left area */}
+        <div className="rounded-xl border bg-card p-2 h-[180px] shrink-0">
           <div className="flex items-center justify-between mb-1">
             <button onClick={() => setWeekOffset(w => w + 1)} className="p-0.5 rounded hover:bg-muted"><ChevronLeft className="h-3.5 w-3.5" /></button>
             <span className="text-[10px] font-medium text-muted-foreground">{weekRangeLabel}</span>
             <button onClick={() => setWeekOffset(w => Math.max(0, w - 1))} disabled={weekOffset === 0} className="p-0.5 rounded hover:bg-muted disabled:opacity-30"><ChevronRight className="h-3.5 w-3.5" /></button>
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="h-[145px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <XAxis dataKey="label" tick={{ fontSize: 8 }} axisLine={false} tickLine={false} interval={0} />
-                <YAxis tick={{ fontSize: 8 }} axisLine={false} tickLine={false} width={20} />
-                <Tooltip contentStyle={{ fontSize: 10 }} />
-                <Legend iconSize={6} wrapperStyle={{ fontSize: 9, paddingTop: 2 }} />
-                <Bar dataKey="feeds" name="Feeds" fill="hsl(200, 40%, 50%)" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="vomit" name="Vomit" fill="hsl(15, 70%, 55%)" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="stool" name="Stool" fill="hsl(145, 35%, 45%)" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="flush" name="Flush" fill="hsl(185, 50%, 45%)" radius={[2, 2, 0, 0]} />
+                <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+                <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={25} />
+                <Tooltip contentStyle={{ fontSize: 11 }} />
+                <Legend iconSize={7} wrapperStyle={{ fontSize: 10, paddingTop: 2 }} />
+                <Bar dataKey="feeds" name="Feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="vomit" name="Vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="stool" name="Stool" fill="hsl(145, 35%, 45%)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="flush" name="Flush (ml)" fill="hsl(185, 50%, 45%)" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* CENTER COLUMN: All Medicine Buttons */}
-      <div className="overflow-y-auto rounded-xl border bg-card p-2">
-        <h3 className="text-[10px] font-medium text-muted-foreground mb-2 px-1">Medicines</h3>
-        <div className="grid grid-cols-4 gap-1.5">
-          {medWithCat.map(({ med, cat }) => {
-            const count = medLogCounts[med.id] || 0;
-            return (
-              <button
-                key={med.id}
-                onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                className={`relative rounded-lg border p-1.5 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-background'}`}
-              >
-                <div className="flex items-center justify-between mb-0.5">
-                  <Pill className={`h-2.5 w-2.5 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
-                  {cat && <span className={`text-[6px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
-                </div>
-                <div className="text-[9px] font-medium leading-tight truncate">{med.name}</div>
-                {med.schedule_note && <div className="text-[7px] text-muted-foreground truncate">{med.schedule_note}</div>}
-                {count > 0 && (
-                  <Badge variant="secondary" className="absolute top-0.5 right-0.5 h-3.5 min-w-3.5 text-[8px] px-0.5 justify-center">{count}</Badge>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* RIGHT COLUMN: Quick Actions + More */}
+      {/* RIGHT COLUMN: Quick Actions */}
       <div className="flex flex-col gap-2 overflow-hidden">
-        {/* Health Event Buttons */}
         <div className="rounded-xl border bg-card p-2">
           <h3 className="text-[10px] font-medium text-muted-foreground mb-1.5 px-1">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-1.5">
@@ -324,35 +347,14 @@ export function QuickLogTab() {
                 <button
                   key={btn.label}
                   onClick={() => setSheet({ type: 'health', metric: btn.metric, fields: btn.fields, dbFields: btn.dbFields })}
-                  className={`${btn.color} text-white rounded-lg p-2 flex flex-col items-center gap-0.5 active:scale-95 transition-transform`}
+                  className={`${btn.color} text-white rounded-lg p-2.5 flex flex-col items-center gap-0.5 active:scale-95 transition-transform`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-5 w-5" />
                   <span className="text-[10px] font-medium">{btn.label}</span>
                 </button>
               );
             })}
           </div>
-        </div>
-
-        {/* More Actions */}
-        <div className="rounded-xl border bg-card p-2">
-          <h3 className="text-[10px] font-medium text-muted-foreground mb-1.5 px-1">More Actions</h3>
-          <div className="grid grid-cols-2 gap-1.5">
-            <button onClick={() => { setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' }); setApptOpen(true); }}
-              className="bg-purple-500 text-white rounded-lg p-2 flex flex-col items-center gap-0.5 active:scale-95 transition-transform">
-              <CalendarPlus className="h-4 w-4" /><span className="text-[10px] font-medium">Appointment</span>
-            </button>
-            <button onClick={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
-              className="bg-indigo-500 text-white rounded-lg p-2 flex flex-col items-center gap-0.5 active:scale-95 transition-transform">
-              <StickyNote className="h-4 w-4" /><span className="text-[10px] font-medium">Written Note</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Recorder Info */}
-        <div className="rounded-xl border bg-card p-2 mt-auto">
-          <div className="text-[9px] text-muted-foreground">Logged by</div>
-          <div className="text-xs font-medium">{savedRecorder || 'Not set'}</div>
         </div>
       </div>
     </div>
