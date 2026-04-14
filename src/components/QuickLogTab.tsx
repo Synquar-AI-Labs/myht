@@ -154,6 +154,7 @@ export function QuickLogTab() {
             { name: 'Thyroid', keys: ['apo-levo', 'apolevo'], color: 'text-teal-500', borderColor: 'border-teal-200', bgColor: 'bg-teal-50', darkBg: 'dark:bg-teal-950/20', darkBorder: 'dark:border-teal-900', iconColor: 'text-teal-400' },
             { name: 'Pancreas', keys: ['cotazym'], color: 'text-amber-500', borderColor: 'border-amber-200', bgColor: 'bg-amber-50', darkBg: 'dark:bg-amber-950/20', darkBorder: 'dark:border-amber-900', iconColor: 'text-amber-400' },
             { name: 'Digestion', keys: ['sennoside', 'sennocide', 'restoralax', 'restrolax'], color: 'text-green-500', borderColor: 'border-green-200', bgColor: 'bg-green-50', darkBg: 'dark:bg-green-950/20', darkBorder: 'dark:border-green-900', iconColor: 'text-green-400' },
+            { name: 'Diarrhea', keys: ['loperamide', 'teva-loperamide'], color: 'text-indigo-500', borderColor: 'border-indigo-200', bgColor: 'bg-indigo-50', darkBg: 'dark:bg-indigo-950/20', darkBorder: 'dark:border-indigo-900', iconColor: 'text-indigo-400' },
           ];
           const categorized = new Set<string>();
           const groups = categories.map(cat => {
