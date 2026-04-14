@@ -137,7 +137,7 @@ export function QuickLogTab() {
 
   // ─── MOBILE LAYOUT (default, stacked) ───
   const mobileLayout = (
-    <div className="space-y-5 pb-4 lg:hidden">
+    <div className="space-y-5 pb-4 md:hidden">
       {/* Today's Summary */}
       <div className="grid grid-cols-4 gap-2">
         {summaryItems.map(s => (
@@ -239,7 +239,7 @@ export function QuickLogTab() {
 
   // ─── TABLET LANDSCAPE LAYOUT (single screen, no scroll) ───
   const tabletLayout = (
-    <div className="hidden lg:grid lg:grid-cols-[260px_1fr] lg:gap-3 lg:h-[calc(100vh-8.5rem)] lg:overflow-hidden">
+    <div className="hidden md:grid md:grid-cols-[260px_1fr] md:gap-3 md:h-[calc(100vh-8.5rem)] md:overflow-hidden">
       {/* LEFT COLUMN: Time + Summary + Quick Actions + Appt/Notes + Recorder */}
       <div className="flex flex-col gap-2 overflow-hidden">
         {/* Date & Time */}
