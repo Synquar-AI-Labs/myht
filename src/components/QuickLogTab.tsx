@@ -4,6 +4,7 @@ import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
+import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
