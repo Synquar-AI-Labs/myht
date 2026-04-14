@@ -155,6 +155,27 @@ export function QuickLogTab() {
         </div>
       </div>
 
+      {/* More Actions */}
+      <div>
+        <h3 className="text-xs font-medium text-muted-foreground mb-2">More Actions</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => { setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' }); setApptOpen(true); }}
+            className="bg-purple-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform"
+          >
+            <CalendarPlus className="h-5 w-5" />
+            <span className="text-xs font-medium">Appointment</span>
+          </button>
+          <button
+            onClick={() => { setVoiceTitle(''); setVoiceFile(null); setVoiceOpen(true); }}
+            className="bg-indigo-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform"
+          >
+            <Upload className="h-5 w-5" />
+            <span className="text-xs font-medium">Voice Note</span>
+          </button>
+        </div>
+      </div>
+
       {/* Weekly Mini Chart */}
       <div>
         <h3 className="text-xs font-medium text-muted-foreground mb-2">7-Day Overview</h3>
@@ -197,6 +218,89 @@ export function QuickLogTab() {
           }}
         />
       )}
+
+      {/* Appointment Dialog */}
+      <Dialog open={apptOpen} onOpenChange={setApptOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Add Appointment</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-xs">Date</Label>
+                <Input type="date" value={apptForm.date} onChange={e => setApptForm(p => ({ ...p, date: e.target.value }))} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Time</Label>
+                <Input type="time" value={apptForm.time} onChange={e => setApptForm(p => ({ ...p, time: e.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Doctor Name</Label>
+              <Input value={apptForm.doctorName} onChange={e => setApptForm(p => ({ ...p, doctorName: e.target.value }))} placeholder="Dr. Smith" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Reason</Label>
+              <Input value={apptForm.reason} onChange={e => setApptForm(p => ({ ...p, reason: e.target.value }))} placeholder="Check-up" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Address</Label>
+              <Input value={apptForm.address} onChange={e => setApptForm(p => ({ ...p, address: e.target.value }))} placeholder="Optional" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Description</Label>
+              <Textarea value={apptForm.description} onChange={e => setApptForm(p => ({ ...p, description: e.target.value }))} placeholder="Optional notes" rows={2} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              className="w-full"
+              disabled={!apptForm.doctorName || !apptForm.reason}
+              onClick={async () => { await addAppointment(apptForm); setApptOpen(false); }}
+            >
+              Save Appointment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Voice Note Dialog */}
+      <Dialog open={voiceOpen} onOpenChange={o => { if (!processing) setVoiceOpen(o); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Upload Voice Note</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Title (optional)</Label>
+              <Input value={voiceTitle} onChange={e => setVoiceTitle(e.target.value)} placeholder="e.g. Doctor visit notes" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Audio File</Label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".m4a,.mp3,.wav,.webm,.ogg,.flac,.mp4,.aac"
+                className="hidden"
+                onChange={e => { if (e.target.files?.[0]) setVoiceFile(e.target.files[0]); }}
+              />
+              <Button variant="outline" className="w-full" onClick={() => fileInputRef.current?.click()}>
+                {voiceFile ? voiceFile.name : 'Choose audio file…'}
+              </Button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              className="w-full"
+              disabled={!voiceFile || processing}
+              onClick={async () => {
+                if (!voiceFile) return;
+                await processAudio(voiceFile, voiceTitle, savedRecorder || 'Unknown');
+                setVoiceOpen(false);
+              }}
+            >
+              {processing ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Processing…</> : 'Process & Save'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
