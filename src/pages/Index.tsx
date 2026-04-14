@@ -43,6 +43,7 @@ const Index = () => {
       </header>
 
       <main className="flex-1 overflow-y-auto px-4 pt-4 pb-20">
+        {activeTab === 'quicklog' && <QuickLogTab />}
         {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
