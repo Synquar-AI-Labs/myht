@@ -29,7 +29,7 @@ const Index = () => {
   const { signOut } = useAuth();
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-background">
+    <div className="mx-auto flex min-h-screen lg:max-w-none max-w-lg flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm px-4 py-3">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
@@ -42,7 +42,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pt-4 pb-20">
+      <main className="flex-1 overflow-y-auto lg:overflow-hidden px-4 pt-4 pb-20 lg:pb-4">
         {activeTab === 'quicklog' && <QuickLogTab />}
         {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
@@ -51,7 +51,7 @@ const Index = () => {
         {activeTab === 'transcripts' && <TranscriptsTab />}
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm">
+      <nav className="fixed bottom-0 left-0 right-0 z-20 border-t bg-background/95 backdrop-blur-sm lg:static lg:border-t-0 lg:border-b">
         <div className="mx-auto flex max-w-lg">
           {tabs.map(tab => {
             const Icon = tab.icon;
