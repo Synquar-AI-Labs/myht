@@ -319,10 +319,10 @@ export function QuickLogTab() {
                 >
                   <div className="flex items-center justify-between mb-0.5">
                     <Pill className={`h-2.5 w-2.5 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
-                    {cat && <span className={`text-[6px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
+                    {cat && <span className={`text-[8px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
                   </div>
-                  <div className="text-[9px] font-medium leading-tight truncate">{med.name}</div>
-                  {med.schedule_note && <div className="text-[7px] text-muted-foreground truncate">{med.schedule_note}</div>}
+                  <div className="text-xs font-medium leading-tight truncate">{med.name}</div>
+                  {med.schedule_note && <div className="text-[9px] text-muted-foreground truncate">{med.schedule_note}</div>}
                   {count > 0 && (
                     <Badge variant="secondary" className="absolute top-0.5 right-0.5 h-3.5 min-w-3.5 text-[8px] px-0.5 justify-center">{count}</Badge>
                   )}
