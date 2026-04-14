@@ -54,6 +54,7 @@ export function QuickLogTab() {
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
+  const [weekOffset, setWeekOffset] = useState(0);
 
   const todayRecord = getRecordByDate(todayStr);
 
@@ -64,20 +65,28 @@ export function QuickLogTab() {
     return counts;
   }, [logs]);
 
-  // Weekly chart data (last 7 days)
+  // Weekly chart data based on weekOffset (0 = current week)
   const chartData = useMemo(() => {
+    const endDate = subDays(new Date(), weekOffset * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const d = format(subDays(new Date(), 6 - i), 'yyyy-MM-dd');
+      const date = subDays(endDate, 6 - i);
+      const d = format(date, 'yyyy-MM-dd');
       const r = records.find(rec => rec.date === d);
       return {
-        day: format(subDays(new Date(), 6 - i), 'EEE'),
+        label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`,
         feeds: r?.feed_bags ?? 0,
         vomit: r?.vomit_count ?? 0,
         stool: r?.stool_count ?? 0,
-        flush: r?.flush_count ?? 0,
+        flush: (r as any)?.flush_ml ?? r?.flush_count ?? 0,
       };
     });
-  }, [records]);
+  }, [records, weekOffset]);
+
+  const weekRangeLabel = useMemo(() => {
+    const endDate = subDays(new Date(), weekOffset * 7);
+    const startDate = subDays(endDate, 6);
+    return `${format(startDate, 'MMM d')} – ${format(endDate, 'MMM d')}`;
+  }, [weekOffset]);
 
   const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string) => {
     dbFieldKeys.forEach(key => {
