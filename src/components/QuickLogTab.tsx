@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { format, subDays } from 'date-fns';
+import { format, subDays, addDays } from 'date-fns';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -54,6 +54,7 @@ export function QuickLogTab() {
   const [voiceFile, setVoiceFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
+  const [weekOffset, setWeekOffset] = useState(0);
 
   const todayRecord = getRecordByDate(todayStr);
 
@@ -64,20 +65,28 @@ export function QuickLogTab() {
     return counts;
   }, [logs]);
 
-  // Weekly chart data (last 7 days)
+  // Weekly chart data based on weekOffset (0 = current week)
   const chartData = useMemo(() => {
+    const endDate = subDays(new Date(), weekOffset * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const d = format(subDays(new Date(), 6 - i), 'yyyy-MM-dd');
+      const date = subDays(endDate, 6 - i);
+      const d = format(date, 'yyyy-MM-dd');
       const r = records.find(rec => rec.date === d);
       return {
-        day: format(subDays(new Date(), 6 - i), 'EEE'),
+        label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`,
         feeds: r?.feed_bags ?? 0,
         vomit: r?.vomit_count ?? 0,
         stool: r?.stool_count ?? 0,
-        flush: r?.flush_count ?? 0,
+        flush: (r as any)?.flush_ml ?? r?.flush_count ?? 0,
       };
     });
-  }, [records]);
+  }, [records, weekOffset]);
+
+  const weekRangeLabel = useMemo(() => {
+    const endDate = subDays(new Date(), weekOffset * 7);
+    const startDate = subDays(endDate, 6);
+    return `${format(startDate, 'MMM d')} – ${format(endDate, 'MMM d')}`;
+  }, [weekOffset]);
 
   const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string) => {
     dbFieldKeys.forEach(key => {
@@ -183,11 +192,19 @@ export function QuickLogTab() {
 
       {/* Weekly Mini Chart */}
       <div>
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">7-Day Overview</h3>
-        <div className="rounded-xl border bg-card p-3 h-36">
+        <div className="flex items-center justify-between mb-2">
+          <button onClick={() => setWeekOffset(w => w + 1)} className="p-1 rounded hover:bg-muted">
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <h3 className="text-xs font-medium text-muted-foreground">{weekRangeLabel}</h3>
+          <button onClick={() => setWeekOffset(w => Math.max(0, w - 1))} disabled={weekOffset === 0} className="p-1 rounded hover:bg-muted disabled:opacity-30">
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="rounded-xl border bg-card p-3 h-40">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <XAxis dataKey="day" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
               <Tooltip contentStyle={{ fontSize: 11 }} />
               <Bar dataKey="feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
