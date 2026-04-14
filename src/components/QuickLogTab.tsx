@@ -42,7 +42,16 @@ export function QuickLogTab() {
   const todayStr = today();
   const { medicines, logs, addMedicineLog } = useMedicines(todayStr);
   const { records, updateField, getRecordByDate } = useHealthRecords();
+  const { addAppointment } = useAppointments();
+  const { processAudio, processing } = useTranscripts();
   const [sheet, setSheet] = useState<SheetState>(null);
+  const [apptOpen, setApptOpen] = useState(false);
+  const [voiceOpen, setVoiceOpen] = useState(false);
+  const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
+  const [voiceTitle, setVoiceTitle] = useState('');
+  const [voiceFile, setVoiceFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const savedRecorder = localStorage.getItem('ht_recorder') || '';
 
   const todayRecord = getRecordByDate(todayStr);
 
