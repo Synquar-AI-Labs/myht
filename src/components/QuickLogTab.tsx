@@ -157,70 +157,41 @@ export function QuickLogTab() {
             { name: 'Diarrhea', keys: ['loperamide', 'teva-loperamide'], color: 'text-indigo-500', borderColor: 'border-indigo-200', bgColor: 'bg-indigo-50', darkBg: 'dark:bg-indigo-950/20', darkBorder: 'dark:border-indigo-900', iconColor: 'text-indigo-400' },
           ];
           const categorized = new Set<string>();
-          const groups = categories.map(cat => {
+          const medWithCat: { med: Medicine; cat: typeof categories[0] | null }[] = [];
+          categories.forEach(cat => {
             const meds = medicines.filter(m => cat.keys.some(k => m.name.toLowerCase().includes(k)));
-            meds.forEach(m => categorized.add(m.id));
-            return { ...cat, meds };
+            meds.forEach(m => { categorized.add(m.id); medWithCat.push({ med: m, cat }); });
           });
-          const otherMeds = medicines.filter(m => !categorized.has(m.id));
+          medicines.filter(m => !categorized.has(m.id)).forEach(m => medWithCat.push({ med: m, cat: null }));
           return (
-            <>
-              {groups.map(group => group.meds.length > 0 && (
-                <div key={group.name}>
-                  <div className="mb-1">
-                    <span className={`text-[10px] font-semibold ${group.color} uppercase tracking-wide`}>{group.name}</span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    {group.meds.map(med => {
-                      const count = medLogCounts[med.id] || 0;
-                      return (
-                        <button
-                          key={med.id}
-                          onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                          className={`relative rounded-xl border ${group.borderColor} ${group.bgColor} ${group.darkBg} ${group.darkBorder} p-2.5 text-left active:scale-95 transition-transform`}
-                        >
-                          <Pill className={`h-3.5 w-3.5 ${group.iconColor} mb-1`} />
-                          <div className="text-xs font-medium leading-tight truncate">{med.name}</div>
-                          {med.schedule_note && (
-                            <div className="text-[9px] text-muted-foreground truncate">{med.schedule_note}</div>
-                          )}
-                          {count > 0 && (
-                            <Badge variant="secondary" className="absolute top-1.5 right-1.5 h-5 min-w-5 text-[10px] px-1 justify-center">
-                              {count}
-                            </Badge>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-              {otherMeds.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {otherMeds.map(med => {
-                    const count = medLogCounts[med.id] || 0;
-                    return (
-                      <button
-                        key={med.id}
-                        onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                        className="relative rounded-xl border bg-card p-2.5 text-left active:scale-95 transition-transform"
-                      >
-                        <Pill className="h-3.5 w-3.5 text-muted-foreground mb-1" />
-                        <div className="text-xs font-medium leading-tight truncate">{med.name}</div>
-                        {med.schedule_note && (
-                          <div className="text-[9px] text-muted-foreground truncate">{med.schedule_note}</div>
-                        )}
-                        {count > 0 && (
-                          <Badge variant="secondary" className="absolute top-1.5 right-1.5 h-5 min-w-5 text-[10px] px-1 justify-center">
-                            {count}
-                          </Badge>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </>
+            <div className="grid grid-cols-3 gap-2">
+              {medWithCat.map(({ med, cat }) => {
+                const count = medLogCounts[med.id] || 0;
+                return (
+                  <button
+                    key={med.id}
+                    onClick={() => setSheet({ type: 'medicine', medicine: med })}
+                    className={`relative rounded-xl border p-2 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-card'}`}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <Pill className={`h-3 w-3 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
+                      {cat && (
+                        <span className={`text-[7px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>
+                      )}
+                    </div>
+                    <div className="text-[10px] font-medium leading-tight truncate">{med.name}</div>
+                    {med.schedule_note && (
+                      <div className="text-[8px] text-muted-foreground truncate">{med.schedule_note}</div>
+                    )}
+                    {count > 0 && (
+                      <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">
+                        {count}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           );
         })()}
       </div>
