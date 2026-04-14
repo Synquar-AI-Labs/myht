@@ -274,6 +274,33 @@ export type Database = {
         }
         Relationships: []
       }
+      written_notes: {
+        Row: {
+          content: string
+          created_at: string
+          date: string
+          id: string
+          recorded_by: string
+          title: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          date?: string
+          id?: string
+          recorded_by?: string
+          title?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          date?: string
+          id?: string
+          recorded_by?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
