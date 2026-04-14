@@ -80,6 +80,9 @@ export function useHealthRecords() {
     const fieldMap: Record<string, string> = {
       feedBags: 'feed_bags',
       flushCount: 'flush_count',
+      flushMl: 'flush_ml',
+      urineCount: 'urine_count',
+      bileBags: 'bile_bags',
       weight: 'weight',
       bpSystolic: 'bp_systolic',
       bpDiastolic: 'bp_diastolic',

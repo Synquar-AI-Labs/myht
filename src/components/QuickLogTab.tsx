@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2 } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, Upload, Loader2, Beaker, FlaskConical } from 'lucide-react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -31,11 +31,13 @@ const HEALTH_BUTTONS: {
   dbFields: string[];
 }[] = [
   { label: 'Feed', metric: 'Feed Bags', icon: Droplets, color: 'bg-blue-500', fields: [{ key: 'feedBags', label: 'Bag count', defaultValue: 1, min: 0 }], dbFields: ['feedBags'] },
+  { label: 'Bile', metric: 'Bile Bags', icon: FlaskConical, color: 'bg-yellow-600', fields: [{ key: 'bileBags', label: 'Bag count', defaultValue: 1, min: 0 }], dbFields: ['bileBags'] },
   { label: 'BP', metric: 'Blood Pressure', icon: Heart, color: 'bg-red-500', fields: [{ key: 'bpSystolic', label: 'Systolic', defaultValue: 120, min: 50, max: 250 }, { key: 'bpDiastolic', label: 'Diastolic', defaultValue: 80, min: 30, max: 150 }], dbFields: ['bpSystolic', 'bpDiastolic'] },
   { label: 'Vomit', metric: 'Vomiting', icon: Activity, color: 'bg-orange-500', fields: [{ key: 'vomitCount', label: 'Count', defaultValue: 1, min: 0 }], dbFields: ['vomitCount', 'vomiting'] },
   { label: 'Poop', metric: 'Stool', icon: CircleDot, color: 'bg-amber-700', fields: [{ key: 'stoolCount', label: 'Count', defaultValue: 1, min: 0 }], dbFields: ['stoolCount', 'stoolPassed'] },
+  { label: 'Urine', metric: 'Urine', icon: Beaker, color: 'bg-yellow-500', fields: [{ key: 'urineCount', label: 'Count', defaultValue: 1, min: 0 }], dbFields: ['urineCount'] },
   { label: 'Weight', metric: 'Weight', icon: Weight, color: 'bg-green-500', fields: [{ key: 'weight', label: 'Weight (kg)', defaultValue: 0, min: 0 }], dbFields: ['weight'] },
-  { label: 'Flush', metric: 'Flush', icon: Waves, color: 'bg-cyan-500', fields: [{ key: 'flushCount', label: 'Flush count', defaultValue: 1, min: 0 }], dbFields: ['flushCount'] },
+  { label: 'Flush', metric: 'Flush', icon: Waves, color: 'bg-cyan-500', fields: [{ key: 'flushMl', label: 'Water (ml)', defaultValue: 500, min: 0 }], dbFields: ['flushMl'] },
 ];
 
 export function QuickLogTab() {
@@ -92,13 +94,16 @@ export function QuickLogTab() {
   return (
     <div className="space-y-5 pb-4">
       {/* Today's Summary */}
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         {[
-          { label: 'Feeds', value: todayRecord?.feed_bags ?? 0 },
+          { label: 'Feed', value: todayRecord?.feed_bags ?? 0 },
+          { label: 'Bile', value: (todayRecord as any)?.bile_bags ?? 0 },
           { label: 'BP', value: todayRecord ? `${todayRecord.bp_systolic}/${todayRecord.bp_diastolic}` : '—' },
           { label: 'Vomit', value: todayRecord?.vomit_count ?? 0 },
           { label: 'Poop', value: todayRecord?.stool_count ?? 0 },
-          { label: 'Flush', value: todayRecord?.flush_count ?? 0 },
+          { label: 'Urine', value: (todayRecord as any)?.urine_count ?? 0 },
+          { label: 'Flush', value: `${(todayRecord as any)?.flush_ml ?? 0}ml` },
+          { label: 'Weight', value: todayRecord?.weight ? `${todayRecord.weight}kg` : '—' },
         ].map(s => (
           <div key={s.label} className="rounded-lg border bg-card p-2 text-center">
             <div className="text-[10px] text-muted-foreground">{s.label}</div>
