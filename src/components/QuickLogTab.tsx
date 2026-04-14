@@ -148,6 +148,7 @@ export function QuickLogTab() {
           const categories: { name: string; keys: string[]; color: string; borderColor: string; bgColor: string; darkBg: string; darkBorder: string; iconColor: string }[] = [
             { name: 'Pain Killers', keys: ['hydromorphone', 'pregabalin', 'acetaminophen'], color: 'text-red-500', borderColor: 'border-red-200', bgColor: 'bg-red-50', darkBg: 'dark:bg-red-950/20', darkBorder: 'dark:border-red-900', iconColor: 'text-red-400' },
             { name: 'Anti-Nausea', keys: ['metoclopramide', 'ondansetron', 'olanzapine'], color: 'text-orange-500', borderColor: 'border-orange-200', bgColor: 'bg-orange-50', darkBg: 'dark:bg-orange-950/20', darkBorder: 'dark:border-orange-900', iconColor: 'text-orange-400' },
+            { name: 'Cancer', keys: ['lenvima'], color: 'text-purple-500', borderColor: 'border-purple-200', bgColor: 'bg-purple-50', darkBg: 'dark:bg-purple-950/20', darkBorder: 'dark:border-purple-900', iconColor: 'text-purple-400' },
           ];
           const categorized = new Set<string>();
           const groups = categories.map(cat => {
