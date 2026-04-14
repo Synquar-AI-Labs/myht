@@ -106,13 +106,13 @@ export function QuickLogTab() {
     return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`;
   }, [weekOffset]);
 
-  const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string) => {
+  const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string, date: string) => {
     dbFieldKeys.forEach(key => {
       let val: number | boolean = values[key] as number;
       if (key === 'vomiting') val = (values['vomitCount'] as number) > 0;
       else if (key === 'stoolPassed') val = (values['stoolCount'] as number) > 0;
       if (val !== undefined) {
-        updateField(todayStr, key, val, recordedBy);
+        updateField(date, key, val, recordedBy);
       }
     });
   };
