@@ -204,7 +204,7 @@ export function QuickLogTab() {
         <div className="rounded-xl border bg-card p-3 h-40">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
-              <XAxis dataKey="label" tick={{ fontSize: 9, whiteSpace: 'pre-line' }} axisLine={false} tickLine={false} interval={0} />
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
               <Tooltip contentStyle={{ fontSize: 11 }} />
               <Bar dataKey="feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
