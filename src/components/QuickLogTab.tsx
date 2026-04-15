@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, Plus, Trash2, Zap } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
