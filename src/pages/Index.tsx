@@ -67,7 +67,7 @@ const Index = () => {
 
       <main className={`flex-1 overflow-y-auto md:overflow-hidden px-4 pt-4 pb-20 md:pb-2 ${isFullscreen ? 'pt-2 pb-2' : ''}`}>
         {activeTab === 'quicklog' && <QuickLogTab appointmentsData={appointmentsData} />}
-        {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} bpReadings={(healthRecords as any).bpReadings} />}
+        {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} bpReadings={healthRecords.bpReadings} />}
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
         {activeTab === 'stays' && <HospitalStaysTab />}
