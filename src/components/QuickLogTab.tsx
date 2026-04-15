@@ -153,7 +153,11 @@ export function QuickLogTab() {
   // ─── MOBILE LAYOUT (default, stacked) ───
   const mobileLayout = (
     <div className="space-y-5 pb-4 md:hidden">
-      {/* Today's Summary */}
+      {/* Date header */}
+      <div className="text-center">
+        <div className="text-sm font-semibold">{currentDate}</div>
+        <div className="text-xs text-muted-foreground">{currentTime}</div>
+      </div>
       <div className="grid grid-cols-4 gap-2">
         {summaryItems.map(s => (
           <div key={s.label} className="rounded-lg border bg-card p-2 text-center">
