@@ -56,7 +56,7 @@ const CATEGORIES: { name: string; keys: string[]; color: string; borderColor: st
 export function QuickLogTab() {
   const todayStr = today();
   const { medicines, logs, addMedicineLog } = useMedicines(todayStr);
-  const { records, updateField, getRecordByDate } = useHealthRecords();
+  const { records, updateField, getRecordByDate, saveBpReading } = useHealthRecords();
   const { addAppointment, getUpcoming } = useAppointments();
   const { addNote } = useWrittenNotes();
   const [sheet, setSheet] = useState<SheetState>(null);
@@ -107,6 +107,13 @@ export function QuickLogTab() {
   }, [weekOffset]);
 
   const handleHealthSave = (dbFieldKeys: string[]) => (values: Record<string, number | boolean>, recordedBy: string, date: string) => {
+    // Handle BP separately — save individual reading & average
+    if (dbFieldKeys.includes('bpSystolic') && dbFieldKeys.includes('bpDiastolic')) {
+      const sys = values['bpSystolic'] as number;
+      const dia = values['bpDiastolic'] as number;
+      saveBpReading(date, sys, dia, recordedBy);
+      return;
+    }
     dbFieldKeys.forEach(key => {
       let val: number | boolean = values[key] as number;
       if (key === 'vomiting') val = (values['vomitCount'] as number) > 0;
