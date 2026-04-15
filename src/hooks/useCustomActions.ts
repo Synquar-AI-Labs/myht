@@ -37,12 +37,13 @@ export function useCustomActions(dateFilter?: string) {
   }, []);
 
   const fetchLogs = useCallback(async () => {
-    let q = supabase.from('custom_action_logs').select('*');
-    if (dateFilter) q = q.eq('date', dateFilter);
-    const { data, error } = await q.order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from('custom_action_logs')
+      .select('*')
+      .order('created_at', { ascending: false });
     if (error) { toast.error('Failed to load custom action logs'); return; }
     setLogs(data ?? []);
-  }, [dateFilter]);
+  }, []);
 
   useEffect(() => { fetchActions(); fetchLogs(); }, [fetchActions, fetchLogs]);
 
