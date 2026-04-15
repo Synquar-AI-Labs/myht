@@ -139,7 +139,7 @@ export function QuickLogTab() {
   const summaryItems = [
     { label: 'Feed', value: todayRecord?.feed_bags ?? 0 },
     { label: 'Bile', value: (todayRecord as any)?.bile_bags ?? 0 },
-    { label: 'BP', value: todayRecord ? `${todayRecord.bp_systolic}/${todayRecord.bp_diastolic}` : '—' },
+    { label: 'BP (avg)', value: todayRecord ? `${todayRecord.bp_systolic}/${todayRecord.bp_diastolic}` : '—' },
     { label: 'Vomit', value: todayRecord?.vomit_count ?? 0 },
     { label: 'Stool', value: todayRecord?.stool_count ?? 0 },
     { label: 'Urine', value: (todayRecord as any)?.urine_count ?? 0 },
