@@ -306,6 +306,19 @@ export function QuickLogTab() {
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Weight chart */}
+        <div className="rounded-xl border bg-card p-3 h-36">
+          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Weight (kg)</h4>
+          <ResponsiveContainer width="100%" height="85%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} domain={['dataMin - 1', 'dataMax + 1']} />
+              <Tooltip contentStyle={{ fontSize: 11 }} />
+              <Line type="monotone" dataKey="weight" name="Weight" stroke="hsl(145, 50%, 45%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
