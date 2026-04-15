@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
 const today = () => format(new Date(), 'yyyy-MM-dd');
@@ -83,7 +83,7 @@ export function QuickLogTab() {
     const thisMonday = subDays(today, mondayOffset);
     const weekStart = subDays(thisMonday, weekOffset * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const date = subDays(weekStart, -i); // add i days to weekStart
+      const date = subDays(weekStart, -i);
       const d = format(date, 'yyyy-MM-dd');
       const r = records.find(rec => rec.date === d);
       return {
@@ -92,6 +92,8 @@ export function QuickLogTab() {
         vomit: r?.vomit_count ?? 0,
         stool: r?.stool_count ?? 0,
         flush: (r as any)?.flush_ml ?? r?.flush_count ?? 0,
+        bpSys: r?.bp_systolic ?? null,
+        bpDia: r?.bp_diastolic ?? null,
       };
     });
   }, [records, weekOffset]);
