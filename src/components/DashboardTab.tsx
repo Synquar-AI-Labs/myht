@@ -94,12 +94,14 @@ function buildRows(
 function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-  doc.setFontSize(16);
-  doc.text(title, 14, 15);
+  doc.setFontSize(18);
+  doc.text('Muhammad Idrees', 14, 15);
+  doc.setFontSize(13);
+  doc.text(title, 14, 23);
   doc.setFontSize(9);
-  doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy h:mm a')}`, 14, 21);
+  doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy h:mm a')}`, 14, 29);
 
-  const head = [['Date', 'Feed', 'Bile', 'BP (avg)', 'Vomit', 'Stool', 'Urine', 'Flushes', 'Weight (kg)']];
+  const startY = 33;
   const body = rows.map(r => [
     r.date,
     String(r.feed),
