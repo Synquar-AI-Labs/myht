@@ -73,6 +73,7 @@ const Index = () => {
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
         {activeTab === 'stays' && <HospitalStaysTab />}
+        {activeTab === 'meds' && <MedicineScheduleTab />}
         {activeTab === 'transcripts' && <TranscriptsTab />}
       </main>
 
