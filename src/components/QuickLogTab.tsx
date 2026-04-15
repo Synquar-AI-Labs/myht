@@ -222,7 +222,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
           })}
           {/* Custom action buttons */}
           {customActions.map(ca => {
-            const count = getLogCountForAction(ca.id);
+            const count = getLogCountForAction(ca.id, todayStr);
             return (
               <button
                 key={ca.id}
