@@ -105,7 +105,7 @@ export function MedicineScheduleTab() {
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(med)}><Pencil className="h-3.5 w-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(med.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(med.id, med.name)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
             </Card>
