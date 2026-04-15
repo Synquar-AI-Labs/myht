@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useMedicineSchedule, MedicineScheduleInsert } from '@/hooks/useMedicineSchedule';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,8 +52,15 @@ export function MedicineScheduleTab() {
     setOpen(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Delete this medicine?')) await deleteMedicine(id);
+  const handleDelete = async (id: string, name: string) => {
+    const { count } = await supabase
+      .from('medicine_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('medicine_id', id);
+    const logWarning = count && count > 0
+      ? `\n\n⚠️ This medicine has ${count} existing log${count > 1 ? 's' : ''} that will lose their reference.`
+      : '';
+    if (confirm(`Delete "${name}"?${logWarning}`)) await deleteMedicine(id);
   };
 
   // Group by med_type
@@ -97,7 +105,7 @@ export function MedicineScheduleTab() {
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(med)}><Pencil className="h-3.5 w-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(med.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(med.id, med.name)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
             </Card>
