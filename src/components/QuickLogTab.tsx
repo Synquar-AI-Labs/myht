@@ -96,7 +96,9 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
 
   useEffect(() => {
     const check = () => {
-      const medsWithSchedule = medicines.map(m => ({ id: m.id, schedule_time: (m as any).schedule_time || '' }));
+      const medsWithSchedule = medicines
+        .filter(m => (m as any).category === 'medicine' || !(m as any).category)
+        .map(m => ({ id: m.id, schedule_time: (m as any).schedule_time || '' }));
       setDueMedIds(getDueMedicineIds(medsWithSchedule, logs, dismissedMedIds, new Date()));
     };
     check();
