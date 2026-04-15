@@ -16,11 +16,11 @@ type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quic
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'quicklog', label: 'Quick Log', icon: Zap },
+  { id: 'meds', label: 'Meds', icon: Pill },
   { id: 'dashboard', label: 'Reports', icon: BarChart3 },
   { id: 'record', label: 'Record', icon: ClipboardList },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
   { id: 'stays', label: 'Stays', icon: Users },
-  { id: 'meds', label: 'Meds', icon: Pill },
   { id: 'transcripts', label: 'Transcripts', icon: Mic },
 ];
 
