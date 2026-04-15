@@ -8,6 +8,8 @@ export interface Medicine {
   name: string;
   schedule_note: string;
   schedule_time: string;
+  category: string;
+  show_in_quick_log: boolean;
   created_at: string;
 }
 
