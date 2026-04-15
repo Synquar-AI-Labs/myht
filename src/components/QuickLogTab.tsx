@@ -53,11 +53,15 @@ const CATEGORIES: { name: string; keys: string[]; color: string; borderColor: st
   { name: 'Diarrhea', keys: ['loperamide', 'teva-loperamide'], color: 'text-indigo-500', borderColor: 'border-indigo-200', bgColor: 'bg-indigo-50', darkBg: 'dark:bg-indigo-950/20', darkBorder: 'dark:border-indigo-900', iconColor: 'text-indigo-400' },
 ];
 
-export function QuickLogTab() {
+interface QuickLogTabProps {
+  appointmentsData: ReturnType<typeof useAppointments>;
+}
+
+export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const todayStr = today();
   const { medicines, logs, addMedicineLog } = useMedicines(todayStr);
   const { records, updateField, getRecordByDate, saveBpReading } = useHealthRecords();
-  const { appointments, addAppointment, getUpcoming } = useAppointments();
+  const { appointments, addAppointment, getUpcoming } = appointmentsData;
   const { addNote } = useWrittenNotes();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
