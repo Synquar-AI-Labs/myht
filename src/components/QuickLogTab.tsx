@@ -64,9 +64,13 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const { records, updateField, getRecordByDate, saveBpReading } = useHealthRecords();
   const { appointments, addAppointment, getUpcoming } = appointmentsData;
   const { addNote } = useWrittenNotes();
+  const { actions: customActions, logs: customLogs, addAction, deleteAction, addLog: addCustomLog, getLogCountForAction } = useCustomActions(todayStr);
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [customActionOpen, setCustomActionOpen] = useState(false);
+  const [customLogSheet, setCustomLogSheet] = useState<{ actionId: string; name: string; unit: string; defaultValue: number } | null>(null);
+  const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
   const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
