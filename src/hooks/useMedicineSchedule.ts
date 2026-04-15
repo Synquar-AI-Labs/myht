@@ -26,7 +26,7 @@ export function useMedicineSchedule() {
     setLoading(true);
     const { data, error } = await supabase
       .from('medicines')
-      .select('id, name, potency, amount, med_type, category, schedule_time, frequency, schedule_note, created_at')
+      .select('id, name, potency, amount, med_type, category, schedule_time, frequency, schedule_note, show_in_quick_log, created_at')
       .order('name');
     if (error) { toast.error('Failed to load medicines'); setLoading(false); return; }
     setMedicines((data as MedicineSchedule[]) ?? []);
