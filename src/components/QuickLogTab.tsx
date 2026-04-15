@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, Plus, Trash2, Zap } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, Plus, Trash2, Zap, X } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -286,8 +286,16 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
                 </div>
                 <div className="text-[10px] font-medium leading-tight truncate">{med.name}</div>
                 {med.schedule_note && <div className="text-[8px] text-muted-foreground truncate">{med.schedule_note}</div>}
-                {count > 0 && (
+                {count > 0 && !isDue && (
                   <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
+                )}
+                {isDue && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); dismissMedAlert(med.id); }}
+                    className="absolute top-0.5 right-0.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 z-10"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 )}
               </button>
             );
@@ -495,8 +503,16 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
                   </div>
                   <div className="text-xs font-medium leading-tight truncate">{med.name}</div>
                   {med.schedule_note && <div className="text-[9px] text-muted-foreground truncate">{med.schedule_note}</div>}
-                  {count > 0 && (
+                  {count > 0 && !isDue && (
                     <Badge variant="secondary" className="absolute top-0.5 right-0.5 h-3.5 min-w-3.5 text-[8px] px-0.5 justify-center">{count}</Badge>
+                  )}
+                  {isDue && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); dismissMedAlert(med.id); }}
+                      className="absolute top-0 right-0 h-4 w-4 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 z-10"
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
                   )}
                 </button>
               );
