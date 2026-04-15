@@ -69,7 +69,7 @@ export function useCustomActions() {
     fetchLogs();
   };
 
-  const getLogCountForAction = (actionId: string) => logs.filter(l => l.action_id === actionId).length;
+  const getLogCountForAction = (actionId: string, date?: string) => logs.filter(l => l.action_id === actionId && (!date || l.date === date)).length;
 
   return { actions, logs, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: fetchLogs };
 }
