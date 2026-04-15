@@ -231,14 +231,16 @@ export function QuickLogTab() {
         </div>
       </div>
 
-      {/* Weekly Mini Chart */}
+      {/* Weekly Charts */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <button onClick={() => setWeekOffset(w => w + 1)} className="p-1 rounded hover:bg-muted"><ChevronLeft className="h-4 w-4" /></button>
           <h3 className="text-xs font-medium text-muted-foreground">{weekRangeLabel}</h3>
           <button onClick={() => setWeekOffset(w => Math.max(0, w - 1))} disabled={weekOffset === 0} className="p-1 rounded hover:bg-muted disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
         </div>
-        <div className="rounded-xl border bg-card p-3 h-48">
+
+        {/* Main metrics chart */}
+        <div className="rounded-xl border bg-card p-3 h-44 mb-3">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
@@ -248,8 +250,35 @@ export function QuickLogTab() {
               <Bar dataKey="feeds" name="Feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="vomit" name="Vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="stool" name="Stool" fill="hsl(145, 35%, 45%)" radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Flush chart */}
+        <div className="rounded-xl border bg-card p-3 h-36 mb-3">
+          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Flush (ml)</h4>
+          <ResponsiveContainer width="100%" height="85%">
+            <BarChart data={chartData}>
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
+              <Tooltip contentStyle={{ fontSize: 11 }} />
               <Bar dataKey="flush" name="Flush (ml)" fill="hsl(185, 50%, 45%)" radius={[3, 3, 0, 0]} />
             </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* BP chart */}
+        <div className="rounded-xl border bg-card p-3 h-36">
+          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Blood Pressure (avg)</h4>
+          <ResponsiveContainer width="100%" height="85%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} domain={[40, 200]} />
+              <Tooltip contentStyle={{ fontSize: 11 }} />
+              <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 4 }} />
+              <Line type="monotone" dataKey="bpSys" name="Systolic" stroke="hsl(0, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
+              <Line type="monotone" dataKey="bpDia" name="Diastolic" stroke="hsl(220, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
+            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
