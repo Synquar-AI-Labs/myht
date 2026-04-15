@@ -1,245 +1,185 @@
 import { useMemo, useState } from 'react';
-import { HealthRecord, DateRange } from '@/types/health';
+import { HealthRecord } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Slider } from '@/components/ui/slider';
 import { format, subDays, parseISO } from 'date-fns';
-import { Activity, Droplets, Weight, Heart, Utensils, CircleDot, AlertTriangle, Ban, ShowerHead, CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 
 interface DashboardTabProps {
   records: HealthRecord[];
+  bpReadings?: { date: string; systolic: number; diastolic: number }[];
 }
 
-const rangeOptions: { label: string; value: DateRange }[] = [
-  { label: '7 Days', value: '7' },
-  { label: '30 Days', value: '30' },
-  { label: 'Custom', value: 'custom' },
-];
+function buildTableData(
+  records: HealthRecord[],
+  bpReadings: { date: string; systolic: number; diastolic: number }[],
+  days: number
+) {
+  const cutoff = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
+  const today = format(new Date(), 'yyyy-MM-dd');
 
-export function DashboardTab({ records }: DashboardTabProps) {
-  const [range, setRange] = useState<DateRange>('7');
-  const [customFrom, setCustomFrom] = useState<Date | undefined>();
-  const [customTo, setCustomTo] = useState<Date | undefined>();
-  const latest = records[0] || null;
+  const filtered = records
+    .filter(r => r.date >= cutoff && r.date <= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
-  const filteredRecords = useMemo(() => {
-    if (range === 'custom') {
-      if (!customFrom || !customTo) return [];
-      const from = format(customFrom, 'yyyy-MM-dd');
-      const to = format(customTo, 'yyyy-MM-dd');
-      return records.filter(r => r.date >= from && r.date <= to).sort((a, b) => a.date.localeCompare(b.date));
+  // Group BP readings by date for averaging
+  const bpByDate: Record<string, { sys: number[]; dia: number[] }> = {};
+  bpReadings.forEach(bp => {
+    if (bp.date < cutoff || bp.date > today) return;
+    if (!bpByDate[bp.date]) bpByDate[bp.date] = { sys: [], dia: [] };
+    bpByDate[bp.date].sys.push(bp.systolic);
+    bpByDate[bp.date].dia.push(bp.diastolic);
+  });
+
+  const rows = filtered.map(r => {
+    // Use individual BP readings average if available, otherwise fall back to record values
+    const bpData = bpByDate[r.date];
+    let avgSys = r.bp_systolic;
+    let avgDia = r.bp_diastolic;
+    if (bpData && bpData.sys.length > 0) {
+      avgSys = Math.round(bpData.sys.reduce((a, b) => a + b, 0) / bpData.sys.length);
+      avgDia = Math.round(bpData.dia.reduce((a, b) => a + b, 0) / bpData.dia.length);
     }
-    const days = range === '7' ? 7 : 30;
-    const cutoff = format(subDays(new Date(), days), 'yyyy-MM-dd');
-    return records.filter(r => r.date >= cutoff).sort((a, b) => a.date.localeCompare(b.date));
-  }, [records, range, customFrom, customTo]);
 
-  const chartData = useMemo(() => {
-    return filteredRecords.map(r => ({
-      date: format(parseISO(r.date), 'MMM d'),
-      feedBags: r.feed_bags,
+    return {
+      date: r.date,
+      label: format(parseISO(r.date), 'MMM d'),
+      feed: r.feed_bags,
+      bile: (r as any).bile_bags ?? 0,
+      bpSys: avgSys,
+      bpDia: avgDia,
+      vomit: (r as any).vomit_count ?? 0,
+      stool: r.stool_count,
+      urine: (r as any).urine_count ?? 0,
       flushes: (r as any).flush_count ?? 0,
       weight: Number(r.weight),
-      systolic: r.bp_systolic,
-      diastolic: r.bp_diastolic,
-      stoolCount: r.stool_passed ? r.stool_count : 0,
-      food: r.food_taken ? 1 : 0,
-      vomit: r.vomiting ? 1 : 0,
-      constipation: r.constipation ? 1 : 0,
-    }));
-  }, [filteredRecords]);
+    };
+  });
 
-  const summaryData = useMemo(() => [
-    { name: 'Food', count: chartData.reduce((s, d) => s + d.food, 0) },
-    { name: 'Vomiting', count: chartData.reduce((s, d) => s + d.vomit, 0) },
-    { name: 'Constipation', count: chartData.reduce((s, d) => s + d.constipation, 0) },
-  ], [chartData]);
+  // Totals: sum for counts, average for BP and weight
+  const count = rows.length || 1;
+  const totals = {
+    feed: rows.reduce((s, r) => s + r.feed, 0),
+    bile: rows.reduce((s, r) => s + r.bile, 0),
+    bpSys: Math.round(rows.reduce((s, r) => s + r.bpSys, 0) / count),
+    bpDia: Math.round(rows.reduce((s, r) => s + r.bpDia, 0) / count),
+    vomit: rows.reduce((s, r) => s + r.vomit, 0),
+    stool: rows.reduce((s, r) => s + r.stool, 0),
+    urine: rows.reduce((s, r) => s + r.urine, 0),
+    flushes: rows.reduce((s, r) => s + r.flushes, 0),
+    weight: rows.length > 0 ? +(rows.reduce((s, r) => s + r.weight, 0) / count).toFixed(1) : 0,
+  };
 
-  return (
-    <div className="space-y-4 pb-4">
-      {/* Range selector at top */}
-      <div className="flex gap-2 flex-wrap">
-        {rangeOptions.map(opt => (
-          <button
-            key={opt.value}
-            onClick={() => setRange(opt.value)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              range === opt.value ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
-      {range === 'custom' && (
-        <div className="flex gap-2 flex-wrap">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className={cn('w-[150px] justify-start text-left font-normal', !customFrom && 'text-muted-foreground')}>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {customFrom ? format(customFrom, 'MMM d, yyyy') : 'From'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={customFrom} onSelect={setCustomFrom} initialFocus className="p-3 pointer-events-auto" />
-            </PopoverContent>
-          </Popover>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className={cn('w-[150px] justify-start text-left font-normal', !customTo && 'text-muted-foreground')}>
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {customTo ? format(customTo, 'MMM d, yyyy') : 'To'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={customTo} onSelect={setCustomTo} initialFocus className="p-3 pointer-events-auto" />
-            </PopoverContent>
-          </Popover>
-        </div>
-      )}
-
-      {latest && (
-        <div className="grid grid-cols-2 gap-3">
-          <SummaryCard icon={<Droplets className="h-4 w-4" />} label="Feed Bags" value={String(latest.feed_bags)} />
-          <SummaryCard icon={<ShowerHead className="h-4 w-4" />} label="Flushes" value={String((latest as any).flush_count ?? 0)} />
-          <SummaryCard icon={<Weight className="h-4 w-4" />} label="Weight" value={`${latest.weight} kg`} />
-          <SummaryCard icon={<Heart className="h-4 w-4" />} label="BP" value={`${latest.bp_systolic}/${latest.bp_diastolic}`} />
-          <SummaryCard icon={<CircleDot className="h-4 w-4" />} label="Stool" value={latest.stool_passed ? String(latest.stool_count) : 'No'} />
-          <SummaryCard icon={<Utensils className="h-4 w-4" />} label="Food" value={latest.food_taken ? 'Yes' : 'No'} />
-          <SummaryCard icon={<AlertTriangle className="h-4 w-4" />} label="Vomiting" value={latest.vomiting ? 'Yes' : 'No'} />
-          <SummaryCard icon={<Ban className="h-4 w-4" />} label="Constipation" value={latest.constipation ? 'Yes' : 'No'} />
-          <SummaryCard icon={<Activity className="h-4 w-4" />} label="Last Entry" value={format(parseISO(latest.date), 'MMM d')} />
-        </div>
-      )}
-
-      {chartData.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No data yet. Start by adding a daily record.</CardContent></Card>
-      ) : (
-        <div className="space-y-4">
-          <ChartCard title="Weight (kg)">
-            <ChartContainer config={{ weight: { label: 'Weight', color: 'hsl(var(--chart-weight))' } }} className="h-[180px] w-full">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="weight" stroke="hsl(var(--chart-weight))" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Feed Bags / Day">
-            <ChartContainer config={{ feedBags: { label: 'Bags', color: 'hsl(var(--chart-feed))' } }} className="h-[180px] w-full">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="feedBags" fill="hsl(var(--chart-feed))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Flushes / Day">
-            <ChartContainer config={{ flushes: { label: 'Flushes', color: 'hsl(var(--chart-stool))' } }} className="h-[180px] w-full">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="flushes" fill="hsl(var(--chart-stool))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Blood Pressure">
-            <ChartContainer config={{ systolic: { label: 'Systolic', color: 'hsl(var(--chart-bp-sys))' }, diastolic: { label: 'Diastolic', color: 'hsl(var(--chart-bp-dia))' } }} className="h-[180px] w-full">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="systolic" stroke="hsl(var(--chart-bp-sys))" strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="diastolic" stroke="hsl(var(--chart-bp-dia))" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Stool Count / Day">
-            <ChartContainer config={{ stoolCount: { label: 'Count', color: 'hsl(var(--chart-stool))' } }} className="h-[180px] w-full">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="stoolCount" fill="hsl(var(--chart-stool))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Food / Vomiting / Constipation (per day)">
-            <ChartContainer config={{
-              food: { label: 'Food', color: 'hsl(var(--chart-food))' },
-              vomit: { label: 'Vomit', color: 'hsl(var(--chart-vomit))' },
-              constipation: { label: 'Constipation', color: 'hsl(var(--chart-constipation))' },
-            }} className="h-[180px] w-full">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} domain={[0, 1]} ticks={[0, 1]} tickFormatter={(v) => v === 1 ? 'Yes' : 'No'} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="food" fill="hsl(var(--chart-food))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="vomit" fill="hsl(var(--chart-vomit))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="constipation" fill="hsl(var(--chart-constipation))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ChartContainer>
-          </ChartCard>
-
-          <ChartCard title="Summary: Food / Vomiting / Constipation (total days)">
-            <ChartContainer config={{
-              count: { label: 'Days', color: 'hsl(var(--chart-food))' },
-            }} className="h-[180px] w-full">
-              <BarChart data={summaryData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" radius={[4, 4, 0, 0]} fill="hsl(var(--chart-food))" />
-              </BarChart>
-            </ChartContainer>
-          </ChartCard>
-        </div>
-      )}
-    </div>
-  );
+  return { rows, totals };
 }
 
-function SummaryCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function MetricTable({ title, days, onDaysChange, records, bpReadings, min, max }: {
+  title: string;
+  days: number;
+  onDaysChange: (v: number) => void;
+  records: HealthRecord[];
+  bpReadings: { date: string; systolic: number; diastolic: number }[];
+  min: number;
+  max: number;
+}) {
+  const { rows, totals } = useMemo(() => buildTableData(records, bpReadings, days), [records, bpReadings, days]);
+
   return (
     <Card className="border-none shadow-sm">
-      <CardContent className="flex items-center gap-3 p-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">{icon}</div>
-        <div>
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="text-sm font-semibold">{value}</p>
+      <CardHeader className="px-4 pb-2 pt-4">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <div className="flex items-center gap-3 pt-2">
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{days} days</span>
+          <Slider
+            value={[days]}
+            onValueChange={v => onDaysChange(v[0])}
+            min={min}
+            max={max}
+            step={1}
+            className="flex-1"
+          />
         </div>
+      </CardHeader>
+      <CardContent className="px-0 pb-4 overflow-x-auto">
+        {rows.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-6">No data for this period</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs px-2 sticky left-0 bg-card z-10">Date</TableHead>
+                <TableHead className="text-xs px-2 text-center">Feed</TableHead>
+                <TableHead className="text-xs px-2 text-center">Bile</TableHead>
+                <TableHead className="text-xs px-2 text-center">BP</TableHead>
+                <TableHead className="text-xs px-2 text-center">Vomit</TableHead>
+                <TableHead className="text-xs px-2 text-center">Stool</TableHead>
+                <TableHead className="text-xs px-2 text-center">Urine</TableHead>
+                <TableHead className="text-xs px-2 text-center">Flush</TableHead>
+                <TableHead className="text-xs px-2 text-center">Wt(kg)</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map(r => (
+                <TableRow key={r.date}>
+                  <TableCell className="text-xs px-2 font-medium sticky left-0 bg-card z-10 whitespace-nowrap">{r.label}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.feed}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.bile}</TableCell>
+                  <TableCell className="text-xs px-2 text-center whitespace-nowrap">
+                    {r.bpSys > 0 ? `${r.bpSys}/${r.bpDia}` : '—'}
+                  </TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.vomit}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.stool}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.urine}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.flushes}</TableCell>
+                  <TableCell className="text-xs px-2 text-center">{r.weight > 0 ? r.weight : '—'}</TableCell>
+                </TableRow>
+              ))}
+              {/* Totals row */}
+              <TableRow className="bg-muted/50 font-semibold">
+                <TableCell className="text-xs px-2 sticky left-0 bg-muted/50 z-10">Total/Avg</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.feed}</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.bile}</TableCell>
+                <TableCell className="text-xs px-2 text-center whitespace-nowrap">
+                  {totals.bpSys > 0 ? `${totals.bpSys}/${totals.bpDia}` : '—'}
+                </TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.vomit}</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.stool}</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.urine}</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.flushes}</TableCell>
+                <TableCell className="text-xs px-2 text-center">{totals.weight > 0 ? totals.weight : '—'}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
 }
 
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
+export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
+  const [weeklyDays, setWeeklyDays] = useState(7);
+  const [monthlyDays, setMonthlyDays] = useState(30);
+
   return (
-    <Card className="border-none shadow-sm">
-      <CardHeader className="px-4 pb-2 pt-4">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="px-2 pb-4">{children}</CardContent>
-    </Card>
+    <div className="space-y-6 pb-4">
+      <MetricTable
+        title="Weekly Overview"
+        days={weeklyDays}
+        onDaysChange={setWeeklyDays}
+        records={records}
+        bpReadings={bpReadings}
+        min={3}
+        max={14}
+      />
+      <MetricTable
+        title="Monthly Overview"
+        days={monthlyDays}
+        onDaysChange={setMonthlyDays}
+        records={records}
+        bpReadings={bpReadings}
+        min={14}
+        max={90}
+      />
+    </div>
   );
 }
