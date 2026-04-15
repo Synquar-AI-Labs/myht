@@ -86,6 +86,19 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
     return counts;
   }, [logs]);
 
+  // ─── Medicine due-time flashing ───
+  const [dueMedIds, setDueMedIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const check = () => {
+      const medsWithSchedule = medicines.map(m => ({ id: m.id, schedule_time: (m as any).schedule_time || '' }));
+      setDueMedIds(getDueMedicineIds(medsWithSchedule, logs, new Date()));
+    };
+    check();
+    const interval = setInterval(check, 60_000);
+    return () => clearInterval(interval);
+  }, [medicines, logs]);
+
   const chartData = useMemo(() => {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon, ...
