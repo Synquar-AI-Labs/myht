@@ -4,6 +4,7 @@ import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
+import { useCustomActions } from '@/hooks/useCustomActions';
 import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, Plus, Trash2, Zap } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -63,9 +64,13 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const { records, updateField, getRecordByDate, saveBpReading } = useHealthRecords();
   const { appointments, addAppointment, getUpcoming } = appointmentsData;
   const { addNote } = useWrittenNotes();
+  const { actions: customActions, logs: customLogs, addAction, deleteAction, addLog: addCustomLog, getLogCountForAction } = useCustomActions();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
+  const [customActionOpen, setCustomActionOpen] = useState(false);
+  const [customLogSheet, setCustomLogSheet] = useState<{ actionId: string; name: string; unit: string; defaultValue: number } | null>(null);
+  const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
   const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
@@ -215,6 +220,31 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
               </button>
             );
           })}
+          {/* Custom action buttons */}
+          {customActions.map(ca => {
+            const count = getLogCountForAction(ca.id, todayStr);
+            return (
+              <button
+                key={ca.id}
+                onClick={() => setCustomLogSheet({ actionId: ca.id, name: ca.name, unit: ca.unit, defaultValue: ca.default_value })}
+                className={`${ca.color} text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform relative`}
+              >
+                <Zap className="h-5 w-5" />
+                <span className="text-xs font-medium">{ca.name}</span>
+                {count > 0 && (
+                  <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
+                )}
+              </button>
+            );
+          })}
+          {/* Add new action button */}
+          <button
+            onClick={() => { setNewAction({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false }); setCustomActionOpen(true); }}
+            className="border-2 border-dashed border-muted-foreground/30 rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform text-muted-foreground"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="text-xs font-medium">Add New</span>
+          </button>
         </div>
       </div>
 
@@ -323,6 +353,35 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Custom action charts */}
+        {customActions.filter(ca => ca.show_graph).map(ca => {
+          const today = new Date();
+          const dayOfWeek = today.getDay();
+          const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+          const thisMonday = subDays(today, mondayOffset);
+          const weekStart = subDays(thisMonday, weekOffset * 7);
+          const caChartData = Array.from({ length: 7 }, (_, i) => {
+            const date = subDays(weekStart, -i);
+            const d = format(date, 'yyyy-MM-dd');
+            const dayLogs = customLogs.filter(l => l.action_id === ca.id && l.date === d);
+            const total = dayLogs.reduce((sum, l) => sum + Number(l.value), 0);
+            return { label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`, value: total };
+          });
+          return (
+            <div key={ca.id} className="rounded-xl border bg-card p-3 h-36">
+              <h4 className="text-[10px] font-medium text-muted-foreground mb-1">{ca.name}{ca.unit ? ` (${ca.unit})` : ''}</h4>
+              <ResponsiveContainer width="100%" height="85%">
+                <BarChart data={caChartData}>
+                  <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+                  <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="value" name={ca.name} fill="hsl(180, 50%, 45%)" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -522,6 +581,56 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Custom Action Dialog */}
+      <Dialog open={customActionOpen} onOpenChange={setCustomActionOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Create Quick Action</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1"><Label className="text-xs">Name</Label><Input value={newAction.name} onChange={e => setNewAction(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Temperature" /></div>
+            <div className="space-y-1"><Label className="text-xs">Unit (optional)</Label><Input value={newAction.unit} onChange={e => setNewAction(p => ({ ...p, unit: e.target.value }))} placeholder="e.g. °C, ml, count" /></div>
+            <div className="space-y-1"><Label className="text-xs">Default Value</Label><Input type="number" value={newAction.default_value} onChange={e => setNewAction(p => ({ ...p, default_value: Number(e.target.value) }))} /></div>
+            <div className="space-y-1">
+              <Label className="text-xs">Color</Label>
+              <div className="grid grid-cols-5 gap-1.5">
+                {['bg-teal-500', 'bg-pink-500', 'bg-lime-500', 'bg-violet-500', 'bg-sky-500', 'bg-rose-500', 'bg-emerald-500', 'bg-fuchsia-500', 'bg-amber-500', 'bg-slate-500'].map(c => (
+                  <button key={c} onClick={() => setNewAction(p => ({ ...p, color: c }))} className={`${c} h-8 rounded-lg ${newAction.color === c ? 'ring-2 ring-offset-2 ring-foreground' : ''}`} />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="show-graph" checked={newAction.show_graph} onChange={e => setNewAction(p => ({ ...p, show_graph: e.target.checked }))} className="rounded" />
+              <Label htmlFor="show-graph" className="text-xs">Add a graph for this action?</Label>
+            </div>
+          </div>
+          <DialogFooter className="flex-col gap-2">
+            <Button className="w-full" disabled={!newAction.name.trim()} onClick={async () => { await addAction(newAction); setCustomActionOpen(false); }}>Create Action</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Custom Action Log Sheet */}
+      {customLogSheet && (
+        <QuickLogSheet
+          open
+          onOpenChange={o => { if (!o) setCustomLogSheet(null); }}
+          mode={{
+            type: 'health',
+            metric: customLogSheet.name,
+            fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.defaultValue, min: 0 }],
+            onSave: (values, recordedBy, date) => {
+              addCustomLog({
+                action_id: customLogSheet.actionId,
+                value: values['value'] as number,
+                date,
+                recorded_by: recordedBy,
+                hour: new Date().getHours() > 12 ? new Date().getHours() - 12 : new Date().getHours() === 0 ? 12 : new Date().getHours(),
+                am_pm: new Date().getHours() >= 12 ? 'PM' : 'AM',
+              });
+            },
+          }}
+        />
+      )}
     </>
   );
 }

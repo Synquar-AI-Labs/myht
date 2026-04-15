@@ -113,6 +113,77 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_action_logs: {
+        Row: {
+          action_id: string
+          am_pm: string
+          created_at: string
+          date: string
+          hour: number
+          id: string
+          recorded_by: string
+          value: number
+        }
+        Insert: {
+          action_id: string
+          am_pm?: string
+          created_at?: string
+          date: string
+          hour?: number
+          id?: string
+          recorded_by?: string
+          value?: number
+        }
+        Update: {
+          action_id?: string
+          am_pm?: string
+          created_at?: string
+          date?: string
+          hour?: number
+          id?: string
+          recorded_by?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_action_logs_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "custom_actions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_actions: {
+        Row: {
+          color: string
+          created_at: string
+          default_value: number
+          id: string
+          name: string
+          show_graph: boolean
+          unit: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          default_value?: number
+          id?: string
+          name: string
+          show_graph?: boolean
+          unit?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          default_value?: number
+          id?: string
+          name?: string
+          show_graph?: boolean
+          unit?: string
+        }
+        Relationships: []
+      }
       health_records: {
         Row: {
           bile_bags: number
