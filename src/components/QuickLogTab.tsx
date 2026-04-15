@@ -94,6 +94,7 @@ export function QuickLogTab() {
         flush: (r as any)?.flush_ml ?? r?.flush_count ?? 0,
         bpSys: r?.bp_systolic ?? null,
         bpDia: r?.bp_diastolic ?? null,
+        weight: r?.weight ?? null,
       };
     });
   }, [records, weekOffset]);
@@ -302,6 +303,19 @@ export function QuickLogTab() {
               <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 4 }} />
               <Line type="monotone" dataKey="bpSys" name="Systolic" stroke="hsl(0, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
               <Line type="monotone" dataKey="bpDia" name="Diastolic" stroke="hsl(220, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Weight chart */}
+        <div className="rounded-xl border bg-card p-3 h-36">
+          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Weight (kg)</h4>
+          <ResponsiveContainer width="100%" height="85%">
+            <LineChart data={chartData}>
+              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} domain={['dataMin - 1', 'dataMax + 1']} />
+              <Tooltip contentStyle={{ fontSize: 11 }} />
+              <Line type="monotone" dataKey="weight" name="Weight" stroke="hsl(145, 50%, 45%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
