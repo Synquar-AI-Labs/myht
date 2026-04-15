@@ -71,7 +71,16 @@ export function MedicineScheduleTab() {
     return acc;
   }, {});
 
-  const setField = (k: keyof MedicineScheduleInsert, v: string) => setForm(f => ({ ...f, [k]: v }));
+  const setField = (k: keyof MedicineScheduleInsert, v: string) => {
+    setForm(f => {
+      const updated = { ...f, [k]: v };
+      // Auto-toggle quick log: medicine defaults to yes, non-medicine to no (only on category change for new items)
+      if (k === 'category' && !editId) {
+        updated.show_in_quick_log = v === 'medicine';
+      }
+      return updated;
+    });
+  };
 
   return (
     <div className="pb-4 space-y-4">
@@ -156,6 +165,14 @@ export function MedicineScheduleTab() {
             <div>
               <Label className="text-xs">Notes</Label>
               <Input value={form.schedule_note} onChange={e => setField('schedule_note', e.target.value)} placeholder="Optional notes" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="show_in_quick_log"
+                checked={form.show_in_quick_log}
+                onCheckedChange={(checked) => setForm(f => ({ ...f, show_in_quick_log: !!checked }))}
+              />
+              <Label htmlFor="show_in_quick_log" className="text-xs cursor-pointer">Show in Quick Log</Label>
             </div>
             <Button className="w-full" onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
           </div>
