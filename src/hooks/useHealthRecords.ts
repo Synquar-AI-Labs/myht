@@ -4,8 +4,14 @@ import { HealthRecord, HealthRecordForm } from '@/types/health';
 import { toast } from 'sonner';
 import { healthRecordSchema } from '@/lib/validation';
 
+// Fields where new entries ADD to the existing value instead of replacing
+const ADDITIVE_FIELDS = new Set([
+  'feed_bags', 'bile_bags', 'stool_count', 'vomit_count', 'urine_count', 'flush_ml', 'flush_count',
+]);
+
 export function useHealthRecords() {
   const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [bpReadings, setBpReadings] = useState<{ id: string; date: string; systolic: number; diastolic: number; recorded_by: string; created_at: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRecords = useCallback(async () => {
@@ -22,7 +28,15 @@ export function useHealthRecords() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchRecords(); }, [fetchRecords]);
+  const fetchBpReadings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('bp_readings' as any)
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (!error) setBpReadings((data as any[]) ?? []);
+  }, []);
+
+  useEffect(() => { fetchRecords(); fetchBpReadings(); }, [fetchRecords, fetchBpReadings]);
 
   const addRecord = useCallback(async (form: HealthRecordForm) => {
     const parsed = healthRecordSchema.safeParse(form);
