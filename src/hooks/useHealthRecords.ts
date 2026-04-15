@@ -4,8 +4,14 @@ import { HealthRecord, HealthRecordForm } from '@/types/health';
 import { toast } from 'sonner';
 import { healthRecordSchema } from '@/lib/validation';
 
+// Fields where new entries ADD to the existing value instead of replacing
+const ADDITIVE_FIELDS = new Set([
+  'feed_bags', 'bile_bags', 'stool_count', 'vomit_count', 'urine_count', 'flush_ml', 'flush_count',
+]);
+
 export function useHealthRecords() {
   const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [bpReadings, setBpReadings] = useState<{ id: string; date: string; systolic: number; diastolic: number; recorded_by: string; created_at: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRecords = useCallback(async () => {
@@ -22,7 +28,15 @@ export function useHealthRecords() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchRecords(); }, [fetchRecords]);
+  const fetchBpReadings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('bp_readings' as any)
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (!error) setBpReadings((data as any[]) ?? []);
+  }, []);
+
+  useEffect(() => { fetchRecords(); fetchBpReadings(); }, [fetchRecords, fetchBpReadings]);
 
   const addRecord = useCallback(async (form: HealthRecordForm) => {
     const parsed = healthRecordSchema.safeParse(form);
@@ -76,7 +90,6 @@ export function useHealthRecords() {
   }, [records]);
 
   const updateField = useCallback(async (date: string, field: string, value: number | boolean | string, recordedBy: string) => {
-    // Map camelCase UI field names to snake_case DB columns
     const fieldMap: Record<string, string> = {
       feedBags: 'feed_bags',
       flushCount: 'flush_count',
@@ -97,17 +110,27 @@ export function useHealthRecords() {
     };
     const dbField = fieldMap[field] || field;
 
-    // Check if record exists for today
+    // BP fields are handled specially — skip individual bp updates here;
+    // they go through saveBpReading instead
+    if (dbField === 'bp_systolic' || dbField === 'bp_diastolic') return;
+
+    // Check if record exists for this date
     const { data: existing } = await supabase
       .from('health_records')
-      .select('id')
+      .select('*')
       .eq('date', date)
       .maybeSingle();
 
     if (existing) {
+      let newValue = value;
+      // For additive fields, ADD to existing value
+      if (ADDITIVE_FIELDS.has(dbField) && typeof value === 'number') {
+        const currentVal = (existing as any)[dbField] ?? 0;
+        newValue = currentVal + value;
+      }
       const { error } = await supabase
         .from('health_records')
-        .update({ [dbField]: value, recorded_by: recordedBy } as any)
+        .update({ [dbField]: newValue, recorded_by: recordedBy } as any)
         .eq('id', existing.id);
       if (error) { toast.error('Failed to update'); console.error(error); return; }
     } else {
@@ -119,5 +142,55 @@ export function useHealthRecords() {
     await fetchRecords();
   }, [fetchRecords]);
 
-  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField };
+  // Save an individual BP reading and update the health_records row with the day's average
+  const saveBpReading = useCallback(async (date: string, systolic: number, diastolic: number, recordedBy: string) => {
+    // Insert individual reading
+    const { error: insertErr } = await supabase.from('bp_readings' as any).insert({
+      date, systolic, diastolic, recorded_by: recordedBy,
+    } as any);
+    if (insertErr) { toast.error('Failed to save BP reading'); console.error(insertErr); return; }
+
+    // Fetch all readings for this date to compute average
+    const { data: dayReadings } = await supabase
+      .from('bp_readings' as any)
+      .select('*')
+      .eq('date', date);
+    const readings = (dayReadings as any[]) ?? [];
+    const avgSys = Math.round(readings.reduce((s: number, r: any) => s + r.systolic, 0) / readings.length);
+    const avgDia = Math.round(readings.reduce((s: number, r: any) => s + r.diastolic, 0) / readings.length);
+
+    // Upsert the average into health_records
+    const { data: existing } = await supabase.from('health_records').select('id').eq('date', date).maybeSingle();
+    if (existing) {
+      await supabase.from('health_records').update({ bp_systolic: avgSys, bp_diastolic: avgDia, recorded_by: recordedBy } as any).eq('id', existing.id);
+    } else {
+      await supabase.from('health_records').insert({ date, bp_systolic: avgSys, bp_diastolic: avgDia, recorded_by: recordedBy } as any);
+    }
+    await Promise.all([fetchRecords(), fetchBpReadings()]);
+  }, [fetchRecords, fetchBpReadings]);
+
+  const getBpReadingsForDate = useCallback((date: string) => {
+    return bpReadings.filter(r => r.date === date);
+  }, [bpReadings]);
+
+  const deleteBpReading = useCallback(async (id: string, date: string) => {
+    const { error } = await supabase.from('bp_readings' as any).delete().eq('id', id);
+    if (error) { toast.error('Failed to delete'); console.error(error); return; }
+
+    // Recalculate average
+    const remaining = bpReadings.filter(r => r.id !== id && r.date === date);
+    const { data: existing } = await supabase.from('health_records').select('id').eq('date', date).maybeSingle();
+    if (existing) {
+      if (remaining.length > 0) {
+        const avgSys = Math.round(remaining.reduce((s, r) => s + r.systolic, 0) / remaining.length);
+        const avgDia = Math.round(remaining.reduce((s, r) => s + r.diastolic, 0) / remaining.length);
+        await supabase.from('health_records').update({ bp_systolic: avgSys, bp_diastolic: avgDia } as any).eq('id', existing.id);
+      } else {
+        await supabase.from('health_records').update({ bp_systolic: 0, bp_diastolic: 0 } as any).eq('id', existing.id);
+      }
+    }
+    await Promise.all([fetchRecords(), fetchBpReadings()]);
+  }, [bpReadings, fetchRecords, fetchBpReadings]);
+
+  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField, saveBpReading, getBpReadingsForDate, deleteBpReading };
 }

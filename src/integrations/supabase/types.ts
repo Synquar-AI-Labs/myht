@@ -86,6 +86,33 @@ export type Database = {
         }
         Relationships: []
       }
+      bp_readings: {
+        Row: {
+          created_at: string
+          date: string
+          diastolic: number
+          id: string
+          recorded_by: string
+          systolic: number
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          diastolic: number
+          id?: string
+          recorded_by?: string
+          systolic: number
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          diastolic?: number
+          id?: string
+          recorded_by?: string
+          systolic?: number
+        }
+        Relationships: []
+      }
       health_records: {
         Row: {
           bile_bags: number
