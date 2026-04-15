@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { format, subDays } from 'date-fns';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
@@ -8,6 +8,7 @@ import { useCustomActions } from '@/hooks/useCustomActions';
 import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
+import { getDueMedicineIds } from '@/lib/medicineAlerts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -84,6 +85,19 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
     logs.forEach(l => { counts[l.medicine_id] = (counts[l.medicine_id] || 0) + 1; });
     return counts;
   }, [logs]);
+
+  // ─── Medicine due-time flashing ───
+  const [dueMedIds, setDueMedIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const check = () => {
+      const medsWithSchedule = medicines.map(m => ({ id: m.id, schedule_time: (m as any).schedule_time || '' }));
+      setDueMedIds(getDueMedicineIds(medsWithSchedule, logs, new Date()));
+    };
+    check();
+    const interval = setInterval(check, 60_000);
+    return () => clearInterval(interval);
+  }, [medicines, logs]);
 
   const chartData = useMemo(() => {
     const today = new Date();
@@ -254,11 +268,12 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
         <div className="grid grid-cols-3 gap-2">
           {medWithCat.map(({ med, cat }) => {
             const count = medLogCounts[med.id] || 0;
+            const isDue = dueMedIds.has(med.id);
             return (
               <button
                 key={med.id}
                 onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                className={`relative rounded-xl border p-2 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-card'}`}
+                className={`relative rounded-xl border p-2 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-card'} ${isDue ? 'animate-pulse ring-2 ring-red-500 ring-offset-1' : ''}`}
               >
                 <div className="flex items-center justify-between mb-0.5">
                   <Pill className={`h-3 w-3 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
@@ -462,11 +477,12 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
           <div className="grid grid-cols-4 gap-1.5">
             {medWithCat.map(({ med, cat }) => {
               const count = medLogCounts[med.id] || 0;
+              const isDue = dueMedIds.has(med.id);
               return (
                 <button
                   key={med.id}
                   onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                  className={`relative rounded-lg border p-1.5 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-background'}`}
+                  className={`relative rounded-lg border p-1.5 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-background'} ${isDue ? 'animate-pulse ring-2 ring-red-500 ring-offset-1' : ''}`}
                 >
                   <div className="flex items-center justify-between mb-0.5">
                     <Pill className={`h-2.5 w-2.5 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />

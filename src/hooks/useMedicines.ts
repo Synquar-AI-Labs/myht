@@ -7,6 +7,7 @@ export interface Medicine {
   id: string;
   name: string;
   schedule_note: string;
+  schedule_time: string;
   created_at: string;
 }
 
