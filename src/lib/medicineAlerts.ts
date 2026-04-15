@@ -54,14 +54,20 @@ function parseSingleTime(str: string): ScheduleSlot | null {
 }
 
 /**
- * Check if `now` falls within ±windowMinutes of a schedule slot.
+ * Check if `now` is within the alert window: starts `leadMinutes` before
+ * the scheduled time and continues indefinitely until logged or dismissed.
  */
-function isWithinWindow(slot: ScheduleSlot, nowHour: number, nowMinute: number, windowMinutes: number): boolean {
+function isInAlertWindow(slot: ScheduleSlot, nowHour: number, nowMinute: number, leadMinutes: number): boolean {
   const slotMin = slot.hour24 * 60 + slot.minute;
   const nowMin = nowHour * 60 + nowMinute;
-  const diff = Math.abs(slotMin - nowMin);
-  // Handle midnight wrap (e.g. 11:45 PM → 12:15 AM)
-  return diff <= windowMinutes || (1440 - diff) <= windowMinutes;
+  // Alert starts `leadMinutes` before scheduled time and continues after
+  const alertStart = (slotMin - leadMinutes + 1440) % 1440;
+  // Check if now is >= alertStart (with midnight wrap)
+  if (alertStart <= slotMin) {
+    return nowMin >= alertStart;
+  }
+  // Wraps midnight
+  return nowMin >= alertStart || nowMin <= slotMin;
 }
 
 /**
@@ -72,7 +78,7 @@ export function isMedicineDue(
   scheduleTime: string,
   todayLogs: { hour: number; am_pm: string }[],
   now: Date = new Date(),
-  windowMinutes = 30,
+  leadMinutes = 15,
 ): boolean {
   const slots = parseScheduleTime(scheduleTime);
   if (slots.length === 0) return false;
@@ -81,7 +87,7 @@ export function isMedicineDue(
   const nowMinute = now.getMinutes();
 
   return slots.some(slot => {
-    if (!isWithinWindow(slot, nowHour, nowMinute, windowMinutes)) return false;
+    if (!isInAlertWindow(slot, nowHour, nowMinute, leadMinutes)) return false;
 
     // Check if already logged for this slot
     const slotAmPm = slot.hour24 >= 12 ? 'PM' : 'AM';
@@ -103,15 +109,16 @@ export function isMedicineDue(
 export function getDueMedicineIds(
   medicines: { id: string; schedule_time?: string }[],
   logs: { medicine_id: string; hour: number; am_pm: string }[],
+  dismissedIds: Set<string> = new Set(),
   now: Date = new Date(),
-  windowMinutes = 30,
+  leadMinutes = 15,
 ): Set<string> {
   const dueIds = new Set<string>();
 
   for (const med of medicines) {
-    if (!med.schedule_time) continue;
+    if (!med.schedule_time || dismissedIds.has(med.id)) continue;
     const medLogs = logs.filter(l => l.medicine_id === med.id);
-    if (isMedicineDue(med.schedule_time, medLogs, now, windowMinutes)) {
+    if (isMedicineDue(med.schedule_time, medLogs, now, leadMinutes)) {
       dueIds.add(med.id);
     }
   }
