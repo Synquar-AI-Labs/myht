@@ -101,7 +101,7 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
   doc.setFontSize(9);
   doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy h:mm a')}`, 14, 29);
 
-  const startY = 33;
+  const head = [['Date', 'Feed', 'Bile', 'BP (avg)', 'Vomit', 'Stool', 'Urine', 'Flushes', 'Weight (kg)']];
   const body = rows.map(r => [
     r.date,
     String(r.feed),
@@ -128,7 +128,7 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
   ]);
 
   autoTable(doc, {
-    startY: 25,
+    startY: 33,
     head,
     body,
     theme: 'grid',
