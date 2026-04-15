@@ -8,6 +8,7 @@ import { useCustomActions } from '@/hooks/useCustomActions';
 import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
+import { getDueMedicineIds } from '@/lib/medicineAlerts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
