@@ -169,6 +169,30 @@ export function QuickLogTab() {
         ))}
       </div>
 
+      {/* Upcoming Appointments (next 5 days) */}
+      {(() => {
+        const fiveDaysOut = format(new Date(Date.now() + 5 * 86400000), 'yyyy-MM-dd');
+        const todayDate = today();
+        const upcoming = appointments.filter(a => a.date >= todayDate && a.date <= fiveDaysOut);
+        if (upcoming.length === 0) return null;
+        return (
+          <div>
+            <h3 className="text-xs font-medium text-muted-foreground mb-2">Upcoming Appointments</h3>
+            <div className="space-y-1.5">
+              {upcoming.map(a => (
+                <div key={a.id} className="rounded-lg border bg-card p-2 flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-primary shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-medium truncate">{a.doctor_name}</div>
+                    <div className="text-[10px] text-muted-foreground">{format(new Date(a.date + 'T00:00'), 'EEE, MMM d')} · {a.time} — {a.reason}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Health Event Buttons */}
       <div>
         <h3 className="text-xs font-medium text-muted-foreground mb-2">Quick Actions</h3>
