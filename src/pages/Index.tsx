@@ -7,11 +7,12 @@ import { DailyRecordTab } from '@/components/DailyRecordTab';
 import { AppointmentsTab } from '@/components/AppointmentsTab';
 import { Button } from '@/components/ui/button';
 import { TranscriptsTab } from '@/components/TranscriptsTab';
-import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap, Maximize, Minimize } from 'lucide-react';
+import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap, Maximize, Minimize, Pill } from 'lucide-react';
 import { HospitalStaysTab } from '@/components/HospitalStaysTab';
 import { QuickLogTab } from '@/components/QuickLogTab';
+import { MedicineScheduleTab } from '@/components/MedicineScheduleTab';
 
-type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog';
+type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog' | 'meds';
 
 const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'quicklog', label: 'Quick Log', icon: Zap },
@@ -19,6 +20,7 @@ const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
   { id: 'record', label: 'Record', icon: ClipboardList },
   { id: 'calendar', label: 'Calendar', icon: CalendarDays },
   { id: 'stays', label: 'Stays', icon: Users },
+  { id: 'meds', label: 'Meds', icon: Pill },
   { id: 'transcripts', label: 'Transcripts', icon: Mic },
 ];
 
@@ -71,6 +73,7 @@ const Index = () => {
         {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
         {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
         {activeTab === 'stays' && <HospitalStaysTab />}
+        {activeTab === 'meds' && <MedicineScheduleTab />}
         {activeTab === 'transcripts' && <TranscriptsTab />}
       </main>
 

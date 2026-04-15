@@ -326,22 +326,40 @@ export type Database = {
       }
       medicines: {
         Row: {
+          amount: string
+          category: string
           created_at: string
+          frequency: string
           id: string
+          med_type: string
           name: string
+          potency: string
           schedule_note: string
+          schedule_time: string
         }
         Insert: {
+          amount?: string
+          category?: string
           created_at?: string
+          frequency?: string
           id?: string
+          med_type?: string
           name: string
+          potency?: string
           schedule_note?: string
+          schedule_time?: string
         }
         Update: {
+          amount?: string
+          category?: string
           created_at?: string
+          frequency?: string
           id?: string
+          med_type?: string
           name?: string
+          potency?: string
           schedule_note?: string
+          schedule_time?: string
         }
         Relationships: []
       }
