@@ -353,6 +353,35 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Custom action charts */}
+        {customActions.filter(ca => ca.show_graph).map(ca => {
+          const today = new Date();
+          const dayOfWeek = today.getDay();
+          const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+          const thisMonday = subDays(today, mondayOffset);
+          const weekStart = subDays(thisMonday, weekOffset * 7);
+          const caChartData = Array.from({ length: 7 }, (_, i) => {
+            const date = subDays(weekStart, -i);
+            const d = format(date, 'yyyy-MM-dd');
+            const dayLogs = customLogs.filter(l => l.action_id === ca.id && l.date === d);
+            const total = dayLogs.reduce((sum, l) => sum + Number(l.value), 0);
+            return { label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`, value: total };
+          });
+          return (
+            <div key={ca.id} className="rounded-xl border bg-card p-3 h-36">
+              <h4 className="text-[10px] font-medium text-muted-foreground mb-1">{ca.name}{ca.unit ? ` (${ca.unit})` : ''}</h4>
+              <ResponsiveContainer width="100%" height="85%">
+                <BarChart data={caChartData}>
+                  <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
+                  <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="value" name={ca.name} fill="hsl(180, 50%, 45%)" radius={[3, 3, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
