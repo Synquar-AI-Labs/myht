@@ -1,0 +1,1 @@
+ALTER TABLE public.medicines ADD COLUMN show_in_quick_log boolean NOT NULL DEFAULT true;
