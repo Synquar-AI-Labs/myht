@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { eachDayOfInterval } from 'date-fns';
+import { MedicineReportCards } from '@/components/MedicineReportCards';
 import { HealthRecord } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -250,6 +251,8 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
           </Button>
         </CardContent>
       </Card>
+      {/* Medicine Reports */}
+      <MedicineReportCards />
     </div>
   );
 }
