@@ -1,38 +1,50 @@
-import { useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { HealthRecord } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Slider } from '@/components/ui/slider';
-import { format, subDays, parseISO } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon, Download } from 'lucide-react';
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths, addMonths } from 'date-fns';
+import { cn } from '@/lib/utils';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface DashboardTabProps {
   records: HealthRecord[];
   bpReadings?: { date: string; systolic: number; diastolic: number }[];
 }
 
-function buildTableData(
+function getMonthOptions() {
+  const now = new Date();
+  const start = subMonths(now, 12);
+  const end = addMonths(now, 1);
+  return eachMonthOfInterval({ start, end }).reverse().map(d => ({
+    value: format(d, 'yyyy-MM'),
+    label: format(d, 'MMM yyyy'),
+  }));
+}
+
+function buildRows(
   records: HealthRecord[],
   bpReadings: { date: string; systolic: number; diastolic: number }[],
-  days: number
+  from: string,
+  to: string
 ) {
-  const cutoff = format(subDays(new Date(), days - 1), 'yyyy-MM-dd');
-  const today = format(new Date(), 'yyyy-MM-dd');
-
   const filtered = records
-    .filter(r => r.date >= cutoff && r.date <= today)
+    .filter(r => r.date >= from && r.date <= to)
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  // Group BP readings by date for averaging
   const bpByDate: Record<string, { sys: number[]; dia: number[] }> = {};
   bpReadings.forEach(bp => {
-    if (bp.date < cutoff || bp.date > today) return;
+    if (bp.date < from || bp.date > to) return;
     if (!bpByDate[bp.date]) bpByDate[bp.date] = { sys: [], dia: [] };
     bpByDate[bp.date].sys.push(bp.systolic);
     bpByDate[bp.date].dia.push(bp.diastolic);
   });
 
   const rows = filtered.map(r => {
-    // Use individual BP readings average if available, otherwise fall back to record values
     const bpData = bpByDate[r.date];
     let avgSys = r.bp_systolic;
     let avgDia = r.bp_diastolic;
@@ -40,12 +52,11 @@ function buildTableData(
       avgSys = Math.round(bpData.sys.reduce((a, b) => a + b, 0) / bpData.sys.length);
       avgDia = Math.round(bpData.dia.reduce((a, b) => a + b, 0) / bpData.dia.length);
     }
-
     return {
-      date: r.date,
-      label: format(parseISO(r.date), 'MMM d'),
+      date: format(parseISO(r.date), 'MMM d'),
       feed: r.feed_bags,
       bile: (r as any).bile_bags ?? 0,
+      bp: avgSys > 0 ? `${avgSys}/${avgDia}` : '—',
       bpSys: avgSys,
       bpDia: avgDia,
       vomit: (r as any).vomit_count ?? 0,
@@ -56,130 +67,181 @@ function buildTableData(
     };
   });
 
-  // Totals: sum for counts, average for BP and weight
   const count = rows.length || 1;
   const totals = {
     feed: rows.reduce((s, r) => s + r.feed, 0),
     bile: rows.reduce((s, r) => s + r.bile, 0),
-    bpSys: Math.round(rows.reduce((s, r) => s + r.bpSys, 0) / count),
-    bpDia: Math.round(rows.reduce((s, r) => s + r.bpDia, 0) / count),
+    bpSys: Math.round(rows.filter(r => r.bpSys > 0).reduce((s, r) => s + r.bpSys, 0) / (rows.filter(r => r.bpSys > 0).length || 1)),
+    bpDia: Math.round(rows.filter(r => r.bpDia > 0).reduce((s, r) => s + r.bpDia, 0) / (rows.filter(r => r.bpDia > 0).length || 1)),
     vomit: rows.reduce((s, r) => s + r.vomit, 0),
     stool: rows.reduce((s, r) => s + r.stool, 0),
     urine: rows.reduce((s, r) => s + r.urine, 0),
     flushes: rows.reduce((s, r) => s + r.flushes, 0),
-    weight: rows.length > 0 ? +(rows.reduce((s, r) => s + r.weight, 0) / count).toFixed(1) : 0,
+    weight: rows.filter(r => r.weight > 0).length > 0
+      ? +(rows.filter(r => r.weight > 0).reduce((s, r) => s + r.weight, 0) / rows.filter(r => r.weight > 0).length).toFixed(1)
+      : 0,
   };
 
   return { rows, totals };
 }
 
-function MetricTable({ title, days, onDaysChange, records, bpReadings, min, max }: {
-  title: string;
-  days: number;
-  onDaysChange: (v: number) => void;
-  records: HealthRecord[];
-  bpReadings: { date: string; systolic: number; diastolic: number }[];
-  min: number;
-  max: number;
-}) {
-  const { rows, totals } = useMemo(() => buildTableData(records, bpReadings, days), [records, bpReadings, days]);
+function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string) {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-  return (
-    <Card className="border-none shadow-sm">
-      <CardHeader className="px-4 pb-2 pt-4">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className="flex items-center gap-3 pt-2">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">{days} days</span>
-          <Slider
-            value={[days]}
-            onValueChange={v => onDaysChange(v[0])}
-            min={min}
-            max={max}
-            step={1}
-            className="flex-1"
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="px-0 pb-4 overflow-x-auto">
-        {rows.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-6">No data for this period</p>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-xs px-2 sticky left-0 bg-card z-10">Date</TableHead>
-                <TableHead className="text-xs px-2 text-center">Feed</TableHead>
-                <TableHead className="text-xs px-2 text-center">Bile</TableHead>
-                <TableHead className="text-xs px-2 text-center">BP</TableHead>
-                <TableHead className="text-xs px-2 text-center">Vomit</TableHead>
-                <TableHead className="text-xs px-2 text-center">Stool</TableHead>
-                <TableHead className="text-xs px-2 text-center">Urine</TableHead>
-                <TableHead className="text-xs px-2 text-center">Flush</TableHead>
-                <TableHead className="text-xs px-2 text-center">Wt(kg)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map(r => (
-                <TableRow key={r.date}>
-                  <TableCell className="text-xs px-2 font-medium sticky left-0 bg-card z-10 whitespace-nowrap">{r.label}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.feed}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.bile}</TableCell>
-                  <TableCell className="text-xs px-2 text-center whitespace-nowrap">
-                    {r.bpSys > 0 ? `${r.bpSys}/${r.bpDia}` : '—'}
-                  </TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.vomit}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.stool}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.urine}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.flushes}</TableCell>
-                  <TableCell className="text-xs px-2 text-center">{r.weight > 0 ? r.weight : '—'}</TableCell>
-                </TableRow>
-              ))}
-              {/* Totals row */}
-              <TableRow className="bg-muted/50 font-semibold">
-                <TableCell className="text-xs px-2 sticky left-0 bg-muted/50 z-10">Total/Avg</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.feed}</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.bile}</TableCell>
-                <TableCell className="text-xs px-2 text-center whitespace-nowrap">
-                  {totals.bpSys > 0 ? `${totals.bpSys}/${totals.bpDia}` : '—'}
-                </TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.vomit}</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.stool}</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.urine}</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.flushes}</TableCell>
-                <TableCell className="text-xs px-2 text-center">{totals.weight > 0 ? totals.weight : '—'}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
-  );
+  doc.setFontSize(16);
+  doc.text(title, 14, 15);
+  doc.setFontSize(9);
+  doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy h:mm a')}`, 14, 21);
+
+  const head = [['Date', 'Feed', 'Bile', 'BP (avg)', 'Vomit', 'Stool', 'Urine', 'Flushes', 'Weight (kg)']];
+  const body = rows.map(r => [
+    r.date,
+    String(r.feed),
+    String(r.bile),
+    r.bp,
+    String(r.vomit),
+    String(r.stool),
+    String(r.urine),
+    String(r.flushes),
+    r.weight > 0 ? String(r.weight) : '—',
+  ]);
+
+  // Add totals row
+  body.push([
+    'Total/Avg',
+    String(totals.feed),
+    String(totals.bile),
+    totals.bpSys > 0 ? `${totals.bpSys}/${totals.bpDia}` : '—',
+    String(totals.vomit),
+    String(totals.stool),
+    String(totals.urine),
+    String(totals.flushes),
+    totals.weight > 0 ? String(totals.weight) : '—',
+  ]);
+
+  autoTable(doc, {
+    startY: 25,
+    head,
+    body,
+    theme: 'grid',
+    headStyles: { fillColor: [80, 80, 80], fontSize: 9 },
+    bodyStyles: { fontSize: 8 },
+    styles: { cellPadding: 2, halign: 'center' },
+    columnStyles: { 0: { halign: 'left' } },
+    didParseCell: (data) => {
+      // Style the totals row
+      if (data.row.index === body.length - 1 && data.section === 'body') {
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.fillColor = [240, 240, 240];
+      }
+    },
+  });
+
+  doc.save(filename);
 }
 
 export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
-  const [weeklyDays, setWeeklyDays] = useState(7);
-  const [monthlyDays, setMonthlyDays] = useState(30);
+  const monthOptions = useMemo(() => getMonthOptions(), []);
+  const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]?.value ?? format(new Date(), 'yyyy-MM'));
+  const [weekDate, setWeekDate] = useState<Date>(new Date());
+
+  // Monthly data
+  const monthlyData = useMemo(() => {
+    const monthStart = format(startOfMonth(parseISO(selectedMonth + '-01')), 'yyyy-MM-dd');
+    const monthEnd = format(endOfMonth(parseISO(selectedMonth + '-01')), 'yyyy-MM-dd');
+    return buildRows(records, bpReadings, monthStart, monthEnd);
+  }, [records, bpReadings, selectedMonth]);
+
+  // Weekly data
+  const weekStart = startOfWeek(weekDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(weekDate, { weekStartsOn: 1 });
+  const weeklyData = useMemo(() => {
+    return buildRows(records, bpReadings, format(weekStart, 'yyyy-MM-dd'), format(weekEnd, 'yyyy-MM-dd'));
+  }, [records, bpReadings, weekStart, weekEnd]);
+
+  const monthLabel = monthOptions.find(m => m.value === selectedMonth)?.label ?? selectedMonth;
+  const weekLabel = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`;
 
   return (
     <div className="space-y-6 pb-4">
-      <MetricTable
-        title="Weekly Overview"
-        days={weeklyDays}
-        onDaysChange={setWeeklyDays}
-        records={records}
-        bpReadings={bpReadings}
-        min={3}
-        max={14}
-      />
-      <MetricTable
-        title="Monthly Overview"
-        days={monthlyDays}
-        onDaysChange={setMonthlyDays}
-        records={records}
-        bpReadings={bpReadings}
-        min={14}
-        max={90}
-      />
+      {/* Weekly PDF */}
+      <Card className="border-none shadow-sm">
+        <CardHeader className="px-4 pb-2 pt-4">
+          <CardTitle className="text-sm font-medium">Weekly Report</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 space-y-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="justify-start text-left font-normal text-sm">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {weekLabel}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={weekDate}
+                  onSelect={(d) => d && setWeekDate(d)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {weeklyData.rows.length} record(s) found for this week
+          </p>
+          <Button
+            onClick={() => generatePdf(
+              `Weekly Health Report — ${weekLabel}`,
+              weeklyData.rows,
+              weeklyData.totals,
+              `weekly-report-${format(weekStart, 'yyyy-MM-dd')}.pdf`
+            )}
+            disabled={weeklyData.rows.length === 0}
+            className="w-full"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download Weekly PDF
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Monthly PDF */}
+      <Card className="border-none shadow-sm">
+        <CardHeader className="px-4 pb-2 pt-4">
+          <CardTitle className="text-sm font-medium">Monthly Report</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 space-y-3">
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {monthOptions.map(opt => (
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {monthlyData.rows.length} record(s) found for {monthLabel}
+          </p>
+          <Button
+            onClick={() => generatePdf(
+              `Monthly Health Report — ${monthLabel}`,
+              monthlyData.rows,
+              monthlyData.totals,
+              `monthly-report-${selectedMonth}.pdf`
+            )}
+            disabled={monthlyData.rows.length === 0}
+            className="w-full"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download Monthly PDF
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
