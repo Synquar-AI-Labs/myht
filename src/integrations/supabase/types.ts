@@ -336,6 +336,7 @@ export type Database = {
           potency: string
           schedule_note: string
           schedule_time: string
+          show_in_quick_log: boolean
         }
         Insert: {
           amount?: string
@@ -348,6 +349,7 @@ export type Database = {
           potency?: string
           schedule_note?: string
           schedule_time?: string
+          show_in_quick_log?: boolean
         }
         Update: {
           amount?: string
@@ -360,6 +362,7 @@ export type Database = {
           potency?: string
           schedule_note?: string
           schedule_time?: string
+          show_in_quick_log?: boolean
         }
         Relationships: []
       }

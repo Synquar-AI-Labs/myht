@@ -161,11 +161,12 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const medWithCat = useMemo(() => {
     const categorized = new Set<string>();
     const result: { med: Medicine; cat: typeof CATEGORIES[0] | null }[] = [];
+    const quickLogMeds = medicines.filter(m => (m as any).show_in_quick_log !== false);
     CATEGORIES.forEach(cat => {
-      const meds = medicines.filter(m => cat.keys.some(k => m.name.toLowerCase().includes(k)));
+      const meds = quickLogMeds.filter(m => cat.keys.some(k => m.name.toLowerCase().includes(k)));
       meds.forEach(m => { categorized.add(m.id); result.push({ med: m, cat }); });
     });
-    medicines.filter(m => !categorized.has(m.id)).forEach(m => result.push({ med: m, cat: null }));
+    quickLogMeds.filter(m => !categorized.has(m.id)).forEach(m => result.push({ med: m, cat: null }));
     return result;
   }, [medicines]);
 

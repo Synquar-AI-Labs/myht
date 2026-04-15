@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
@@ -29,7 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 const emptyForm: MedicineScheduleInsert = {
   name: '', potency: '', amount: '', med_type: '', category: 'medicine',
-  schedule_time: '', frequency: 'daily', schedule_note: '',
+  schedule_time: '', frequency: 'daily', schedule_note: '', show_in_quick_log: true,
 };
 
 export function MedicineScheduleTab() {
@@ -41,7 +42,7 @@ export function MedicineScheduleTab() {
   const openAdd = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
   const openEdit = (med: typeof medicines[0]) => {
     setEditId(med.id);
-    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note });
+    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log });
     setOpen(true);
   };
 
@@ -70,7 +71,16 @@ export function MedicineScheduleTab() {
     return acc;
   }, {});
 
-  const setField = (k: keyof MedicineScheduleInsert, v: string) => setForm(f => ({ ...f, [k]: v }));
+  const setField = (k: keyof MedicineScheduleInsert, v: string) => {
+    setForm(f => {
+      const updated = { ...f, [k]: v };
+      // Auto-toggle quick log: medicine defaults to yes, non-medicine to no (only on category change for new items)
+      if (k === 'category' && !editId) {
+        updated.show_in_quick_log = v === 'medicine';
+      }
+      return updated;
+    });
+  };
 
   return (
     <div className="pb-4 space-y-4">
@@ -155,6 +165,14 @@ export function MedicineScheduleTab() {
             <div>
               <Label className="text-xs">Notes</Label>
               <Input value={form.schedule_note} onChange={e => setField('schedule_note', e.target.value)} placeholder="Optional notes" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="show_in_quick_log"
+                checked={form.show_in_quick_log}
+                onCheckedChange={(checked) => setForm(f => ({ ...f, show_in_quick_log: !!checked }))}
+              />
+              <Label htmlFor="show_in_quick_log" className="text-xs cursor-pointer">Show in Quick Log</Label>
             </div>
             <Button className="w-full" onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
           </div>
