@@ -94,6 +94,7 @@ export function QuickLogTab() {
         flush: (r as any)?.flush_ml ?? r?.flush_count ?? 0,
         bpSys: r?.bp_systolic ?? null,
         bpDia: r?.bp_diastolic ?? null,
+        weight: r?.weight ?? null,
       };
     });
   }, [records, weekOffset]);
