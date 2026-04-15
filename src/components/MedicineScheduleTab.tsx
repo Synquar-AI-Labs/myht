@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
@@ -29,7 +30,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 const emptyForm: MedicineScheduleInsert = {
   name: '', potency: '', amount: '', med_type: '', category: 'medicine',
-  schedule_time: '', frequency: 'daily', schedule_note: '',
+  schedule_time: '', frequency: 'daily', schedule_note: '', show_in_quick_log: true,
 };
 
 export function MedicineScheduleTab() {
@@ -41,7 +42,7 @@ export function MedicineScheduleTab() {
   const openAdd = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
   const openEdit = (med: typeof medicines[0]) => {
     setEditId(med.id);
-    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note });
+    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log });
     setOpen(true);
   };
 
