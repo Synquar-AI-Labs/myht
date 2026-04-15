@@ -51,8 +51,15 @@ export function MedicineScheduleTab() {
     setOpen(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Delete this medicine?')) await deleteMedicine(id);
+  const handleDelete = async (id: string, name: string) => {
+    const { count } = await supabase
+      .from('medicine_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('medicine_id', id);
+    const logWarning = count && count > 0
+      ? `\n\n⚠️ This medicine has ${count} existing log${count > 1 ? 's' : ''} that will lose their reference.`
+      : '';
+    if (confirm(`Delete "${name}"?${logWarning}`)) await deleteMedicine(id);
   };
 
   // Group by med_type
