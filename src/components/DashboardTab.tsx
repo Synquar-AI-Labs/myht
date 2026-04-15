@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { eachDayOfInterval } from 'date-fns';
 import { HealthRecord } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,12 @@ function buildRows(
   from: string,
   to: string
 ) {
-  const filtered = records
-    .filter(r => r.date >= from && r.date <= to)
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const recordsByDate: Record<string, HealthRecord> = {};
+  records.forEach(r => { if (r.date >= from && r.date <= to) recordsByDate[r.date] = r; });
+
+  // Generate all days in the range
+  const allDays = eachDayOfInterval({ start: parseISO(from), end: parseISO(to) })
+    .map(d => format(d, 'yyyy-MM-dd'));
 
   const bpByDate: Record<string, { sys: number[]; dia: number[] }> = {};
   bpReadings.forEach(bp => {
@@ -44,26 +48,28 @@ function buildRows(
     bpByDate[bp.date].dia.push(bp.diastolic);
   });
 
-  const rows = filtered.map(r => {
-    const bpData = bpByDate[r.date];
-    let avgSys = r.bp_systolic;
-    let avgDia = r.bp_diastolic;
+  const rows = allDays.map(day => {
+    const r = recordsByDate[day];
+    const bpData = bpByDate[day];
+    let avgSys = r?.bp_systolic ?? 0;
+    let avgDia = r?.bp_diastolic ?? 0;
     if (bpData && bpData.sys.length > 0) {
       avgSys = Math.round(bpData.sys.reduce((a, b) => a + b, 0) / bpData.sys.length);
       avgDia = Math.round(bpData.dia.reduce((a, b) => a + b, 0) / bpData.dia.length);
     }
     return {
-      date: format(parseISO(r.date), 'MMM d'),
-      feed: r.feed_bags,
-      bile: (r as any).bile_bags ?? 0,
+      date: format(parseISO(day), 'MMM d'),
+      feed: r?.feed_bags ?? 0,
+      bile: (r as any)?.bile_bags ?? 0,
       bp: avgSys > 0 ? `${avgSys}/${avgDia}` : '—',
       bpSys: avgSys,
       bpDia: avgDia,
-      vomit: (r as any).vomit_count ?? 0,
-      stool: r.stool_count,
-      urine: (r as any).urine_count ?? 0,
-      flushes: (r as any).flush_count ?? 0,
-      weight: Number(r.weight),
+      vomit: (r as any)?.vomit_count ?? 0,
+      stool: r?.stool_count ?? 0,
+      urine: (r as any)?.urine_count ?? 0,
+      flushes: (r as any)?.flush_count ?? 0,
+      weight: Number(r?.weight ?? 0),
+      hasRecord: !!r,
     };
   });
 
