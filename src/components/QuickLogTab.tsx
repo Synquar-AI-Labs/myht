@@ -220,6 +220,31 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
               </button>
             );
           })}
+          {/* Custom action buttons */}
+          {customActions.map(ca => {
+            const count = getLogCountForAction(ca.id);
+            return (
+              <button
+                key={ca.id}
+                onClick={() => setCustomLogSheet({ actionId: ca.id, name: ca.name, unit: ca.unit, defaultValue: ca.default_value })}
+                className={`${ca.color} text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform relative`}
+              >
+                <Zap className="h-5 w-5" />
+                <span className="text-xs font-medium">{ca.name}</span>
+                {count > 0 && (
+                  <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
+                )}
+              </button>
+            );
+          })}
+          {/* Add new action button */}
+          <button
+            onClick={() => { setNewAction({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false }); setCustomActionOpen(true); }}
+            className="border-2 border-dashed border-muted-foreground/30 rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform text-muted-foreground"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="text-xs font-medium">Add New</span>
+          </button>
         </div>
       </div>
 
