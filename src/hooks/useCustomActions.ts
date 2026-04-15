@@ -23,7 +23,7 @@ export interface CustomActionLog {
   created_at: string;
 }
 
-export function useCustomActions(dateFilter?: string) {
+export function useCustomActions() {
   const [actions, setActions] = useState<CustomAction[]>([]);
   const [logs, setLogs] = useState<CustomActionLog[]>([]);
 
