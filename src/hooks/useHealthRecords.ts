@@ -192,5 +192,5 @@ export function useHealthRecords() {
     await Promise.all([fetchRecords(), fetchBpReadings()]);
   }, [bpReadings, fetchRecords, fetchBpReadings]);
 
-  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField };
+  return { records, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField, saveBpReading, getBpReadingsForDate, deleteBpReading };
 }
