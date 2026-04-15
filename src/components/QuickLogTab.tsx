@@ -581,6 +581,56 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Custom Action Dialog */}
+      <Dialog open={customActionOpen} onOpenChange={setCustomActionOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Create Quick Action</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1"><Label className="text-xs">Name</Label><Input value={newAction.name} onChange={e => setNewAction(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Temperature" /></div>
+            <div className="space-y-1"><Label className="text-xs">Unit (optional)</Label><Input value={newAction.unit} onChange={e => setNewAction(p => ({ ...p, unit: e.target.value }))} placeholder="e.g. °C, ml, count" /></div>
+            <div className="space-y-1"><Label className="text-xs">Default Value</Label><Input type="number" value={newAction.default_value} onChange={e => setNewAction(p => ({ ...p, default_value: Number(e.target.value) }))} /></div>
+            <div className="space-y-1">
+              <Label className="text-xs">Color</Label>
+              <div className="grid grid-cols-5 gap-1.5">
+                {['bg-teal-500', 'bg-pink-500', 'bg-lime-500', 'bg-violet-500', 'bg-sky-500', 'bg-rose-500', 'bg-emerald-500', 'bg-fuchsia-500', 'bg-amber-500', 'bg-slate-500'].map(c => (
+                  <button key={c} onClick={() => setNewAction(p => ({ ...p, color: c }))} className={`${c} h-8 rounded-lg ${newAction.color === c ? 'ring-2 ring-offset-2 ring-foreground' : ''}`} />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="show-graph" checked={newAction.show_graph} onChange={e => setNewAction(p => ({ ...p, show_graph: e.target.checked }))} className="rounded" />
+              <Label htmlFor="show-graph" className="text-xs">Add a graph for this action?</Label>
+            </div>
+          </div>
+          <DialogFooter className="flex-col gap-2">
+            <Button className="w-full" disabled={!newAction.name.trim()} onClick={async () => { await addAction(newAction); setCustomActionOpen(false); }}>Create Action</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Custom Action Log Sheet */}
+      {customLogSheet && (
+        <QuickLogSheet
+          open
+          onOpenChange={o => { if (!o) setCustomLogSheet(null); }}
+          mode={{
+            type: 'health',
+            metric: customLogSheet.name,
+            fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.defaultValue, min: 0 }],
+            onSave: (values, recordedBy, date) => {
+              addCustomLog({
+                action_id: customLogSheet.actionId,
+                value: values['value'] as number,
+                date,
+                recorded_by: recordedBy,
+                hour: new Date().getHours() > 12 ? new Date().getHours() - 12 : new Date().getHours() === 0 ? 12 : new Date().getHours(),
+                am_pm: new Date().getHours() >= 12 ? 'PM' : 'AM',
+              });
+            },
+          }}
+        />
+      )}
     </>
   );
 }
