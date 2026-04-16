@@ -55,19 +55,20 @@ function parseSingleTime(str: string): ScheduleSlot | null {
 
 /**
  * Check if `now` is within the alert window: starts `leadMinutes` before
- * the scheduled time and continues indefinitely until logged or dismissed.
+ * the scheduled time and ends `trailMinutes` after (default 120 min / 2 hours).
  */
-function isInAlertWindow(slot: ScheduleSlot, nowHour: number, nowMinute: number, leadMinutes: number): boolean {
+function isInAlertWindow(slot: ScheduleSlot, nowHour: number, nowMinute: number, leadMinutes: number, trailMinutes = 120): boolean {
   const slotMin = slot.hour24 * 60 + slot.minute;
   const nowMin = nowHour * 60 + nowMinute;
-  // Alert starts `leadMinutes` before scheduled time and continues after
   const alertStart = (slotMin - leadMinutes + 1440) % 1440;
-  // Check if now is >= alertStart (with midnight wrap)
-  if (alertStart <= slotMin) {
-    return nowMin >= alertStart;
+  const alertEnd = (slotMin + trailMinutes) % 1440;
+
+  // Check if nowMin is within [alertStart, alertEnd] with midnight wrap
+  if (alertStart <= alertEnd) {
+    return nowMin >= alertStart && nowMin <= alertEnd;
   }
   // Wraps midnight
-  return nowMin >= alertStart || nowMin <= slotMin;
+  return nowMin >= alertStart || nowMin <= alertEnd;
 }
 
 /**
