@@ -6,6 +6,8 @@ import { medicineSchema, medicineLogSchema } from '@/lib/validation';
 export interface Medicine {
   id: string;
   name: string;
+  potency: string;
+  amount: string;
   schedule_note: string;
   schedule_time: string;
   category: string;
