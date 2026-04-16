@@ -581,7 +581,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
       {/* Sheet */}
       {sheet?.type === 'medicine' && (
         <QuickLogSheet open onOpenChange={o => { if (!o) setSheet(null); }}
-          mode={{ type: 'medicine', medicineName: sheet.medicine.name, medicineId: sheet.medicine.id, onSave: addMedicineLog }} />
+          mode={{ type: 'medicine', medicineName: sheet.medicine.name, medicineId: sheet.medicine.id, medicineAmount: sheet.medicine.amount, onSave: addMedicineLog }} />
       )}
       {sheet?.type === 'health' && (
         <QuickLogSheet open onOpenChange={o => { if (!o) setSheet(null); }}

@@ -11,6 +11,7 @@ type MedicineMode = {
   type: 'medicine';
   medicineName: string;
   medicineId: string;
+  medicineAmount?: string;
   onSave: (data: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; date: string }) => void;
 };
 
@@ -85,6 +86,9 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
           <DrawerTitle>
             {mode.type === 'medicine' ? `Log ${mode.medicineName}` : `Log ${mode.metric}`}
           </DrawerTitle>
+          {mode.type === 'medicine' && mode.medicineAmount && (
+            <p className="text-sm text-primary font-semibold">{mode.medicineAmount}</p>
+          )}
         </DrawerHeader>
 
         <div className="px-4 pb-2 space-y-4">
