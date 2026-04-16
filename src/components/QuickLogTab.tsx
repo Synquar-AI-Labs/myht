@@ -77,6 +77,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const [noteContent, setNoteContent] = useState('');
   const savedRecorder = localStorage.getItem('ht_recorder') || '';
   const [weekOffset, setWeekOffset] = useState(0);
+  const dismissedStorageKey = `ht_dismissed_med_alerts_${todayStr}`;
 
   const todayRecord = getRecordByDate(todayStr);
 
@@ -88,11 +89,40 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
 
   // ─── Medicine due-time flashing ───
   const [dueMedIds, setDueMedIds] = useState<Set<string>>(new Set());
-  const [dismissedMedIds, setDismissedMedIds] = useState<Set<string>>(new Set());
+  const [dismissedMedIds, setDismissedMedIds] = useState<Set<string>>(() => {
+    const saved = localStorage.getItem(dismissedStorageKey);
+    if (!saved) return new Set();
+
+    try {
+      const parsed = JSON.parse(saved);
+      return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      return new Set();
+    }
+  });
 
   const dismissMedAlert = (medId: string) => {
     setDismissedMedIds(prev => new Set(prev).add(medId));
   };
+
+  useEffect(() => {
+    localStorage.setItem(dismissedStorageKey, JSON.stringify(Array.from(dismissedMedIds)));
+  }, [dismissedMedIds, dismissedStorageKey]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(dismissedStorageKey);
+    if (!saved) {
+      setDismissedMedIds(new Set());
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(saved);
+      setDismissedMedIds(new Set(Array.isArray(parsed) ? parsed : []));
+    } catch {
+      setDismissedMedIds(new Set());
+    }
+  }, [dismissedStorageKey]);
 
   useEffect(() => {
     const check = () => {
