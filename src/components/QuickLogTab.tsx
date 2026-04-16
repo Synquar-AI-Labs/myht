@@ -288,7 +288,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
                   {cat && <span className={`text-[7px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
                 </div>
                 <div className="text-[10px] font-medium leading-tight truncate">{med.name}</div>
-                {(med as any).amount && <div className="text-[8px] text-primary font-semibold truncate">{(med as any).amount}</div>}
+                {med.amount && <div className="text-[8px] text-primary font-semibold truncate">{med.amount}</div>}
                 {med.schedule_note && <div className="text-[8px] text-muted-foreground truncate">{med.schedule_note}</div>}
                 {count > 0 && !isDue && (
                   <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
@@ -506,7 +506,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
                     {cat && <span className={`text-[8px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
                   </div>
                   <div className="text-xs font-medium leading-tight truncate">{med.name}</div>
-                  {(med as any).amount && <div className="text-[9px] text-primary font-semibold truncate">{(med as any).amount}</div>}
+                  {med.amount && <div className="text-[9px] text-primary font-semibold truncate">{med.amount}</div>}
                   {count > 0 && !isDue && (
                     <Badge variant="secondary" className="absolute top-0.5 right-0.5 h-3.5 min-w-3.5 text-[8px] px-0.5 justify-center">{count}</Badge>
                   )}
