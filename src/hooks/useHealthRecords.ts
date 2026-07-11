@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { HealthRecord, HealthRecordForm } from '@/types/health';
 import { toast } from 'sonner';
@@ -9,34 +10,41 @@ const ADDITIVE_FIELDS = new Set([
   'feed_bags', 'bile_bags', 'stool_count', 'vomit_count', 'urine_count', 'flush_ml', 'flush_count',
 ]);
 
+type BpReading = { id: string; date: string; systolic: number; diastolic: number; recorded_by: string; created_at: string };
+
 export function useHealthRecords() {
-  const [records, setRecords] = useState<HealthRecord[]>([]);
-  const [bpReadings, setBpReadings] = useState<{ id: string; date: string; systolic: number; diastolic: number; recorded_by: string; created_at: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchRecords = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('health_records')
-      .select('*')
-      .order('date', { ascending: false });
-    if (error) {
-      toast.error('Failed to load records');
-      console.error(error);
-    } else {
-      setRecords(data ?? []);
-    }
-    setLoading(false);
-  }, []);
+  const { data: records = [], isLoading: loading } = useQuery({
+    queryKey: ['health_records'],
+    queryFn: async (): Promise<HealthRecord[]> => {
+      const { data, error } = await supabase
+        .from('health_records')
+        .select('*')
+        .order('date', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
-  const fetchBpReadings = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('bp_readings' as any)
-      .select('*')
-      .order('created_at', { ascending: true });
-    if (!error) setBpReadings((data as any[]) ?? []);
-  }, []);
+  const { data: bpReadings = [] } = useQuery({
+    queryKey: ['bp_readings'],
+    queryFn: async (): Promise<BpReading[]> => {
+      const { data, error } = await supabase
+        .from('bp_readings' as any)
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      return (data as any[]) ?? [];
+    },
+  });
 
-  useEffect(() => { fetchRecords(); fetchBpReadings(); }, [fetchRecords, fetchBpReadings]);
+  const invalidateRecords = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['health_records'] });
+  }, [queryClient]);
+  const invalidateBp = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['bp_readings'] });
+  }, [queryClient]);
 
   const addRecord = useCallback(async (form: HealthRecordForm) => {
     const parsed = healthRecordSchema.safeParse(form);
@@ -44,10 +52,9 @@ export function useHealthRecords() {
       toast.error(parsed.error.errors[0]?.message || 'Invalid input');
       return;
     }
-    // Upsert by date — delete existing record for that date first
-    await supabase.from('health_records').delete().eq('date', form.date);
-    const { error } = await supabase.from('health_records').insert({
-      date: form.date,
+    // Only the fields the daily form owns. Anything else on the row
+    // (bile_bags, urine_count, flush_ml — logged via Quick Log) is preserved.
+    const formFields = {
       feed_bags: form.feedBags,
       flush_count: form.flushCount,
       weight: form.weight,
@@ -62,14 +69,35 @@ export function useHealthRecords() {
       constipation: form.constipation,
       recorded_by: form.recordedBy,
       misc_notes: form.miscNotes,
-    } as any);
+    };
+
+    // Update in place if the day already has a record; otherwise insert.
+    // (Never delete-then-insert — a failed insert would lose the whole day.)
+    const { data: existing } = await supabase
+      .from('health_records')
+      .select('id')
+      .eq('date', form.date)
+      .maybeSingle();
+
+    let error;
+    if (existing) {
+      ({ error } = await supabase
+        .from('health_records')
+        .update(formFields as any)
+        .eq('id', existing.id));
+    } else {
+      ({ error } = await supabase
+        .from('health_records')
+        .insert({ date: form.date, ...formFields } as any));
+    }
+
     if (error) {
       toast.error('Failed to save record');
       console.error(error);
     } else {
-      await fetchRecords();
+      invalidateRecords();
     }
-  }, [fetchRecords]);
+  }, [invalidateRecords]);
 
   const deleteRecord = useCallback(async (id: string) => {
     const { error } = await supabase.from('health_records').delete().eq('id', id);
@@ -77,9 +105,9 @@ export function useHealthRecords() {
       toast.error('Failed to delete');
       console.error(error);
     } else {
-      setRecords(prev => prev.filter(r => r.id !== id));
+      invalidateRecords();
     }
-  }, []);
+  }, [invalidateRecords]);
 
   const getLatestRecord = useCallback(() => {
     return records.length > 0 ? records[0] : null;
@@ -139,8 +167,8 @@ export function useHealthRecords() {
         .insert({ date, [dbField]: value, recorded_by: recordedBy } as any);
       if (error) { toast.error('Failed to save'); console.error(error); return; }
     }
-    await fetchRecords();
-  }, [fetchRecords]);
+    invalidateRecords();
+  }, [invalidateRecords]);
 
   // Save an individual BP reading and update the health_records row with the day's average
   const saveBpReading = useCallback(async (date: string, systolic: number, diastolic: number, recordedBy: string) => {
@@ -166,8 +194,9 @@ export function useHealthRecords() {
     } else {
       await supabase.from('health_records').insert({ date, bp_systolic: avgSys, bp_diastolic: avgDia, recorded_by: recordedBy } as any);
     }
-    await Promise.all([fetchRecords(), fetchBpReadings()]);
-  }, [fetchRecords, fetchBpReadings]);
+    invalidateRecords();
+    invalidateBp();
+  }, [invalidateRecords, invalidateBp]);
 
   const getBpReadingsForDate = useCallback((date: string) => {
     return bpReadings.filter(r => r.date === date);
@@ -189,8 +218,9 @@ export function useHealthRecords() {
         await supabase.from('health_records').update({ bp_systolic: 0, bp_diastolic: 0 } as any).eq('id', existing.id);
       }
     }
-    await Promise.all([fetchRecords(), fetchBpReadings()]);
-  }, [bpReadings, fetchRecords, fetchBpReadings]);
+    invalidateRecords();
+    invalidateBp();
+  }, [bpReadings, invalidateRecords, invalidateBp]);
 
   return { records, bpReadings, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField, saveBpReading, getBpReadingsForDate, deleteBpReading };
 }

@@ -26,7 +26,7 @@ export function parseScheduleTime(raw: string): ScheduleSlot[] {
     return [];
   }
 
-  const parts = raw.split(/[\/,]/).map(s => s.trim()).filter(Boolean);
+  const parts = raw.split(/[/,]/).map(s => s.trim()).filter(Boolean);
   const slots: ScheduleSlot[] = [];
 
   for (const part of parts) {

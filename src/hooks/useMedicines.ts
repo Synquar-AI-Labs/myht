@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { medicineSchema, medicineLogSchema } from '@/lib/validation';
@@ -26,45 +27,48 @@ export interface MedicineLog {
   medicine?: Medicine;
 }
 
+// Shared across useMedicines, useMedicineSchedule and the report cards so every
+// screen reads the same cached medicine list.
+export const MEDICINES_QUERY_KEY = ['medicines'] as const;
+
+export async function fetchMedicinesList() {
+  const { data, error } = await supabase
+    .from('medicines' as any)
+    .select('*')
+    .order('name');
+  if (error) throw error;
+  return (data as any[]) ?? [];
+}
+
 export function useMedicines(viewDate: string) {
-  const [medicines, setMedicines] = useState<Medicine[]>([]);
-  const [logs, setLogs] = useState<MedicineLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchMedicines = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('medicines' as any)
-      .select('*')
-      .order('name');
-    if (error) {
-      console.error(error);
-    } else {
-      setMedicines((data as any[]) ?? []);
-    }
-  }, []);
+  const { data: medicines = [] } = useQuery({
+    queryKey: MEDICINES_QUERY_KEY,
+    queryFn: fetchMedicinesList,
+  });
 
-  const fetchLogs = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('medicine_logs' as any)
-      .select('*, medicine:medicines(*)')
-      .eq('date', viewDate)
-      .order('created_at', { ascending: true });
-    if (error) {
-      console.error(error);
-    } else {
-      setLogs((data as any[])?.map((d: any) => ({ ...d, medicine: d.medicine })) ?? []);
-    }
-    setLoading(false);
-  }, [viewDate]);
+  const { data: logs = [], isLoading: loading } = useQuery({
+    queryKey: ['medicine_logs_by_date', viewDate],
+    queryFn: async (): Promise<MedicineLog[]> => {
+      const { data, error } = await supabase
+        .from('medicine_logs' as any)
+        .select('*, medicine:medicines(*)')
+        .eq('date', viewDate)
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      return (data as any[])?.map((d: any) => ({ ...d, medicine: d.medicine })) ?? [];
+    },
+  });
 
-  useEffect(() => {
-    fetchMedicines();
-  }, [fetchMedicines]);
+  const invalidateMedicines = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: MEDICINES_QUERY_KEY });
+  }, [queryClient]);
 
-  useEffect(() => {
-    setLoading(true);
-    fetchLogs();
-  }, [fetchLogs]);
+  const invalidateLogs = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['medicine_logs_by_date'] });
+    queryClient.invalidateQueries({ queryKey: ['medicine_logs_all'] });
+  }, [queryClient]);
 
   const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; date?: string }) => {
     const parsed = medicineLogSchema.safeParse({ ...log, date: log.date || viewDate });
@@ -84,9 +88,9 @@ export function useMedicines(viewDate: string) {
       console.error(error);
     } else {
       toast.success('Medicine logged');
-      await fetchLogs();
+      invalidateLogs();
     }
-  }, [viewDate, fetchLogs]);
+  }, [viewDate, invalidateLogs]);
 
   const deleteMedicineLog = useCallback(async (id: string) => {
     const { error } = await supabase.from('medicine_logs' as any).delete().eq('id', id);
@@ -94,10 +98,10 @@ export function useMedicines(viewDate: string) {
       toast.error('Failed to delete');
       console.error(error);
     } else {
-      setLogs(prev => prev.filter(l => l.id !== id));
+      invalidateLogs();
       toast.success('Deleted');
     }
-  }, []);
+  }, [invalidateLogs]);
 
   const updateMedicineLog = useCallback(async (id: string, updates: { medicine_id?: string; hour?: number; am_pm?: string; recorded_by?: string }) => {
     const { error } = await supabase.from('medicine_logs' as any).update(updates as any).eq('id', id);
@@ -106,9 +110,9 @@ export function useMedicines(viewDate: string) {
       console.error(error);
     } else {
       toast.success('Updated');
-      await fetchLogs();
+      invalidateLogs();
     }
-  }, [fetchLogs]);
+  }, [invalidateLogs]);
 
   const addNewMedicine = useCallback(async (name: string, scheduleNote: string) => {
     const parsed = medicineSchema.safeParse({ name, schedule_note: scheduleNote });
@@ -122,9 +126,9 @@ export function useMedicines(viewDate: string) {
       console.error(error);
     } else {
       toast.success('Medicine added to list');
-      await fetchMedicines();
+      invalidateMedicines();
     }
-  }, [fetchMedicines]);
+  }, [invalidateMedicines]);
 
   const copyFromPreviousDay = useCallback(async (previousDate: string) => {
     const { data, error } = await supabase
@@ -148,9 +152,9 @@ export function useMedicines(viewDate: string) {
       console.error(insertError);
     } else {
       toast.success('Copied medicine logs from previous day');
-      await fetchLogs();
+      invalidateLogs();
     }
-  }, [viewDate, fetchLogs]);
+  }, [viewDate, invalidateLogs]);
 
   return { medicines, logs, loading, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay };
 }

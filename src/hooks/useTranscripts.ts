@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -17,36 +18,28 @@ export interface Transcript {
 }
 
 export function useTranscripts() {
-  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+  const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  const fetchTranscripts = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('audio_transcripts')
-      .select('*')
-      .eq('date', selectedDate)
-      .order('created_at', { ascending: false });
+  const { data: transcripts = [], isLoading: loading } = useQuery({
+    queryKey: ['audio_transcripts', selectedDate],
+    queryFn: async (): Promise<Transcript[]> => {
+      const { data, error } = await supabase
+        .from('audio_transcripts')
+        .select('*')
+        .eq('date', selectedDate)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map((d: any) => ({
+        ...d,
+        action_items: Array.isArray(d.action_items) ? d.action_items : [],
+        follow_ups: Array.isArray(d.follow_ups) ? d.follow_ups : [],
+      }));
+    },
+  });
 
-    if (error) {
-      console.error('Error fetching transcripts:', error);
-    } else {
-      setTranscripts(
-        (data || []).map((d: any) => ({
-          ...d,
-          action_items: Array.isArray(d.action_items) ? d.action_items : [],
-          follow_ups: Array.isArray(d.follow_ups) ? d.follow_ups : [],
-        }))
-      );
-    }
-    setLoading(false);
-  }, [selectedDate]);
-
-  useEffect(() => {
-    fetchTranscripts();
-  }, [fetchTranscripts]);
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['audio_transcripts'] });
 
   const processAudio = async (audioBlob: Blob, title: string, recordedBy: string) => {
     setProcessing(true);
@@ -128,7 +121,7 @@ export function useTranscripts() {
       if (insertError) throw insertError;
 
       toast({ title: 'Transcript saved', description: 'Audio has been transcribed and analyzed.' });
-      await fetchTranscripts();
+      invalidate();
     } catch (e: any) {
       console.error('processAudio error:', e);
       toast({ title: 'Error', description: e.message || 'Failed to process audio', variant: 'destructive' });
@@ -143,7 +136,7 @@ export function useTranscripts() {
       toast({ title: 'Error', description: 'Failed to delete transcript', variant: 'destructive' });
     } else {
       toast({ title: 'Deleted' });
-      await fetchTranscripts();
+      invalidate();
     }
   };
 

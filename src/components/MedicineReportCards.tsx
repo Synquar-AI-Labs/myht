@@ -1,5 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { MEDICINES_QUERY_KEY, fetchMedicinesList } from '@/hooks/useMedicines';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -134,21 +136,22 @@ export function MedicineReportCards() {
   const monthOptions = useMemo(() => getMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]?.value ?? format(new Date(), 'yyyy-MM'));
   const [weekDate, setWeekDate] = useState<Date>(new Date());
-  const [medicines, setMedicines] = useState<MedicineInfo[]>([]);
-  const [logs, setLogs] = useState<MedLog[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      const [medsRes, logsRes] = await Promise.all([
-        supabase.from('medicines').select('id, name, potency, amount, category').order('name'),
-        supabase.from('medicine_logs').select('date, medicine_id'),
-      ]);
-      setMedicines((medsRes.data as MedicineInfo[]) ?? []);
-      setLogs((logsRes.data as MedLog[]) ?? []);
-      setLoading(false);
-    })();
-  }, []);
+  const { data: medicines = [], isLoading: medsLoading } = useQuery({
+    queryKey: MEDICINES_QUERY_KEY,
+    queryFn: fetchMedicinesList,
+  });
+
+  const { data: logs = [], isLoading: logsLoading } = useQuery({
+    queryKey: ['medicine_logs_all'],
+    queryFn: async (): Promise<MedLog[]> => {
+      const { data, error } = await supabase.from('medicine_logs').select('date, medicine_id');
+      if (error) throw error;
+      return (data as MedLog[]) ?? [];
+    },
+  });
+
+  const loading = medsLoading || logsLoading;
 
   const weekStart = startOfWeek(weekDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(weekDate, { weekStartsOn: 1 });
