@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { Copy, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatBp } from '@/lib/utils';
 
 interface DailyRecordTabProps {
   records: HealthRecord[];
@@ -112,7 +113,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
               <div><span className="text-muted-foreground">Feed Bags:</span> {viewRecord.feed_bags}</div>
               <div><span className="text-muted-foreground">Flushes:</span> {(viewRecord as any).flush_count ?? 0}</div>
               <div><span className="text-muted-foreground">Weight:</span> {viewRecord.weight} kg</div>
-              <div><span className="text-muted-foreground">BP:</span> {viewRecord.bp_systolic}/{viewRecord.bp_diastolic}</div>
+              <div><span className="text-muted-foreground">BP:</span> {formatBp(viewRecord.bp_systolic, viewRecord.bp_diastolic)}</div>
               <div><span className="text-muted-foreground">Food Taken:</span> {viewRecord.food_taken ? 'Yes' : 'No'}</div>
               {viewRecord.food_taken && viewRecord.food_description && (
                 <div className="col-span-2"><span className="text-muted-foreground">Food:</span> {viewRecord.food_description}</div>
@@ -244,7 +245,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium">{format(parseISO(record.date), 'EEE, MMM d')}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {record.feed_bags} bags · {record.weight}kg · BP {record.bp_systolic}/{record.bp_diastolic}
+                      {record.feed_bags} bags · {record.weight}kg · BP {formatBp(record.bp_systolic, record.bp_diastolic)}
                       {record.stool_passed ? ` · Stool ×${record.stool_count}` : ''}
                       {(record as any).recorded_by ? ` · by ${(record as any).recorded_by}` : ''}
                     </p>

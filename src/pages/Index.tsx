@@ -1,16 +1,20 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useAuth } from '@/hooks/useAuth';
-import { DashboardTab } from '@/components/DashboardTab';
-import { DailyRecordTab } from '@/components/DailyRecordTab';
-import { AppointmentsTab } from '@/components/AppointmentsTab';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { Button } from '@/components/ui/button';
-import { TranscriptsTab } from '@/components/TranscriptsTab';
-import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap, Maximize, Minimize, Pill } from 'lucide-react';
-import { HospitalStaysTab } from '@/components/HospitalStaysTab';
+import { BarChart3, ClipboardList, CalendarDays, Mic, Heart, LogOut, Users, Zap, Maximize, Minimize, Pill, Loader2 } from 'lucide-react';
 import { QuickLogTab } from '@/components/QuickLogTab';
-import { MedicineScheduleTab } from '@/components/MedicineScheduleTab';
+
+// Quick Log is the default/home tab, so it loads eagerly. The rest — and their
+// heavy dependencies (jsPDF, extra charts) — load only when first opened.
+const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
+const DailyRecordTab = lazy(() => import('@/components/DailyRecordTab').then(m => ({ default: m.DailyRecordTab })));
+const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m => ({ default: m.AppointmentsTab })));
+const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
+const HospitalStaysTab = lazy(() => import('@/components/HospitalStaysTab').then(m => ({ default: m.HospitalStaysTab })));
+const MedicineScheduleTab = lazy(() => import('@/components/MedicineScheduleTab').then(m => ({ default: m.MedicineScheduleTab })));
 
 type Tab = 'dashboard' | 'record' | 'calendar' | 'stays' | 'transcripts' | 'quicklog' | 'meds';
 
@@ -27,6 +31,7 @@ const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
 const Index = () => {
   const [activeTab, setActiveTab] = useState<Tab>('quicklog');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  useRealtimeSync();
   const healthRecords = useHealthRecords();
   const appointmentsData = useAppointments();
   const { signOut } = useAuth();
@@ -68,13 +73,15 @@ const Index = () => {
       )}
 
       <main className={`flex-1 overflow-y-auto md:overflow-hidden px-4 pt-4 pb-20 md:pb-2 ${isFullscreen ? 'pt-2 pb-2' : ''}`}>
-        {activeTab === 'quicklog' && <QuickLogTab appointmentsData={appointmentsData} />}
-        {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} bpReadings={healthRecords.bpReadings} />}
-        {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
-        {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
-        {activeTab === 'stays' && <HospitalStaysTab />}
-        {activeTab === 'meds' && <MedicineScheduleTab />}
-        {activeTab === 'transcripts' && <TranscriptsTab />}
+        <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
+          {activeTab === 'quicklog' && <QuickLogTab appointmentsData={appointmentsData} />}
+          {activeTab === 'dashboard' && <DashboardTab records={healthRecords.records} bpReadings={healthRecords.bpReadings} />}
+          {activeTab === 'record' && <DailyRecordTab {...healthRecords} />}
+          {activeTab === 'calendar' && <AppointmentsTab {...appointmentsData} />}
+          {activeTab === 'stays' && <HospitalStaysTab />}
+          {activeTab === 'meds' && <MedicineScheduleTab />}
+          {activeTab === 'transcripts' && <TranscriptsTab />}
+        </Suspense>
       </main>
 
       {/* Nav — hidden in fullscreen */}

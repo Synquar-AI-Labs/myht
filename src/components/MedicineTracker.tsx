@@ -23,7 +23,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [hour, setHour] = useState(12);
   const [amPm, setAmPm] = useState<'AM' | 'PM'>('AM');
-  const [recordedBy, setRecordedBy] = useState('');
+  const [recordedBy, setRecordedBy] = useState(() => localStorage.getItem('ht_recorder') || '');
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showNewMedicineDialog, setShowNewMedicineDialog] = useState(false);
@@ -34,13 +34,14 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
     setSelectedMedicine('');
     setHour(12);
     setAmPm('AM');
-    setRecordedBy('');
+    setRecordedBy(localStorage.getItem('ht_recorder') || '');
     setEditingId(null);
     setShowForm(false);
   };
 
   const handleSubmit = async () => {
     if (!selectedMedicine) return;
+    if (recordedBy) localStorage.setItem('ht_recorder', recordedBy);
     if (editingId) {
       await updateMedicineLog(editingId, { medicine_id: selectedMedicine, hour, am_pm: amPm, recorded_by: recordedBy });
     } else {

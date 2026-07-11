@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -24,52 +25,62 @@ export interface CustomActionLog {
 }
 
 export function useCustomActions() {
-  const [actions, setActions] = useState<CustomAction[]>([]);
-  const [logs, setLogs] = useState<CustomActionLog[]>([]);
+  const queryClient = useQueryClient();
 
-  const fetchActions = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('custom_actions')
-      .select('*')
-      .order('created_at', { ascending: true });
-    if (error) { toast.error('Failed to load custom actions'); return; }
-    setActions(data ?? []);
-  }, []);
+  const { data: actions = [] } = useQuery({
+    queryKey: ['custom_actions'],
+    queryFn: async (): Promise<CustomAction[]> => {
+      const { data, error } = await supabase
+        .from('custom_actions')
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
-  const fetchLogs = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('custom_action_logs')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) { toast.error('Failed to load custom action logs'); return; }
-    setLogs(data ?? []);
-  }, []);
+  const { data: logs = [] } = useQuery({
+    queryKey: ['custom_action_logs'],
+    queryFn: async (): Promise<CustomActionLog[]> => {
+      const { data, error } = await supabase
+        .from('custom_action_logs')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
 
-  useEffect(() => { fetchActions(); fetchLogs(); }, [fetchActions, fetchLogs]);
+  const invalidateActions = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['custom_actions'] });
+  }, [queryClient]);
+  const invalidateLogs = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['custom_action_logs'] });
+  }, [queryClient]);
 
   const addAction = async (action: { name: string; unit: string; color: string; default_value: number; show_graph: boolean }) => {
     const { error } = await supabase.from('custom_actions').insert(action);
     if (error) { toast.error('Failed to add custom action'); return; }
     toast.success(`Added ${action.name}`);
-    fetchActions();
+    invalidateActions();
   };
 
   const deleteAction = async (id: string) => {
     const { error } = await supabase.from('custom_actions').delete().eq('id', id);
     if (error) { toast.error('Failed to delete action'); return; }
     toast.success('Action deleted');
-    fetchActions();
-    fetchLogs();
+    invalidateActions();
+    invalidateLogs();
   };
 
   const addLog = async (data: { action_id: string; value: number; date: string; recorded_by: string; hour: number; am_pm: string }) => {
     const { error } = await supabase.from('custom_action_logs').insert(data);
     if (error) { toast.error('Failed to log action'); return; }
     toast.success('Logged');
-    fetchLogs();
+    invalidateLogs();
   };
 
   const getLogCountForAction = (actionId: string, date?: string) => logs.filter(l => l.action_id === actionId && (!date || l.date === date)).length;
 
-  return { actions, logs, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: fetchLogs };
+  return { actions, logs, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: invalidateLogs };
 }

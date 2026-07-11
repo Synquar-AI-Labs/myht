@@ -9,6 +9,7 @@ import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
 import { getDueMedicineIds } from '@/lib/medicineAlerts';
+import { formatBp } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -203,7 +204,7 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const summaryItems = [
     { label: 'Feed', value: todayRecord?.feed_bags ?? 0 },
     { label: 'Bile', value: (todayRecord as any)?.bile_bags ?? 0 },
-    { label: 'BP (avg)', value: todayRecord ? `${todayRecord.bp_systolic}/${todayRecord.bp_diastolic}` : '—' },
+    { label: 'BP (avg)', value: formatBp(todayRecord?.bp_systolic, todayRecord?.bp_diastolic) },
     { label: 'Vomit', value: todayRecord?.vomit_count ?? 0 },
     { label: 'Stool', value: todayRecord?.stool_count ?? 0 },
     { label: 'Urine', value: (todayRecord as any)?.urine_count ?? 0 },

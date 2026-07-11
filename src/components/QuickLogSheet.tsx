@@ -162,6 +162,11 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
         </div>
 
         <DrawerFooter>
+          {!recorder && (
+            <p className="text-center text-xs text-muted-foreground">
+              Choose who's logging above to enable Save
+            </p>
+          )}
           <Button onClick={handleSave} disabled={!recorder} className="w-full">Save</Button>
         </DrawerFooter>
       </DrawerContent>

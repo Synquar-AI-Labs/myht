@@ -8,14 +8,17 @@ import { Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
+type Mode = 'signin' | 'signup';
+
 export default function Auth() {
+  const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) navigate('/', { replace: true });
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -26,21 +29,33 @@ export default function Auth() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error && (error.message === 'Invalid login credentials' || error.message === 'Email not confirmed')) {
-        // Account doesn't exist or wasn't confirmed — recreate it
-        const { error: signUpError } = await supabase.auth.signUp({ email, password });
-        if (signUpError) throw signUpError;
-        // Auto-confirm is on, so sign in immediately
-        const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
-        if (retryError) throw retryError;
-      } else if (error) {
-        throw error;
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        // With auto-confirm on, sign in immediately so we land on the app.
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) {
+          toast.success('Account created. Please sign in.');
+          setMode('signin');
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          if (error.message === 'Invalid login credentials') {
+            toast.error('Incorrect email or password');
+          } else {
+            throw error;
+          }
+        }
       }
     } catch (err: any) {
-      toast.error(err.message || 'Sign in failed');
+      toast.error(err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -55,7 +70,7 @@ export default function Auth() {
             <CardTitle className="text-xl">Health Tracker</CardTitle>
           </div>
           <p className="text-sm text-muted-foreground">
-            Sign in to continue
+            {mode === 'signin' ? 'Sign in to continue' : 'Create a new account'}
           </p>
         </CardHeader>
         <CardContent>
@@ -69,9 +84,18 @@ export default function Auth() {
               <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1" placeholder="Enter your password" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Please wait…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
+          <button
+            type="button"
+            onClick={() => setMode(m => (m === 'signin' ? 'signup' : 'signin'))}
+            className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground"
+          >
+            {mode === 'signin'
+              ? "Don't have an account? Create one"
+              : 'Already have an account? Sign in'}
+          </button>
         </CardContent>
       </Card>
     </div>
