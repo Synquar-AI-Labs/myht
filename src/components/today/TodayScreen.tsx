@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { Check, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -130,17 +130,15 @@ export function TodayScreen() {
                 i < givenVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
               }`}
             >
-              <Check className="mt-0.5 h-5 w-5 flex-none self-start text-[#2e7d4f]" strokeWidth={3} />
               <span className="min-w-0 flex-1">
                 <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
                   {g.medicine?.name ?? 'Unknown'}
                 </span>
-                {doseLabel(g.medicine) && (
-                  <span className="block text-[13px] text-[#8b8175]">{doseLabel(g.medicine)}</span>
-                )}
-              </span>
-              <span className="mt-0.5 flex-none self-start text-[13px] text-[#8b8175]">
-                {timeLabel(g.at)}{g.log.recorded_by ? ` · ${g.log.recorded_by}` : ''}
+                <span className="block text-[14px] text-[#8b8175]">
+                  {doseLabel(g.medicine) && `${doseLabel(g.medicine)} · `}
+                  <span className="font-semibold text-[#2e7d4f]">✓ {timeLabel(g.at)}</span>
+                  {g.log.recorded_by && ` · ${g.log.recorded_by}`}
+                </span>
               </span>
             </button>
           ))}
@@ -184,16 +182,16 @@ export function TodayScreen() {
                       }`
                 }
               >
-                <span className={`mt-0.5 w-[70px] flex-none self-start text-sm ${highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
-                  {timeLabel(u.at)}
-                </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
                     {u.medicine.name}
                   </span>
-                  {doseLabel(u.medicine) && (
-                    <span className="block text-[13px] text-[#8b8175]">{doseLabel(u.medicine)}</span>
-                  )}
+                  <span className="block text-[14px] text-[#8b8175]">
+                    {doseLabel(u.medicine) && `${doseLabel(u.medicine)} · `}
+                    <span className={highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}>
+                      {timeLabel(u.at)}
+                    </span>
+                  </span>
                 </span>
                 {u.state === 'due' && (
                   <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-white">
