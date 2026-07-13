@@ -302,7 +302,7 @@ export function TodayScreen() {
         }}
         onAddNote={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
       />
-      <TrendsSection records={records} customActions={customActions} customLogs={customLogs} />
+      <TrendsSection records={records} customActions={customActions} customLogs={customLogs} alwaysShowVitals={!isMobile} />
     </div>
   );
 

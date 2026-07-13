@@ -9,7 +9,7 @@ import type { HealthRecord, Appointment } from '@/types/health';
 import type { GivenItem, UpcomingItem } from '@/components/today/todaySchedule';
 import { timeLabel, doseLabel, logDateTime } from '@/components/today/todaySchedule';
 import { READING_TYPES, ReadingType } from '@/components/today/readingTypes';
-import { TrendsCharts } from '@/components/today/TrendsCharts';
+import { TrendsCharts, TrendsOpenPanel } from '@/components/today/TrendsCharts';
 import type { CustomActionLog } from '@/hooks/useCustomActions';
 
 /* ── Shared collapsible card shell ─────────────────────────────── */
@@ -259,9 +259,30 @@ interface TrendsSectionProps {
   records: HealthRecord[];
   customActions: CustomAction[];
   customLogs: CustomActionLog[];
+  /** Wide layout: BP & weight charts stay visible; the rest collapse inside. */
+  alwaysShowVitals?: boolean;
 }
 
-export function TrendsSection({ records, customActions, customLogs }: TrendsSectionProps) {
+export function TrendsSection({ records, customActions, customLogs, alwaysShowVitals }: TrendsSectionProps) {
+  if (alwaysShowVitals) {
+    return (
+      <div className="rounded-2xl border border-[#e9e2d6] bg-white">
+        <div className="flex min-h-[68px] items-center gap-3.5 p-3.5">
+          <span className="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-[#fdf0e6] text-[#c2740c]">
+            <BarChart3 className="h-[22px] w-[22px]" strokeWidth={2.2} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[17px] font-bold text-[#26201a]">Visuals & trends</span>
+            <span className="block truncate text-[13px] text-[#8b8175]">Blood pressure & weight this week</span>
+          </span>
+        </div>
+        <div className="border-t border-[#f3ede2] p-3.5">
+          <TrendsOpenPanel records={records} customActions={customActions} customLogs={customLogs} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SectionCard
       icon={<BarChart3 className="h-[22px] w-[22px]" strokeWidth={2.2} />}
