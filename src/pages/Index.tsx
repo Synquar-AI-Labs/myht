@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { QuickLogTab } from '@/components/QuickLogTab';
 import { TodayScreen } from '@/components/today/TodayScreen';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Heavy screens (PDF/report tooling, extra charts) load on first open.
 const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
@@ -41,6 +42,7 @@ const Index = () => {
   const [historySub, setHistorySub] = useState<HistorySub>('record');
   const [moreView, setMoreView] = useState<MoreView>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const isMobile = useIsMobile();
   useRealtimeSync();
   const healthRecords = useHealthRecords();
   const appointmentsData = useAppointments();
@@ -84,14 +86,12 @@ const Index = () => {
 
       <main className={`flex-1 overflow-y-auto pb-24 md:overflow-hidden md:px-4 md:pt-4 md:pb-2 ${isFullscreen ? 'pt-2 pb-2' : ''}`}>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
+          {/* Mount ONLY the active layout — running both alert engines at once
+              (one merely CSS-hidden) risks the two disagreeing. */}
           {activeTab === 'today' && (
-            <>
-              <TodayScreen />
-              {/* Tablet keeps the existing dashboard layout for now */}
-              <div className="hidden md:block">
-                <QuickLogTab appointmentsData={appointmentsData} />
-              </div>
-            </>
+            isMobile
+              ? <TodayScreen />
+              : <QuickLogTab appointmentsData={appointmentsData} />
           )}
 
           {activeTab === 'history' && (

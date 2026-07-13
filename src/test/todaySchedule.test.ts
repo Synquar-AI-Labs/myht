@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildGivenList, buildUpcomingList, logDateTime } from '@/components/today/todaySchedule';
+import { buildGivenList, buildUpcomingList, logDateTime, doseLabel } from '@/components/today/todaySchedule';
 import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
 
 const med = (over: Partial<Medicine>): Medicine => ({
@@ -10,6 +10,7 @@ const med = (over: Partial<Medicine>): Medicine => ({
   schedule_note: '',
   schedule_time: '',
   category: 'medicine',
+  frequency: 'daily',
   show_in_quick_log: true,
   created_at: '2026-07-01T00:00:00Z',
   ...over,
@@ -37,6 +38,14 @@ describe('logDateTime', () => {
   });
 });
 
+describe('doseLabel', () => {
+  it('joins potency and amount — potency is medically meaningful', () => {
+    expect(doseLabel(med({ potency: '1mg', amount: '1.5 pills' }))).toBe('1mg · 1.5 pills');
+    expect(doseLabel(med({ potency: '', amount: '2 pills' }))).toBe('2 pills');
+    expect(doseLabel(undefined)).toBe('');
+  });
+});
+
 describe('buildGivenList', () => {
   it('includes logs within the last 12 hours, most recent first', () => {
     const logs = [
@@ -58,59 +67,101 @@ describe('buildGivenList', () => {
     expect(result.map(r => r.log.id)).toEqual(['y']);
   });
 
-  it('excludes future-dated logs', () => {
-    const logs = [log({ id: 'f', hour: 11, am_pm: 'PM' })]; // 11 PM > now+1h
+  it('never shows future administrations as given (max 5 min clock skew)', () => {
+    const logs = [log({ id: 'f', hour: 9, am_pm: 'PM' })]; // 9 PM > 8:47 + 5 min
     expect(buildGivenList(logs, [med({})], NOW)).toHaveLength(0);
   });
 });
 
-describe('buildUpcomingList', () => {
-  it('lists scheduled doses in the next 12 hours, soonest first', () => {
+describe('buildUpcomingList — scheduling scope', () => {
+  it('lists daily doses in the next 12 hours, soonest first', () => {
     const meds = [
       med({ id: 'm1', name: 'A', schedule_time: '9:00 PM' }),
       med({ id: 'm2', name: 'B', schedule_time: '8:00 AM' }), // tomorrow morning, inside 12h
-      med({ id: 'm3', name: 'C', schedule_time: '2:00 PM' }), // today past+outside, tomorrow outside
+      med({ id: 'm3', name: 'C', schedule_time: '2:00 PM' }), // today too old, tomorrow too far
     ];
     const result = buildUpcomingList(meds, [], NOW);
     expect(result.map(r => r.medicine.name)).toEqual(['A', 'B']);
   });
 
-  it('flags due within lead window and keeps missed doses up to 2h back', () => {
+  it('never auto-schedules PRN or every-N-day medicines, even with parseable times', () => {
     const meds = [
-      med({ id: 'm1', name: 'DueNow', schedule_time: '9:00 PM' }),   // 13 min ahead → due
-      med({ id: 'm2', name: 'Missed', schedule_time: '7:30 PM' }),   // 77 min ago, unlogged → due
-      med({ id: 'm3', name: 'Later', schedule_time: '11:00 PM' }),   // 2h+ ahead → not due
+      med({ id: 'm1', name: 'PRN', frequency: 'as needed', schedule_time: '9:00 PM' }),
+      med({ id: 'm2', name: 'EveryTwo', frequency: 'every 2 days', schedule_time: '9:00 PM' }),
+      med({ id: 'm3', name: 'Daily', frequency: 'daily', schedule_time: '9:00 PM' }),
     ];
     const result = buildUpcomingList(meds, [], NOW);
-    const byName = Object.fromEntries(result.map(r => [r.medicine.name, r.due]));
-    expect(byName['DueNow']).toBe(true);
-    expect(byName['Missed']).toBe(true);
-    expect(byName['Later']).toBe(false);
+    expect(result.map(r => r.medicine.name)).toEqual(['Daily']);
   });
 
-  it('drops slots already logged within ±1 hour', () => {
-    const meds = [med({ id: 'm1', name: 'A', schedule_time: '9:00 PM' })];
-    const logs = [log({ hour: 8, am_pm: 'PM' })]; // 8:00 PM log covers 9:00 PM slot (±1h)
+  it('excludes non-medicine items and hidden medicines entirely', () => {
+    const meds = [
+      med({ id: 'm1', name: 'Flush', category: 'non-medicine', schedule_time: '10:00 PM' }),
+      med({ id: 'm2', name: 'Hidden', show_in_quick_log: false, schedule_time: '9:00 PM' }),
+    ];
+    expect(buildUpcomingList(meds, [], NOW)).toHaveLength(0);
+  });
+
+  it('skips as-needed/unparseable schedule strings', () => {
+    const meds = [med({ id: 'm1', schedule_time: 'As needed' }), med({ id: 'm2', schedule_time: '' })];
+    expect(buildUpcomingList(meds, [], NOW)).toHaveLength(0);
+  });
+});
+
+describe('buildUpcomingList — states', () => {
+  it('splits due (±15 min, flashing) from overdue (static, up to 2h) from scheduled', () => {
+    const meds = [
+      med({ id: 'm1', name: 'DueNow', schedule_time: '9:00 PM' }),   // 13 min ahead → due
+      med({ id: 'm2', name: 'Missed', schedule_time: '7:30 PM' }),   // 77 min ago → overdue
+      med({ id: 'm3', name: 'JustPast', schedule_time: '8:45 PM' }), // 2 min ago → due
+      med({ id: 'm4', name: 'Later', schedule_time: '11:00 PM' }),   // 2h+ ahead → scheduled
+    ];
+    const byName = Object.fromEntries(
+      buildUpcomingList(meds, [], NOW).map(r => [r.medicine.name, r.state]),
+    );
+    expect(byName['DueNow']).toBe('due');
+    expect(byName['Missed']).toBe('overdue');
+    expect(byName['JustPast']).toBe('due');
+    expect(byName['Later']).toBe('scheduled');
+  });
+
+  it('drops overdue doses after the 2-hour trail', () => {
+    const meds = [med({ id: 'm1', schedule_time: '6:00 PM' })]; // 2h47m ago
+    expect(buildUpcomingList(meds, [], NOW)).toHaveLength(0);
+  });
+});
+
+describe('buildUpcomingList — one-to-one log matching', () => {
+  it('one log can never satisfy two scheduled doses', () => {
+    // Slots 8 PM and 10 PM; a single 9 PM log is within ±1h of BOTH.
+    const meds = [med({ id: 'm1', name: 'Twice', schedule_time: '8:00 PM / 10:00 PM' })];
+    const logs = [log({ hour: 9, am_pm: 'PM' })];
+    const result = buildUpcomingList(meds, logs, NOW);
+    // The log consumes the 8 PM slot (walked chronologically); 10 PM survives.
+    expect(result).toHaveLength(1);
+    expect(result[0].at.getHours()).toBe(22);
+  });
+
+  it('two logs clear two adjacent slots', () => {
+    const meds = [med({ id: 'm1', schedule_time: '8:00 PM / 10:00 PM' })];
+    const logs = [
+      log({ id: 'a', hour: 8, am_pm: 'PM' }),
+      log({ id: 'b', hour: 9, am_pm: 'PM', created_at: '2026-07-13T21:00:00Z' }),
+    ];
     expect(buildUpcomingList(meds, logs, NOW)).toHaveLength(0);
   });
 
-  it('handles multi-slot schedules and never flags non-medicines due', () => {
-    const meds = [
-      med({ id: 'm1', name: 'Multi', schedule_time: '10:00 AM / 9:00 PM' }),
-      med({ id: 'm2', name: 'Flush', category: 'non-medicine', schedule_time: '10:00 PM' }),
-    ];
-    const result = buildUpcomingList(meds, [], NOW);
-    const multi = result.filter(r => r.medicine.name === 'Multi');
-    // 9:00 PM today (due) and 10:00 AM tomorrow is >12h → excluded
-    expect(multi).toHaveLength(1);
-    expect(multi[0].due).toBe(true);
-    const flush = result.find(r => r.medicine.name === 'Flush');
-    expect(flush).toBeDefined();
-    expect(flush!.due).toBe(false);
+  it('drops a slot when a log lands within ±1 hour', () => {
+    const meds = [med({ id: 'm1', schedule_time: '9:00 PM' })];
+    const logs = [log({ hour: 8, am_pm: 'PM' })];
+    expect(buildUpcomingList(meds, logs, NOW)).toHaveLength(0);
   });
 
-  it('skips as-needed/unparseable schedules', () => {
-    const meds = [med({ id: 'm1', schedule_time: 'As needed' }), med({ id: 'm2', schedule_time: '' })];
-    expect(buildUpcomingList(meds, [], NOW)).toHaveLength(0);
+  it('handles multi-slot schedules across the window', () => {
+    const meds = [med({ id: 'm1', name: 'Multi', schedule_time: '10:00 AM / 9:00 PM' })];
+    const result = buildUpcomingList(meds, [], NOW);
+    // 10 AM today is >2h past, 10 AM tomorrow is >12h away → only 9 PM shows.
+    expect(result).toHaveLength(1);
+    expect(result[0].state).toBe('due');
   });
 });

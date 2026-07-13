@@ -3,11 +3,11 @@ import { format, parseISO } from 'date-fns';
 import { Heart, Pill, Calendar, BarChart3, ChevronDown, Plus, StickyNote, CalendarDays, Clock, MapPin } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import type { Medicine } from '@/hooks/useMedicines';
+import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
 import type { CustomAction } from '@/hooks/useCustomActions';
 import type { HealthRecord, Appointment } from '@/types/health';
 import type { GivenItem, UpcomingItem } from '@/components/today/todaySchedule';
-import { timeLabel } from '@/components/today/todaySchedule';
+import { timeLabel, doseLabel, logDateTime } from '@/components/today/todaySchedule';
 import { READING_TYPES, ReadingType } from '@/components/today/readingTypes';
 import { TrendsCharts } from '@/components/today/TrendsCharts';
 import type { CustomActionLog } from '@/hooks/useCustomActions';
@@ -118,21 +118,32 @@ export function ReadingSection({
 
 interface MedicineSectionProps {
   medicines: Medicine[];
+  /** ALL of today's medicine logs (not the 12-hour presentation window). */
+  todayLogs: MedicineLog[];
   given: GivenItem[];
   upcoming: UpcomingItem[];
   onPickMedicine: (med: Medicine) => void;
 }
 
-export function MedicineSection({ medicines, given, upcoming, onPickMedicine }: MedicineSectionProps) {
+export function MedicineSection({ medicines, todayLogs, given, upcoming, onPickMedicine }: MedicineSectionProps) {
   const visible = medicines.filter(m => m.show_in_quick_log !== false);
   const last = given[0];
   const subtitle = last?.medicine
     ? `All ${visible.length} medicines · last: ${last.medicine.name.split(' ')[0]}, ${timeLabel(last.at)}`
     : `All ${visible.length} medicines`;
 
-  const givenCount = new Map<string, number>();
-  given.forEach(g => givenCount.set(g.log.medicine_id, (givenCount.get(g.log.medicine_id) ?? 0) + 1));
-  const dueIds = new Set(upcoming.filter(u => u.due).map(u => u.medicine.id));
+  // Per-day status: how many times given TODAY and when last, plus the
+  // medicine's next unadministered slot (already one-to-one matched upstream).
+  const todayByMed = new Map<string, Date[]>();
+  todayLogs.forEach(log => {
+    const list = todayByMed.get(log.medicine_id) ?? [];
+    list.push(logDateTime(log));
+    todayByMed.set(log.medicine_id, list);
+  });
+  const nextSlotByMed = new Map<string, UpcomingItem>();
+  upcoming.forEach(u => {
+    if (!nextSlotByMed.has(u.medicine.id)) nextSlotByMed.set(u.medicine.id, u);
+  });
 
   return (
     <SectionCard
@@ -143,29 +154,39 @@ export function MedicineSection({ medicines, given, upcoming, onPickMedicine }: 
     >
       <div className="-mx-1">
         {visible.map((med, i) => {
-          const count = givenCount.get(med.id) ?? 0;
-          const isDue = dueIds.has(med.id);
+          const todayTimes = (todayByMed.get(med.id) ?? []).sort((a, b) => a.getTime() - b.getTime());
+          const lastToday = todayTimes[todayTimes.length - 1];
+          const next = nextSlotByMed.get(med.id);
+          const dose = doseLabel(med);
           return (
             <button
               key={med.id}
               onClick={() => onPickMedicine(med)}
               className={`flex w-full items-center gap-3 rounded-xl px-1 py-3 text-left ${
                 i < visible.length - 1 ? 'border-b border-[#f3ede2]' : ''
-              } ${isDue ? 'animate-due-flash-row' : ''}`}
+              } ${next?.state === 'due' ? 'animate-due-flash-row' : next?.state === 'overdue' ? 'bg-[rgba(194,65,12,0.08)]' : ''}`}
             >
               <span className="min-w-0 flex-1">
-                <span className="text-[16px] font-bold text-[#26201a]">{med.name}</span>
-                {med.amount && <span className="text-[15px] font-medium text-[#8b8175]"> {med.amount}</span>}
+                <span className="block text-[16px] font-bold text-[#26201a]">{med.name}</span>
+                <span className="block text-[13px] text-[#8b8175]">
+                  {dose}
+                  {lastToday && (
+                    <span className="font-semibold text-[#2e7d4f]">
+                      {dose ? ' · ' : ''}✓ {timeLabel(lastToday)}{todayTimes.length > 1 ? ` ×${todayTimes.length}` : ''}
+                    </span>
+                  )}
+                  {next && next.state === 'scheduled' && ` · next ${timeLabel(next.at)}`}
+                  {!lastToday && !next && !med.schedule_time && `${dose ? ' · ' : ''}as needed`}
+                </span>
               </span>
-              {isDue ? (
+              {next?.state === 'due' && (
                 <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-wide text-white">
                   Due
                 </span>
-              ) : count > 0 ? (
-                <span className="flex-none text-[13px] font-semibold text-[#2e7d4f]">✓ ×{count}</span>
-              ) : (
-                <span className="max-w-[35%] flex-none truncate text-right text-[12px] text-[#8b8175]">
-                  {med.schedule_time || 'as needed'}
+              )}
+              {next?.state === 'overdue' && (
+                <span className="flex-none rounded-lg border border-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-wide text-[#c2410c]">
+                  Overdue
                 </span>
               )}
             </button>

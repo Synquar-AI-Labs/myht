@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { AppointmentForm } from '@/types/health';
 import {
-  buildGivenList, buildUpcomingList, previousDay, timeLabel, GivenItem,
+  buildGivenList, buildUpcomingList, previousDay, timeLabel, doseLabel, GivenItem,
 } from '@/components/today/todaySchedule';
 import { ReadingSection, MedicineSection, ApptNotesSection, TrendsSection } from '@/components/today/TodaySections';
 import { ReadingType } from '@/components/today/readingTypes';
@@ -66,12 +66,17 @@ export function TodayScreen() {
   const allLogs = useMemo(() => [...todayLogs, ...yesterdayLogs], [todayLogs, yesterdayLogs]);
   const given = useMemo(() => buildGivenList(allLogs, medicines, now), [allLogs, medicines, now]);
   const upcoming = useMemo(() => buildUpcomingList(medicines, allLogs, now), [medicines, allLogs, now]);
-  const hasDue = upcoming.some(u => u.due);
+  const hasDue = upcoming.some(u => u.state === 'due');
 
   const todayRecord = getRecordByDate(todayStr);
+  // "Next" must respect time-of-day: a 9 AM appointment is not "next" at 4 PM.
+  const nowTime = format(now, 'HH:mm');
   const upcomingAppointments = useMemo(
-    () => appointments.filter(a => a.date >= todayStr),
-    [appointments, todayStr],
+    () =>
+      appointments
+        .filter(a => a.date > todayStr || (a.date === todayStr && (a.time || '') >= nowTime))
+        .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || '')),
+    [appointments, todayStr, nowTime],
   );
 
   const lastBpToday = useMemo(() => {
@@ -101,7 +106,7 @@ export function TodayScreen() {
   const upcomingVisible = upcomingExpanded ? upcoming : upcoming.slice(0, VISIBLE_ROWS);
 
   return (
-    <div className="mx-auto max-w-[560px] md:hidden">
+    <div className="mx-auto max-w-[560px]">
       {/* Header: date + live clock */}
       <div className="flex items-baseline justify-between px-5 pt-5">
         <h1 className="text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
@@ -128,8 +133,8 @@ export function TodayScreen() {
               <Check className="h-5 w-5 flex-none text-[#2e7d4f]" strokeWidth={3} />
               <span className="min-w-0 flex-1 truncate">
                 <span className="text-[17px] font-bold text-[#26201a]">{g.medicine?.name ?? 'Unknown'}</span>
-                {g.medicine?.amount && (
-                  <span className="text-[17px] font-medium text-[#8b8175]"> {g.medicine.amount}</span>
+                {doseLabel(g.medicine) && (
+                  <span className="text-[15px] font-medium text-[#8b8175]"> {doseLabel(g.medicine)}</span>
                 )}
               </span>
               <span className="flex-none text-[13px] text-[#8b8175]">
@@ -161,34 +166,44 @@ export function TodayScreen() {
           {upcoming.length === 0 && (
             <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing scheduled in the next 12 hours.</p>
           )}
-          {upcomingVisible.map((u, i) => (
-            <button
-              key={`${u.medicine.id}-${u.at.getTime()}`}
-              onClick={() => setSheet({ type: 'medicine', medicine: u.medicine })}
-              className={
-                u.due
-                  ? 'animate-due-flash-row -mx-2.5 my-0.5 flex w-[calc(100%+20px)] items-center gap-3 rounded-xl px-2.5 py-3 text-left'
-                  : `flex w-full items-center gap-3 py-3 text-left ${
-                      i < upcomingVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
-                    }`
-              }
-            >
-              <span className={`w-[70px] flex-none text-sm ${u.due ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
-                {timeLabel(u.at)}
-              </span>
-              <span className="min-w-0 flex-1 truncate">
-                <span className="text-[17px] font-bold text-[#26201a]">{u.medicine.name}</span>
-                {u.medicine.amount && (
-                  <span className="text-[17px] font-medium text-[#8b8175]"> {u.medicine.amount}</span>
-                )}
-              </span>
-              {u.due && (
-                <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-white">
-                  Due
+          {upcomingVisible.map((u, i) => {
+            const highlighted = u.state !== 'scheduled';
+            return (
+              <button
+                key={`${u.medicine.id}-${u.at.getTime()}`}
+                onClick={() => setSheet({ type: 'medicine', medicine: u.medicine })}
+                className={
+                  highlighted
+                    ? `-mx-2.5 my-0.5 flex w-[calc(100%+20px)] items-center gap-3 rounded-xl px-2.5 py-3 text-left ${
+                        u.state === 'due' ? 'animate-due-flash-row' : 'bg-[rgba(194,65,12,0.08)]'
+                      }`
+                    : `flex w-full items-center gap-3 py-3 text-left ${
+                        i < upcomingVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
+                      }`
+                }
+              >
+                <span className={`w-[70px] flex-none text-sm ${highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
+                  {timeLabel(u.at)}
                 </span>
-              )}
-            </button>
-          ))}
+                <span className="min-w-0 flex-1 truncate">
+                  <span className="text-[17px] font-bold text-[#26201a]">{u.medicine.name}</span>
+                  {doseLabel(u.medicine) && (
+                    <span className="text-[15px] font-medium text-[#8b8175]"> {doseLabel(u.medicine)}</span>
+                  )}
+                </span>
+                {u.state === 'due' && (
+                  <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-white">
+                    Due
+                  </span>
+                )}
+                {u.state === 'overdue' && (
+                  <span className="flex-none rounded-lg border border-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-[#c2410c]">
+                    Overdue
+                  </span>
+                )}
+              </button>
+            );
+          })}
           {upcoming.length > VISIBLE_ROWS && (
             <button
               onClick={() => setUpcomingExpanded(e => !e)}
@@ -218,6 +233,7 @@ export function TodayScreen() {
         />
         <MedicineSection
           medicines={medicines}
+          todayLogs={todayLogs}
           given={given}
           upcoming={upcoming}
           onPickMedicine={med => setSheet({ type: 'medicine', medicine: med })}
@@ -250,15 +266,14 @@ export function TodayScreen() {
             type: 'health',
             metric: customLogSheet.name,
             fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.default_value, min: 0 }],
-            onSave: (values, recordedBy, date) => {
-              const h = new Date().getHours();
+            onSave: (values, recordedBy, date, time) => {
               addCustomLog({
                 action_id: customLogSheet.id,
                 value: values['value'] as number,
                 date,
                 recorded_by: recordedBy,
-                hour: h > 12 ? h - 12 : h === 0 ? 12 : h,
-                am_pm: h >= 12 ? 'PM' : 'AM',
+                hour: time.hour,
+                am_pm: time.amPm,
               });
             },
           }}
@@ -269,10 +284,12 @@ export function TodayScreen() {
       <AlertDialog open={!!undoTarget} onOpenChange={o => { if (!o) setUndoTarget(null); }}>
         <AlertDialogContent className="max-w-sm rounded-2xl">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove this entry?</AlertDialogTitle>
+            <AlertDialogTitle>Delete this entry?</AlertDialogTitle>
             <AlertDialogDescription>
               {undoTarget?.medicine?.name} · {undoTarget ? timeLabel(undoTarget.at) : ''}
-              {undoTarget?.log.recorded_by ? ` · by ${undoTarget.log.recorded_by}` : ''}
+              {undoTarget?.log.recorded_by ? ` · by ${undoTarget.log.recorded_by}` : ''}.
+              This permanently removes it from the record. To change the time
+              or details instead, use History → Record → Medicines.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -281,7 +298,7 @@ export function TodayScreen() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => { if (undoTarget) deleteMedicineLog(undoTarget.log.id); setUndoTarget(null); }}
             >
-              Remove
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

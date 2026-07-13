@@ -19,7 +19,12 @@ type HealthMode = {
   type: 'health';
   metric: string;
   fields: HealthField[];
-  onSave: (values: Record<string, number | boolean>, recordedBy: string, date: string) => void;
+  onSave: (
+    values: Record<string, number | boolean>,
+    recordedBy: string,
+    date: string,
+    time: { hour: number; amPm: string },
+  ) => void;
 };
 
 export interface HealthField {
@@ -78,7 +83,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
     if (mode.type === 'medicine') {
       mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: recorder, date: selectedDate });
     } else {
-      mode.onSave(fieldValues, recorder, selectedDate);
+      mode.onSave(fieldValues, recorder, selectedDate, { hour, amPm });
     }
     onOpenChange(false);
   };

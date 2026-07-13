@@ -12,6 +12,7 @@ export interface Medicine {
   schedule_note: string;
   schedule_time: string;
   category: string;
+  frequency: string;
   show_in_quick_log: boolean;
   created_at: string;
 }
