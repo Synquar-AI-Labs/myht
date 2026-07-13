@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
 import { useCustomActions, CustomAction } from '@/hooks/useCustomActions';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { QuickLogSheet } from '@/components/QuickLogSheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,19 +19,129 @@ import {
 } from '@/components/ui/alert-dialog';
 import { AppointmentForm } from '@/types/health';
 import {
-  buildGivenList, buildUpcomingList, previousDay, timeLabel, doseLabel, GivenItem,
+  buildGivenList, buildUpcomingList, previousDay, timeLabel, doseLabel,
+  GivenItem, UpcomingItem,
 } from '@/components/today/todaySchedule';
 import { ReadingSection, MedicineSection, ApptNotesSection, TrendsSection } from '@/components/today/TodaySections';
 import { ReadingType } from '@/components/today/readingTypes';
 
 const VISIBLE_ROWS = 4;
 
+/** True when the viewport is at least `px` wide (tracks live). */
+function useMinWidth(px: number): boolean {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth >= px,
+  );
+  useEffect(() => {
+    const mql = window.matchMedia(`(min-width: ${px}px)`);
+    const onChange = () => setMatches(mql.matches);
+    mql.addEventListener('change', onChange);
+    setMatches(mql.matches);
+    return () => mql.removeEventListener('change', onChange);
+  }, [px]);
+  return matches;
+}
+
 type SheetState =
   | { type: 'medicine'; medicine: Medicine }
   | { type: 'health'; reading: ReadingType }
   | null;
 
+/* ── Row renderers: stacked (phone) vs inline (tablet/desktop) ── */
+
+function GivenRow({ g, inline, divider, onTap }: { g: GivenItem; inline: boolean; divider: boolean; onTap: () => void }) {
+  const dose = doseLabel(g.medicine);
+  const meta = `${timeLabel(g.at)}${g.log.recorded_by ? ` · ${g.log.recorded_by}` : ''}`;
+
+  if (inline) {
+    return (
+      <button onClick={onTap} className={`flex w-full items-center gap-3 py-3 text-left ${divider ? 'border-b border-[#f3ede2]' : ''}`}>
+        <Check className="h-5 w-5 flex-none text-[#2e7d4f]" strokeWidth={3} />
+        <span className="min-w-0 flex-1 truncate">
+          <span className="text-[17px] font-bold text-[#26201a]">{g.medicine?.name ?? 'Unknown'}</span>
+          {dose && <span className="text-[15px] font-medium text-[#8b8175]"> {dose}</span>}
+        </span>
+        <span className="flex-none text-[13px] text-[#8b8175]">{meta}</span>
+      </button>
+    );
+  }
+  return (
+    <button onClick={onTap} className={`flex w-full items-center gap-3 py-3 text-left ${divider ? 'border-b border-[#f3ede2]' : ''}`}>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[17px] font-bold leading-snug text-[#26201a]">{g.medicine?.name ?? 'Unknown'}</span>
+        <span className="block text-[14px] text-[#8b8175]">
+          {dose && `${dose} · `}
+          <span className="font-semibold text-[#2e7d4f]">✓ {timeLabel(g.at)}</span>
+          {g.log.recorded_by && ` · ${g.log.recorded_by}`}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function UpcomingRow({ u, inline, divider, onTap }: { u: UpcomingItem; inline: boolean; divider: boolean; onTap: () => void }) {
+  const highlighted = u.state !== 'scheduled';
+  const dose = doseLabel(u.medicine);
+  const rowClass = highlighted
+    ? `-mx-2.5 my-0.5 flex w-[calc(100%+20px)] items-center gap-3 rounded-xl px-2.5 py-3 text-left ${
+        u.state === 'due' ? 'animate-due-flash-row' : 'bg-[rgba(194,65,12,0.08)]'
+      }`
+    : `flex w-full items-center gap-3 py-3 text-left ${divider ? 'border-b border-[#f3ede2]' : ''}`;
+
+  const badge = u.state === 'due' ? (
+    <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-white">Due</span>
+  ) : u.state === 'overdue' ? (
+    <span className="flex-none rounded-lg border border-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-[#c2410c]">Overdue</span>
+  ) : null;
+
+  if (inline) {
+    return (
+      <button onClick={onTap} className={rowClass}>
+        <span className={`w-[70px] flex-none text-sm ${highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
+          {timeLabel(u.at)}
+        </span>
+        <span className="min-w-0 flex-1 truncate">
+          <span className="text-[17px] font-bold text-[#26201a]">{u.medicine.name}</span>
+          {dose && <span className="text-[15px] font-medium text-[#8b8175]"> {dose}</span>}
+        </span>
+        {badge}
+      </button>
+    );
+  }
+  return (
+    <button onClick={onTap} className={rowClass}>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[17px] font-bold leading-snug text-[#26201a]">{u.medicine.name}</span>
+        <span className="block text-[14px] text-[#8b8175]">
+          {dose && `${dose} · `}
+          <span className={highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}>
+            {timeLabel(u.at)}
+          </span>
+        </span>
+      </span>
+      {badge}
+    </button>
+  );
+}
+
+function ExpanderFooter({ expanded, count, noun, onToggle }: { expanded: boolean; count: number; noun: string; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="flex w-full items-center justify-center gap-1.5 border-t border-[#f3ede2] py-[11px] text-[15px] font-semibold text-[#8a6240]"
+    >
+      {expanded ? 'Show less' : `Show all ${count} ${noun}`}
+      <ChevronDown className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`} strokeWidth={2.5} />
+    </button>
+  );
+}
+
 export function TodayScreen() {
+  const isMobile = useIsMobile();
+  // Single-line rows need real width; tablets in portrait keep stacked rows
+  // so medicine names never truncate.
+  const isWide = useMinWidth(1024);
+
   // Re-evaluate "now" every 30s: drives the clock, the 12h windows and due flags.
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -104,152 +215,132 @@ export function TodayScreen() {
 
   const givenVisible = givenExpanded ? given : given.slice(0, VISIBLE_ROWS);
   const upcomingVisible = upcomingExpanded ? upcoming : upcoming.slice(0, VISIBLE_ROWS);
+  const inline = !isMobile && isWide;
+
+  /* ── Shared building blocks (rendered exactly once per arrangement) ── */
+
+  const givenCard = (
+    <section>
+      <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#2e7d4f]">
+        Given · last 12 hours
+      </div>
+      <div className="rounded-2xl border border-[#e9e2d6] bg-white px-4 py-0.5">
+        {given.length === 0 && (
+          <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing given in the last 12 hours.</p>
+        )}
+        {givenVisible.map((g, i) => (
+          <GivenRow
+            key={g.log.id}
+            g={g}
+            inline={inline}
+            divider={i < givenVisible.length - 1}
+            onTap={() => setUndoTarget(g)}
+          />
+        ))}
+        {given.length > VISIBLE_ROWS && (
+          <ExpanderFooter expanded={givenExpanded} count={given.length} noun="given" onToggle={() => setGivenExpanded(e => !e)} />
+        )}
+      </div>
+    </section>
+  );
+
+  const upcomingCard = (
+    <section>
+      <div className="mb-2.5 flex items-center gap-2">
+        {hasDue && <span className="animate-due-dot h-2.5 w-2.5 rounded-full bg-[#c2410c]" />}
+        <span className="text-sm font-bold uppercase tracking-[0.06em] text-[#c2410c]">
+          Coming up · next 12 hours
+        </span>
+      </div>
+      <div className="rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-4 py-0.5">
+        {upcoming.length === 0 && (
+          <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing scheduled in the next 12 hours.</p>
+        )}
+        {upcomingVisible.map((u, i) => (
+          <UpcomingRow
+            key={`${u.medicine.id}-${u.at.getTime()}`}
+            u={u}
+            inline={inline}
+            divider={i < upcomingVisible.length - 1}
+            onTap={() => setSheet({ type: 'medicine', medicine: u.medicine })}
+          />
+        ))}
+        {upcoming.length > VISIBLE_ROWS && (
+          <ExpanderFooter expanded={upcomingExpanded} count={upcoming.length} noun="upcoming" onToggle={() => setUpcomingExpanded(e => !e)} />
+        )}
+      </div>
+    </section>
+  );
+
+  const sectionsStack = (
+    <div className="flex flex-col gap-2">
+      <ReadingSection
+        todayRecord={todayRecord}
+        lastBpLabel={lastBpLabel}
+        customActions={customActions}
+        getLogCountForAction={getLogCountForAction}
+        todayStr={todayStr}
+        onPickReading={rt => setSheet({ type: 'health', reading: rt })}
+        onPickCustomAction={ca => setCustomLogSheet(ca)}
+        onAddCustomAction={() => {
+          setNewAction({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
+          setCustomActionOpen(true);
+        }}
+      />
+      <MedicineSection
+        medicines={medicines}
+        todayLogs={todayLogs}
+        given={given}
+        upcoming={upcoming}
+        onPickMedicine={med => setSheet({ type: 'medicine', medicine: med })}
+      />
+      <ApptNotesSection
+        nextAppointments={upcomingAppointments}
+        onAddAppointment={() => {
+          setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
+          setApptOpen(true);
+        }}
+        onAddNote={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
+      />
+      <TrendsSection records={records} customActions={customActions} customLogs={customLogs} />
+    </div>
+  );
 
   return (
-    <div className="mx-auto max-w-[560px]">
-      {/* Header: date + live clock */}
-      <div className="flex items-baseline justify-between px-5 pt-5">
-        <h1 className="text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
-        <span className="text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
-      </div>
-
-      {/* GIVEN · LAST 12 HOURS */}
-      <div className="px-5 pt-[18px]">
-        <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#2e7d4f]">
-          Given · last 12 hours
-        </div>
-        <div className="rounded-2xl border border-[#e9e2d6] bg-white px-4 py-0.5">
-          {given.length === 0 && (
-            <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing given in the last 12 hours.</p>
-          )}
-          {givenVisible.map((g, i) => (
-            <button
-              key={g.log.id}
-              onClick={() => setUndoTarget(g)}
-              className={`flex w-full items-center gap-3 py-3 text-left ${
-                i < givenVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
-              }`}
-            >
-              <span className="min-w-0 flex-1">
-                <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
-                  {g.medicine?.name ?? 'Unknown'}
-                </span>
-                <span className="block text-[14px] text-[#8b8175]">
-                  {doseLabel(g.medicine) && `${doseLabel(g.medicine)} · `}
-                  <span className="font-semibold text-[#2e7d4f]">✓ {timeLabel(g.at)}</span>
-                  {g.log.recorded_by && ` · ${g.log.recorded_by}`}
-                </span>
-              </span>
-            </button>
-          ))}
-          {given.length > VISIBLE_ROWS && (
-            <button
-              onClick={() => setGivenExpanded(e => !e)}
-              className="flex w-full items-center justify-center gap-1.5 border-t border-[#f3ede2] py-[11px] text-[15px] font-semibold text-[#8a6240]"
-            >
-              {givenExpanded ? 'Show less' : `Show all ${given.length} given`}
-              <ChevronDown className={`h-4 w-4 transition-transform ${givenExpanded ? 'rotate-180' : ''}`} strokeWidth={2.5} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* COMING UP · NEXT 12 HOURS */}
-      <div className="px-5 pt-[22px]">
-        <div className="mb-2.5 flex items-center gap-2">
-          {hasDue && <span className="animate-due-dot h-2.5 w-2.5 rounded-full bg-[#c2410c]" />}
-          <span className="text-sm font-bold uppercase tracking-[0.06em] text-[#c2410c]">
-            Coming up · next 12 hours
-          </span>
-        </div>
-        <div className="rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-4 py-0.5">
-          {upcoming.length === 0 && (
-            <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing scheduled in the next 12 hours.</p>
-          )}
-          {upcomingVisible.map((u, i) => {
-            const highlighted = u.state !== 'scheduled';
-            return (
-              <button
-                key={`${u.medicine.id}-${u.at.getTime()}`}
-                onClick={() => setSheet({ type: 'medicine', medicine: u.medicine })}
-                className={
-                  highlighted
-                    ? `-mx-2.5 my-0.5 flex w-[calc(100%+20px)] items-center gap-3 rounded-xl px-2.5 py-3 text-left ${
-                        u.state === 'due' ? 'animate-due-flash-row' : 'bg-[rgba(194,65,12,0.08)]'
-                      }`
-                    : `flex w-full items-center gap-3 py-3 text-left ${
-                        i < upcomingVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
-                      }`
-                }
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
-                    {u.medicine.name}
-                  </span>
-                  <span className="block text-[14px] text-[#8b8175]">
-                    {doseLabel(u.medicine) && `${doseLabel(u.medicine)} · `}
-                    <span className={highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}>
-                      {timeLabel(u.at)}
-                    </span>
-                  </span>
-                </span>
-                {u.state === 'due' && (
-                  <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-white">
-                    Due
-                  </span>
-                )}
-                {u.state === 'overdue' && (
-                  <span className="flex-none rounded-lg border border-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-[0.05em] text-[#c2410c]">
-                    Overdue
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          {upcoming.length > VISIBLE_ROWS && (
-            <button
-              onClick={() => setUpcomingExpanded(e => !e)}
-              className="flex w-full items-center justify-center gap-1.5 border-t border-[#f3ede2] py-[11px] text-[15px] font-semibold text-[#8a6240]"
-            >
-              {upcomingExpanded ? 'Show less' : `Show all ${upcoming.length} upcoming`}
-              <ChevronDown className={`h-4 w-4 transition-transform ${upcomingExpanded ? 'rotate-180' : ''}`} strokeWidth={2.5} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Collapsible sections */}
-      <div className="flex flex-col gap-2 px-5 pb-6 pt-[22px]">
-        <ReadingSection
-          todayRecord={todayRecord}
-          lastBpLabel={lastBpLabel}
-          customActions={customActions}
-          getLogCountForAction={getLogCountForAction}
-          todayStr={todayStr}
-          onPickReading={rt => setSheet({ type: 'health', reading: rt })}
-          onPickCustomAction={ca => setCustomLogSheet(ca)}
-          onAddCustomAction={() => {
-            setNewAction({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
-            setCustomActionOpen(true);
-          }}
-        />
-        <MedicineSection
-          medicines={medicines}
-          todayLogs={todayLogs}
-          given={given}
-          upcoming={upcoming}
-          onPickMedicine={med => setSheet({ type: 'medicine', medicine: med })}
-        />
-        <ApptNotesSection
-          nextAppointments={upcomingAppointments}
-          onAddAppointment={() => {
-            setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
-            setApptOpen(true);
-          }}
-          onAddNote={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
-        />
-        <TrendsSection records={records} customActions={customActions} customLogs={customLogs} />
-      </div>
+    <div className={isMobile ? 'mx-auto max-w-[560px]' : 'mx-auto max-w-6xl px-8'}>
+      {isMobile ? (
+        <>
+          {/* Header: date + live clock */}
+          <div className="flex items-baseline justify-between px-5 pt-5">
+            <h1 className="text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
+            <span className="text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
+          </div>
+          <div className="px-5 pt-[18px]">{givenCard}</div>
+          <div className="px-5 pt-[22px]">{upcomingCard}</div>
+          <div className="px-5 pb-6 pt-[22px]">{sectionsStack}</div>
+        </>
+      ) : (
+        <>
+          {/* Header row: date + clock left; the floating nav pills sit top-right */}
+          <div className="flex items-baseline gap-4 pt-6 pr-[300px]">
+            <h1 className="text-[32px] font-normal leading-tight text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
+            <span className="text-[19px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
+          </div>
+          {/* Two columns: timeline left, record & review right */}
+          <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-7">
+            <div className="flex flex-col gap-7">
+              {upcomingCard}
+              {givenCard}
+            </div>
+            <div>
+              <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#8b8175]">
+                Record & review
+              </div>
+              {sectionsStack}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Log drawers (existing components) */}
       {sheet?.type === 'medicine' && (
@@ -282,7 +373,7 @@ export function TodayScreen() {
         />
       )}
 
-      {/* Undo a given entry */}
+      {/* Delete a given entry */}
       <AlertDialog open={!!undoTarget} onOpenChange={o => { if (!o) setUndoTarget(null); }}>
         <AlertDialogContent className="max-w-sm rounded-2xl">
           <AlertDialogHeader>
