@@ -130,14 +130,16 @@ export function TodayScreen() {
                 i < givenVisible.length - 1 ? 'border-b border-[#f3ede2]' : ''
               }`}
             >
-              <Check className="h-5 w-5 flex-none text-[#2e7d4f]" strokeWidth={3} />
-              <span className="min-w-0 flex-1 truncate">
-                <span className="text-[17px] font-bold text-[#26201a]">{g.medicine?.name ?? 'Unknown'}</span>
+              <Check className="mt-0.5 h-5 w-5 flex-none self-start text-[#2e7d4f]" strokeWidth={3} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
+                  {g.medicine?.name ?? 'Unknown'}
+                </span>
                 {doseLabel(g.medicine) && (
-                  <span className="text-[15px] font-medium text-[#8b8175]"> {doseLabel(g.medicine)}</span>
+                  <span className="block text-[13px] text-[#8b8175]">{doseLabel(g.medicine)}</span>
                 )}
               </span>
-              <span className="flex-none text-[13px] text-[#8b8175]">
+              <span className="mt-0.5 flex-none self-start text-[13px] text-[#8b8175]">
                 {timeLabel(g.at)}{g.log.recorded_by ? ` · ${g.log.recorded_by}` : ''}
               </span>
             </button>
@@ -182,13 +184,15 @@ export function TodayScreen() {
                       }`
                 }
               >
-                <span className={`w-[70px] flex-none text-sm ${highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
+                <span className={`mt-0.5 w-[70px] flex-none self-start text-sm ${highlighted ? 'font-extrabold text-[#c2410c]' : 'font-bold text-[#8a6240]'}`}>
                   {timeLabel(u.at)}
                 </span>
-                <span className="min-w-0 flex-1 truncate">
-                  <span className="text-[17px] font-bold text-[#26201a]">{u.medicine.name}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[17px] font-bold leading-snug text-[#26201a]">
+                    {u.medicine.name}
+                  </span>
                   {doseLabel(u.medicine) && (
-                    <span className="text-[15px] font-medium text-[#8b8175]"> {doseLabel(u.medicine)}</span>
+                    <span className="block text-[13px] text-[#8b8175]">{doseLabel(u.medicine)}</span>
                   )}
                 </span>
                 {u.state === 'due' && (
