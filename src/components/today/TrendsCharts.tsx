@@ -38,7 +38,8 @@ function buildWeekData(records: HealthRecord[], weekOffset: number): WeekDatum[]
     const d = format(date, 'yyyy-MM-dd');
     const r = records.find(rec => rec.date === d);
     return {
-      label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`,
+      // Just the day number — the week range already sits above the charts.
+      label: format(date, 'd'),
       feeds: r?.feed_bags ?? 0,
       vomit: r?.vomit_count ?? 0,
       stool: r?.stool_count ?? 0,
@@ -154,7 +155,7 @@ function CustomCharts({ customActions, customLogs, weekOffset }: { customActions
           const d = format(date, 'yyyy-MM-dd');
           const dayLogs = customLogs.filter(l => l.action_id === ca.id && l.date === d);
           const total = dayLogs.reduce((sum, l) => sum + Number(l.value), 0);
-          return { label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`, value: total };
+          return { label: format(date, 'd'), value: total };
         });
         return (
           <div key={ca.id} className="rounded-xl border border-[#e9e2d6] bg-white p-3 h-36">

@@ -213,9 +213,11 @@ export function TodayScreen() {
     });
   };
 
-  const givenVisible = givenExpanded ? given : given.slice(0, VISIBLE_ROWS);
-  const upcomingVisible = upcomingExpanded ? upcoming : upcoming.slice(0, VISIBLE_ROWS);
   const inline = !isMobile && isWide;
+  // Desktop's compact single-line rows fit five and line up with the pills.
+  const visibleRows = inline ? VISIBLE_ROWS + 1 : VISIBLE_ROWS;
+  const givenVisible = givenExpanded ? given : given.slice(0, visibleRows);
+  const upcomingVisible = upcomingExpanded ? upcoming : upcoming.slice(0, visibleRows);
 
   /* ── Shared building blocks (rendered exactly once per arrangement) ── */
 
@@ -237,7 +239,7 @@ export function TodayScreen() {
             onTap={() => setUndoTarget(g)}
           />
         ))}
-        {given.length > VISIBLE_ROWS && (
+        {given.length > visibleRows && (
           <ExpanderFooter expanded={givenExpanded} count={given.length} noun="given" onToggle={() => setGivenExpanded(e => !e)} />
         )}
       </div>
@@ -265,7 +267,7 @@ export function TodayScreen() {
             onTap={() => setSheet({ type: 'medicine', medicine: u.medicine })}
           />
         ))}
-        {upcoming.length > VISIBLE_ROWS && (
+        {upcoming.length > visibleRows && (
           <ExpanderFooter expanded={upcomingExpanded} count={upcoming.length} noun="upcoming" onToggle={() => setUpcomingExpanded(e => !e)} />
         )}
       </div>
