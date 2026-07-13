@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense, lazy } from 'react';
 import { format, parseISO } from 'date-fns';
-import { Heart, Pill, Calendar, BarChart3, ChevronDown, Plus, StickyNote, CalendarDays, Clock, MapPin } from 'lucide-react';
+import { Heart, Pill, Calendar, BarChart3, ChevronDown, Plus, StickyNote, CalendarDays, Clock, MapPin, Mic, Loader2 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
@@ -11,6 +11,9 @@ import { timeLabel, doseLabel, logDateTime } from '@/components/today/todaySched
 import { READING_TYPES, ReadingType } from '@/components/today/readingTypes';
 import { TrendsCharts, TrendsOpenPanel } from '@/components/today/TrendsCharts';
 import type { CustomActionLog } from '@/hooks/useCustomActions';
+
+// Loaded on first expand — keeps the recorder code out of the initial bundle.
+const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
 
 /* ── Shared collapsible card shell ─────────────────────────────── */
 
@@ -253,7 +256,24 @@ export function ApptNotesSection({ nextAppointments, onAddAppointment, onAddNote
   );
 }
 
-/* ── 4. Visuals & trends ───────────────────────────────────────── */
+/* ── 4. Transcribe a visit ─────────────────────────────────────── */
+
+export function TranscriptsSection() {
+  return (
+    <SectionCard
+      icon={<Mic className="h-[22px] w-[22px]" strokeWidth={2.2} />}
+      chipClass="bg-[#e6f4f1] text-[#0f766e]"
+      title="Transcribe a visit"
+      subtitle="Record & summarize doctor conversations"
+    >
+      <Suspense fallback={<div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
+        <TranscriptsTab />
+      </Suspense>
+    </SectionCard>
+  );
+}
+
+/* ── 5. Visuals & trends ───────────────────────────────────────── */
 
 interface TrendsSectionProps {
   records: HealthRecord[];
@@ -273,7 +293,7 @@ export function TrendsSection({ records, customActions, customLogs, alwaysShowVi
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-[17px] font-bold text-[#26201a]">Visuals & trends</span>
-            <span className="block truncate text-[13px] text-[#8b8175]">Blood pressure & weight this week</span>
+            <span className="block truncate text-[13px] text-[#8b8175]">Blood pressure this week</span>
           </span>
         </div>
         <div className="border-t border-[#f3ede2] p-3.5">

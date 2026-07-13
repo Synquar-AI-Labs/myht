@@ -192,8 +192,8 @@ export function TrendsCharts({ records, customActions, customLogs }: TrendsDataP
 }
 
 /**
- * Desktop/tablet panel: BP and Weight are always visible (the two vitals a
- * doctor asks about first); the remaining charts sit behind "More charts".
+ * Desktop/tablet panel: the blood-pressure chart is always visible; every
+ * other chart sits behind "More charts" so the card mirrors the Given list.
  */
 export function TrendsOpenPanel({ records, customActions, customLogs }: TrendsDataProps) {
   const [weekOffset, setWeekOffset] = useState(0);
@@ -204,14 +204,14 @@ export function TrendsOpenPanel({ records, customActions, customLogs }: TrendsDa
     <div className="space-y-3">
       <WeekNav weekOffset={weekOffset} setWeekOffset={setWeekOffset} />
       <BpChart data={data} />
-      <WeightChart data={data} />
       <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
         <CollapsibleTrigger className="flex w-full items-center justify-center gap-1.5 py-1 text-[15px] font-semibold text-[#8a6240]">
-          {moreOpen ? 'Show less' : 'More charts — feeds, flush & custom'}
+          {moreOpen ? 'Show less' : 'More charts — weight, feeds, flush & custom'}
           <ChevronDown className={`h-4 w-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
         </CollapsibleTrigger>
         <CollapsibleContent className="collapsible-content">
           <div className="space-y-3 pt-2">
+            <WeightChart data={data} />
             <MainChart data={data} />
             <FlushChart data={data} />
             <CustomCharts customActions={customActions} customLogs={customLogs} weekOffset={weekOffset} />

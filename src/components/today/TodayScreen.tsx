@@ -22,7 +22,7 @@ import {
   buildGivenList, buildUpcomingList, previousDay, timeLabel, doseLabel,
   GivenItem, UpcomingItem,
 } from '@/components/today/todaySchedule';
-import { ReadingSection, MedicineSection, ApptNotesSection, TrendsSection } from '@/components/today/TodaySections';
+import { ReadingSection, MedicineSection, ApptNotesSection, TranscriptsSection, TrendsSection } from '@/components/today/TodaySections';
 import { ReadingType } from '@/components/today/readingTypes';
 
 const VISIBLE_ROWS = 4;
@@ -272,7 +272,8 @@ export function TodayScreen() {
     </section>
   );
 
-  const sectionsStack = (
+  // The four collapsed "pills": reading, medicine, appointments, transcription.
+  const recordPills = (
     <div className="flex flex-col gap-2">
       <ReadingSection
         todayRecord={todayRecord}
@@ -302,8 +303,12 @@ export function TodayScreen() {
         }}
         onAddNote={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
       />
-      <TrendsSection records={records} customActions={customActions} customLogs={customLogs} alwaysShowVitals={!isMobile} />
+      <TranscriptsSection />
     </div>
+  );
+
+  const trendsCard = (
+    <TrendsSection records={records} customActions={customActions} customLogs={customLogs} alwaysShowVitals={!isMobile} />
   );
 
   return (
@@ -317,7 +322,10 @@ export function TodayScreen() {
           </div>
           <div className="px-5 pt-[18px]">{givenCard}</div>
           <div className="px-5 pt-[22px]">{upcomingCard}</div>
-          <div className="px-5 pb-6 pt-[22px]">{sectionsStack}</div>
+          <div className="px-5 pb-6 pt-[22px]">
+            {recordPills}
+            <div className="pt-2">{trendsCard}</div>
+          </div>
         </>
       ) : (
         <>
@@ -326,18 +334,20 @@ export function TodayScreen() {
             <h1 className="text-[32px] font-normal leading-tight text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
             <span className="text-[19px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
-          {/* Two columns: timeline left, record & review right */}
-          <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-7">
-            <div className="flex flex-col gap-7">
-              {upcomingCard}
-              {givenCard}
-            </div>
+          {/* Band 1: Coming up ↔ the four record pills */}
+          <div className="grid grid-cols-2 items-start gap-8 pt-7">
+            <div>{upcomingCard}</div>
             <div>
               <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#8b8175]">
                 Record & review
               </div>
-              {sectionsStack}
+              {recordPills}
             </div>
+          </div>
+          {/* Band 2: Given ↔ blood-pressure visual */}
+          <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-8">
+            <div>{givenCard}</div>
+            <div className="pt-[26px]">{trendsCard}</div>
           </div>
         </>
       )}
