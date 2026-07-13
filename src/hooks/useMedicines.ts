@@ -77,7 +77,7 @@ export function useMedicines(viewDate: string) {
       return;
     }
     const { error } = await supabase.from('medicine_logs' as any).insert({
-      date: viewDate,
+      date: parsed.data.date,
       medicine_id: parsed.data.medicine_id,
       hour: parsed.data.hour,
       am_pm: parsed.data.am_pm,

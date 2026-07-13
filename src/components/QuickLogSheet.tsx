@@ -52,6 +52,9 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const parsedDate = selectedDate ? new Date(selectedDate + 'T00:00') : null;
   const displayDate = parsedDate && !isNaN(parsedDate.getTime()) ? format(parsedDate, 'EEE, MMM d') : '—';
 
+  // Initialize only when the sheet OPENS. The parent re-renders on a clock
+  // tick and recreates `mode` each render — depending on it here would wipe
+  // whatever the caregiver is typing mid-entry.
   useEffect(() => {
     if (open) {
       const n = new Date();
@@ -66,7 +69,8 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
         setFieldValues(init);
       }
     }
-  }, [open, mode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleSave = () => {
     if (!recorder) return;

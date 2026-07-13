@@ -4,7 +4,6 @@ import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
-import { useCustomActions } from '@/hooks/useCustomActions';
 import { CalendarDays } from 'lucide-react';
 import { QuickLogSheet, HealthField } from '@/components/QuickLogSheet';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, Plus, Trash2, Zap, X } from 'lucide-react';
+import { Droplets, Heart, Activity, CircleDot, Weight, Waves, Pill, CalendarPlus, StickyNote, Beaker, FlaskConical, ChevronLeft, ChevronRight, Clock, X } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { AppointmentForm } from '@/types/health';
 
@@ -66,13 +65,9 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
   const { records, updateField, getRecordByDate, saveBpReading } = useHealthRecords();
   const { appointments, addAppointment, getUpcoming } = appointmentsData;
   const { addNote } = useWrittenNotes();
-  const { actions: customActions, logs: customLogs, addAction, deleteAction, addLog: addCustomLog, getLogCountForAction } = useCustomActions();
   const [sheet, setSheet] = useState<SheetState>(null);
   const [apptOpen, setApptOpen] = useState(false);
   const [noteOpen, setNoteOpen] = useState(false);
-  const [customActionOpen, setCustomActionOpen] = useState(false);
-  const [customLogSheet, setCustomLogSheet] = useState<{ actionId: string; name: string; unit: string; defaultValue: number } | null>(null);
-  const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
   const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
@@ -214,240 +209,6 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
 
   const currentTime = format(new Date(), 'h:mm a');
   const currentDate = format(new Date(), 'EEEE, MMMM d, yyyy');
-
-  // ─── MOBILE LAYOUT (default, stacked) ───
-  const mobileLayout = (
-    <div className="space-y-5 pb-4 md:hidden">
-      {/* Date header */}
-      <div className="text-center">
-        <div className="text-sm font-semibold">{currentDate}</div>
-        <div className="text-xs text-muted-foreground">{currentTime}</div>
-      </div>
-      <div className="grid grid-cols-4 gap-2">
-        {summaryItems.map(s => (
-          <div key={s.label} className="rounded-lg border bg-card p-2 text-center">
-            <div className="text-[10px] text-muted-foreground">{s.label}</div>
-            <div className="text-sm font-semibold">{s.value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Upcoming Appointments (next 5 days) */}
-      {(() => {
-        const fiveDaysOut = format(new Date(Date.now() + 5 * 86400000), 'yyyy-MM-dd');
-        const todayDate = today();
-        const upcoming = appointments.filter(a => a.date >= todayDate && a.date <= fiveDaysOut);
-        if (upcoming.length === 0) return null;
-        return (
-          <div>
-            <h3 className="text-xs font-medium text-muted-foreground mb-2">Upcoming Appointments</h3>
-            <div className="space-y-1.5">
-              {upcoming.map(a => (
-                <div key={a.id} className="rounded-lg border bg-card p-2 flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-primary shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-medium truncate">{a.doctor_name}</div>
-                    <div className="text-[10px] text-muted-foreground">{format(new Date(a.date + 'T00:00'), 'EEE, MMM d')} · {a.time} — {a.reason}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Health Event Buttons */}
-      <div>
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">Quick Actions</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {HEALTH_BUTTONS.map(btn => {
-            const Icon = btn.icon;
-            return (
-              <button
-                key={btn.label}
-                onClick={() => setSheet({ type: 'health', metric: btn.metric, fields: btn.fields, dbFields: btn.dbFields })}
-                className={`${btn.color} text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform`}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="text-xs font-medium">{btn.label}</span>
-              </button>
-            );
-          })}
-          {/* Custom action buttons */}
-          {customActions.map(ca => {
-            const count = getLogCountForAction(ca.id, todayStr);
-            return (
-              <button
-                key={ca.id}
-                onClick={() => setCustomLogSheet({ actionId: ca.id, name: ca.name, unit: ca.unit, defaultValue: ca.default_value })}
-                className={`${ca.color} text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform relative`}
-              >
-                <Zap className="h-5 w-5" />
-                <span className="text-xs font-medium">{ca.name}</span>
-                {count > 0 && (
-                  <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
-                )}
-              </button>
-            );
-          })}
-          {/* Add new action button */}
-          <button
-            onClick={() => { setNewAction({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false }); setCustomActionOpen(true); }}
-            className="border-2 border-dashed border-muted-foreground/30 rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform text-muted-foreground"
-          >
-            <Plus className="h-5 w-5" />
-            <span className="text-xs font-medium">Add New</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Medicine Buttons */}
-      <div>
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">Medicines</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {medWithCat.map(({ med, cat }) => {
-            const count = medLogCounts[med.id] || 0;
-            const isDue = dueMedIds.has(med.id);
-            return (
-              <button
-                key={med.id}
-                onClick={() => setSheet({ type: 'medicine', medicine: med })}
-                className={`relative rounded-xl border p-2 text-left active:scale-95 transition-transform ${cat ? `${cat.borderColor} ${cat.bgColor} ${cat.darkBg} ${cat.darkBorder}` : 'bg-card'} ${isDue ? 'animate-pulse ring-2 ring-red-500 ring-offset-1' : ''}`}
-              >
-                <div className="flex items-center justify-between mb-0.5">
-                  <Pill className={`h-3 w-3 ${cat ? cat.iconColor : 'text-muted-foreground'}`} />
-                  {cat && <span className={`text-[7px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.name}</span>}
-                </div>
-                <div className="text-[10px] font-medium leading-tight truncate">{med.name}</div>
-                {med.amount && <div className="text-[8px] text-primary font-semibold truncate">{med.amount}</div>}
-                {med.schedule_note && <div className="text-[8px] text-muted-foreground truncate">{med.schedule_note}</div>}
-                {count > 0 && !isDue && (
-                  <Badge variant="secondary" className="absolute top-1 right-1 h-4 min-w-4 text-[9px] px-0.5 justify-center">{count}</Badge>
-                )}
-                {isDue && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); dismissMedAlert(med.id); }}
-                    className="absolute top-0.5 right-0.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 z-10"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* More Actions */}
-      <div>
-        <h3 className="text-xs font-medium text-muted-foreground mb-2">More Actions</h3>
-        <div className="grid grid-cols-2 gap-2">
-          <button onClick={() => { setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' }); setApptOpen(true); }}
-            className="bg-purple-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
-            <CalendarPlus className="h-5 w-5" /><span className="text-xs font-medium">Appointment</span>
-          </button>
-          <button onClick={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
-            className="bg-indigo-500 text-white rounded-xl p-3 flex flex-col items-center gap-1 active:scale-95 transition-transform">
-            <StickyNote className="h-5 w-5" /><span className="text-xs font-medium">Written Note</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Weekly Charts */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <button onClick={() => setWeekOffset(w => w + 1)} className="p-1 rounded hover:bg-muted"><ChevronLeft className="h-4 w-4" /></button>
-          <h3 className="text-xs font-medium text-muted-foreground">{weekRangeLabel}</h3>
-          <button onClick={() => setWeekOffset(w => Math.max(0, w - 1))} disabled={weekOffset === 0} className="p-1 rounded hover:bg-muted disabled:opacity-30"><ChevronRight className="h-4 w-4" /></button>
-        </div>
-
-        {/* Main metrics chart */}
-        <div className="rounded-xl border bg-card p-3 h-44 mb-3">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
-              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={25} />
-              <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 4 }} />
-              <Bar dataKey="feeds" name="Feeds" fill="hsl(200, 40%, 50%)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="vomit" name="Vomit" fill="hsl(15, 70%, 55%)" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="stool" name="Stool" fill="hsl(145, 35%, 45%)" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Flush chart */}
-        <div className="rounded-xl border bg-card p-3 h-36 mb-3">
-          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Flush (ml)</h4>
-          <ResponsiveContainer width="100%" height="85%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
-              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
-              <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Bar dataKey="flush" name="Flush (ml)" fill="hsl(185, 50%, 45%)" radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* BP chart */}
-        <div className="rounded-xl border bg-card p-3 h-36">
-          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Blood Pressure (avg)</h4>
-          <ResponsiveContainer width="100%" height="85%">
-            <LineChart data={chartData}>
-              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
-              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} domain={[40, 200]} />
-              <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Legend iconSize={8} wrapperStyle={{ fontSize: 10, paddingTop: 4 }} />
-              <Line type="monotone" dataKey="bpSys" name="Systolic" stroke="hsl(0, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
-              <Line type="monotone" dataKey="bpDia" name="Diastolic" stroke="hsl(220, 70%, 55%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Weight chart */}
-        <div className="rounded-xl border bg-card p-3 h-36">
-          <h4 className="text-[10px] font-medium text-muted-foreground mb-1">Weight (kg)</h4>
-          <ResponsiveContainer width="100%" height="85%">
-            <LineChart data={chartData}>
-              <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
-              <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} domain={['dataMin - 1', 'dataMax + 1']} />
-              <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Line type="monotone" dataKey="weight" name="Weight" stroke="hsl(145, 50%, 45%)" strokeWidth={2} dot={{ r: 3 }} connectNulls={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Custom action charts */}
-        {customActions.filter(ca => ca.show_graph).map(ca => {
-          const today = new Date();
-          const dayOfWeek = today.getDay();
-          const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-          const thisMonday = subDays(today, mondayOffset);
-          const weekStart = subDays(thisMonday, weekOffset * 7);
-          const caChartData = Array.from({ length: 7 }, (_, i) => {
-            const date = subDays(weekStart, -i);
-            const d = format(date, 'yyyy-MM-dd');
-            const dayLogs = customLogs.filter(l => l.action_id === ca.id && l.date === d);
-            const total = dayLogs.reduce((sum, l) => sum + Number(l.value), 0);
-            return { label: `${format(date, 'EEE')}\n${format(date, 'd/M')}`, value: total };
-          });
-          return (
-            <div key={ca.id} className="rounded-xl border bg-card p-3 h-36">
-              <h4 className="text-[10px] font-medium text-muted-foreground mb-1">{ca.name}{ca.unit ? ` (${ca.unit})` : ''}</h4>
-              <ResponsiveContainer width="100%" height="85%">
-                <BarChart data={caChartData}>
-                  <XAxis dataKey="label" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} interval={0} />
-                  <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={30} />
-                  <Tooltip contentStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="value" name={ca.name} fill="hsl(180, 50%, 45%)" radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   const upcomingAppts = getUpcoming().slice(0, 5);
 
@@ -606,7 +367,6 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
 
   return (
     <>
-      {mobileLayout}
       {tabletLayout}
 
       {/* Sheet */}
@@ -654,55 +414,6 @@ export function QuickLogTab({ appointmentsData }: QuickLogTabProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Create Custom Action Dialog */}
-      <Dialog open={customActionOpen} onOpenChange={setCustomActionOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Create Quick Action</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1"><Label className="text-xs">Name</Label><Input value={newAction.name} onChange={e => setNewAction(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Temperature" /></div>
-            <div className="space-y-1"><Label className="text-xs">Unit (optional)</Label><Input value={newAction.unit} onChange={e => setNewAction(p => ({ ...p, unit: e.target.value }))} placeholder="e.g. °C, ml, count" /></div>
-            <div className="space-y-1"><Label className="text-xs">Default Value</Label><Input type="number" value={newAction.default_value} onChange={e => setNewAction(p => ({ ...p, default_value: Number(e.target.value) }))} /></div>
-            <div className="space-y-1">
-              <Label className="text-xs">Color</Label>
-              <div className="grid grid-cols-5 gap-1.5">
-                {['bg-teal-500', 'bg-pink-500', 'bg-lime-500', 'bg-violet-500', 'bg-sky-500', 'bg-rose-500', 'bg-emerald-500', 'bg-fuchsia-500', 'bg-amber-500', 'bg-slate-500'].map(c => (
-                  <button key={c} onClick={() => setNewAction(p => ({ ...p, color: c }))} className={`${c} h-8 rounded-lg ${newAction.color === c ? 'ring-2 ring-offset-2 ring-foreground' : ''}`} />
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="show-graph" checked={newAction.show_graph} onChange={e => setNewAction(p => ({ ...p, show_graph: e.target.checked }))} className="rounded" />
-              <Label htmlFor="show-graph" className="text-xs">Add a graph for this action?</Label>
-            </div>
-          </div>
-          <DialogFooter className="flex-col gap-2">
-            <Button className="w-full" disabled={!newAction.name.trim()} onClick={async () => { await addAction(newAction); setCustomActionOpen(false); }}>Create Action</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Custom Action Log Sheet */}
-      {customLogSheet && (
-        <QuickLogSheet
-          open
-          onOpenChange={o => { if (!o) setCustomLogSheet(null); }}
-          mode={{
-            type: 'health',
-            metric: customLogSheet.name,
-            fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.defaultValue, min: 0 }],
-            onSave: (values, recordedBy, date) => {
-              addCustomLog({
-                action_id: customLogSheet.actionId,
-                value: values['value'] as number,
-                date,
-                recorded_by: recordedBy,
-                hour: new Date().getHours() > 12 ? new Date().getHours() - 12 : new Date().getHours() === 0 ? 12 : new Date().getHours(),
-                am_pm: new Date().getHours() >= 12 ? 'PM' : 'AM',
-              });
-            },
-          }}
-        />
-      )}
     </>
   );
 }

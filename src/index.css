@@ -118,3 +118,58 @@
     font-family: 'DM Serif Display', serif;
   }
 }
+
+/* "Today" screen due-dose animations (design handoff option 2c) */
+@keyframes duePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes dueFlashRow {
+  0%, 100% { background-color: rgba(194, 65, 12, 0.16); }
+  50% { background-color: rgba(194, 65, 12, 0); }
+}
+
+.animate-due-pulse {
+  animation: duePulse 1.2s infinite;
+}
+
+.animate-due-dot {
+  animation: duePulse 1.6s infinite;
+}
+
+.animate-due-flash-row {
+  animation: dueFlashRow 1.2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-due-pulse,
+  .animate-due-dot {
+    animation: none;
+  }
+  .animate-due-flash-row {
+    animation: none;
+    background-color: rgba(194, 65, 12, 0.16);
+  }
+}
+
+/* Collapsible sections open/close (~200ms ease-out per design handoff) */
+@keyframes collapsibleDown {
+  from { height: 0; }
+  to { height: var(--radix-collapsible-content-height); }
+}
+
+@keyframes collapsibleUp {
+  from { height: var(--radix-collapsible-content-height); }
+  to { height: 0; }
+}
+
+.collapsible-content {
+  overflow: hidden;
+}
+.collapsible-content[data-state='open'] {
+  animation: collapsibleDown 200ms ease-out;
+}
+.collapsible-content[data-state='closed'] {
+  animation: collapsibleUp 200ms ease-out;
+}
