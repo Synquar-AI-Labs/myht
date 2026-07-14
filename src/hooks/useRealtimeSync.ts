@@ -13,9 +13,9 @@ const TABLE_KEYS: Record<string, string[][]> = {
   appointments: [['appointments']],
   custom_actions: [['custom_actions']],
   custom_action_logs: [['custom_action_logs']],
-  hospital_stays: [['hospital-stays']],
+  hospital_stays: [['hospital-stays'], ['hospital-stays-summary']],
   written_notes: [['written-notes']],
-  audio_transcripts: [['audio_transcripts']],
+  audio_transcripts: [['audio_transcripts'], ['audio_transcripts-count']],
 };
 
 /**

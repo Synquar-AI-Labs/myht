@@ -19,6 +19,8 @@ interface DailyRecordTabProps {
   deleteRecord: (id: string) => Promise<void>;
   getLatestRecord: () => HealthRecord | null;
   getRecordByDate: (date: string) => HealthRecord | null;
+  /** Day to open on (yyyy-MM-dd); defaults to today. */
+  initialDate?: string;
 }
 
 const emptyForm: HealthRecordForm = {
@@ -29,11 +31,11 @@ const emptyForm: HealthRecordForm = {
   recordedBy: '', miscNotes: '',
 };
 
-export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate }: DailyRecordTabProps) {
+export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate }: DailyRecordTabProps) {
   const [form, setForm] = useState<HealthRecordForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [viewDate, setViewDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [viewDate, setViewDate] = useState(initialDate ?? format(new Date(), 'yyyy-MM-dd'));
 
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
 
