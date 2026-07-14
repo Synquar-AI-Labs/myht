@@ -75,6 +75,17 @@ serve(async (req) => {
     const audioBytes = new Uint8Array(await fileData.arrayBuffer());
     console.log("Downloaded file:", { size: audioBytes.length, type: fileData.type });
 
+    // OpenAI's transcription endpoint rejects files over 25 MB — fail with a
+    // human explanation instead of a cryptic upstream 413.
+    const MAX_TRANSCRIBABLE_BYTES = 25 * 1024 * 1024;
+    if (audioBytes.length > MAX_TRANSCRIBABLE_BYTES) {
+      const mb = (audioBytes.length / (1024 * 1024)).toFixed(1);
+      return new Response(
+        JSON.stringify({ error: `This recording is ${mb} MB — the transcription limit is 25 MB (about 90 minutes of speech). Please split longer conversations.` }),
+        { status: 413, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Check magic bytes to detect 3GP container (Apple Voice Memos)
     // MP4/M4A/3GP files have "ftyp" at offset 4
     const magicStr = new TextDecoder("ascii").decode(audioBytes.slice(4, 8));
@@ -117,7 +128,12 @@ serve(async (req) => {
     if (!whisperRes.ok) {
       const err = await whisperRes.text();
       console.error("Whisper error:", whisperRes.status, err);
-      return new Response(JSON.stringify({ error: "Transcription failed", details: err }), {
+      const friendly = whisperRes.status === 413
+        ? "The recording is too large for the transcription service (25 MB limit)."
+        : whisperRes.status === 429
+          ? "The transcription service is busy right now — please try again in a minute."
+          : `Transcription failed (service error ${whisperRes.status}). Please try again.`;
+      return new Response(JSON.stringify({ error: friendly, details: err }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

@@ -1,11 +1,13 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranscripts, Transcript } from '@/hooks/useTranscripts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Mic, Square, Upload, Trash2, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
+import { Mic, Square, Upload, Trash2, ChevronDown, ChevronRight, Loader2, RotateCcw } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { toast } from 'sonner';
+import { pickRecordingMimeType, formatDuration, SPEECH_BITS_PER_SECOND } from '@/lib/recording';
 
 export function TranscriptsTab() {
   const {
@@ -14,47 +16,111 @@ export function TranscriptsTab() {
     setSelectedDate,
     loading,
     processing,
+    processingStage,
+    canRetry,
+    retryTranscription,
     processAudio,
     deleteTranscript,
   } = useTranscripts();
 
   const [recording, setRecording] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
   const [title, setTitle] = useState('');
   const [recordedBy, setRecordedBy] = useState('');
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wakeLockRef = useRef<{ release: () => Promise<void> } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startRecording = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
-      chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        if (blob.size > 0) {
-          await processAudio(blob, title, recordedBy || 'Unknown');
-        }
-      };
-
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start();
-      setRecording(true);
-    } catch (err) {
-      console.error('Microphone access denied:', err);
-    }
-  }, [processAudio, title, recordedBy]);
-
-  const stopRecording = useCallback(() => {
-    mediaRecorderRef.current?.stop();
+  const cleanupRecording = useCallback(() => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+    wakeLockRef.current?.release().catch(() => {});
+    wakeLockRef.current = null;
     setRecording(false);
   }, []);
+
+  // Never leave the mic running if the caregiver navigates away mid-recording.
+  useEffect(() => {
+    return () => {
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== 'inactive') {
+        recorder.stream.getTracks().forEach(t => t.stop());
+        try { recorder.stop(); } catch { /* already stopped */ }
+      }
+      cleanupRecording();
+    };
+  }, [cleanupRecording]);
+
+  const startRecording = useCallback(async () => {
+    let stream: MediaStream;
+    try {
+      // Mono is all speech needs, and it halves the file size.
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 } });
+    } catch (err) {
+      console.error('Microphone access denied:', err);
+      toast.error('Microphone access is blocked. Allow the microphone for this site in your browser settings, then try again.');
+      return;
+    }
+
+    // iOS Safari records audio/mp4, Chrome records webm — pick what THIS
+    // browser supports instead of assuming webm (which broke every iPhone).
+    const mimeType = pickRecordingMimeType();
+    let mediaRecorder: MediaRecorder;
+    try {
+      mediaRecorder = new MediaRecorder(stream, {
+        ...(mimeType ? { mimeType } : {}),
+        audioBitsPerSecond: SPEECH_BITS_PER_SECOND,
+      });
+    } catch (err) {
+      console.error('MediaRecorder init failed:', err);
+      stream.getTracks().forEach(t => t.stop());
+      toast.error("This browser can't record audio. Use the Upload button with a voice memo instead.");
+      return;
+    }
+
+    chunksRef.current = [];
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+
+    mediaRecorder.onerror = () => {
+      toast.error('Recording stopped unexpectedly. Anything captured so far will still be processed.');
+      try { mediaRecorder.stop(); } catch { /* already stopped */ }
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      cleanupRecording();
+      const blob = new Blob(chunksRef.current, { type: mimeType ?? mediaRecorder.mimeType ?? 'audio/webm' });
+      if (blob.size > 0) {
+        await processAudio(blob, title, recordedBy || 'Unknown');
+      } else {
+        toast.error('No audio was captured. Please try again.');
+      }
+    };
+
+    mediaRecorderRef.current = mediaRecorder;
+    // Collect a chunk every second — a long conversation isn't one fragile
+    // giant buffer, and an unexpected stop keeps everything captured so far.
+    mediaRecorder.start(1000);
+    setRecording(true);
+    setElapsed(0);
+    timerRef.current = setInterval(() => setElapsed(s => s + 1), 1000);
+
+    // Keep the phone screen awake: on iOS, auto-lock suspends recording and
+    // silently kills long conversations.
+    try {
+      const nav = navigator as Navigator & { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } };
+      wakeLockRef.current = (await nav.wakeLock?.request('screen')) ?? null;
+    } catch { /* unsupported or denied — recording still works while awake */ }
+  }, [processAudio, title, recordedBy, cleanupRecording]);
+
+  const stopRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== 'inactive') recorder.stop();
+    else cleanupRecording();
+  }, [cleanupRecording]);
 
   const handleFileUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +158,7 @@ export function TranscriptsTab() {
           <div className="flex gap-2">
             {recording ? (
               <Button variant="destructive" onClick={stopRecording} className="flex-1">
-                <Square className="h-4 w-4 mr-1" /> Stop
+                <Square className="h-4 w-4 mr-1" /> Stop · {formatDuration(elapsed)}
               </Button>
             ) : (
               <Button onClick={startRecording} disabled={processing} className="flex-1">
@@ -115,10 +181,24 @@ export function TranscriptsTab() {
               onChange={handleFileUpload}
             />
           </div>
+          {recording && (
+            <div className="flex items-center justify-center gap-2 py-1 text-sm font-medium text-destructive">
+              <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-destructive" />
+              Recording — keep the phone unlocked
+            </div>
+          )}
           {processing && (
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-2">
-              <Loader2 className="h-4 w-4 animate-spin" /> Transcribing & analyzing...
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {processingStage === 'uploading' && 'Uploading audio…'}
+              {processingStage === 'transcribing' && 'Transcribing — this can take a minute for long talks…'}
+              {processingStage === 'saving' && 'Saving transcript…'}
             </div>
+          )}
+          {canRetry && !processing && (
+            <Button variant="outline" onClick={retryTranscription} className="w-full">
+              <RotateCcw className="h-4 w-4 mr-1" /> Try transcribing again — the audio is already uploaded
+            </Button>
           )}
         </CardContent>
       </Card>
