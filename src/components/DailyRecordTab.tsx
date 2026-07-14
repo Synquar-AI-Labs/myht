@@ -15,12 +15,14 @@ import { formatBp } from '@/lib/utils';
 
 interface DailyRecordTabProps {
   records: HealthRecord[];
-  addRecord: (form: HealthRecordForm) => Promise<void>;
-  deleteRecord: (id: string) => Promise<void>;
+  addRecord: (form: HealthRecordForm) => Promise<boolean>;
+  deleteRecord: (id: string) => Promise<boolean>;
   getLatestRecord: () => HealthRecord | null;
   getRecordByDate: (date: string) => HealthRecord | null;
   /** Day to open on (yyyy-MM-dd); defaults to today. */
   initialDate?: string;
+  /** Edit-one-day mode (History → "Edit this day"): hides the global Past Entries list. */
+  dayOnly?: boolean;
 }
 
 const emptyForm: HealthRecordForm = {
@@ -31,18 +33,24 @@ const emptyForm: HealthRecordForm = {
   recordedBy: '', miscNotes: '',
 };
 
-export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate }: DailyRecordTabProps) {
+export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly }: DailyRecordTabProps) {
   const startDate = initialDate ?? format(new Date(), 'yyyy-MM-dd');
-  // The entry form always targets the day being viewed — never silently today.
+  // ONE authoritative day: viewDate. The form has no separate date — every
+  // save targets the day shown in the navigator, and nothing else.
+  const [viewDate, setViewDate] = useState(startDate);
   const [form, setForm] = useState<HealthRecordForm>({ ...emptyForm, date: startDate });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [viewDate, setViewDate] = useState(startDate);
 
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
 
   const update = <K extends keyof HealthRecordForm>(key: K, value: HealthRecordForm[K]) => {
     setForm(prev => ({ ...prev, [key]: value }));
+  };
+
+  const resetFormFor = (date: string) => {
+    setForm({ ...emptyForm, date });
+    setEditingId(null);
   };
 
   const handleCopyPrevious = () => {
@@ -56,20 +64,28 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   };
 
   const handleSubmit = async () => {
-    if (!form.date) { toast.error('Please select a date'); return; }
     if (!form.recordedBy) { toast.error('Please select who is recording'); return; }
     setSaving(true);
-    await addRecord(form);
-    setForm({ ...emptyForm, date: viewDate });
-    setEditingId(null);
+    const wasEditing = !!editingId;
+    const ok = await addRecord({ ...form, date: viewDate });
     setSaving(false);
-    toast.success(editingId ? 'Record updated' : 'Record saved');
+    if (!ok) return; // keep the form values — nothing was saved
+    resetFormFor(viewDate);
+    toast.success(wasEditing ? 'Record updated' : 'Record saved');
   };
 
   const handleEdit = (record: HealthRecord) => {
+    // Editing a record moves the whole screen to that record's day, so the
+    // header, form and save target can never disagree.
+    setViewDate(record.date);
     setForm(dbToHealthForm(record));
     setEditingId(record.id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id: string) => {
+    const ok = await deleteRecord(id);
+    if (ok) toast.success('Record deleted');
   };
 
   const navigateDate = (direction: 'prev' | 'next') => {
@@ -77,9 +93,8 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     const newDate = direction === 'prev' ? subDays(current, 1) : addDays(current, 1);
     const newStr = format(newDate, 'yyyy-MM-dd');
     setViewDate(newStr);
-    // Keep the entry form pointed at the day on screen (unless mid-edit of
-    // an existing record, which carries its own date).
-    if (!editingId) setForm(prev => ({ ...prev, date: newStr }));
+    // A new day starts a fresh form — values never carry across days.
+    resetFormFor(newStr);
   };
 
   const isToday = viewDate === format(new Date(), 'yyyy-MM-dd');
@@ -112,7 +127,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
                 <Button variant="outline" size="sm" onClick={() => handleEdit(viewRecord)}>
                   <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
                 </Button>
-                <Button variant="outline" size="sm" className="text-destructive" onClick={async () => { await deleteRecord(viewRecord.id); toast.success('Record deleted'); }}>
+                <Button variant="outline" size="sm" className="text-destructive" onClick={() => handleDelete(viewRecord.id)}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -146,17 +161,13 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       <Card className="border-none shadow-sm">
         <CardHeader className="px-4 pb-2 pt-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">{editingId ? 'Edit Record' : 'New Entry'}</CardTitle>
+            <CardTitle className="text-base">{editingId ? 'Edit Record' : 'New Entry'} — {format(parseISO(viewDate), 'MMM d')}</CardTitle>
             <Button variant="outline" size="sm" onClick={handleCopyPrevious} className="gap-1.5 text-xs">
               <Copy className="h-3.5 w-3.5" /> Copy Previous
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4 px-4 pb-4">
-          <div>
-            <Label className="text-xs text-muted-foreground">Date</Label>
-            <Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" />
-          </div>
           <div>
             <Label className="text-xs text-muted-foreground">Recorded By</Label>
             <Select value={form.recordedBy} onValueChange={v => update('recordedBy', v)}>
@@ -222,10 +233,17 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <Label className="text-xs text-muted-foreground">Constipation</Label>
             <Switch checked={form.constipation} onCheckedChange={v => update('constipation', v)} />
           </div>
-          <Button onClick={handleSubmit} className="w-full gap-2" disabled={saving}>
-            <Plus className="h-4 w-4" />
-            {saving ? 'Saving...' : editingId ? 'Update Record' : 'Save Entry'}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleSubmit} className="flex-1 gap-2" disabled={saving}>
+              <Plus className="h-4 w-4" />
+              {saving ? 'Saving...' : editingId ? 'Update Record' : 'Save Entry'}
+            </Button>
+            {editingId && (
+              <Button variant="outline" disabled={saving} onClick={() => resetFormFor(viewDate)}>
+                Cancel
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -242,7 +260,8 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       {/* Medicine Tracker */}
       <MedicineTracker viewDate={viewDate} />
 
-      {/* Past entries list */}
+      {/* Past entries list (hidden when editing a single day from History) */}
+      {!dayOnly && (
       <div>
         <h3 className="mb-2 px-1 text-sm font-medium text-muted-foreground">Past Entries</h3>
         {records.length === 0 ? (
@@ -264,7 +283,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(record)}>
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={async () => { await deleteRecord(record.id); toast.success('Record deleted'); }}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(record.id)}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
@@ -274,6 +293,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

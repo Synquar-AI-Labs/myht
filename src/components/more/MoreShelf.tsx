@@ -15,9 +15,26 @@ const HospitalStaysTab = lazy(() => import('@/components/HospitalStaysTab').then
 const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
 const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
 
-/** Fetches the full health/BP history only when Reports is actually opened. */
+/** Fetches the full health/BP history only when Reports is actually opened.
+ *  Gated hard on load state — a half-loaded dataset must never become a
+ *  plausible-looking all-zero medical PDF. */
 function ReportsView() {
-  const { records, bpReadings } = useHealthRecords();
+  const { records, bpReadings, loading, bpLoading, loadError } = useHealthRecords();
+  if (loadError) {
+    return (
+      <div className="rounded-2xl border border-[#f0c9ae] bg-[#fdf0e6] p-4 text-[14px] font-medium text-[#c2740c]">
+        Couldn't load the records — check the connection and try again.
+      </div>
+    );
+  }
+  if (loading || bpLoading) {
+    return (
+      <div className="flex flex-col items-center gap-2 py-10 text-[13px] text-[#8b8175]">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        Loading all records…
+      </div>
+    );
+  }
   return <DashboardTab records={records} bpReadings={bpReadings} />;
 }
 

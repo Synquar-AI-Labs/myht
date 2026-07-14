@@ -81,12 +81,13 @@ export function HistoryTab() {
   );
   const groups = useMemo(() => groupDiary(entries), [entries]);
 
-  // "Meds given" counts real medicines only — historical Feed/Flush
-  // pseudo-medicine logs are activities, not doses.
-  const medsGivenCount = useMemo(() => {
-    const nonMedIds = new Set(medicines.filter(m => m.category === 'non-medicine').map(m => m.id));
-    return medLogs.filter(l => !nonMedIds.has(l.medicine_id)).length;
-  }, [medLogs, medicines]);
+  // "Meds given" counts real medicines only. The joined log.medicine row
+  // carries the category, so this can't miscount while the medicines-list
+  // query is loading or failed.
+  const medsGivenCount = useMemo(
+    () => medLogs.filter(l => (l.medicine?.category ?? 'medicine') !== 'non-medicine').length,
+    [medLogs],
+  );
 
   // Day chips: today plus the three previous days, then the free date picker.
   const dayChips = useMemo(() => {
@@ -104,25 +105,33 @@ export function HistoryTab() {
 
   const isCustomDate = !dayChips.some(c => c.str === selectedDate);
 
-  // While loading, show dashes — never a confident-looking zero.
+  // Loading shows "…", a failed query shows "—". A zero only ever means a
+  // confirmed zero — this strip is read as medical fact.
+  const medsValue = medLogsLoading ? '…' : medLogsError ? '—' : String(medsGivenCount);
+  const recValue = (v: string) => (recordsLoading ? '…' : recordsBpError ? '—' : v);
   const summary = [
-    { value: medLogsLoading ? '…' : String(medsGivenCount), label: medsGivenCount === 1 ? 'med given' : 'meds given', tone: 'text-[#2e7d4f]' },
-    { value: recordsLoading ? '…' : String(dayRecord?.feed_bags ?? 0), label: 'feeds', tone: 'text-[#26201a]' },
-    { value: recordsLoading ? '…' : formatBp(dayRecord?.bp_systolic, dayRecord?.bp_diastolic), label: 'BP', tone: 'text-[#26201a]' },
-    { value: recordsLoading ? '…' : String(dayRecord?.vomit_count ?? 0), label: 'vomit', tone: (dayRecord?.vomit_count ?? 0) > 0 ? 'text-[#c2410c]' : 'text-[#26201a]' },
-    { value: recordsLoading ? '…' : dayRecord?.weight && Number(dayRecord.weight) > 0 ? String(dayRecord.weight) : '—', label: 'kg', tone: 'text-[#26201a]' },
+    { value: medsValue, label: medsGivenCount === 1 && !medLogsError ? 'med given' : 'meds given', tone: 'text-[#2e7d4f]' },
+    { value: recValue(String(dayRecord?.feed_bags ?? 0)), label: 'feeds', tone: 'text-[#26201a]' },
+    { value: recValue(formatBp(dayRecord?.bp_systolic, dayRecord?.bp_diastolic)), label: 'BP', tone: 'text-[#26201a]' },
+    { value: recValue(String(dayRecord?.vomit_count ?? 0)), label: 'vomit', tone: (dayRecord?.vomit_count ?? 0) > 0 ? 'text-[#c2410c]' : 'text-[#26201a]' },
+    { value: recValue(dayRecord?.weight && Number(dayRecord.weight) > 0 ? String(dayRecord.weight) : '—'), label: 'kg', tone: 'text-[#26201a]' },
   ];
 
-  // Untimed aggregates the strip doesn't cover — shown honestly as totals.
+  // The complete untimed daily record — "No" and 0 are medical information
+  // (no food, no stool), so nothing is filtered out.
+  const flushParts = [
+    dayRecord?.flush_ml ? `${dayRecord.flush_ml} ml` : null,
+    dayRecord?.flush_count ? `${dayRecord.flush_count}×` : null,
+  ].filter(Boolean);
   const dayTotals: { label: string; value: string }[] = dayRecord ? [
     { label: 'Bile bags', value: String(dayRecord.bile_bags ?? 0) },
     { label: 'Stool', value: String(dayRecord.stool_count ?? 0) },
     { label: 'Urine', value: String(dayRecord.urine_count ?? 0) },
-    { label: 'Flush', value: dayRecord.flush_ml ? `${dayRecord.flush_ml} ml` : String(dayRecord.flush_count ?? 0) },
+    { label: 'Flush', value: flushParts.length ? flushParts.join(' · ') : '0' },
     { label: 'Food', value: dayRecord.food_taken ? `Yes${dayRecord.food_description ? ` — ${dayRecord.food_description}` : ''}` : 'No' },
     { label: 'Constipation', value: dayRecord.constipation ? 'Yes' : 'No' },
     ...(dayRecord.misc_notes ? [{ label: 'Notes', value: dayRecord.misc_notes }] : []),
-  ].filter(t => t.value !== '0' && t.value !== 'No') : [];
+  ] : [];
 
   if (view === 'charts') {
     return (
@@ -142,7 +151,7 @@ export function HistoryTab() {
           <ChevronLeft className="h-4 w-4" /> Back to the diary
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
-          <DailyRecordTab {...healthRecords} initialDate={selectedDate} />
+          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly />
         </Suspense>
       </div>
     );
@@ -238,6 +247,11 @@ export function HistoryTab() {
         {diaryLoading && groups.length === 0 && (
           <div className="flex justify-center py-8">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {diaryLoading && groups.length > 0 && (
+          <div className="flex items-center justify-center gap-2 text-[13px] text-[#8b8175]">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Still loading the rest of the day…
           </div>
         )}
         {!diaryLoading && !diaryError && groups.length === 0 && (

@@ -48,11 +48,12 @@ export function useHealthRecords() {
     queryClient.invalidateQueries({ queryKey: ['bp_readings'] });
   }, [queryClient]);
 
-  const addRecord = useCallback(async (form: HealthRecordForm) => {
+  /** Returns true only when the record verifiably saved. */
+  const addRecord = useCallback(async (form: HealthRecordForm): Promise<boolean> => {
     const parsed = healthRecordSchema.safeParse(form);
     if (!parsed.success) {
       toast.error(parsed.error.errors[0]?.message || 'Invalid input');
-      return;
+      return false;
     }
     // Only the fields the daily form owns. Anything else on the row
     // (bile_bags, urine_count, flush_ml — logged via Quick Log) is preserved.
@@ -96,19 +97,22 @@ export function useHealthRecords() {
     if (error) {
       toast.error('Failed to save record');
       console.error(error);
-    } else {
-      invalidateRecords();
+      return false;
     }
+    invalidateRecords();
+    return true;
   }, [invalidateRecords]);
 
-  const deleteRecord = useCallback(async (id: string) => {
+  /** Returns true only when the delete verifiably succeeded. */
+  const deleteRecord = useCallback(async (id: string): Promise<boolean> => {
     const { error } = await supabase.from('health_records').delete().eq('id', id);
     if (error) {
       toast.error('Failed to delete');
       console.error(error);
-    } else {
-      invalidateRecords();
+      return false;
     }
+    invalidateRecords();
+    return true;
   }, [invalidateRecords]);
 
   const getLatestRecord = useCallback(() => {
