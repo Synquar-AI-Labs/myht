@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { Minimize, Loader2, Clock, BarChart3, MoreHorizontal } from 'lucide-react';
 import { TodayScreen } from '@/components/today/TodayScreen';
+import { RecordingIndicator } from '@/components/RecordingIndicator';
 
 const HistoryTab = lazy(() => import('@/components/history/HistoryTab').then(m => ({ default: m.HistoryTab })));
 const MoreShelf = lazy(() => import('@/components/more/MoreShelf').then(m => ({ default: m.MoreShelf })));
@@ -40,6 +41,7 @@ const Index = () => {
 
   return (
     <div className="relative mx-auto flex min-h-screen flex-col bg-[#faf7f2]">
+      <RecordingIndicator />
       {/* Floating pill nav — tablet & desktop */}
       {!isFullscreen && (
         <nav className="absolute right-6 top-5 z-30 hidden items-center gap-1 rounded-2xl border border-[#e9e2d6] bg-white p-1.5 shadow-sm md:flex">

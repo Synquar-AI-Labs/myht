@@ -17,6 +17,10 @@ describe('pickRecordingMimeType', () => {
     expect(pickRecordingMimeType(() => false)).toBeUndefined();
   });
 
+  it('never offers ogg (unsupported by the transcription service)', () => {
+    expect(pickRecordingMimeType(t => t.includes('ogg'))).toBeUndefined();
+  });
+
   it('treats a throwing isTypeSupported as unsupported', () => {
     expect(pickRecordingMimeType(() => { throw new Error('nope'); })).toBeUndefined();
   });

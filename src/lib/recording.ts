@@ -9,12 +9,15 @@
  *   BEFORE spending minutes uploading.
  */
 
-/** Candidate container/codec combos, most efficient first per platform. */
+/**
+ * Candidate container/codec combos, most efficient first per platform.
+ * All are formats the transcription service accepts (webm, mp4/m4a) — we do
+ * NOT record ogg, which it doesn't reliably support.
+ */
 const MIME_CANDIDATES = [
   'audio/webm;codecs=opus', // Chrome / Android / Firefox — smallest for speech
   'audio/mp4',              // iOS / macOS Safari (AAC)
   'audio/webm',
-  'audio/ogg;codecs=opus',
 ];
 
 /**

@@ -109,8 +109,16 @@ serve(async (req) => {
     const ext = fileName.split(".").pop()?.toLowerCase() || "m4a";
     const safeName = `recording_${Date.now()}.${ext}`;
 
-    // Create File for Whisper
-    const whisperFile = new File([patchedBytes], safeName, { type: "audio/mp4" });
+    // Label the File with its ACTUAL content type — sending webm/wav as
+    // "audio/mp4" can confuse the transcription service.
+    const CONTENT_TYPES: Record<string, string> = {
+      m4a: "audio/mp4", mp4: "audio/mp4", mp3: "audio/mpeg", mpeg: "audio/mpeg",
+      mpga: "audio/mpeg", wav: "audio/wav", webm: "audio/webm", ogg: "audio/ogg",
+      oga: "audio/ogg", flac: "audio/flac",
+    };
+    const whisperFile = new File([patchedBytes], safeName, {
+      type: CONTENT_TYPES[ext] ?? "audio/mp4",
+    });
 
     console.log("Sending to Whisper:", { safeName, size: patchedBytes.length, patched: patchedBytes !== audioBytes });
 
