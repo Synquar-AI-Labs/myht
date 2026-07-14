@@ -49,7 +49,7 @@ export function useMedicines(viewDate: string) {
     queryFn: fetchMedicinesList,
   });
 
-  const { data: logs = [], isLoading: loading } = useQuery({
+  const { data: logs = [], isLoading: loading, isError: loadError } = useQuery({
     queryKey: ['medicine_logs_by_date', viewDate],
     queryFn: async (): Promise<MedicineLog[]> => {
       const { data, error } = await supabase
@@ -157,5 +157,5 @@ export function useMedicines(viewDate: string) {
     }
   }, [viewDate, invalidateLogs]);
 
-  return { medicines, logs, loading, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay };
+  return { medicines, logs, loading, loadError, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay };
 }

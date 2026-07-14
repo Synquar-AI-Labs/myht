@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -14,6 +14,12 @@ const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m
 const HospitalStaysTab = lazy(() => import('@/components/HospitalStaysTab').then(m => ({ default: m.HospitalStaysTab })));
 const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
 const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
+
+/** Fetches the full health/BP history only when Reports is actually opened. */
+function ReportsView() {
+  const { records, bpReadings } = useHealthRecords();
+  return <DashboardTab records={records} bpReadings={bpReadings} />;
+}
 
 type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports';
 
@@ -33,21 +39,30 @@ interface RowSpec {
 export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   const [view, setView] = useState<ShelfView>(null);
 
+  // Minute tick so "next appointment" can't stay stale on a mounted shelf.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
   const appointmentsData = useAppointments();
-  const healthRecords = useHealthRecords();
 
-  const { data: medicines = [] } = useQuery({ queryKey: MEDICINES_QUERY_KEY, queryFn: fetchMedicinesList });
+  const { data: medicines = [], isLoading: medsLoading } = useQuery({ queryKey: MEDICINES_QUERY_KEY, queryFn: fetchMedicinesList });
 
+  // Rows are caregiver coverage blocks (incl. unavailability), NOT "stays" —
+  // so the subtitle talks about coverage, and skips unavailable blocks.
   const { data: staysSummary } = useQuery({
     queryKey: ['hospital-stays-summary'],
     queryFn: async () => {
-      const { count, data, error } = await supabase
+      const { data, error } = await supabase
         .from('hospital_stays')
-        .select('date', { count: 'exact' })
+        .select('date')
+        .eq('is_unavailable', false)
         .order('date', { ascending: false })
         .limit(1);
       if (error) throw error;
-      return { count: count ?? 0, last: data?.[0]?.date as string | undefined };
+      return { latest: (data?.[0]?.date as string | undefined) ?? null };
     },
   });
 
@@ -63,35 +78,39 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   });
 
   const nextAppointment = useMemo(() => {
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const nowTime = format(new Date(), 'HH:mm');
+    const todayStr = format(now, 'yyyy-MM-dd');
+    const nowTime = format(now, 'HH:mm');
     return appointmentsData.appointments
       .filter(a => a.date > todayStr || (a.date === todayStr && (a.time || '') >= nowTime))
       .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''))[0];
-  }, [appointmentsData.appointments]);
+  }, [appointmentsData.appointments, now]);
 
   const rows: RowSpec[] = [
     {
       view: 'meds',
       title: 'Medicine cabinet',
-      subtitle: `${medicines.length} medicines · schedules, doses, old & new`,
+      subtitle: medsLoading
+        ? 'Schedules, doses, old & new'
+        : `${medicines.length} medicines · schedules, doses, old & new`,
       icon: Pill,
       chip: 'bg-[#f3ecfb] text-[#8b5cf6]',
     },
     {
       view: 'visits',
       title: 'Doctor visits',
-      subtitle: nextAppointment
-        ? `Next: ${nextAppointment.doctor_name} — ${format(parseISO(nextAppointment.date), 'EEE, MMM d')} · ${nextAppointment.time}`
-        : 'No upcoming appointments',
+      subtitle: appointmentsData.loading
+        ? 'Upcoming appointments'
+        : nextAppointment
+          ? `Next: ${nextAppointment.doctor_name} — ${format(parseISO(nextAppointment.date), 'EEE, MMM d')} · ${nextAppointment.time}`
+          : 'No upcoming appointments',
       icon: CalendarDays,
       chip: 'bg-[#eef1f9] text-[#4f6bd6]',
     },
     {
       view: 'stays',
       title: 'Hospital stays',
-      subtitle: staysSummary && staysSummary.count > 0
-        ? `${staysSummary.count} stays recorded${staysSummary.last ? ` · last: ${format(parseISO(staysSummary.last), 'MMM d')}` : ''}`
+      subtitle: staysSummary?.latest
+        ? `Coverage scheduled through ${format(parseISO(staysSummary.latest), 'MMM d')}`
         : "Who's with Dad, and when",
       icon: Users,
       chip: 'bg-[#eaf3ec] text-[#2e7d4f]',
@@ -123,7 +142,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
           {view === 'visits' && <AppointmentsTab {...appointmentsData} />}
           {view === 'stays' && <HospitalStaysTab />}
           {view === 'conversations' && <TranscriptsTab />}
-          {view === 'reports' && <DashboardTab records={healthRecords.records} bpReadings={healthRecords.bpReadings} />}
+          {view === 'reports' && <ReportsView />}
         </Suspense>
       </div>
     );

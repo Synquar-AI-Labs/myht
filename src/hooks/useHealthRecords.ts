@@ -15,7 +15,7 @@ type BpReading = { id: string; date: string; systolic: number; diastolic: number
 export function useHealthRecords() {
   const queryClient = useQueryClient();
 
-  const { data: records = [], isLoading: loading } = useQuery({
+  const { data: records = [], isLoading: loading, isError: recordsError } = useQuery({
     queryKey: ['health_records'],
     queryFn: async (): Promise<HealthRecord[]> => {
       const { data, error } = await supabase
@@ -27,7 +27,7 @@ export function useHealthRecords() {
     },
   });
 
-  const { data: bpReadings = [] } = useQuery({
+  const { data: bpReadings = [], isLoading: bpLoading, isError: bpError } = useQuery({
     queryKey: ['bp_readings'],
     queryFn: async (): Promise<BpReading[]> => {
       const { data, error } = await supabase
@@ -38,6 +38,8 @@ export function useHealthRecords() {
       return (data as any[]) ?? [];
     },
   });
+
+  const loadError = recordsError || bpError;
 
   const invalidateRecords = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['health_records'] });
@@ -222,5 +224,5 @@ export function useHealthRecords() {
     invalidateBp();
   }, [bpReadings, invalidateRecords, invalidateBp]);
 
-  return { records, bpReadings, loading, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField, saveBpReading, getBpReadingsForDate, deleteBpReading };
+  return { records, bpReadings, loading, bpLoading, loadError, addRecord, deleteRecord, getLatestRecord, getRecordByDate, updateField, saveBpReading, getBpReadingsForDate, deleteBpReading };
 }

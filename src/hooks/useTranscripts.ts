@@ -17,6 +17,24 @@ export interface Transcript {
   created_at: string;
 }
 
+/**
+ * The ONLY fetcher for `['audio_transcripts', date]` — HistoryTab shares the
+ * cache key, so the result shape must stay identical everywhere.
+ */
+export async function fetchTranscriptsForDate(date: string): Promise<Transcript[]> {
+  const { data, error } = await supabase
+    .from('audio_transcripts')
+    .select('*')
+    .eq('date', date)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map((d: any) => ({
+    ...d,
+    action_items: Array.isArray(d.action_items) ? d.action_items : [],
+    follow_ups: Array.isArray(d.follow_ups) ? d.follow_ups : [],
+  }));
+}
+
 export function useTranscripts() {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -24,22 +42,13 @@ export function useTranscripts() {
 
   const { data: transcripts = [], isLoading: loading } = useQuery({
     queryKey: ['audio_transcripts', selectedDate],
-    queryFn: async (): Promise<Transcript[]> => {
-      const { data, error } = await supabase
-        .from('audio_transcripts')
-        .select('*')
-        .eq('date', selectedDate)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []).map((d: any) => ({
-        ...d,
-        action_items: Array.isArray(d.action_items) ? d.action_items : [],
-        follow_ups: Array.isArray(d.follow_ups) ? d.follow_ups : [],
-      }));
-    },
+    queryFn: () => fetchTranscriptsForDate(selectedDate),
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['audio_transcripts'] });
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ['audio_transcripts'] });
+    queryClient.invalidateQueries({ queryKey: ['audio_transcripts-count'] });
+  };
 
   const processAudio = async (audioBlob: Blob, title: string, recordedBy: string) => {
     setProcessing(true);

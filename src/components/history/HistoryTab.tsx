@@ -3,13 +3,13 @@ import { format, parseISO, subDays } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import {
   Pill, Heart, Zap, StickyNote, Mic, CalendarDays, ChevronDown, ChevronLeft,
-  ChevronRight, BarChart3, Pencil, Moon, Sun, Sunrise, MoonStar, Loader2,
+  ChevronRight, BarChart3, Pencil, Moon, Sun, Sunrise, MoonStar, Loader2, AlertTriangle,
 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useMedicines } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useCustomActions } from '@/hooks/useCustomActions';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
+import { fetchTranscriptsForDate } from '@/hooks/useTranscripts';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -33,6 +33,7 @@ const PERIOD_ICON: Record<PeriodKey, React.ComponentType<{ className?: string; s
   afternoon: Sun,
   morning: Sunrise,
   night: MoonStar,
+  untimed: Pencil,
 };
 
 type View = 'diary' | 'charts' | 'editday';
@@ -44,24 +45,20 @@ export function HistoryTab() {
   const [pickerOpen, setPickerOpen] = useState(false);
 
   const healthRecords = useHealthRecords();
-  const { records, bpReadings } = healthRecords;
-  const { medicines, logs: medLogs } = useMedicines(selectedDate);
-  const { actions: customActions, logs: customLogs } = useCustomActions();
-  const { notes } = useWrittenNotes();
+  const { records, bpReadings, loading: recordsLoading, bpLoading, loadError: recordsBpError } = healthRecords;
+  const { medicines, logs: medLogs, loading: medLogsLoading, loadError: medLogsError } = useMedicines(selectedDate);
+  const { actions: customActions, logs: customLogs, loading: customLoading, loadError: customError } = useCustomActions();
+  const { notes, loading: notesLoading, loadError: notesError } = useWrittenNotes();
 
-  // Same query key shape as useTranscripts so the caches are shared.
-  const { data: transcripts = [] } = useQuery({
+  // Shares useTranscripts' cache key AND fetcher, so the shapes can't drift.
+  const { data: transcripts = [], isLoading: transcriptsLoading, isError: transcriptsError } = useQuery({
     queryKey: ['audio_transcripts', selectedDate],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('audio_transcripts')
-        .select('*')
-        .eq('date', selectedDate)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchTranscriptsForDate(selectedDate),
   });
+
+  // Never present "nothing recorded" (or zeros) while any source is pending.
+  const diaryLoading = medLogsLoading || customLoading || notesLoading || transcriptsLoading || recordsLoading || bpLoading;
+  const diaryError = medLogsError || customError || notesError || transcriptsError || recordsBpError;
 
   const dayRecord = useMemo(() => records.find(r => r.date === selectedDate) ?? null, [records, selectedDate]);
   const dayBp = useMemo(() => bpReadings.filter(r => r.date === selectedDate), [bpReadings, selectedDate]);
@@ -73,15 +70,23 @@ export function HistoryTab() {
 
   const entries = useMemo(
     () => buildDiaryEntries({
+      date: selectedDate,
       medLogs, medicines,
       bpReadings: dayBp,
       customActions, customLogs: dayCustomLogs,
       notes: dayNotes,
       transcripts,
     }),
-    [medLogs, medicines, dayBp, customActions, dayCustomLogs, dayNotes, transcripts],
+    [selectedDate, medLogs, medicines, dayBp, customActions, dayCustomLogs, dayNotes, transcripts],
   );
   const groups = useMemo(() => groupDiary(entries), [entries]);
+
+  // "Meds given" counts real medicines only — historical Feed/Flush
+  // pseudo-medicine logs are activities, not doses.
+  const medsGivenCount = useMemo(() => {
+    const nonMedIds = new Set(medicines.filter(m => m.category === 'non-medicine').map(m => m.id));
+    return medLogs.filter(l => !nonMedIds.has(l.medicine_id)).length;
+  }, [medLogs, medicines]);
 
   // Day chips: today plus the three previous days, then the free date picker.
   const dayChips = useMemo(() => {
@@ -99,13 +104,25 @@ export function HistoryTab() {
 
   const isCustomDate = !dayChips.some(c => c.str === selectedDate);
 
+  // While loading, show dashes — never a confident-looking zero.
   const summary = [
-    { value: String(medLogs.length), label: medLogs.length === 1 ? 'med given' : 'meds given', tone: 'text-[#2e7d4f]' },
-    { value: String(dayRecord?.feed_bags ?? 0), label: 'feeds', tone: 'text-[#26201a]' },
-    { value: formatBp(dayRecord?.bp_systolic, dayRecord?.bp_diastolic), label: 'BP', tone: 'text-[#26201a]' },
-    { value: String(dayRecord?.vomit_count ?? 0), label: 'vomit', tone: (dayRecord?.vomit_count ?? 0) > 0 ? 'text-[#c2410c]' : 'text-[#26201a]' },
-    { value: dayRecord?.weight && Number(dayRecord.weight) > 0 ? String(dayRecord.weight) : '—', label: 'kg', tone: 'text-[#26201a]' },
+    { value: medLogsLoading ? '…' : String(medsGivenCount), label: medsGivenCount === 1 ? 'med given' : 'meds given', tone: 'text-[#2e7d4f]' },
+    { value: recordsLoading ? '…' : String(dayRecord?.feed_bags ?? 0), label: 'feeds', tone: 'text-[#26201a]' },
+    { value: recordsLoading ? '…' : formatBp(dayRecord?.bp_systolic, dayRecord?.bp_diastolic), label: 'BP', tone: 'text-[#26201a]' },
+    { value: recordsLoading ? '…' : String(dayRecord?.vomit_count ?? 0), label: 'vomit', tone: (dayRecord?.vomit_count ?? 0) > 0 ? 'text-[#c2410c]' : 'text-[#26201a]' },
+    { value: recordsLoading ? '…' : dayRecord?.weight && Number(dayRecord.weight) > 0 ? String(dayRecord.weight) : '—', label: 'kg', tone: 'text-[#26201a]' },
   ];
+
+  // Untimed aggregates the strip doesn't cover — shown honestly as totals.
+  const dayTotals: { label: string; value: string }[] = dayRecord ? [
+    { label: 'Bile bags', value: String(dayRecord.bile_bags ?? 0) },
+    { label: 'Stool', value: String(dayRecord.stool_count ?? 0) },
+    { label: 'Urine', value: String(dayRecord.urine_count ?? 0) },
+    { label: 'Flush', value: dayRecord.flush_ml ? `${dayRecord.flush_ml} ml` : String(dayRecord.flush_count ?? 0) },
+    { label: 'Food', value: dayRecord.food_taken ? `Yes${dayRecord.food_description ? ` — ${dayRecord.food_description}` : ''}` : 'No' },
+    { label: 'Constipation', value: dayRecord.constipation ? 'Yes' : 'No' },
+    ...(dayRecord.misc_notes ? [{ label: 'Notes', value: dayRecord.misc_notes }] : []),
+  ].filter(t => t.value !== '0' && t.value !== 'No') : [];
 
   if (view === 'charts') {
     return (
@@ -195,9 +212,35 @@ export function HistoryTab() {
         ))}
       </div>
 
+      {/* Day totals — real data that has no timestamps, shown as totals */}
+      {!recordsLoading && dayTotals.length > 0 && (
+        <div className="mt-3 rounded-2xl border border-[#e9e2d6] bg-white p-3.5">
+          <div className="mb-1.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#8b8175]">Day totals</div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {dayTotals.map(t => (
+              <span key={t.label} className="text-[13px] text-[#26201a]">
+                <span className="text-[#8b8175]">{t.label}: </span>
+                <span className="font-semibold">{t.value}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Diary, grouped by time of day (newest first) */}
       <div key={selectedDate} className="mt-5 space-y-5">
-        {groups.length === 0 && (
+        {diaryError && (
+          <div className="flex items-center gap-2 rounded-2xl border border-[#f0c9ae] bg-[#fdf0e6] p-3 text-[13px] font-medium text-[#c2740c]">
+            <AlertTriangle className="h-4 w-4 flex-none" />
+            Couldn't load the full diary — check the connection and try again.
+          </div>
+        )}
+        {diaryLoading && groups.length === 0 && (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {!diaryLoading && !diaryError && groups.length === 0 && (
           <p className="py-6 text-center text-[14px] text-[#8b8175]">
             Nothing recorded on {format(parseISO(selectedDate), 'EEE, MMM d')}.
           </p>
@@ -229,7 +272,12 @@ export function HistoryTab() {
                         <div className="min-w-0 flex-1">
                           <div className="text-[16px] font-bold leading-snug text-[#26201a]">{entry.title}</div>
                           <div className="text-[13px] text-[#8b8175]">
-                            {timeLabel(entry.at)}{entry.by ? ` · by ${entry.by}` : ''}
+                            {entry.untimed
+                              ? `time not recorded · entered ${format(entry.at, 'MMM d')}`
+                              : entry.timeKind === 'entered'
+                                ? `entered ${timeLabel(entry.at)}`
+                                : timeLabel(entry.at)}
+                            {entry.by ? ` · by ${entry.by}` : ''}
                           </div>
                           {entry.detail && (
                             <div className="mt-0.5 line-clamp-2 text-[13px] text-[#8b8175]">{entry.detail}</div>

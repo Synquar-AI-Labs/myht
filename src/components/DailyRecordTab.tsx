@@ -32,10 +32,12 @@ const emptyForm: HealthRecordForm = {
 };
 
 export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate }: DailyRecordTabProps) {
-  const [form, setForm] = useState<HealthRecordForm>(emptyForm);
+  const startDate = initialDate ?? format(new Date(), 'yyyy-MM-dd');
+  // The entry form always targets the day being viewed — never silently today.
+  const [form, setForm] = useState<HealthRecordForm>({ ...emptyForm, date: startDate });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [viewDate, setViewDate] = useState(initialDate ?? format(new Date(), 'yyyy-MM-dd'));
+  const [viewDate, setViewDate] = useState(startDate);
 
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
 
@@ -44,11 +46,13 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   };
 
   const handleCopyPrevious = () => {
-    const latest = getLatestRecord();
-    if (!latest) { toast.error('No previous record to copy from'); return; }
-    setForm({ ...dbToHealthForm(latest), date: format(new Date(), 'yyyy-MM-dd') });
+    // Records are sorted newest-first; copy the closest record BEFORE the
+    // day being edited (not the latest overall, which could be today's).
+    const previous = records.find(r => r.date < viewDate);
+    if (!previous) { toast.error('No earlier record to copy from'); return; }
+    setForm({ ...dbToHealthForm(previous), date: viewDate });
     setEditingId(null);
-    toast.success('Copied from previous entry');
+    toast.success(`Copied from ${format(parseISO(previous.date), 'MMM d')}`);
   };
 
   const handleSubmit = async () => {
@@ -56,7 +60,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     if (!form.recordedBy) { toast.error('Please select who is recording'); return; }
     setSaving(true);
     await addRecord(form);
-    setForm({ ...emptyForm, date: format(new Date(), 'yyyy-MM-dd') });
+    setForm({ ...emptyForm, date: viewDate });
     setEditingId(null);
     setSaving(false);
     toast.success(editingId ? 'Record updated' : 'Record saved');
@@ -71,7 +75,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const navigateDate = (direction: 'prev' | 'next') => {
     const current = parseISO(viewDate);
     const newDate = direction === 'prev' ? subDays(current, 1) : addDays(current, 1);
-    setViewDate(format(newDate, 'yyyy-MM-dd'));
+    const newStr = format(newDate, 'yyyy-MM-dd');
+    setViewDate(newStr);
+    // Keep the entry form pointed at the day on screen (unless mid-edit of
+    // an existing record, which carries its own date).
+    if (!editingId) setForm(prev => ({ ...prev, date: newStr }));
   };
 
   const isToday = viewDate === format(new Date(), 'yyyy-MM-dd');

@@ -1,11 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 export function useWrittenNotes() {
   const queryClient = useQueryClient();
 
-  const { data: notes = [] } = useQuery({
+  const { data: notes = [], isLoading: loading, isError: loadError } = useQuery({
     queryKey: ['written-notes'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -19,6 +20,9 @@ export function useWrittenNotes() {
 
   const addNote = async (title: string, content: string, recordedBy: string) => {
     const { error } = await supabase.from('written_notes').insert({
+      // Explicit local calendar date — the DB default is server (UTC) time,
+      // which would file an evening note under tomorrow.
+      date: format(new Date(), 'yyyy-MM-dd'),
       title: title || null,
       content,
       recorded_by: recordedBy,
@@ -28,5 +32,5 @@ export function useWrittenNotes() {
     queryClient.invalidateQueries({ queryKey: ['written-notes'] });
   };
 
-  return { notes, addNote };
+  return { notes, loading, loadError, addNote };
 }

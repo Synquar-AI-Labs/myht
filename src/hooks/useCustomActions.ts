@@ -27,7 +27,7 @@ export interface CustomActionLog {
 export function useCustomActions() {
   const queryClient = useQueryClient();
 
-  const { data: actions = [] } = useQuery({
+  const { data: actions = [], isLoading: actionsLoading, isError: actionsError } = useQuery({
     queryKey: ['custom_actions'],
     queryFn: async (): Promise<CustomAction[]> => {
       const { data, error } = await supabase
@@ -39,7 +39,7 @@ export function useCustomActions() {
     },
   });
 
-  const { data: logs = [] } = useQuery({
+  const { data: logs = [], isLoading: logsLoading, isError: logsError } = useQuery({
     queryKey: ['custom_action_logs'],
     queryFn: async (): Promise<CustomActionLog[]> => {
       const { data, error } = await supabase
@@ -50,6 +50,9 @@ export function useCustomActions() {
       return data ?? [];
     },
   });
+
+  const loading = actionsLoading || logsLoading;
+  const loadError = actionsError || logsError;
 
   const invalidateActions = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['custom_actions'] });
@@ -82,5 +85,5 @@ export function useCustomActions() {
 
   const getLogCountForAction = (actionId: string, date?: string) => logs.filter(l => l.action_id === actionId && (!date || l.date === date)).length;
 
-  return { actions, logs, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: invalidateLogs };
+  return { actions, logs, loading, loadError, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: invalidateLogs };
 }

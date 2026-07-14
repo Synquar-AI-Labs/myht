@@ -46,6 +46,7 @@ export function useHospitalStays(weekStart: Date, weekEnd: Date) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hospital-stays'] });
+      queryClient.invalidateQueries({ queryKey: ['hospital-stays-summary'] });
     },
   });
 
@@ -59,6 +60,7 @@ export function useHospitalStays(weekStart: Date, weekEnd: Date) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hospital-stays'] });
+      queryClient.invalidateQueries({ queryKey: ['hospital-stays-summary'] });
     },
   });
 
