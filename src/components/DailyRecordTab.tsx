@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { HealthRecord, HealthRecordForm, dbToHealthForm, RECORDER_OPTIONS } from '@/types/health';
 import { MedicineTracker } from '@/components/MedicineTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,6 +43,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const [form, setForm] = useState<HealthRecordForm>({ ...emptyForm, date: startDate });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  // While ANY write is in flight, every competing control locks — a save and
+  // a delete of the same record must never race.
+  const busy = saving || deleting;
+  useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
 
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
 
@@ -67,15 +72,16 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
 
   const handleSubmit = async () => {
     if (!form.recordedBy) { toast.error('Please select who is recording'); return; }
-    setSaving(true);
-    onBusyChange?.(true);
     const wasEditing = !!editingId;
-    const ok = await addRecord({ ...form, date: viewDate });
-    setSaving(false);
-    onBusyChange?.(false);
-    if (!ok) return; // keep the form values — nothing was saved
-    resetFormFor(viewDate);
-    toast.success(wasEditing ? 'Record updated' : 'Record saved');
+    setSaving(true);
+    try {
+      const ok = await addRecord({ ...form, date: viewDate });
+      if (!ok) return; // keep the form values — nothing was saved
+      resetFormFor(viewDate);
+      toast.success(wasEditing ? 'Record updated' : 'Record saved');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleEdit = (record: HealthRecord) => {
@@ -88,8 +94,13 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   };
 
   const handleDelete = async (id: string) => {
-    const ok = await deleteRecord(id);
-    if (ok) toast.success('Record deleted');
+    setDeleting(true);
+    try {
+      const ok = await deleteRecord(id);
+      if (ok) toast.success('Record deleted');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const navigateDate = (direction: 'prev' | 'next') => {
@@ -110,7 +121,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       <Card className="border-none shadow-sm">
         <CardContent className="flex items-center justify-between px-4 py-3">
           {!dayOnly ? (
-            <Button variant="ghost" size="icon" onClick={() => navigateDate('prev')} disabled={saving}>
+            <Button variant="ghost" size="icon" onClick={() => navigateDate('prev')} disabled={busy}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
           ) : <span className="w-10" />}
@@ -119,7 +130,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             {isToday && <p className="text-xs text-muted-foreground">Today</p>}
           </div>
           {!dayOnly ? (
-            <Button variant="ghost" size="icon" onClick={() => navigateDate('next')} disabled={isToday || saving}>
+            <Button variant="ghost" size="icon" onClick={() => navigateDate('next')} disabled={isToday || busy}>
               <ChevronRight className="h-5 w-5" />
             </Button>
           ) : <span className="w-10" />}
@@ -133,10 +144,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">Record for {format(parseISO(viewRecord.date), 'MMM d')}</CardTitle>
               <div className="flex gap-1">
-                <Button variant="outline" size="sm" onClick={() => handleEdit(viewRecord)}>
+                <Button variant="outline" size="sm" onClick={() => handleEdit(viewRecord)} disabled={busy}>
                   <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
                 </Button>
-                <Button variant="outline" size="sm" className="text-destructive" onClick={() => handleDelete(viewRecord.id)}>
+                <Button variant="outline" size="sm" className="text-destructive" aria-label="Delete record" onClick={() => handleDelete(viewRecord.id)} disabled={busy}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -171,7 +182,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
         <CardHeader className="px-4 pb-2 pt-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">{editingId ? 'Edit Record' : 'New Entry'} — {format(parseISO(viewDate), 'MMM d')}</CardTitle>
-            <Button variant="outline" size="sm" onClick={handleCopyPrevious} className="gap-1.5 text-xs">
+            <Button variant="outline" size="sm" onClick={handleCopyPrevious} className="gap-1.5 text-xs" disabled={busy}>
               <Copy className="h-3.5 w-3.5" /> Copy Previous
             </Button>
           </div>
@@ -243,12 +254,12 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <Switch checked={form.constipation} onCheckedChange={v => update('constipation', v)} />
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleSubmit} className="flex-1 gap-2" disabled={saving}>
+            <Button onClick={handleSubmit} className="flex-1 gap-2" disabled={busy}>
               <Plus className="h-4 w-4" />
               {saving ? 'Saving...' : editingId ? 'Update Record' : 'Save Entry'}
             </Button>
             {editingId && (
-              <Button variant="outline" disabled={saving} onClick={() => resetFormFor(viewDate)}>
+              <Button variant="outline" disabled={busy} onClick={() => resetFormFor(viewDate)}>
                 Cancel
               </Button>
             )}
@@ -289,10 +300,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
                     </p>
                   </div>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(record)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit record" onClick={() => handleEdit(record)} disabled={busy}>
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(record.id)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" aria-label="Delete record" onClick={() => handleDelete(record.id)} disabled={busy}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>

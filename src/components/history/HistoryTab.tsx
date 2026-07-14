@@ -38,12 +38,22 @@ const PERIOD_ICON: Record<PeriodKey, React.ComponentType<{ className?: string; s
 
 type View = 'diary' | 'charts' | 'editday';
 
-export function HistoryTab() {
+interface HistoryTabProps {
+  /** Mirrors the day-editor's in-flight save so the app can lock global nav. */
+  onBusyChange?: (busy: boolean) => void;
+}
+
+export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   const todayStr = format(new Date(), 'yyyy-MM-dd');
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [view, setView] = useState<View>('diary');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [editorBusy, setEditorBusy] = useState(false);
+
+  const handleEditorBusy = (busy: boolean) => {
+    setEditorBusy(busy);
+    onBusyChange?.(busy);
+  };
 
   const healthRecords = useHealthRecords();
   const { records, bpReadings, loading: recordsLoading, bpLoading, loadError: recordsBpError } = healthRecords;
@@ -156,7 +166,7 @@ export function HistoryTab() {
           <ChevronLeft className="h-4 w-4" /> {editorBusy ? 'Saving…' : 'Back to the diary'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
-          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly onBusyChange={setEditorBusy} />
+          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly onBusyChange={handleEditorBusy} />
         </Suspense>
       </div>
     );
