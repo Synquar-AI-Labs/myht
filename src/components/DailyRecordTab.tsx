@@ -23,6 +23,8 @@ interface DailyRecordTabProps {
   initialDate?: string;
   /** Edit-one-day mode (History → "Edit this day"): hides the global Past Entries list. */
   dayOnly?: boolean;
+  /** Notified while a save is in flight, so parents can lock navigation. */
+  onBusyChange?: (busy: boolean) => void;
 }
 
 const emptyForm: HealthRecordForm = {
@@ -33,7 +35,7 @@ const emptyForm: HealthRecordForm = {
   recordedBy: '', miscNotes: '',
 };
 
-export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly }: DailyRecordTabProps) {
+export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly, onBusyChange }: DailyRecordTabProps) {
   const startDate = initialDate ?? format(new Date(), 'yyyy-MM-dd');
   // ONE authoritative day: viewDate. The form has no separate date — every
   // save targets the day shown in the navigator, and nothing else.
@@ -66,9 +68,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const handleSubmit = async () => {
     if (!form.recordedBy) { toast.error('Please select who is recording'); return; }
     setSaving(true);
+    onBusyChange?.(true);
     const wasEditing = !!editingId;
     const ok = await addRecord({ ...form, date: viewDate });
     setSaving(false);
+    onBusyChange?.(false);
     if (!ok) return; // keep the form values — nothing was saved
     resetFormFor(viewDate);
     toast.success(wasEditing ? 'Record updated' : 'Record saved');
@@ -101,19 +105,24 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
 
   return (
     <div className="space-y-4 pb-4">
-      {/* Date Navigator */}
+      {/* Date header — in dayOnly mode there are no arrows: this screen
+          edits exactly the day it was opened for. */}
       <Card className="border-none shadow-sm">
         <CardContent className="flex items-center justify-between px-4 py-3">
-          <Button variant="ghost" size="icon" onClick={() => navigateDate('prev')}>
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
+          {!dayOnly ? (
+            <Button variant="ghost" size="icon" onClick={() => navigateDate('prev')} disabled={saving}>
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          ) : <span className="w-10" />}
           <div className="text-center">
             <p className="text-sm font-semibold">{format(parseISO(viewDate), 'EEEE, MMM d, yyyy')}</p>
             {isToday && <p className="text-xs text-muted-foreground">Today</p>}
           </div>
-          <Button variant="ghost" size="icon" onClick={() => navigateDate('next')} disabled={isToday}>
-            <ChevronRight className="h-5 w-5" />
-          </Button>
+          {!dayOnly ? (
+            <Button variant="ghost" size="icon" onClick={() => navigateDate('next')} disabled={isToday || saving}>
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          ) : <span className="w-10" />}
         </CardContent>
       </Card>
 
@@ -258,7 +267,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       </Card>
 
       {/* Medicine Tracker */}
-      <MedicineTracker viewDate={viewDate} />
+      <MedicineTracker key={viewDate} viewDate={viewDate} />
 
       {/* Past entries list (hidden when editing a single day from History) */}
       {!dayOnly && (

@@ -43,6 +43,7 @@ export function HistoryTab() {
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [view, setView] = useState<View>('diary');
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [editorBusy, setEditorBusy] = useState(false);
 
   const healthRecords = useHealthRecords();
   const { records, bpReadings, loading: recordsLoading, bpLoading, loadError: recordsBpError } = healthRecords;
@@ -147,11 +148,15 @@ export function HistoryTab() {
   if (view === 'editday') {
     return (
       <div className="mx-auto max-w-[560px]">
-        <button onClick={() => setView('diary')} className="mb-3 flex items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
-          <ChevronLeft className="h-4 w-4" /> Back to the diary
+        <button
+          onClick={() => setView('diary')}
+          disabled={editorBusy}
+          className="mb-3 flex items-center gap-1 text-[15px] font-semibold text-[#8a6240] disabled:opacity-40"
+        >
+          <ChevronLeft className="h-4 w-4" /> {editorBusy ? 'Saving…' : 'Back to the diary'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
-          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly />
+          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly onBusyChange={setEditorBusy} />
         </Suspense>
       </div>
     );
