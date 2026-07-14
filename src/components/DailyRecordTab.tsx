@@ -121,7 +121,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       <Card className="border-none shadow-sm">
         <CardContent className="flex items-center justify-between px-4 py-3">
           {!dayOnly ? (
-            <Button variant="ghost" size="icon" onClick={() => navigateDate('prev')} disabled={busy}>
+            <Button variant="ghost" size="icon" aria-label="Previous day" onClick={() => navigateDate('prev')} disabled={busy}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
           ) : <span className="w-10" />}
@@ -130,7 +130,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             {isToday && <p className="text-xs text-muted-foreground">Today</p>}
           </div>
           {!dayOnly ? (
-            <Button variant="ghost" size="icon" onClick={() => navigateDate('next')} disabled={isToday || busy}>
+            <Button variant="ghost" size="icon" aria-label="Next day" onClick={() => navigateDate('next')} disabled={isToday || busy}>
               <ChevronRight className="h-5 w-5" />
             </Button>
           ) : <span className="w-10" />}
@@ -187,7 +187,8 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4 px-4 pb-4">
+        <CardContent className="px-4 pb-4">
+          <fieldset disabled={busy} className="space-y-4">
           <div>
             <Label className="text-xs text-muted-foreground">Recorded By</Label>
             <Select value={form.recordedBy} onValueChange={v => update('recordedBy', v)}>
@@ -264,6 +265,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
               </Button>
             )}
           </div>
+          </fieldset>
         </CardContent>
       </Card>
 
@@ -273,7 +275,9 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           <CardTitle className="text-base">Misc Notes</CardTitle>
         </CardHeader>
         <CardContent className="px-4 pb-4">
-          <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes or observations..." className="min-h-[80px] text-sm" maxLength={1000} />
+          <fieldset disabled={busy}>
+            <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes or observations..." className="min-h-[80px] text-sm" maxLength={1000} />
+          </fieldset>
         </CardContent>
       </Card>
 
