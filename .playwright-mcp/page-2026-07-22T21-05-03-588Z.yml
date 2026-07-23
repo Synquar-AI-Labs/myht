@@ -1,0 +1,1350 @@
+- generic [active] [ref=f2e1]:
+  - link "Skip to main content" [ref=f2e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=f2e6]:
+    - generic:
+      - generic: "How are you actually keeping track of your parent's meds and supplements without losing your mind? : r/CaregiverSupport"
+      - banner [ref=f2e10]:
+        - navigation [ref=f2e11]:
+          - link "Home" [ref=f2e15] [cursor=pointer]:
+            - /url: https://www.reddit.com/
+          - search [ref=f2e33]:
+            - generic [ref=f2e35]:
+              - generic "Remove r/CaregiverSupport filter and expand search to all of Reddit" [ref=f2e41] [cursor=pointer]:
+                - button [pressed] [ref=f2e42]:
+                  - generic [ref=f2e45]: r/CaregiverSupport
+              - textbox "Remove r/CaregiverSupport filter and expand search to all of Reddit" [ref=f2e52]:
+                - /placeholder: Search in ⁨r/CaregiverSupport⁩
+          - generic [ref=f2e53]:
+            - link "Sign Up" [ref=f2e59] [cursor=pointer]:
+              - /url: https://www.reddit.com/register/
+            - link "Log In" [ref=f2e65] [cursor=pointer]:
+              - /url: https://www.reddit.com/login/
+            - button [ref=f2e72] [cursor=pointer]
+      - generic [ref=f2e78]:
+        - generic [ref=f2e79]:
+          - generic [ref=f2e80]:
+            - generic:
+              - generic:
+                - link "Skip to Sign up" [ref=f2e81] [cursor=pointer]:
+                  - /url: "#left-sidebar-container"
+                - link "Skip to Right Sidebar" [ref=f2e82] [cursor=pointer]:
+                  - /url: "#right-sidebar-container"
+          - generic [ref=f2e83]:
+            - main [ref=f2e84]:
+              - 'generic "How are you actually keeping track of your parent''s meds and supplements without losing your mind? : r/CaregiverSupport"'
+              - generic [ref=f2e85]:
+                - generic [ref=f2e86]:
+                  - generic [ref=f2e87]:
+                    - button "Back" [ref=f2e89] [cursor=pointer]
+                    - link "Go to CaregiverSupport" [ref=f2e97] [cursor=pointer]:
+                      - /url: https://www.reddit.com/r/CaregiverSupport/
+                    - group [ref=f2e102]:
+                      - generic [ref=f2e103]:
+                        - link "r/CaregiverSupport" [ref=f2e106] [cursor=pointer]:
+                          - /url: https://www.reddit.com/r/CaregiverSupport/
+                        - generic [ref=f2e107]: •
+                        - time [ref=f2e109]: 3mo ago
+                      - 'link "Author: Greysawpark" [ref=f2e114] [cursor=pointer]':
+                        - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e115]: Greysawpark
+                  - button "Open user actions" [ref=f2e119] [cursor=pointer]
+                - 'heading "Post Title: How are you actually keeping track of your parent''s meds and supplements without losing your mind?" [level=1] [ref=f2e126]': How are you actually keeping track of your parent's meds and supplements without losing your mind?
+                - generic [ref=f2e130]:
+                  - paragraph [ref=f2e131]: Looking for real systems, not platitudes.
+                  - paragraph [ref=f2e132]: My mom takes 6 supplements plus 3 prescriptions and I've been the one running point on it for the past year. Pill organizer helps but only if I remember to look at it. Notes app is chaos. I tried two of the commercial med trackers and they both assume one user managing one set of meds, neither handled "track for myself AND for her, separately, with shared visibility."
+                  - paragraph [ref=f2e133]: "So: what does your actual setup look like? Whiteboard on the fridge? Calendar reminders? Some app I haven't found? Something low-tech I'm overcomplicating?"
+                  - paragraph [ref=f2e134]: Really trying to figure out what works long-term, not what looks good for a week.
+                - generic [ref=f2e135]:
+                  - generic [ref=f2e138]: "34"
+                  - generic [ref=f2e141]: ·
+                  - generic [ref=f2e144]: "76"
+              - separator [ref=f2e145]
+              - generic "Growing a business means headwinds and complexity. Intuit QuickBooks' AI agents handle the jobs so you're not doing it alone. 💪" [ref=f2e146]:
+                - generic [ref=f2e147]:
+                  - 'generic "Advertisement: Growing a business means headwinds and complexity. Intuit QuickBooks'' AI agents handle the jobs so you''re not doing it alone. 💪" [ref=f2e148]':
+                    - 'link "Advertisement: Growing a business means headwinds and complexity. Intuit QuickBooks'' AI agents handle the jobs so you''re not doing it alone. 💪" [ref=f2e149] [cursor=pointer]':
+                      - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                  - generic [ref=f2e150]:
+                    - generic [ref=f2e151]:
+                      - link "QuickBooks_Canada" [ref=f2e153] [cursor=pointer]:
+                        - /url: /user/QuickBooks_Canada/
+                        - img "u/QuickBooks_Canada avatar" [ref=f2e156]
+                      - generic [ref=f2e158]: •
+                      - link "Promoted" [ref=f2e160] [cursor=pointer]:
+                        - /url: /user/QuickBooks_Canada/
+                      - link [ref=f2e163] [cursor=pointer]:
+                        - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                    - button "Open user actions" [ref=f2e169] [cursor=pointer]
+                  - generic [ref=f2e175]:
+                    - generic [ref=f2e176]:
+                      - link "Growing a business means headwinds and complexity. Intuit QuickBooks' AI agents handle the jobs so you're not doing it alone. 💪" [ref=f2e178] [cursor=pointer]:
+                        - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                      - generic [ref=f2e179]:
+                        - link [ref=f2e181] [cursor=pointer]:
+                          - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                        - generic [ref=f2e182]:
+                          - link [ref=f2e184] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                          - link "ad.doubleclick.net" [ref=f2e189] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=kPThqAPPeQchy2Gyh-L6qrvdzt7USJLJtxHyA1I4xKHqam7aJR4mgB5XobmL-e72Q18o_u2V2ZNv-FKb3WDEGSPu359Z65kWwyiVAD7Mbrvy-Y9yJ1wbVhhdIv-6ygfx8KGcVMn1KSfp2sKbg8mN_G0jBwKFLmhZXOO5JBgrRckgbfQhamn5pp5q3x4H8HxvKgn3PTruE850000qNXfs2DquZJhnKFTDd9HFZ11lnHO5LKzFxD39MjhROuzFXbviGd3n-Al4OQtcxi9RZH3RPVLDRPDw_BRPkRDerzfOg4yNQUzKVmUDHyPxkF5OV7MmRHP9F3LsWPU2O6nnQRvf3vZxusAiL9JtM_MIos0MMacERp7ePcgvr_K16eKwHPe2I470JN0ePVru_6U3ZwNA-cdp1cYKH9AcVqZO3icKVpMliPFrnH_vNGKbes6CYEo2vZcwD6TR6pbYHkqJ28XivDBnaUinp3uTi5VrslR7hZJxJZcJZUVnNdwoP30-lV9fhdnBSYtncjiq3cbnJQ7ML8dN3fA5Vr2XlSYPHmKbEN-0lTD4pScti27hVcHSSCk_fyoaTY6uWaN0Lv26o6khdZIah5LCeHWDbREOMxJU8s4bBud6gzhbxsyHwdBwEYSFBWYomZVtKYVvnE6J2eX9AcUTu2fH7A5x1BM8KzTCimyl8Gjm2eMUxZ2z0_TCgfM&zp=JRl0Bs5Q6rcKhL5IP8xPWj7se9YIdhY7cs0rcIa2nZTRHKyK8CQCQeLBC_zB33fTnBaKfPFPE1eyO5hc0lo26YMRL_KhtAJyc1sseF_Q75-du31C44MzRoU3LrJNxDfFvu-w3JOiuLj7zHydzZS3V_MwNdVKJLA1EHFoUtLNo44JYJSEZxanr0Ffqja4BG8w4jk-e9mF4VssMSiMrjIi7dXCnVZb-eTHku5m0vKAfSVYsMixVN-2gDtQg9Hwk8WX6xRq990stPHU0jNu5bJR2Q6D1Hn8-hTPaQhzRwO6a9Y_DnUzlo4NySgdRR9L1aRgHQO7JMqC881hYDhhPFqaaUKOtB7FBjfsxKqdykipkKPDTDtHooFViObL1elZ02znvk1JI1Vb2Bpki62fXxD-_mKLtoVbxfBV-HJxzJn7SKs7Wrw1ClIn_ByTcEZSzv3JSf6w5oUe0r2OozIxhlZEOrX71veUI7CCAze_zcbBqGca-x8iMDIqWbgWISC6-wuRFqRJF48zf-SYHwf1gAzT4DjRJzc3J0kOy8WucF1NXw5V-tqwUad3W2z--ED8M3PgLjv2I785hQgWHhjae8nNw2T7dzu3JOnJXPf4O0RaM0BTXIuQDgzlJSA8
+                    - generic [ref=f2e190] [cursor=pointer]:
+                      - 'img "Clickable image which will reveal the video player: Growing a business means headwinds and complexity. Intuit QuickBooks'' AI agents handle the jobs so you''re not doing it alone. 💪" [ref=f2e191]'
+                      - button "Play video" [ref=f2e192]
+                  - generic:
+                    - generic:
+                      - button [ref=f2e195] [cursor=pointer]
+                      - generic [ref=f2e204]:
+                        - generic [ref=f2e205]:
+                          - button "Toggle playback" [ref=f2e206] [cursor=pointer]
+                          - generic "Media time" [ref=f2e209]
+                          - generic [ref=f2e214]:
+                            - generic [ref=f2e215]: 0:00
+                            - generic [ref=f2e216]: / 0:00
+                          - button "Toggle captions" [ref=f2e217] [cursor=pointer]
+                          - generic [ref=f2e221]:
+                            - button "Settings" [ref=f2e222] [cursor=pointer]
+                            - generic:
+                              - button:
+                                - generic: Auto
+                          - button "Toggle fullscreen" [ref=f2e225] [cursor=pointer]
+                        - button "Toggle volume" [ref=f2e231] [cursor=pointer]
+              - separator [ref=f2e235]
+              - region "Comments" [ref=f2e238]:
+                - heading "Comments Section" [level=1] [ref=f2e239]
+                - article "Comment from Successful_Tax_5385 3 months ago" [ref=f2e241]:
+                  - generic [ref=f2e242] [cursor=pointer]:
+                    - link "Successful_Tax_5385's profile --- avatar" [ref=f2e247]:
+                      - /url: https://www.reddit.com/user/Successful_Tax_5385/
+                      - img "u/Successful_Tax_5385 avatar" [ref=f2e250]
+                    - generic [ref=f2e254]:
+                      - link "Successful_Tax_5385's profile" [ref=f2e257]:
+                        - /url: https://www.reddit.com/user/Successful_Tax_5385/
+                        - text: Successful_Tax_5385
+                      - generic [ref=f2e258]: •
+                      - link [ref=f2e260]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oknugtw/
+                        - time [ref=f2e262]: 3mo ago
+                  - generic [ref=f2e264]:
+                    - generic [ref=f2e267]:
+                      - paragraph [ref=f2e268]: The person I care for takes 8 meds, plus supplements and insulin. I have a schedule. I am in charge of the meds, so only I have to worry about if they took it or not. I give them the same meds everyday at the same time. I check on drug interaction checker.com to see if any of the meds interact. If not, all the meds that don't interact with each other, I give to them at the same time. I usually dont exceed 3 meds at one time, though.
+                      - paragraph [ref=f2e269]: "But this system works for me: -I am in charge of meds. So I give them meds, their only job is to swallow it. -I give them the same meds at the same time, everyday."
+                      - paragraph [ref=f2e270]: I have a piece of paper that has the schedule written down, taped right in front of their bed.
+                      - paragraph [ref=f2e271]: Hopefully this helps.
+                    - generic [ref=f2e272]: "23"
+                    - generic [ref=f2e279]:
+                      - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e281]':
+                        - generic [ref=f2e282] [cursor=pointer]:
+                          - link "Greysawpark's profile --- avatar" [ref=f2e287]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                          - generic [ref=f2e297]:
+                            - link "Greysawpark's profile" [ref=f2e300]:
+                              - /url: https://www.reddit.com/user/Greysawpark/
+                              - text: Greysawpark
+                            - generic "Comment distinguished as the original poster" [ref=f2e303]: OP
+                            - generic [ref=f2e304]: •
+                            - link [ref=f2e306]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oknwd5m/
+                              - time [ref=f2e308]: 3mo ago
+                        - generic [ref=f2e310]:
+                          - generic [ref=f2e313]:
+                            - paragraph [ref=f2e314]: This is the cleanest system anyone's described "caregiver owns it, recipient just swallows" framing especially, that's a real shift from what I've been doing. I've been trying to make tracking easier on her end, but you're right that the cleaner version is just pulling "did you take it" off her plate entirely.
+                            - paragraph [ref=f2e315]: Quick question, when you get sick or travel, who runs the system? That's the part I keep getting tripped up on. The taped schedule covers the meds-and-times piece but the timing logic seems to live in your head. Curious how you handle backup or whether you just don't take the time off.
+                          - generic [ref=f2e316]: "14"
+                          - button "2 more replies" [ref=f2e326] [cursor=pointer]:
+                            - generic [ref=f2e331]:
+                              - generic [ref=f2e332]: "2"
+                              - text: more replies
+                      - 'article "Comment thread level 1: Reply from skratchez83 3 months ago" [ref=f2e336]':
+                        - generic [ref=f2e337] [cursor=pointer]:
+                          - link "skratchez83's profile --- avatar" [ref=f2e342]:
+                            - /url: https://www.reddit.com/user/skratchez83/
+                          - generic [ref=f2e352]:
+                            - link "skratchez83's profile" [ref=f2e355]:
+                              - /url: https://www.reddit.com/user/skratchez83/
+                              - text: skratchez83
+                            - generic [ref=f2e356]: •
+                            - link [ref=f2e358]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko5o8w/
+                              - time [ref=f2e360]: 3mo ago
+                        - generic [ref=f2e362]:
+                          - paragraph [ref=f2e366]: 1000% this. This was the only way I could keep track of the 15 medications, inhalers, and supplements.
+                          - generic [ref=f2e367]: "7"
+                      - button "1 more reply" [ref=f2e376] [cursor=pointer]:
+                        - generic [ref=f2e381]:
+                          - generic [ref=f2e382]: "1"
+                          - text: more reply
+                - article "Comment from penalba 3 months ago" [ref=f2e386]:
+                  - generic [ref=f2e387] [cursor=pointer]:
+                    - link "penalba's profile --- avatar" [ref=f2e392]:
+                      - /url: https://www.reddit.com/user/penalba/
+                      - img "u/penalba avatar" [ref=f2e395]
+                    - generic [ref=f2e399]:
+                      - link "penalba's profile" [ref=f2e402]:
+                        - /url: https://www.reddit.com/user/penalba/
+                        - text: penalba
+                      - generic [ref=f2e403]: •
+                      - link [ref=f2e405]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oknwy5q/
+                        - time [ref=f2e407]: 3mo ago
+                  - generic [ref=f2e409]:
+                    - generic [ref=f2e412]:
+                      - paragraph [ref=f2e413]:
+                        - text: I use
+                        - link "pillpack" [ref=f2e416] [cursor=pointer]:
+                          - /url: /search/?q=pillpack+medication+management&cId=24230656-d760-48f8-9e6e-5f5ece9c6d2d&iId=a5edcd5b-1c62-4313-b6f0-88f311cde33f
+                        - text: ", now"
+                        - link "Amazon pharmacy" [ref=f2e422] [cursor=pointer]:
+                          - /url: /search/?q=Amazon+pharmacy+medication+delivery&cId=d8a1cc14-37b7-4a39-8df5-c3c796c6bf15&iId=62198daa-e001-41d5-9a1d-95cb218da033
+                        - text: ", that sends individual packets of meds. No bottles. I especially like that the opened packet serves as confirmation that the pills were served. It’s been a game changer for me."
+                      - paragraph [ref=f2e426]: "Other pharmacies offer this too:"
+                      - paragraph [ref=f2e427]:
+                        - link "https://accupacrx.com/wp-content/uploads/2021/11/packet-single-labels-white@2x-1-980x612.png" [ref=f2e428] [cursor=pointer]:
+                          - /url: https://accupacrx.com/wp-content/uploads/2021/11/packet-single-labels-white@2x-1-980x612.png
+                    - generic [ref=f2e429]: "19"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e438]':
+                      - generic [ref=f2e439] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e444]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e454]:
+                          - link "Greysawpark's profile" [ref=f2e457]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e460]: OP
+                          - generic [ref=f2e461]: •
+                          - link [ref=f2e463]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oknxc0r/
+                            - time [ref=f2e465]: 3mo ago
+                      - generic [ref=f2e467]:
+                        - generic [ref=f2e470]:
+                          - paragraph [ref=f2e471]: This is great, the "opened packet = confirmation" is exactly the kind of passive verification I've been trying to engineer manually. Hadn't considered the pharmacy could solve it for me.
+                          - paragraph [ref=f2e472]:
+                            - text: Curious how it handles dose changes mid-month? Does Amazon ship a corrective set when something gets adjusted, or do you wait out the cycle? That's the friction I keep imagining with
+                            - link "pre-pack systems" [ref=f2e475] [cursor=pointer]:
+                              - /url: /search/?q=pre-pack+medication+systems&cId=afe2a7bc-7e2f-4783-9978-b1d027916557&iId=15f0d250-3325-4f5e-8d4e-a9c54bd21673
+                            - text: .
+                        - generic [ref=f2e479]: "9"
+                        - button "2 more replies" [ref=f2e489] [cursor=pointer]:
+                          - generic [ref=f2e494]:
+                            - generic [ref=f2e495]: "2"
+                            - text: more replies
+                - article "Comment from brandy13271 3 months ago" [ref=f2e499]:
+                  - generic [ref=f2e500] [cursor=pointer]:
+                    - link "brandy13271's profile --- avatar" [ref=f2e505]:
+                      - /url: https://www.reddit.com/user/brandy13271/
+                    - generic [ref=f2e515]:
+                      - link "brandy13271's profile" [ref=f2e518]:
+                        - /url: https://www.reddit.com/user/brandy13271/
+                        - text: brandy13271
+                      - generic [ref=f2e519]: •
+                      - link [ref=f2e521]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko0232/
+                        - time [ref=f2e523]: 3mo ago
+                  - generic [ref=f2e525]:
+                    - generic [ref=f2e528]:
+                      - paragraph [ref=f2e529]: For my own medications, I use 7 separate containers, one for each day of the week (old pill bottles with sharpie labels). Every Sunday, I lay out all the meds with every day in its own bottle, double-checking across a master list, and then I put the actual bottles of meds away for the week. Every morning, I take the pills for the day and split it into one carry case with sections for morning, afternoon, night. End of the day, carry-case should be empty. End of the week, I will have 7 empty day-of-the-week containers, and the whole process starts again.
+                      - paragraph [ref=f2e530]: I found this routine has built-in double checks and redundancies, so I don't forget or take something twice. Also, at my Sunday refill session, I make sure that I have enough meds for the future. No notes, no technology, no communication.
+                      - paragraph [ref=f2e531]: "\"Is it in today's bottle? Yes? Then move it to the carry case. Is it the time labeled on the carry case? Then take it.\""
+                    - generic [ref=f2e532]: "6"
+                    - generic [ref=f2e539]:
+                      - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e541]':
+                        - generic [ref=f2e542] [cursor=pointer]:
+                          - link "Greysawpark's profile --- avatar" [ref=f2e547]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                          - generic [ref=f2e557]:
+                            - link "Greysawpark's profile" [ref=f2e560]:
+                              - /url: https://www.reddit.com/user/Greysawpark/
+                              - text: Greysawpark
+                            - generic "Comment distinguished as the original poster" [ref=f2e563]: OP
+                            - generic [ref=f2e564]: •
+                            - link [ref=f2e566]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko0uzs/
+                              - time [ref=f2e568]: 3mo ago
+                        - generic [ref=f2e570]:
+                          - generic [ref=f2e573]:
+                            - paragraph [ref=f2e574]: This is pretty cool, fully self-administered with built-in audits. The "end-of-week the containers should be empty" is a good passive verification system but where the verification is over the system itself, not just individual doses. Genuinely elegant.
+                            - paragraph [ref=f2e575]: One question, what's the recovery if Sunday gets disrupted? If you can't do the refill session some week (sick, traveling, holiday weekend), does the rhythm get bumped to Monday or do you have a fallback? I keep noticing that everyone's working systems depend on a key person doing a key thing on a key day, and the failure mode is what happens when that day gets blown up.
+                          - generic [ref=f2e576]: "3"
+                          - button "1 more reply" [ref=f2e586] [cursor=pointer]:
+                            - generic [ref=f2e591]:
+                              - generic [ref=f2e592]: "1"
+                              - text: more reply
+                      - button "1 more reply" [ref=f2e597] [cursor=pointer]:
+                        - generic [ref=f2e602]:
+                          - generic [ref=f2e603]: "1"
+                          - text: more reply
+                - generic "Organizing your thoughts is easier than you think." [ref=f2e608]:
+                  - generic [ref=f2e609]:
+                    - 'generic "Advertisement: Organizing your thoughts is easier than you think." [ref=f2e610]':
+                      - 'link "Advertisement: Organizing your thoughts is easier than you think." [ref=f2e611] [cursor=pointer]':
+                        - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                    - generic [ref=f2e612]:
+                      - generic [ref=f2e613]:
+                        - link "u/Objective_Boss_2173" [ref=f2e615] [cursor=pointer]:
+                          - /url: /user/Objective_Boss_2173/
+                          - img "u/Objective_Boss_2173 avatar" [ref=f2e618]
+                        - generic [ref=f2e620]: •
+                        - link "Promoted" [ref=f2e622] [cursor=pointer]:
+                          - /url: /user/Objective_Boss_2173/
+                        - link [ref=f2e625] [cursor=pointer]:
+                          - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                      - button "Open user actions" [ref=f2e631] [cursor=pointer]
+                    - generic [ref=f2e636]:
+                      - link "Organizing your thoughts is easier than you think." [ref=f2e638] [cursor=pointer]:
+                        - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                      - list [ref=f2e642]:
+                        - generic:
+                          - listitem [ref=f2e643]:
+                            - generic [ref=f2e644]:
+                              - link [ref=f2e646] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                              - link [ref=f2e648] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                                - img "Organizing your thoughts is easier than you think." [ref=f2e649]
+                          - listitem [ref=f2e650]:
+                            - generic [ref=f2e651]:
+                              - link [ref=f2e653] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=idR8C0gapc4yG-uL9g7eP_c_IeWpV-xUZ3drlAsOGF7VcUmctOWbfIUaHaMj6e_9CISKT9AFoAQ0AHdw5-NlUq5JMUvwpc7t9aTuJ2t0OT8pT-qo-pjE5QF9zRwaGlwNkJROuB2Eu1EeiYw2FL6-Iyzt4ZqsRJqHHQwIMtSs2NEgnWeLOYJFMjuQC2EnC_xujO5iDHT_2tr2n-R5H6zkK3WLgyu950CVBbUZySl6F2-lBwX7ZfIblPoLPqAlgPf9KPx7Nj2INh1TYPWMXYjm8MZecJOU4TacJz80jDXepB2YoOQ1Nw
+                              - link [ref=f2e655] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=idR8C0gapc4yG-uL9g7eP_c_IeWpV-xUZ3drlAsOGF7VcUmctOWbfIUaHaMj6e_9CISKT9AFoAQ0AHdw5-NlUq5JMUvwpc7t9aTuJ2t0OT8pT-qo-pjE5QF9zRwaGlwNkJROuB2Eu1EeiYw2FL6-Iyzt4ZqsRJqHHQwIMtSs2NEgnWeLOYJFMjuQC2EnC_xujO5iDHT_2tr2n-R5H6zkK3WLgyu950CVBbUZySl6F2-lBwX7ZfIblPoLPqAlgPf9KPx7Nj2INh1TYPWMXYjm8MZecJOU4TacJz80jDXepB2YoOQ1Nw
+                                - img "Organizing your thoughts is easier than you think." [ref=f2e656]
+                      - generic [ref=f2e657]:
+                        - link [ref=f2e659] [cursor=pointer]:
+                          - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                        - generic [ref=f2e660]:
+                          - link "apps.apple.com" [ref=f2e664] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                          - link [ref=f2e666] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=Ezlx9akuculmC7bn6bE8ETi3FUWZB0XM0VusKzUMU4pew504BF1vy0K4V98tWPQ4fwppqirmzoR5ALF6GV538DpwrxwcG-POQ2ZV4OokiL3sE0Nv_nF_gVd2j6-fxW0NbfQkTOcKErnOU-mdEtBeDcAQ3lzWqI0hTMTUutu3UxAKZPGXTTy1oa451FKHlfCyR0HSWphSY9hPPehiBOkKw-WhJFebGNK8jdeCiCnglA6yJJfvI2MNOqkj688-Gpkr5mg7GFNyklBajxDShgm6NHZvQJAzgp7TFz9gCh6xhDgtwWl3akG8RlMQ6KWGvAHK7cRyOu87mhdihKyKwm_LxRtgimtb3quUdi-rG35DyrC1L5HH8whk5MR_RF2MswXwRPws1qEZgFaZp56Bq8L_TKweMRr3CfT26cc70qBq1eoQWDYjEdyTH8fFamiv4K6KqO9hjNFsZrtVtOElIrMxeys_uVnLnDNJkNrKwlLz_TyCUjN5gqj71NsT1r6VWgvnSuPS48IoHXk8Pd-tE4Z6dnApD0qS1_rJ6CqDRQlCmMUB1t3gLgmWBHTDseywEAeANmRmxyBJ9O8PXYgsgRRPcRi292ACu9O8uRcsyyDbHdCXPE_O6nzhR360NhfMVurJcYbPJiUdFCOE2H2cZDaNiHJ1bv6yir6PqhEbGCvYj3yyBPVHZqA2rR8DgqxquSGGW78P&zp=miFdaUDCjVMex2jpVIF_Tabvzrnrbd3j8GhrBkeRdkvnNZhMlQWijLSSe7YDq_KQW37bbSYpZzUzSWKfHiTh6OeKqbQawiSYxEMSfT8h-z8dFI2YJhsq0Sn5RTpNeuvYcgiaRbTgmaSloqJAyTgFRuVp_CR0zV8SHgiHOJT1Dkc9AxV9Jb39ne4SwlEaYPcToyBu6lZgo8TIaFj-N848C6YgMrh5NVyNBJzfsFyj8z3-qZnudDMlS_ut9Uff9XvQmEq8OElmMh_XVRrae7VXByI3jQ-HXhH2E8HG4Q7zuTDtqRbskA
+                - article "Comment from monpetitfromage54 3 months ago" [ref=f2e670]:
+                  - generic [ref=f2e671] [cursor=pointer]:
+                    - link "monpetitfromage54's profile --- avatar" [ref=f2e676]:
+                      - /url: https://www.reddit.com/user/monpetitfromage54/
+                    - generic [ref=f2e686]:
+                      - link "monpetitfromage54's profile" [ref=f2e689]:
+                        - /url: https://www.reddit.com/user/monpetitfromage54/
+                        - text: monpetitfromage54
+                      - generic [ref=f2e690]: •
+                      - link [ref=f2e692]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko24da/
+                        - time [ref=f2e694]: 3mo ago
+                  - generic [ref=f2e696]:
+                    - paragraph [ref=f2e700]:
+                      - text: we have reminders set on a schedule on our
+                      - link "alexa" [ref=f2e703] [cursor=pointer]:
+                        - /url: /search/?q=alexa+medication+reminders&cId=a123e12d-ff1f-4d78-81da-63475867f8ba&iId=83334107-6acc-4305-88e9-77e5775453c9
+                      - text: . it announces it and sends notifications to our phones. the notification doesn't get swiped away until the pills are taken. if we get off schedule for some reason (oversleeping, vacation, etc.) because sometimes life happens, we set new reminders for the day. during times where we have extra meds (mostly post hospital visit) we have a
+                      - link "spreadsheet" [ref=f2e709] [cursor=pointer]:
+                        - /url: /search/?q=medication+tracking+spreadsheet&cId=68a4ea09-2774-4a26-a49c-28a2d60fbf03&iId=32224c2f-7177-4576-a531-5ea36f7cab9e
+                      - text: with each med listed vertically in time slots and a week's worth of dates horizontally. we set reminders and check the box for each med that's taken and note the exact time, so we both know what's been taken and when.
+                    - generic [ref=f2e713]: "6"
+                    - generic [ref=f2e720]:
+                      - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e722]':
+                        - generic [ref=f2e723] [cursor=pointer]:
+                          - link "Greysawpark's profile --- avatar" [ref=f2e728]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                          - generic [ref=f2e738]:
+                            - link "Greysawpark's profile" [ref=f2e741]:
+                              - /url: https://www.reddit.com/user/Greysawpark/
+                              - text: Greysawpark
+                            - generic "Comment distinguished as the original poster" [ref=f2e744]: OP
+                            - generic [ref=f2e745]: •
+                            - link [ref=f2e747]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko2vt7/
+                              - time [ref=f2e749]: 3mo ago
+                        - generic [ref=f2e751]:
+                          - paragraph [ref=f2e755]: The Alexa solution is one I hadn't considered. And something we have in our house for sure. Thank you for sharing!
+                          - generic [ref=f2e756]: "4"
+                      - button "2 more replies" [ref=f2e765] [cursor=pointer]:
+                        - generic [ref=f2e770]:
+                          - generic [ref=f2e771]: "2"
+                          - text: more replies
+                - article "Comment from saltandocean 3 months ago" [ref=f2e775]:
+                  - generic [ref=f2e776] [cursor=pointer]:
+                    - link "saltandocean's profile --- avatar" [ref=f2e781]:
+                      - /url: https://www.reddit.com/user/saltandocean/
+                    - generic [ref=f2e791]:
+                      - link "saltandocean's profile" [ref=f2e794]:
+                        - /url: https://www.reddit.com/user/saltandocean/
+                        - text: saltandocean
+                      - generic [ref=f2e795]: •
+                      - link [ref=f2e797]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko6y24/
+                        - time [ref=f2e799]: 3mo ago
+                  - generic [ref=f2e801]:
+                    - generic [ref=f2e804]:
+                      - paragraph [ref=f2e805]: My mom is on about 14 -18 pills daily.
+                      - paragraph [ref=f2e806]: We have three medipacks I set up about every two weeks so I’m always a week ahead.
+                      - paragraph [ref=f2e807]: Her pill cases have AM/PM - and are kept inside a pill organizer case.
+                      - paragraph [ref=f2e808]: Every morning I wake her up and she takes the day and am set of pills.
+                      - paragraph [ref=f2e809]: When I leave- she takes the day PM pills.
+                      - paragraph [ref=f2e810]: I’ve been doing this for about .. 10 years.
+                      - paragraph [ref=f2e811]: ETA- all her meds I’ve put into a spreadsheet. The pill description, dose, and when to take. This is printed and kept inside her med box.
+                    - generic [ref=f2e812]: "5"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e821]':
+                      - generic [ref=f2e822] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e827]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e837]:
+                          - link "Greysawpark's profile" [ref=f2e840]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e843]: OP
+                          - generic [ref=f2e844]: •
+                          - link [ref=f2e846]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko9cr5/
+                            - time [ref=f2e848]: 3mo ago
+                      - generic [ref=f2e850]:
+                        - paragraph [ref=f2e854]: The three-medipacks-running-a-week-ahead buffer is brilliant, and 10 years of doing it is the best endorsement there is. Thanks for sharing.
+                        - generic [ref=f2e855]: "6"
+                - article "Comment from Unique_Rabbit_2031 3 months ago" [ref=f2e863]:
+                  - generic [ref=f2e864] [cursor=pointer]:
+                    - link "Unique_Rabbit_2031's profile --- avatar" [ref=f2e869]:
+                      - /url: https://www.reddit.com/user/Unique_Rabbit_2031/
+                      - img "u/Unique_Rabbit_2031 avatar" [ref=f2e872]
+                    - generic [ref=f2e876]:
+                      - link "Unique_Rabbit_2031's profile" [ref=f2e879]:
+                        - /url: https://www.reddit.com/user/Unique_Rabbit_2031/
+                        - text: Unique_Rabbit_2031
+                      - generic [ref=f2e880]: •
+                      - link [ref=f2e882]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko4o0q/
+                        - time [ref=f2e884]: 3mo ago
+                  - generic [ref=f2e886]:
+                    - generic [ref=f2e889]:
+                      - paragraph [ref=f2e890]: I started using Basic Intake for my mom's medications and supplements about 6 weeks ago and was honestly surprised how well it handled her meds… even though the app calls itself a supplement tracker. Same reminder system, same scheduling, same multi-day patterns. Just worked across both without any setup gymnastics.
+                      - paragraph [ref=f2e891]: I like the AI assistant as well, just as a fail safe for checking interactions between her supplements and medications. We had a scare a couple years ago so I'm overly cautious. First tool I've used that handles interaction questions across the whole stack.
+                    - generic [ref=f2e892]: "4"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e901]':
+                      - generic [ref=f2e902] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e907]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e917]:
+                          - link "Greysawpark's profile" [ref=f2e920]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e923]: OP
+                          - generic [ref=f2e924]: •
+                          - link [ref=f2e926]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko8hfm/
+                            - time [ref=f2e928]: 3mo ago
+                      - generic [ref=f2e930]:
+                        - generic [ref=f2e933]:
+                          - paragraph [ref=f2e934]: Sorry to hear about the scare. Genuinely valid reason to lean on a fail-safe.
+                          - paragraph [ref=f2e935]: Question on Basic Intake, does the AI assistant pull from her actual pills and supplements automatically, or do you have to type the question out with everything in it? Curious how that interaction-check works in practice. How can you be sure its reliable and not getting weird or dangerous answers?
+                        - generic [ref=f2e936]: "2"
+                        - button "2 more replies" [ref=f2e946] [cursor=pointer]:
+                          - generic [ref=f2e951]:
+                            - generic [ref=f2e952]: "2"
+                            - text: more replies
+                - article "Comment from moomootea 3 months ago" [ref=f2e956]:
+                  - generic [ref=f2e957] [cursor=pointer]:
+                    - link "moomootea's profile --- avatar" [ref=f2e962]:
+                      - /url: https://www.reddit.com/user/moomootea/
+                    - generic [ref=f2e972]:
+                      - link "moomootea's profile" [ref=f2e975]:
+                        - /url: https://www.reddit.com/user/moomootea/
+                        - text: moomootea
+                      - generic [ref=f2e976]: •
+                      - link [ref=f2e978]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko2ge1/
+                        - time [ref=f2e980]: 3mo ago
+                  - generic [ref=f2e982]:
+                    - generic [ref=f2e985]:
+                      - paragraph [ref=f2e986]: "I write the instructions in a blog so the notes are accessible anywhere I go. It’s simplified to AM and PM. For eg. AM: before food: medicine A. After food: medicine B, supplement C. A printout is on a central bulletin board near the medicines. We use pillboxes with AM, PM label for entire week. At the beginning, I used a notebook so I could check off after giving meds because I was afraid of forgetting."
+                      - paragraph [ref=f2e987]: Same with appointments. They are in the blog too but with initials so no names are mentioned.
+                    - generic [ref=f2e988]: "3"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e997]':
+                      - generic [ref=f2e998] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e1003]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e1013]:
+                          - link "Greysawpark's profile" [ref=f2e1016]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e1019]: OP
+                          - generic [ref=f2e1020]: •
+                          - link [ref=f2e1022]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko37y7/
+                            - time [ref=f2e1024]: 3mo ago
+                      - generic [ref=f2e1026]:
+                        - paragraph [ref=f2e1030]: The blog-as-cloud-doc workaround is clever. Accessible anywhere without needing to learn a new tool, and the initials approach handles the privacy piece most caregivers don't think about. Treating it like "this could be public someday, write it accordingly" is good discipline.
+                        - generic [ref=f2e1031]: "3"
+                        - button "2 more replies" [ref=f2e1041] [cursor=pointer]:
+                          - generic [ref=f2e1046]:
+                            - generic [ref=f2e1047]: "2"
+                            - text: more replies
+                - article "Comment from caregiver1956 2 months ago" [ref=f2e1051]:
+                  - generic [ref=f2e1052] [cursor=pointer]:
+                    - link "caregiver1956's profile --- avatar" [ref=f2e1057]:
+                      - /url: https://www.reddit.com/user/caregiver1956/
+                    - generic [ref=f2e1067]:
+                      - link "caregiver1956's profile" [ref=f2e1070]:
+                        - /url: https://www.reddit.com/user/caregiver1956/
+                        - text: caregiver1956
+                      - generic [ref=f2e1071]: •
+                      - link [ref=f2e1073]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/okqek9g/
+                        - time [ref=f2e1075]: 2mo ago
+                  - generic [ref=f2e1077]:
+                    - paragraph [ref=f2e1081]: Pharmacy packed blister packs
+                    - generic [ref=f2e1082]: "3"
+                    - button "1 more reply" [ref=f2e1092] [cursor=pointer]:
+                      - generic [ref=f2e1097]:
+                        - generic [ref=f2e1098]: "1"
+                        - text: more reply
+                - article "Comment from Magic_Macksimus 3 months ago" [ref=f2e1102]:
+                  - generic [ref=f2e1103] [cursor=pointer]:
+                    - link "Magic_Macksimus's profile --- avatar" [ref=f2e1108]:
+                      - /url: https://www.reddit.com/user/Magic_Macksimus/
+                    - generic [ref=f2e1118]:
+                      - link "Magic_Macksimus's profile" [ref=f2e1121]:
+                        - /url: https://www.reddit.com/user/Magic_Macksimus/
+                        - text: Magic_Macksimus
+                      - generic [ref=f2e1122]: •
+                      - link [ref=f2e1124]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/okplcql/
+                        - time [ref=f2e1126]: 3mo ago
+                  - generic [ref=f2e1128]:
+                    - paragraph [ref=f2e1132]: We use a Hero pill dispenser, which has been a lifesaver. It’s noisy and slow, but managed with an app so I know when meds were taken and can adjust dosages as necessary on the fly. It also pre-dispenses for vacation mode which is handy.
+                    - generic [ref=f2e1133]: "2"
+                    - button "1 more reply" [ref=f2e1143] [cursor=pointer]:
+                      - generic [ref=f2e1148]:
+                        - generic [ref=f2e1149]: "1"
+                        - text: more reply
+                - article "Comment from GoddessLeeLu 2 months ago" [ref=f2e1153]:
+                  - generic [ref=f2e1154] [cursor=pointer]:
+                    - link "GoddessLeeLu's profile --- avatar" [ref=f2e1159]:
+                      - /url: https://www.reddit.com/user/GoddessLeeLu/
+                    - generic [ref=f2e1169]:
+                      - link "GoddessLeeLu's profile" [ref=f2e1172]:
+                        - /url: https://www.reddit.com/user/GoddessLeeLu/
+                        - text: GoddessLeeLu
+                      - generic [ref=f2e1173]: •
+                      - link [ref=f2e1175]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/okprgx7/
+                        - time [ref=f2e1177]: 2mo ago
+                  - generic [ref=f2e1179]:
+                    - generic [ref=f2e1182]:
+                      - paragraph [ref=f2e1183]: Oy. I use medication dividers that I fill weekly. As far as tracking my Dad's meds...I use an app called "Tasks". I keep a list of every med, dosage, date of last dose, and set a reminder for 2 weeks bedore that last dose to refill from the VA.
+                      - paragraph [ref=f2e1184]: And my Dad has 13 oral meds, 2 insulins, 1 nose spray, attends, wound care supplies, and a few other things.
+                    - generic [ref=f2e1185]: "2"
+                    - button "1 more reply" [ref=f2e1195] [cursor=pointer]:
+                      - generic [ref=f2e1200]:
+                        - generic [ref=f2e1201]: "1"
+                        - text: more reply
+                - article "Comment from Electronic-Milk-911 3 months ago" [ref=f2e1205]:
+                  - generic [ref=f2e1206] [cursor=pointer]:
+                    - link "Electronic-Milk-911's profile --- avatar" [ref=f2e1211]:
+                      - /url: https://www.reddit.com/user/Electronic-Milk-911/
+                      - img "u/Electronic-Milk-911 avatar" [ref=f2e1214]
+                    - generic [ref=f2e1218]:
+                      - link "Electronic-Milk-911's profile" [ref=f2e1221]:
+                        - /url: https://www.reddit.com/user/Electronic-Milk-911/
+                        - text: Electronic-Milk-911
+                      - generic [ref=f2e1222]: •
+                      - link [ref=f2e1224]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko4w3r/
+                        - time [ref=f2e1226]: 3mo ago
+                  - generic [ref=f2e1228]:
+                    - generic [ref=f2e1231]:
+                      - paragraph [ref=f2e1232]: My grandpa used to take 14 pills plus pain relief patches so I came up with this system. I have 4 weekly pill boxes with day and night slots so I can fill one full month at a time. You can expand to 3 months if you receive that much at once.
+                      - paragraph [ref=f2e1233]: When the new prescriptions arrive I take all of the bottles out and I will put a D for day or N for night or D/N for day and night on the lid.
+                      - paragraph [ref=f2e1234]: Lay out 14 Dixie cups and add each dose to the cups. I think it helps to prevent doubles or mix ups because you can do a quick visual check after to make sure they all look correct before you pour them into the pill organizer. You could do the full 28 cups but I find it’s easier to manage 14 at a time. This is much faster for me than trying to get them into the little tiny slots on the pill boxes.
+                      - paragraph [ref=f2e1235]: I also have a visual quick reference guide that I use to confirm they’re correct. Like yep big orange one, little white round, blue oval, were good! the doctor really appreciated it too! It shows all her pills and dosages and the date so you can look back and say oh we added that in October of 2025 and before that she was taking X dosage of Y instead.
+                    - generic [ref=f2e1236]: "3"
+                    - generic [ref=f2e1243]:
+                      - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e1245]':
+                        - generic [ref=f2e1246] [cursor=pointer]:
+                          - link "Greysawpark's profile --- avatar" [ref=f2e1251]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                          - generic [ref=f2e1261]:
+                            - link "Greysawpark's profile" [ref=f2e1264]:
+                              - /url: https://www.reddit.com/user/Greysawpark/
+                              - text: Greysawpark
+                            - generic "Comment distinguished as the original poster" [ref=f2e1267]: OP
+                            - generic [ref=f2e1268]: •
+                            - link [ref=f2e1270]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko8nd7/
+                              - time [ref=f2e1272]: 3mo ago
+                        - generic [ref=f2e1274]:
+                          - paragraph [ref=f2e1278]: That's a pretty awesome cheatsheet.
+                          - generic [ref=f2e1279]: "4"
+                      - button "2 more replies" [ref=f2e1288] [cursor=pointer]:
+                        - generic [ref=f2e1293]:
+                          - generic [ref=f2e1294]: "2"
+                          - text: more replies
+                - article "Comment from Gleeful_Robot 3 months ago" [ref=f2e1298]:
+                  - generic [ref=f2e1299] [cursor=pointer]:
+                    - link "Gleeful_Robot's profile --- avatar" [ref=f2e1304]:
+                      - /url: https://www.reddit.com/user/Gleeful_Robot/
+                    - generic [ref=f2e1314]:
+                      - link "Gleeful_Robot's profile" [ref=f2e1317]:
+                        - /url: https://www.reddit.com/user/Gleeful_Robot/
+                        - text: Gleeful_Robot
+                      - generic [ref=f2e1318]: •
+                      - link [ref=f2e1320]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko0uj8/
+                        - time [ref=f2e1322]: 3mo ago
+                  - generic [ref=f2e1324]:
+                    - generic [ref=f2e1327]:
+                      - paragraph [ref=f2e1328]: Have you used the Medisafe tracker app? It allows you to create multiple profiles with notification reminders for all of them. You can toggle between different profiles. It's great if you need phone reminders and tracking. You can mirror the app on 2 different phones by setting them up with the same login on both phones. Edit - tho I'm not sure if you can silence one profile's notification only on the 2nd phone.
+                      - paragraph [ref=f2e1329]: Also, Walmart sells the tiny little pill sized ziploc style pouches, they're like $2 bucks for 50 (search for pill bags or pill pouches). You can fill each bag with meds/supplements, time and date them (eg Monday, 5/15/26 @ 8 am, Monday 5/15/26 @ 8 pm) with a sharpie and organize them in a small trays, one for AM and one for PM, dollar tree has all sorts of sized trays that can work for this, instead of the pharmacy pill packs. An empty pouch means they were taken. I usually set out that day's pouches on the table to better keep track. I like the pharmacy pill pack idea however my parents doctors frequently change or add meds and supplements, so I would have to rip thru all the pouches to reconfigure everything anyway, this system is a more flexible DIY option.
+                    - generic [ref=f2e1330]: "2"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e1339]':
+                      - generic [ref=f2e1340] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e1345]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e1355]:
+                          - link "Greysawpark's profile" [ref=f2e1358]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e1361]: OP
+                          - generic [ref=f2e1362]: •
+                          - link [ref=f2e1364]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko1gqu/
+                            - time [ref=f2e1366]: 3mo ago
+                      - generic [ref=f2e1368]:
+                        - generic [ref=f2e1371]:
+                          - paragraph [ref=f2e1372]: This is an interesting hybrid — pharmacy pill pack works for stable regimens but breaks the moment a doctor changes anything, which is the actual reality of caring for parents. The DIY pouches with dates solve that elegantly. Real flexibility tradeoff.
+                          - paragraph [ref=f2e1373]: Quick question on Medisafe, does the multi-profile thing actually work well for caregivers in practice? My understanding is most med-tracker apps treat "caregiver mode" as an afterthought, but you're saying it toggles cleanly between profiles?
+                        - generic [ref=f2e1374]: "4"
+                        - button "2 more replies" [ref=f2e1384] [cursor=pointer]:
+                          - generic [ref=f2e1389]:
+                            - generic [ref=f2e1390]: "2"
+                            - text: more replies
+                - generic "We match your data, however messy. See how 👀" [ref=f2e1395]:
+                  - generic [ref=f2e1396]:
+                    - 'generic "Advertisement: We match your data, however messy. See how 👀" [ref=f2e1397]':
+                      - 'link "Advertisement: We match your data, however messy. See how 👀" [ref=f2e1398] [cursor=pointer]':
+                        - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                    - generic [ref=f2e1399]:
+                      - generic [ref=f2e1400]:
+                        - link "u/data_ladder" [ref=f2e1402] [cursor=pointer]:
+                          - /url: /user/data_ladder/
+                          - img "u/data_ladder avatar" [ref=f2e1405]
+                        - generic [ref=f2e1407]: •
+                        - link "Promoted" [ref=f2e1409] [cursor=pointer]:
+                          - /url: /user/data_ladder/
+                        - link [ref=f2e1412] [cursor=pointer]:
+                          - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                      - button "Open user actions" [ref=f2e1418] [cursor=pointer]
+                    - generic [ref=f2e1423]:
+                      - link "We match your data, however messy. See how 👀" [ref=f2e1425] [cursor=pointer]:
+                        - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                      - list [ref=f2e1429]:
+                        - generic:
+                          - listitem [ref=f2e1430]:
+                            - generic [ref=f2e1431]:
+                              - link [ref=f2e1433] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                              - link [ref=f2e1435] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                                - img "Outcome from our messiest data test" [ref=f2e1436]
+                          - listitem [ref=f2e1437]:
+                            - generic [ref=f2e1438]:
+                              - link [ref=f2e1440] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=rGRbdYbbu1qK3EVhBe5yhERHUYBB1B2l7yeinwHQH7AZsd_yCHjgbXhGK6-1lxlm7eBl1v3n8Zy4EzKlB2bV0vDHBLE1jGc1vrvLcrhcuPtaBfOdBPIt-Mw7_R-2nwuhmz_WPU-Sl6gJ8286P5j9zIKTtRVRgMQFWeWHLB2oS6K-H7JCJas7M-gY05GU7Qxy1TkYMkdsFzd-M73KYLRu5kWwD0b-xQyG3wC4ysrzyfj_7lKDueDLm8VPf4VjxC1SHiS2Bc6ZwZdtjnSe274bqDRTwbaHnnu6nh9LTUfXQnJdqDHP82cLSe89nsAfxXb2tIaFvUqjDW6TbPm4b3C_HK8Kdn5jlHklWT-AeAAZIQp1NFVVzyFoe58sPSMyP8wB
+                              - link [ref=f2e1442] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=rGRbdYbbu1qK3EVhBe5yhERHUYBB1B2l7yeinwHQH7AZsd_yCHjgbXhGK6-1lxlm7eBl1v3n8Zy4EzKlB2bV0vDHBLE1jGc1vrvLcrhcuPtaBfOdBPIt-Mw7_R-2nwuhmz_WPU-Sl6gJ8286P5j9zIKTtRVRgMQFWeWHLB2oS6K-H7JCJas7M-gY05GU7Qxy1TkYMkdsFzd-M73KYLRu5kWwD0b-xQyG3wC4ysrzyfj_7lKDueDLm8VPf4VjxC1SHiS2Bc6ZwZdtjnSe274bqDRTwbaHnnu6nh9LTUfXQnJdqDHP82cLSe89nsAfxXb2tIaFvUqjDW6TbPm4b3C_HK8Kdn5jlHklWT-AeAAZIQp1NFVVzyFoe58sPSMyP8wB
+                                - img "Typos, nicknames, abbreviations, all caught" [ref=f2e1443]
+                          - listitem [ref=f2e1444]:
+                            - generic [ref=f2e1445]:
+                              - link [ref=f2e1447] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=WhUxnZeO3-azCo_tMcO2Ui4be8YBN9DYW26SAB5Yw4PaHr2zir95LceJ_jip4EZYL7v3sW9VmTnzXzCZsrvN2L1C84T8rB5oIL6Gw-YAfi4aHIBYrzL1EEN9vnsD8428o96a58oiMwXauESJtnzdxqDfXHAC6wsjU2yiaB-17nYIHGwZgso85zHj-SZ3ou2L26Og6Xt98FiV6ve8n4varczmVeNXrM7rEIUC1CnNDmmU1zN3hRfEeBz_sElwe3qspP4idegjo0s8NzKn7e-hMb7UG8sGWM4BpZIKMWYcau6bFfNZl5C6ripKTwQj2EKRCKJR74AcIF40iG4ghap1vles0ryx6VBznKVh6M67-06KCYJAGv_WnNLlg8e9
+                              - link [ref=f2e1449] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=WhUxnZeO3-azCo_tMcO2Ui4be8YBN9DYW26SAB5Yw4PaHr2zir95LceJ_jip4EZYL7v3sW9VmTnzXzCZsrvN2L1C84T8rB5oIL6Gw-YAfi4aHIBYrzL1EEN9vnsD8428o96a58oiMwXauESJtnzdxqDfXHAC6wsjU2yiaB-17nYIHGwZgso85zHj-SZ3ou2L26Og6Xt98FiV6ve8n4varczmVeNXrM7rEIUC1CnNDmmU1zN3hRfEeBz_sElwe3qspP4idegjo0s8NzKn7e-hMb7UG8sGWM4BpZIKMWYcau6bFfNZl5C6ripKTwQj2EKRCKJR74AcIF40iG4ghap1vles0ryx6VBznKVh6M67-06KCYJAGv_WnNLlg8e9
+                                - img "Different Data Sources. One Clean List" [ref=f2e1450]
+                          - listitem [ref=f2e1451]:
+                            - generic [ref=f2e1452]:
+                              - link [ref=f2e1454] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=FhByzSMDqgIxubaoFtU6vLA65V-AtOO4g49xMDHLPKLSeJG8hf0SjdU7HbnaskF440ibgpMUm8CCjf2w3IX607uzFyVd-09_M7W0fCLKH6wKaCcuYulOI9r3W5rnvp9OBRXJBpLifLZC5okocNfUhgpGb9EMSYw3fMIgyMPJMNthycwl4-zNC01aKmvKB_4SC_HB2Y_KZu4GgLiuDjJEvaaJDP23l-WYcws35afwvyffif0NLNaKz-PaTf4ANlYHh65msXkdRUxB9BLwGNf5yTxdTRCDzKvMwreO8CcJcGKkaH29f7cgomPZ4DrFdx4cj8WRHGfgyRS8Z8d7Y3-3d4yKDMHg24QW4AWglhYAAk-C-lq5yd8B9_pJpZDooUcW5wu9Wpnqy3lDThb4qDk
+                              - link [ref=f2e1456] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=FhByzSMDqgIxubaoFtU6vLA65V-AtOO4g49xMDHLPKLSeJG8hf0SjdU7HbnaskF440ibgpMUm8CCjf2w3IX607uzFyVd-09_M7W0fCLKH6wKaCcuYulOI9r3W5rnvp9OBRXJBpLifLZC5okocNfUhgpGb9EMSYw3fMIgyMPJMNthycwl4-zNC01aKmvKB_4SC_HB2Y_KZu4GgLiuDjJEvaaJDP23l-WYcws35afwvyffif0NLNaKz-PaTf4ANlYHh65msXkdRUxB9BLwGNf5yTxdTRCDzKvMwreO8CcJcGKkaH29f7cgomPZ4DrFdx4cj8WRHGfgyRS8Z8d7Y3-3d4yKDMHg24QW4AWglhYAAk-C-lq5yd8B9_pJpZDooUcW5wu9Wpnqy3lDThb4qDk
+                                - img "Every record, resolved to one truth" [ref=f2e1457]
+                          - listitem [ref=f2e1458]:
+                            - generic [ref=f2e1459]:
+                              - link [ref=f2e1461] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=RowJCq5LnWrW2NnigkJa5AMixYTJAhDEvZMe9zyhv6JQIMqjKwY_HaslqsN8MCEDBZn4HJIsvLJWo1UK9ADEe_uvH4nCuBa74gK8vx2G6zWFaoIBn6e_hJ_SiF2zdTyCF2VKXrATPs7uAY_v3Yi3egbwSreMhsk_ZiUvTwwOR8VhkrQOa2XpNEy6wiIvdT5up66P7N_Od1gYoYuPSEcVlljx59IoQavvu5UIkvQMScGR0At5lyGvf1fXmV7Xfc_gX8yQZzL-VXyXR7DjVMkr4QhkT7J_bi4kPjrwfLOYi2Yk8xbXJt8bcNjGktVIsODCDtX4uqjBS1SG4INcEXn3UwSewnMBMqtOW6OjTy2mUxquYCeix94rlQI3b80DI9voP-o
+                              - link [ref=f2e1463] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=RowJCq5LnWrW2NnigkJa5AMixYTJAhDEvZMe9zyhv6JQIMqjKwY_HaslqsN8MCEDBZn4HJIsvLJWo1UK9ADEe_uvH4nCuBa74gK8vx2G6zWFaoIBn6e_hJ_SiF2zdTyCF2VKXrATPs7uAY_v3Yi3egbwSreMhsk_ZiUvTwwOR8VhkrQOa2XpNEy6wiIvdT5up66P7N_Od1gYoYuPSEcVlljx59IoQavvu5UIkvQMScGR0At5lyGvf1fXmV7Xfc_gX8yQZzL-VXyXR7DjVMkr4QhkT7J_bi4kPjrwfLOYi2Yk8xbXJt8bcNjGktVIsODCDtX4uqjBS1SG4INcEXn3UwSewnMBMqtOW6OjTy2mUxquYCeix94rlQI3b80DI9voP-o
+                                - img "Linked records in under 10 mins" [ref=f2e1464]
+                      - generic [ref=f2e1465]:
+                        - link [ref=f2e1467] [cursor=pointer]:
+                          - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                        - generic [ref=f2e1468]:
+                          - link "dataladder.com" [ref=f2e1472] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                          - link [ref=f2e1474] [cursor=pointer]:
+                            - /url: https://alb.reddit.com/cr?za=1-VDQdZ3584VFY4VtEXQWD7WI_i8JVu7nlSw9iI-GgR9JFeds5wXaTDPWGMwVJziDf1HASlC-r29NYR66vR0XsLlkOaFx5J47FuWMmooXvk0fcFxVODLkZJL4VPrbCE7DNMeacZTjZnWFUUw2Jlr7avNSFlIQEAA1zpulv-j4nxU3xF7hPizz4T8Q98P113WciSKySDEG-JYGuHVfCDcn7jkPNa7_rc6zZdSupWkHtnxrSLWGTADqwknPeF0qWo02ECbuf5hWx6ixfLN1e1H6Zk_-SoyqeWO9sWL4x0LIZyTsOuKx6bzoDdD1QC7aXe37pnOt5zBu2YUvLNwietxt6RmPKBNdXk6crXrk8owsrL6i4qXe1tuIi0E6Ol4qN0e1-qXxv1tEYIRPcnDPVA-_hhoT2JVnxGTBThfClCQJuVvPm_pM0mA8t2Z5-MriL3R73E5va6MYWKj5fogA0gyrqkQI0NQJ7U5GXSdYHUZZJOkDYrHRwB3oYFZJyg4s-V26VDY63O-gjBaAElkgvEo46wA-WK_pywR5iucQiSQqA84vophqb3bxY5YfyHABSKDLGUeKiopgGnk8R9pdbZWBPG3bR56387CEUwWqvwombV0AvO_9y1YeCAQWrh2aX0LKkiafLhibQLPYw2HOMVM_3S_NpelPcFTT8ytYDSJxGsUtKSL8ksVOq7mCsGUNK1KXTrEle89ovy4mJZRUEI4WfQgUe7T8fJ5iaPnNxeK83I7IWKHAoZRWSmNBPZCuZKf0mZhDgz8WLwTFLrwHt2vZGDRMOmWtqMGU1iJ8rBgw4jsZADUPIxyqXgxw0U-2qghZt4YROPryq8R9ZesWt9Y53zIoespx8Qd60I&zp=VmABExzuMwtE4oVA1StvpbVAVQxE6snhzy5UItTbjmaqtn6YWoASIGPFLhRn3lLkEKu9MHHKmiwIp_25en6qjVEgbyI5v1r17kYswz-5eq5YOm0DWMYC4saRMajfPQLDkX7B5VJUrZgsLHNUNw1uLV53sRubgr7-S14aPJqItx500_oSq01ZaMqN47CgbdglH3PcZJ1Q1LkwfgNmBqYAqSzHSXi0taQLq6imyTxJQnG-hkDIsiemhxdnn0iwYIm8HpS4Auph7Gr_5iME3ekz71wWjDgCreh9RSsgA-xFDov-4Auyjs9yiL-t9xZ8
+                - article "Comment from buxzythebeeeeeeee 3 months ago" [ref=f2e1478]:
+                  - generic [ref=f2e1479] [cursor=pointer]:
+                    - link "buxzythebeeeeeeee's profile --- avatar" [ref=f2e1484]:
+                      - /url: https://www.reddit.com/user/buxzythebeeeeeeee/
+                    - generic [ref=f2e1500]:
+                      - link "buxzythebeeeeeeee's profile" [ref=f2e1503]:
+                        - /url: https://www.reddit.com/user/buxzythebeeeeeeee/
+                        - text: buxzythebeeeeeeee
+                      - generic [ref=f2e1504]: •
+                      - link [ref=f2e1506]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko6xkd/
+                        - time [ref=f2e1508]: 3mo ago
+                  - generic [ref=f2e1510]:
+                    - paragraph [ref=f2e1514]: Hi, sorry to be suspicious, but are you a real person? This is a 6 year old account with very low karma that only became active again less than a month ago. Pill organizing is one of the most market researched questions in this subreddit and this post looks pretty much identical in formatting and wording to every other (generative ai) version of this exact same question the sub has received.
+                    - generic [ref=f2e1515]: "2"
+                    - 'article "Comment thread level 1: Reply from Greysawpark 3 months ago" [ref=f2e1524]':
+                      - generic [ref=f2e1525] [cursor=pointer]:
+                        - link "Greysawpark's profile --- avatar" [ref=f2e1530]:
+                          - /url: https://www.reddit.com/user/Greysawpark/
+                        - generic [ref=f2e1540]:
+                          - link "Greysawpark's profile" [ref=f2e1543]:
+                            - /url: https://www.reddit.com/user/Greysawpark/
+                            - text: Greysawpark
+                          - generic "Comment distinguished as the original poster" [ref=f2e1546]: OP
+                          - generic [ref=f2e1547]: •
+                          - link [ref=f2e1549]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/oko7h6a/
+                            - time [ref=f2e1551]: 3mo ago
+                      - generic [ref=f2e1553]:
+                        - paragraph [ref=f2e1557]: Last time I checked. While I have been on reddit for awhile, I have not typically used it. But I always appreciate being called a robot :P
+                        - generic [ref=f2e1558]: "2"
+                        - button "2 more replies" [ref=f2e1568] [cursor=pointer]:
+                          - generic [ref=f2e1573]:
+                            - generic [ref=f2e1574]: "2"
+                            - text: more replies
+                - article "Comment from prismacolorful_life 3 months ago" [ref=f2e1578]:
+                  - generic [ref=f2e1579] [cursor=pointer]:
+                    - link "prismacolorful_life's profile --- avatar" [ref=f2e1584]:
+                      - /url: https://www.reddit.com/user/prismacolorful_life/
+                      - img "u/prismacolorful_life avatar" [ref=f2e1587]
+                    - generic [ref=f2e1591]:
+                      - link "prismacolorful_life's profile" [ref=f2e1594]:
+                        - /url: https://www.reddit.com/user/prismacolorful_life/
+                        - text: prismacolorful_life
+                      - generic [ref=f2e1595]: •
+                      - link [ref=f2e1597]:
+                        - /url: https://www.reddit.com/r/CaregiverSupport/comments/1t7boem/comment/okol7ib/
+                        - time [ref=f2e1599]: 3mo ago
+                  - generic [ref=f2e1601]:
+                    - generic [ref=f2e1604]:
+                      - paragraph [ref=f2e1605]: I use an automatic pill dispenser from Livefine that has alarm settings. There are 28 slots, since my mother takes prescriptions 2x a day, I refill every two weeks. I just fill it once, and lock it. You can adjust the frequency to your mom’s schedule, There’s 2 different models, the one my mom has is several years old without the WiFi. There is also a hero dispenser but that is subscription based
+                      - paragraph [ref=f2e1606]: With her prescription bottles, I write abbreviations on the caps with different color sharpies. I made abbreviations key with the color code, name, and frequency. One is in the box where her bottles are stored. The other is taped inside the door of a cabinet it is stored in. I loathed grabbing at different bottles looking for the right one. It was a waste of time.
+                      - paragraph [ref=f2e1607]: We also have one of those dementia calendar clocks. My mom doesn’t have dementia, but gets confused when she wakes up regarding AM / PM. There are different alarm category settings. So it’s set 2x a day, daily and says medicine which is easy for her to read.
+                      - paragraph [ref=f2e1608]: I’ve noticed the basic plastic pill boxes were much harder for to open if you have hand arthritis. You also have make sure all compartments were shut proper. Pills would be prone to flying or wind up on the ground.
+                    - generic [ref=f2e1609]: "4"
+            - generic [ref=f2e1619]:
+              - generic [ref=f2e1620]:
+                - complementary "Related Posts Section" [ref=f2e1621]:
+                  - heading "Related Posts Section" [level=1] [ref=f2e1622]: More posts you may like
+                  - generic [ref=f2e1623]: Related posts
+                  - list [ref=f2e1629]:
+                    - listitem [ref=f2e1630]:
+                      - generic [ref=f2e1631]:
+                        - generic [ref=f2e1632]:
+                          - link [ref=f2e1633] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1ihss6e/adviceexperience_with_parent_refusing_diagnosis/
+                          - generic [ref=f2e1636]:
+                            - generic [ref=f2e1638]:
+                              - link "r/CaregiverSupport" [ref=f2e1639] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1644]: •
+                              - time [ref=f2e1646]: 1y ago
+                            - link [ref=f2e1648] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1ihss6e/adviceexperience_with_parent_refusing_diagnosis/
+                              - heading "List item post - Advice/experience with parent refusing diagnosis and treatm..." [level=3] [ref=f2e1651]: Advice/experience with parent refusing diagnosis and treatment for metastatic cancer
+                          - generic [ref=f2e1653]:
+                            - generic [ref=f2e1654]: "5"
+                            - text: upvotes ·
+                            - generic [ref=f2e1655]: "11"
+                            - text: comments
+                        - separator [ref=f2e1656]
+                    - listitem [ref=f2e1657]:
+                      - generic [ref=f2e1658]:
+                        - generic [ref=f2e1659]:
+                          - link [ref=f2e1660] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/stayathomemoms/comments/1pcxu5s/how_do_i_become_a_more_patient_parent/
+                          - generic [ref=f2e1663]:
+                            - generic [ref=f2e1665]:
+                              - link "r/stayathomemoms" [ref=f2e1666] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/stayathomemoms/
+                              - generic [ref=f2e1671]: •
+                              - time [ref=f2e1673]: 8mo ago
+                            - link [ref=f2e1675] [cursor=pointer]:
+                              - /url: /r/stayathomemoms/comments/1pcxu5s/how_do_i_become_a_more_patient_parent/
+                              - heading "List item post - How do I become a more patient parent" [level=3] [ref=f2e1678]: How do I become a more patient parent
+                          - generic [ref=f2e1680]:
+                            - generic [ref=f2e1681]: "9"
+                            - text: upvotes ·
+                            - generic [ref=f2e1682]: "10"
+                            - text: comments
+                        - separator [ref=f2e1683]
+                    - listitem [ref=f2e1684]:
+                      - generic [ref=f2e1685]:
+                        - generic [ref=f2e1686]:
+                          - link [ref=f2e1687] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1ibqnhy/how_do_you_manage_medications_for_your_parents/
+                          - generic [ref=f2e1690]:
+                            - generic [ref=f2e1692]:
+                              - link "r/CaregiverSupport" [ref=f2e1693] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1698]: •
+                              - time [ref=f2e1700]: 2y ago
+                            - link [ref=f2e1702] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1ibqnhy/how_do_you_manage_medications_for_your_parents/
+                              - heading "List item post - How Do You Manage Medications for Your Parents? Looking for..." [level=3] [ref=f2e1705]: How Do You Manage Medications for Your Parents? Looking for Advice
+                          - generic [ref=f2e1707]:
+                            - generic [ref=f2e1708]: "6"
+                            - text: upvotes ·
+                            - generic [ref=f2e1709]: "28"
+                            - text: comments
+                        - separator [ref=f2e1710]
+                    - listitem [ref=f2e1711]:
+                      - generic [ref=f2e1713]:
+                        - generic:
+                          - 'generic "Advertisement: One Move. Full portfolio coverage. Get a professionally built, diversified portfolio with CI GAM’s All-in-One ETFs. CBAP & CEQP. Now with a permanent allocation to gold and bitcoin built-in" [ref=f2e1714]':
+                            - 'link "Advertisement: One Move. Full portfolio coverage. Get a professionally built, diversified portfolio with CI GAM’s All-in-One ETFs. CBAP & CEQP. Now with a permanent allocation to gold and bitcoin built-in" [ref=f2e1715] [cursor=pointer]':
+                              - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                          - generic [ref=f2e1716]:
+                            - generic [ref=f2e1717]:
+                              - generic [ref=f2e1718]:
+                                - generic [ref=f2e1719]:
+                                  - generic [ref=f2e1720]:
+                                    - link "u/CI-GAM avatar CI-GAM" [ref=f2e1722] [cursor=pointer]:
+                                      - /url: /user/CI-GAM/
+                                      - img "u/CI-GAM avatar" [ref=f2e1725]
+                                      - generic [ref=f2e1726]: CI-GAM
+                                    - generic [ref=f2e1727]: •
+                                    - link "Promoted" [ref=f2e1729] [cursor=pointer]:
+                                      - /url: /user/CI-GAM/
+                                    - link [ref=f2e1732] [cursor=pointer]:
+                                      - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                                  - button "Open user actions" [ref=f2e1738] [cursor=pointer]
+                                - link "One Move. Full portfolio coverage. Get a professionally built, diversified portfolio with CI GAM’s All-in-One ETFs. CBAP & CEQP. Now with a permanent allocation to gold and bitcoin built-in" [ref=f2e1745] [cursor=pointer]:
+                                  - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                                  - generic "One Move. Full portfolio coverage. Get a professionally built, diversified portfolio with CI GAM’s All-in-One ETFs. CBAP & CEQP. Now with a permanent allocation to gold and bitcoin built-in" [ref=f2e1746]
+                              - link [ref=f2e1749] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                                - 'img "Thumbnail image: One Move. Full portfolio coverage. Get a professionally built, diversified portfolio with CI GAM’s All-in-One ETFs. CBAP & CEQP. Now with a permanent allocation to gold and bitcoin built-in" [ref=f2e1751]'
+                            - generic [ref=f2e1752]:
+                              - link [ref=f2e1754] [cursor=pointer]:
+                                - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                              - generic [ref=f2e1755]:
+                                - link "cifinancial.com" [ref=f2e1758] [cursor=pointer]:
+                                  - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                                - link [ref=f2e1760] [cursor=pointer]:
+                                  - /url: https://alb.reddit.com/cr?za=Ij4OIxWdkXTNAQXfzW9tP_ztgNFThYimzxxtyDQxUg7g--vsSFybqvgUYyVmNNoS4zHrF5B_wtz5kniSi-pmrHOgibQr5gnEXG30iQ39nLwt8TTQF6gKPsUo1eMVrxa5MYrXp3WCefZU0xE67TwEbDOgJXJVi63GBAHFTUJIqZzatLiBsaRjp0SRNmwqmEapsKtJiC5XxrO6dGCDWpiUtkPsH_UlFFOmKfplzIRWxJjXSlPkD_WZO02UCMyVSX8ogAcC5UOURBAel5kcpczhhnBOre0FES65TD0eG0N8fngeHeWZIW0lC4k-NcVmdNrV6Z4BTt465aznOaRU1TS6JgG5ZtsP8lVq7uw5vAZGjHFhPP_a9VHHoQr_A9byR0o7rW8ipE-Qb5Qe7xjaNT_jjIiR21FZ2KF1HrO1b7KOtiqGu2K88bSDGeNe8hwduYE7AFl797aamR7aXCQnGsglOxGhNCn-4Qm7j2hO9nAGRiP3IDGkDp55wmCAsPMtmXlK18tmCaG6hiz2ba9HSYQvrMX64EY_OIP1-0bOgkWX_6KTdZxXyQQ-Fd1QgbT7aRLoACvOvAKGTA8_i9IAFxYPmDjKW2duxrx5VY0ILVzrUOZBvNSLQtPam6dvb81mh2enoEZsV8On0K5JjNgkhQ7rAqSXH3GJqIYQyX3El6uu_A&zp=qlRApNwtmN_VIenuozZBg2rwLGJTN0LZxgBB4xwtL3B_BxPBhigIURPYRcpapca4ZR7AL8EqasfZQNflAzNP7aade83L2gc6bs1JCBiybHe2bGloRF2Wt2ar0Dv3IAcPzAia_cG5okJmY61GE31rMlxBCI-iPDjhZswxnEx2k2_UoGlzjYp7H0YeYDu2ZGpFgqIDN0aA9BqabGkub0kxkMbI9ebYFIl9UuB2FkrDuCCxBS7z-ciYzWpBnFDN8vPT7GuGPTPM7x2ddohbP9lmO0ZiZu6LrOe7cKCphY1TgLh8nbm9iswmFZXTad84Gr1Hg1cFluZD790vcL1AKmHZMB4MGfYeGM8LLO2AEFmNRu0i-X-7vfQnyg2bV0hTL5b5CcXqs7bx_J-9sBNNfjtQklGD3Y-JppA-ArqdYrd9cnJzwEmo8xvD1nY
+                      - separator [ref=f2e1763]
+                    - listitem [ref=f2e1764]:
+                      - generic [ref=f2e1765]:
+                        - generic [ref=f2e1766]:
+                          - link [ref=f2e1767] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v0f8y5/am_i_a_bad_person_if_i_go_home_to_sleep_tonight/
+                          - generic [ref=f2e1770]:
+                            - generic [ref=f2e1772]:
+                              - link "r/CaregiverSupport" [ref=f2e1773] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1778]: •
+                              - time [ref=f2e1780]: 4d ago
+                            - link [ref=f2e1782] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v0f8y5/am_i_a_bad_person_if_i_go_home_to_sleep_tonight/
+                              - heading "List item post - Am I a bad person if I go home to sleep tonight while my mo..." [level=3] [ref=f2e1785]: Am I a bad person if I go home to sleep tonight while my mom is in ICU?
+                          - generic [ref=f2e1787]:
+                            - generic [ref=f2e1788]: "153"
+                            - text: upvotes ·
+                            - generic [ref=f2e1789]: "61"
+                            - text: comments
+                        - separator [ref=f2e1790]
+                    - listitem [ref=f2e1791]:
+                      - generic [ref=f2e1792]:
+                        - generic [ref=f2e1793]:
+                          - link [ref=f2e1794] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uyfd0d/so_pissed_need_to_vent/
+                          - generic [ref=f2e1797]:
+                            - generic [ref=f2e1799]:
+                              - link "r/CaregiverSupport" [ref=f2e1800] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1805]: •
+                              - time [ref=f2e1807]: 6d ago
+                            - link [ref=f2e1809] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uyfd0d/so_pissed_need_to_vent/
+                              - heading "List item post - So pissed. Need to vent" [level=3] [ref=f2e1812]: So pissed. Need to vent
+                          - generic [ref=f2e1814]:
+                            - generic [ref=f2e1815]: "131"
+                            - text: upvotes ·
+                            - generic [ref=f2e1816]: "56"
+                            - text: comments
+                        - separator [ref=f2e1817]
+                    - listitem [ref=f2e1818]:
+                      - generic [ref=f2e1819]:
+                        - generic [ref=f2e1820]:
+                          - link [ref=f2e1821] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v0w1cz/i_miss_my_life_before_becoming_a_full_time/
+                          - generic [ref=f2e1824]:
+                            - generic [ref=f2e1826]:
+                              - link "r/CaregiverSupport" [ref=f2e1827] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1832]: •
+                              - time [ref=f2e1834]: 3d ago
+                            - link [ref=f2e1836] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v0w1cz/i_miss_my_life_before_becoming_a_full_time/
+                              - heading "List item post - I miss my life before becoming a full time caregiver." [level=3] [ref=f2e1839]: I miss my life before becoming a full time caregiver.
+                          - generic [ref=f2e1841]:
+                            - generic [ref=f2e1842]: "119"
+                            - text: upvotes ·
+                            - generic [ref=f2e1843]: "35"
+                            - text: comments
+                        - separator [ref=f2e1844]
+                    - listitem [ref=f2e1845]:
+                      - generic [ref=f2e1846]:
+                        - generic [ref=f2e1847]:
+                          - link [ref=f2e1848] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v3hy1f/why_isnt_caregiving_given_the_same_grace_as/
+                          - generic [ref=f2e1851]:
+                            - generic [ref=f2e1853]:
+                              - link "r/CaregiverSupport" [ref=f2e1854] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1859]: •
+                              - time [ref=f2e1861]: 6h ago
+                            - link [ref=f2e1863] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v3hy1f/why_isnt_caregiving_given_the_same_grace_as/
+                              - heading "List item post - Why isn't caregiving given the same grace as parenting?" [level=3] [ref=f2e1866]: Why isn't caregiving given the same grace as parenting?
+                          - generic [ref=f2e1868]:
+                            - generic [ref=f2e1869]: "99"
+                            - text: upvotes ·
+                            - generic [ref=f2e1870]: "40"
+                            - text: comments
+                        - separator [ref=f2e1871]
+                    - listitem [ref=f2e1872]:
+                      - generic [ref=f2e1873]:
+                        - generic [ref=f2e1874]:
+                          - link [ref=f2e1875] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uz7hi2/burnout_is_here/
+                          - generic [ref=f2e1878]:
+                            - generic [ref=f2e1880]:
+                              - link "r/CaregiverSupport" [ref=f2e1881] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1886]: •
+                              - time [ref=f2e1888]: 5d ago
+                            - link [ref=f2e1890] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uz7hi2/burnout_is_here/
+                              - heading "List item post - Burnout is here" [level=3] [ref=f2e1893]: Burnout is here
+                          - generic [ref=f2e1895]:
+                            - generic [ref=f2e1896]: "99"
+                            - text: upvotes ·
+                            - generic [ref=f2e1897]: "41"
+                            - text: comments
+                        - separator [ref=f2e1898]
+                    - listitem [ref=f2e1899]:
+                      - generic [ref=f2e1900]:
+                        - generic [ref=f2e1901]:
+                          - link [ref=f2e1902] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v04rkb/im_wasting_my_life/
+                          - generic [ref=f2e1905]:
+                            - generic [ref=f2e1907]:
+                              - link "r/CaregiverSupport" [ref=f2e1908] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1913]: •
+                              - time [ref=f2e1915]: 4d ago
+                            - link [ref=f2e1917] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v04rkb/im_wasting_my_life/
+                              - heading "List item post - I'm wasting my life" [level=3] [ref=f2e1920]: I'm wasting my life
+                          - generic [ref=f2e1922]:
+                            - generic [ref=f2e1923]: "95"
+                            - text: upvotes ·
+                            - generic [ref=f2e1924]: "23"
+                            - text: comments
+                        - separator [ref=f2e1925]
+                    - listitem [ref=f2e1926]:
+                      - generic [ref=f2e1927]:
+                        - generic [ref=f2e1928]:
+                          - link [ref=f2e1929] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v1zwmw/the_end/
+                          - generic [ref=f2e1932]:
+                            - generic [ref=f2e1934]:
+                              - link "r/CaregiverSupport" [ref=f2e1935] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1940]: •
+                              - time [ref=f2e1942]: 2d ago
+                            - link [ref=f2e1944] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v1zwmw/the_end/
+                              - heading "List item post - The end." [level=3] [ref=f2e1947]: The end.
+                          - generic [ref=f2e1949]:
+                            - generic [ref=f2e1950]: "85"
+                            - text: upvotes ·
+                            - generic [ref=f2e1951]: "15"
+                            - text: comments
+                        - separator [ref=f2e1952]
+                    - listitem [ref=f2e1953]:
+                      - generic [ref=f2e1954]:
+                        - generic [ref=f2e1955]:
+                          - link [ref=f2e1956] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uxn7zc/husband_just_admitted_to_skilled_nursing_already/
+                          - generic [ref=f2e1959]:
+                            - generic [ref=f2e1961]:
+                              - link "r/CaregiverSupport" [ref=f2e1962] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1967]: •
+                              - time [ref=f2e1969]: 7d ago
+                            - link [ref=f2e1971] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uxn7zc/husband_just_admitted_to_skilled_nursing_already/
+                              - heading "List item post - Husband just admitted to skilled nursing already trying to ..." [level=3] [ref=f2e1974]: Husband just admitted to skilled nursing already trying to go home.
+                          - generic [ref=f2e1976]:
+                            - generic [ref=f2e1977]: "77"
+                            - text: upvotes ·
+                            - generic [ref=f2e1978]: "33"
+                            - text: comments
+                        - separator [ref=f2e1979]
+                    - listitem [ref=f2e1980]:
+                      - generic [ref=f2e1981]:
+                        - generic [ref=f2e1982]:
+                          - link [ref=f2e1983] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uy4ccm/hate_having_to_wake_up_early_for_this_shit/
+                          - generic [ref=f2e1986]:
+                            - generic [ref=f2e1988]:
+                              - link "r/CaregiverSupport" [ref=f2e1989] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e1994]: •
+                              - time [ref=f2e1996]: 6d ago
+                            - link [ref=f2e1998] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uy4ccm/hate_having_to_wake_up_early_for_this_shit/
+                              - heading "List item post - hate having to wake up early for this shit" [level=3] [ref=f2e2001]: hate having to wake up early for this shit
+                          - generic [ref=f2e2003]:
+                            - generic [ref=f2e2004]: "75"
+                            - text: upvotes ·
+                            - generic [ref=f2e2005]: "35"
+                            - text: comments
+                        - separator [ref=f2e2006]
+                    - listitem [ref=f2e2007]:
+                      - generic [ref=f2e2008]:
+                        - generic [ref=f2e2009]:
+                          - link [ref=f2e2010] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v3dbfo/hhs_wants_to_cut_home_care_services/
+                          - generic [ref=f2e2013]:
+                            - generic [ref=f2e2015]:
+                              - link "r/CaregiverSupport" [ref=f2e2016] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2021]: •
+                              - time [ref=f2e2023]: 10h ago
+                            - link [ref=f2e2025] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v3dbfo/hhs_wants_to_cut_home_care_services/
+                              - heading "List item post - HHS wants to cut home care services" [level=3] [ref=f2e2028]: HHS wants to cut home care services
+                          - generic [ref=f2e2030]:
+                            - generic [ref=f2e2031]: "73"
+                            - text: upvotes ·
+                            - generic [ref=f2e2032]: "48"
+                            - text: comments
+                        - separator [ref=f2e2033]
+                    - listitem [ref=f2e2034]:
+                      - generic [ref=f2e2035]:
+                        - generic [ref=f2e2036]:
+                          - link [ref=f2e2037] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v1d6r8/ive_been_a_caregiver_for_19_years_and_im_beyond/
+                          - generic [ref=f2e2040]:
+                            - generic [ref=f2e2042]:
+                              - link "r/CaregiverSupport" [ref=f2e2043] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2048]: •
+                              - time [ref=f2e2050]: 3d ago
+                            - link [ref=f2e2052] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v1d6r8/ive_been_a_caregiver_for_19_years_and_im_beyond/
+                              - heading "List item post - I've Been a Caregiver for 19 Years, and I'm Beyond Drained" [level=3] [ref=f2e2055]: I've Been a Caregiver for 19 Years, and I'm Beyond Drained
+                          - generic [ref=f2e2057]:
+                            - generic [ref=f2e2058]: "71"
+                            - text: upvotes ·
+                            - generic [ref=f2e2059]: "16"
+                            - text: comments
+                        - separator [ref=f2e2060]
+                    - listitem [ref=f2e2061]:
+                      - generic [ref=f2e2062]:
+                        - generic [ref=f2e2063]:
+                          - link [ref=f2e2064] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v0t2ws/my_watch_is_over/
+                          - generic [ref=f2e2067]:
+                            - generic [ref=f2e2069]:
+                              - link "r/CaregiverSupport" [ref=f2e2070] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2075]: •
+                              - time [ref=f2e2077]: 3d ago
+                            - link [ref=f2e2079] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v0t2ws/my_watch_is_over/
+                              - heading "List item post - My watch is over" [level=3] [ref=f2e2082]: My watch is over
+                          - generic [ref=f2e2084]:
+                            - generic [ref=f2e2085]: "67"
+                            - text: upvotes ·
+                            - generic [ref=f2e2086]: "18"
+                            - text: comments
+                        - separator [ref=f2e2087]
+                    - listitem [ref=f2e2088]:
+                      - generic [ref=f2e2089]:
+                        - generic [ref=f2e2090]:
+                          - link [ref=f2e2091] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v3fqip/after_8_years_i_told_the_family_i_must_get_paid/
+                          - generic [ref=f2e2094]:
+                            - generic [ref=f2e2096]:
+                              - link "r/CaregiverSupport" [ref=f2e2097] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2102]: •
+                              - time [ref=f2e2104]: 8h ago
+                            - link [ref=f2e2106] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v3fqip/after_8_years_i_told_the_family_i_must_get_paid/
+                              - heading "List item post - After 8 years, I told the family I must get paid for caring..." [level=3] [ref=f2e2109]: After 8 years, I told the family I must get paid for caring for my 91-year-old mother on dialysis - and living in my home - for the situation to be sustainable for all of us.
+                          - generic [ref=f2e2111]:
+                            - generic [ref=f2e2112]: "59"
+                            - text: upvotes ·
+                            - generic [ref=f2e2113]: "12"
+                            - text: comments
+                        - separator [ref=f2e2114]
+                    - listitem [ref=f2e2115]:
+                      - generic [ref=f2e2116]:
+                        - generic [ref=f2e2117]:
+                          - link [ref=f2e2118] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uymq3y/i_know_in_my_heart_that_i_will_spill_the_pee/
+                          - generic [ref=f2e2121]:
+                            - generic [ref=f2e2123]:
+                              - link "r/CaregiverSupport" [ref=f2e2124] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2129]: •
+                              - time [ref=f2e2131]: 6d ago
+                            - link [ref=f2e2133] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uymq3y/i_know_in_my_heart_that_i_will_spill_the_pee/
+                              - heading "List item post - I know in my heart that I will spill the pee canister." [level=3] [ref=f2e2136]: I know in my heart that I will spill the pee canister.
+                          - generic [ref=f2e2138]:
+                            - generic [ref=f2e2139]: "57"
+                            - text: upvotes ·
+                            - generic [ref=f2e2140]: "32"
+                            - text: comments
+                        - separator [ref=f2e2141]
+                    - listitem [ref=f2e2142]:
+                      - generic [ref=f2e2143]:
+                        - generic [ref=f2e2144]:
+                          - link [ref=f2e2145] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uyg96r/mom_said_we_like_the_you_thats_here/
+                          - generic [ref=f2e2148]:
+                            - generic [ref=f2e2150]:
+                              - link "r/CaregiverSupport" [ref=f2e2151] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2156]: •
+                              - time [ref=f2e2158]: 6d ago
+                            - link [ref=f2e2160] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uyg96r/mom_said_we_like_the_you_thats_here/
+                              - heading "List item post - Mom said, \"We like the you that's here\"" [level=3] [ref=f2e2163]: Mom said, "We like the you that's here"
+                          - generic [ref=f2e2165]:
+                            - generic [ref=f2e2166]: "53"
+                            - text: upvotes ·
+                            - generic [ref=f2e2167]: "4"
+                            - text: comments
+                        - separator [ref=f2e2168]
+                    - listitem [ref=f2e2169]:
+                      - generic [ref=f2e2170]:
+                        - generic [ref=f2e2171]:
+                          - link [ref=f2e2172] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uyusxx/a_few_weeks/
+                          - generic [ref=f2e2175]:
+                            - generic [ref=f2e2177]:
+                              - link "r/CaregiverSupport" [ref=f2e2178] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2183]: •
+                              - time [ref=f2e2185]: 5d ago
+                            - link [ref=f2e2187] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uyusxx/a_few_weeks/
+                              - heading "List item post - \"A few weeks\"" [level=3] [ref=f2e2190]: "\"A few weeks\""
+                          - generic [ref=f2e2192]:
+                            - generic [ref=f2e2193]: "52"
+                            - text: upvotes ·
+                            - generic [ref=f2e2194]: "15"
+                            - text: comments
+                        - separator [ref=f2e2195]
+                    - listitem [ref=f2e2196]:
+                      - generic [ref=f2e2197]:
+                        - generic [ref=f2e2198]:
+                          - link [ref=f2e2199] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v1x319/hospice_rant/
+                          - generic [ref=f2e2202]:
+                            - generic [ref=f2e2204]:
+                              - link "r/CaregiverSupport" [ref=f2e2205] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2210]: •
+                              - time [ref=f2e2212]: 2d ago
+                            - link [ref=f2e2214] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v1x319/hospice_rant/
+                              - heading "List item post - Hospice rant" [level=3] [ref=f2e2217]: Hospice rant
+                          - generic [ref=f2e2219]:
+                            - generic [ref=f2e2220]: "48"
+                            - text: upvotes ·
+                            - generic [ref=f2e2221]: "18"
+                            - text: comments
+                        - separator [ref=f2e2222]
+                    - listitem [ref=f2e2223]:
+                      - generic [ref=f2e2224]:
+                        - generic [ref=f2e2225]:
+                          - link [ref=f2e2226] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v33rqp/my_mindset_scares_me/
+                          - generic [ref=f2e2229]:
+                            - generic [ref=f2e2231]:
+                              - link "r/CaregiverSupport" [ref=f2e2232] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2237]: •
+                              - time [ref=f2e2239]: 18h ago
+                            - link [ref=f2e2241] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v33rqp/my_mindset_scares_me/
+                              - heading "List item post - My mindset scares me" [level=3] [ref=f2e2244]: My mindset scares me
+                          - generic [ref=f2e2246]:
+                            - generic [ref=f2e2247]: "47"
+                            - text: upvotes ·
+                            - generic [ref=f2e2248]: "16"
+                            - text: comments
+                        - separator [ref=f2e2249]
+                    - listitem [ref=f2e2250]:
+                      - generic [ref=f2e2251]:
+                        - generic [ref=f2e2252]:
+                          - link [ref=f2e2253] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v01yar/mom_clogs_up_the_toilet_most_of_the_time_she_poops/
+                          - generic [ref=f2e2256]:
+                            - generic [ref=f2e2258]:
+                              - link "r/CaregiverSupport" [ref=f2e2259] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2264]: •
+                              - time [ref=f2e2266]: 4d ago
+                            - link [ref=f2e2268] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v01yar/mom_clogs_up_the_toilet_most_of_the_time_she_poops/
+                              - heading "List item post - mom clogs up the toilet most of the time she poops" [level=3] [ref=f2e2271]: mom clogs up the toilet most of the time she poops
+                          - generic [ref=f2e2273]:
+                            - generic [ref=f2e2274]: "47"
+                            - text: upvotes ·
+                            - generic [ref=f2e2275]: "105"
+                            - text: comments
+                        - separator [ref=f2e2276]
+                    - listitem [ref=f2e2277]:
+                      - generic [ref=f2e2278]:
+                        - generic [ref=f2e2279]:
+                          - link [ref=f2e2280] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1uztgkh/little_hobbies_to_heal_ourselves/
+                          - generic [ref=f2e2283]:
+                            - generic [ref=f2e2285]:
+                              - link "r/CaregiverSupport" [ref=f2e2286] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2291]: •
+                              - time [ref=f2e2293]: 4d ago
+                            - link [ref=f2e2295] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1uztgkh/little_hobbies_to_heal_ourselves/
+                              - heading "List item post - Little hobbies to heal ourselves." [level=3] [ref=f2e2298]: Little hobbies to heal ourselves.
+                          - generic [ref=f2e2300]:
+                            - generic [ref=f2e2301]: "43"
+                            - text: upvotes ·
+                            - generic [ref=f2e2302]: "45"
+                            - text: comments
+                        - separator [ref=f2e2303]
+                    - listitem [ref=f2e2304]:
+                      - generic [ref=f2e2305]:
+                        - generic [ref=f2e2306]:
+                          - link [ref=f2e2307] [cursor=pointer]:
+                            - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v0f38p/if_i_hear_what_one_more_time/
+                          - generic [ref=f2e2310]:
+                            - generic [ref=f2e2312]:
+                              - link "r/CaregiverSupport" [ref=f2e2313] [cursor=pointer]:
+                                - /url: https://www.reddit.com/r/CaregiverSupport/
+                              - generic [ref=f2e2318]: •
+                              - time [ref=f2e2320]: 4d ago
+                            - link [ref=f2e2322] [cursor=pointer]:
+                              - /url: /r/CaregiverSupport/comments/1v0f38p/if_i_hear_what_one_more_time/
+                              - heading "List item post - If I hear \"what\" one more time...." [level=3] [ref=f2e2325]: If I hear "what" one more time....
+                          - generic [ref=f2e2327]:
+                            - generic [ref=f2e2328]: "38"
+                            - text: upvotes ·
+                            - generic [ref=f2e2329]: "26"
+                            - text: comments
+                        - separator [ref=f2e2330]
+                    - listitem [ref=f2e2331]:
+                      - generic [ref=f2e2333]:
+                        - link [ref=f2e2334] [cursor=pointer]:
+                          - /url: https://www.reddit.com/r/CaregiverSupport/comments/1v1bco7/forced_caregiver/
+                        - generic [ref=f2e2337]:
+                          - generic [ref=f2e2339]:
+                            - link "r/CaregiverSupport" [ref=f2e2340] [cursor=pointer]:
+                              - /url: https://www.reddit.com/r/CaregiverSupport/
+                            - generic [ref=f2e2345]: •
+                            - time [ref=f2e2347]: 3d ago
+                          - link [ref=f2e2349] [cursor=pointer]:
+                            - /url: /r/CaregiverSupport/comments/1v1bco7/forced_caregiver/
+                            - heading "List item post - Forced caregiver" [level=3] [ref=f2e2352]: Forced caregiver
+                        - generic [ref=f2e2354]:
+                          - generic [ref=f2e2355]: "36"
+                          - text: upvotes ·
+                          - generic [ref=f2e2356]: "20"
+                          - text: comments
+                - complementary "Community information" [ref=f2e2357]:
+                  - generic [ref=f2e2359]:
+                    - heading "Community Info Section" [level=1] [ref=f2e2360]
+                    - generic [ref=f2e2361]:
+                      - link "r/CaregiverSupport" [ref=f2e2363] [cursor=pointer]:
+                        - /url: /r/CaregiverSupport/
+                      - button "Join" [ref=f2e2368] [cursor=pointer]
+                    - generic [ref=f2e2369]:
+                      - generic [ref=f2e2370]: Support for Caregivers
+                      - generic [ref=f2e2371]: Welcome! Caregiving is an enormously challenging role, physically, emotionally, and financially. We are a caring community of caregivers here to support you, to problem solve with you and to simply let you vent when you need to. We are so glad you are here.
+                      - button "Show more" [ref=f2e2372] [cursor=pointer]
+                      - generic: Public
+              - list [ref=f2e2381]:
+                - listitem [ref=f2e2382]:
+                  - link "Home" [ref=f2e2384] [cursor=pointer]:
+                    - /url: /?feed=home
+                - listitem [ref=f2e2385]:
+                  - link "Popular" [ref=f2e2387] [cursor=pointer]:
+                    - /url: /r/popular/
+                - listitem [ref=f2e2388]:
+                  - link "News" [ref=f2e2390] [cursor=pointer]:
+                    - /url: /news/
+                - listitem [ref=f2e2391]:
+                  - link "Explore" [ref=f2e2393] [cursor=pointer]:
+                    - /url: /explore/
+                - listitem [ref=f2e2394]:
+                  - link "Best of Reddit" [ref=f2e2396] [cursor=pointer]:
+                    - /url: https://www.reddit.com/posts/2026/global/
+                - listitem [ref=f2e2397]:
+                  - link "Best of Reddit in Portuguese" [ref=f2e2399] [cursor=pointer]:
+                    - /url: https://www.reddit.com/posts/2026/tl-pt-BR/
+                - listitem [ref=f2e2400]:
+                  - link "Best of Reddit in German" [ref=f2e2402] [cursor=pointer]:
+                    - /url: https://www.reddit.com/posts/2026/tl-de/
+                - listitem [ref=f2e2403]:
+                  - link "Reddit Rules" [ref=f2e2405] [cursor=pointer]:
+                    - /url: https://www.redditinc.com/policies/content-policy
+                - listitem [ref=f2e2406]:
+                  - link "Privacy Policy" [ref=f2e2408] [cursor=pointer]:
+                    - /url: https://www.reddit.com/policies/privacy-policy
+                - listitem [ref=f2e2409]:
+                  - link "User Agreement" [ref=f2e2411] [cursor=pointer]:
+                    - /url: https://www.redditinc.com/policies/user-agreement
+                - listitem [ref=f2e2412]:
+                  - link "Accessibility" [ref=f2e2414] [cursor=pointer]:
+                    - /url: https://support.reddithelp.com/hc/sections/38303584022676-Accessibility
+                - listitem [ref=f2e2415]:
+                  - link "Reddit, Inc. © 2026. All rights reserved." [ref=f2e2416] [cursor=pointer]:
+                    - /url: https://redditinc.com
+        - generic [ref=f2e2419]:
+          - paragraph [ref=f2e2420]: Join the most real place on the internet
+          - generic [ref=f2e2422]:
+            - generic [ref=f2e2425]:
+              - iframe [ref=f2e2430]:
+                - button "Continue with Google. Opens in new tab" [ref=f4e3] [cursor=pointer]:
+                  - generic [ref=f4e5]: Continue with Google
+              - generic [ref=f2e2432] [cursor=pointer]:
+                - generic [ref=f2e2433]: Continue with Apple
+                - button "Sign in with Apple" [ref=f2e2439]:
+                  - generic [ref=f2e2440]:
+                    - img:
+                      - generic:
+                        - img:
+                          - generic:  Sign in with Apple
+            - link "Continue with Phone Number" [ref=f2e2445] [cursor=pointer]:
+              - /url: https://www.reddit.com/login/
+            - link "Continue with Email" [ref=f2e2454] [cursor=pointer]:
+              - /url: https://www.reddit.com/register/
+          - paragraph [ref=f2e2461]:
+            - text: By continuing, you agree to our
+            - link "User Agreement" [ref=f2e2462] [cursor=pointer]:
+              - /url: https://www.redditinc.com/policies/user-agreement
+            - text: and acknowledge that you understand the
+            - link "Privacy Policy" [ref=f2e2463] [cursor=pointer]:
+              - /url: https://www.redditinc.com/policies/privacy-policy
+            - text: .

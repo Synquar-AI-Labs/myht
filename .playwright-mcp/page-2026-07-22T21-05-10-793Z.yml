@@ -1,0 +1,521 @@
+- generic [active] [ref=f11e1]:
+  - banner [ref=f11e2]:
+    - link "jump to content" [ref=f11e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=f11e5]:
+      - generic [ref=f11e6]: my subreddits
+      - generic [ref=f11e8]:
+        - list [ref=f11e9]:
+          - listitem [ref=f11e10]:
+            - link "popular" [ref=f11e11] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/popular/
+          - listitem [ref=f11e12]:
+            - text: "-"
+            - link "all" [ref=f11e13] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/all/
+          - listitem [ref=f11e14]:
+            - text: "-"
+            - link "users" [ref=f11e15] [cursor=pointer]:
+              - /url: https://old.reddit.com/users/
+        - text: "|"
+        - list [ref=f11e16]:
+          - listitem [ref=f11e17]:
+            - link "AskReddit" [ref=f11e18] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/AskReddit/
+          - listitem [ref=f11e19]:
+            - text: "-"
+            - link "pics" [ref=f11e20] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/pics/
+          - listitem [ref=f11e21]:
+            - text: "-"
+            - link "funny" [ref=f11e22] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/funny/
+          - listitem [ref=f11e23]:
+            - text: "-"
+            - link "movies" [ref=f11e24] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/movies/
+          - listitem [ref=f11e25]:
+            - text: "-"
+            - link "gaming" [ref=f11e26] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gaming/
+          - listitem [ref=f11e27]:
+            - text: "-"
+            - link "worldnews" [ref=f11e28] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/worldnews/
+          - listitem [ref=f11e29]:
+            - text: "-"
+            - link "news" [ref=f11e30] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/news/
+          - listitem [ref=f11e31]:
+            - text: "-"
+            - link "todayilearned" [ref=f11e32] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/todayilearned/
+          - listitem [ref=f11e33]:
+            - text: "-"
+            - link "nottheonion" [ref=f11e34] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nottheonion/
+          - listitem [ref=f11e35]:
+            - text: "-"
+            - link "explainlikeimfive" [ref=f11e36] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/explainlikeimfive/
+          - listitem [ref=f11e37]:
+            - text: "-"
+            - link "mildlyinteresting" [ref=f11e38] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/mildlyinteresting/
+          - listitem [ref=f11e39]:
+            - text: "-"
+            - link "DIY" [ref=f11e40] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/DIY/
+          - listitem [ref=f11e41]:
+            - text: "-"
+            - link "videos" [ref=f11e42] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/videos/
+          - listitem [ref=f11e43]:
+            - text: "-"
+            - link "OldSchoolCool" [ref=f11e44] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/OldSchoolCool/
+          - listitem [ref=f11e45]:
+            - text: "-"
+            - link "TwoXChromosomes" [ref=f11e46] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/TwoXChromosomes/
+          - listitem [ref=f11e47]:
+            - text: "-"
+            - link "tifu" [ref=f11e48] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/tifu/
+          - listitem [ref=f11e49]:
+            - text: "-"
+            - link "Music" [ref=f11e50] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Music/
+          - listitem [ref=f11e51]:
+            - text: "-"
+            - link "books" [ref=f11e52] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/books/
+          - listitem [ref=f11e53]:
+            - text: "-"
+            - link "LifeProTips" [ref=f11e54] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/LifeProTips/
+          - listitem [ref=f11e55]:
+            - text: "-"
+            - link "dataisbeautiful" [ref=f11e56] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/dataisbeautiful/
+          - listitem [ref=f11e57]:
+            - text: "-"
+            - link "aww" [ref=f11e58] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/aww/
+          - listitem [ref=f11e59]:
+            - text: "-"
+            - link "science" [ref=f11e60] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/science/
+          - listitem [ref=f11e61]:
+            - text: "-"
+            - link "space" [ref=f11e62] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/space/
+          - listitem [ref=f11e63]:
+            - text: "-"
+            - link "Showerthoughts" [ref=f11e64] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Showerthoughts/
+          - listitem [ref=f11e65]:
+            - text: "-"
+            - link "askscience" [ref=f11e66] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/askscience/
+          - listitem [ref=f11e67]:
+            - text: "-"
+            - link "Jokes" [ref=f11e68] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Jokes/
+          - listitem [ref=f11e69]:
+            - text: "-"
+            - link "Art" [ref=f11e70] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Art/
+          - listitem [ref=f11e71]:
+            - text: "-"
+            - link "IAmA" [ref=f11e72] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/IAmA/
+          - listitem [ref=f11e73]:
+            - text: "-"
+            - link "Futurology" [ref=f11e74] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Futurology/
+          - listitem [ref=f11e75]:
+            - text: "-"
+            - link "sports" [ref=f11e76] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/sports/
+          - listitem [ref=f11e77]:
+            - text: "-"
+            - link "UpliftingNews" [ref=f11e78] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/UpliftingNews/
+          - listitem [ref=f11e79]:
+            - text: "-"
+            - link "food" [ref=f11e80] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/food/
+          - listitem [ref=f11e81]:
+            - text: "-"
+            - link "nosleep" [ref=f11e82] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nosleep/
+          - listitem [ref=f11e83]:
+            - text: "-"
+            - link "creepy" [ref=f11e84] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/creepy/
+          - listitem [ref=f11e85]:
+            - text: "-"
+            - link "history" [ref=f11e86] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/history/
+          - listitem [ref=f11e87]:
+            - text: "-"
+            - link "gifs" [ref=f11e88] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gifs/
+          - listitem [ref=f11e89]:
+            - text: "-"
+            - link "InternetIsBeautiful" [ref=f11e90] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/InternetIsBeautiful/
+          - listitem [ref=f11e91]:
+            - text: "-"
+            - link "GetMotivated" [ref=f11e92] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/GetMotivated/
+          - listitem [ref=f11e93]:
+            - text: "-"
+            - link "gadgets" [ref=f11e94] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gadgets/
+          - listitem [ref=f11e95]:
+            - text: "-"
+            - link "announcements" [ref=f11e96] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/announcements/
+          - listitem [ref=f11e97]:
+            - text: "-"
+            - link "WritingPrompts" [ref=f11e98] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/WritingPrompts/
+          - listitem [ref=f11e99]:
+            - text: "-"
+            - link "philosophy" [ref=f11e100] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/philosophy/
+          - listitem [ref=f11e101]:
+            - text: "-"
+            - link "Documentaries" [ref=f11e102] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Documentaries/
+          - listitem [ref=f11e103]:
+            - text: "-"
+            - link "EarthPorn" [ref=f11e104] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/EarthPorn/
+          - listitem [ref=f11e105]:
+            - text: "-"
+            - link "photoshopbattles" [ref=f11e106] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/photoshopbattles/
+          - listitem [ref=f11e107]:
+            - text: "-"
+            - link "listentothis" [ref=f11e108] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/listentothis/
+          - listitem [ref=f11e109]:
+            - text: "-"
+            - link "blog" [ref=f11e110] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/blog/
+      - link "more »" [ref=f11e111] [cursor=pointer]:
+        - /url: https://old.reddit.com/subreddits/
+    - generic [ref=f11e112]:
+      - link "reddit.com" [ref=f11e113] [cursor=pointer]:
+        - /url: /
+      - link "eldercare" [ref=f11e115] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/eldercare/
+      - list [ref=f11e116]:
+        - listitem [ref=f11e117]:
+          - link "comments" [ref=f11e118] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/eldercare/comments/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/
+        - listitem [ref=f11e119]:
+          - link "other discussions (1)" [ref=f11e120] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/eldercare/duplicates/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/
+    - generic [ref=f11e121]:
+      - generic [ref=f11e122]:
+        - text: Want to join?
+        - link "Log in" [ref=f11e123] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: or
+        - link "sign up" [ref=f11e124] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: in seconds.
+      - list
+  - generic [ref=f11e125]:
+    - search [ref=f11e127]:
+      - textbox "search" [ref=f11e128]
+      - button "Submit" [ref=f11e129] [cursor=pointer]
+    - generic [ref=f11e131]:
+      - generic [ref=f11e132]:
+        - text: this post was submitted on
+        - time [ref=f11e133]: 09 Jul 2026
+      - generic [ref=f11e134]: 0 points (50% upvoted)
+      - generic [ref=f11e135]:
+        - text: "shortlink:"
+        - textbox [ref=f11e136]: https://redd.it/1urf9hw
+    - link "Submit a new link" [ref=f11e140] [cursor=pointer]:
+      - /url: https://old.reddit.com/r/eldercare/submit
+    - link "Submit a new text post" [ref=f11e145] [cursor=pointer]:
+      - /url: https://old.reddit.com/r/eldercare/submit?selftext=true
+    - generic [ref=f11e148]:
+      - heading [level=1] [ref=f11e149]:
+        - link "eldercare" [ref=f11e150] [cursor=pointer]:
+          - /url: https://old.reddit.com/r/eldercare/
+      - link "join" [ref=f11e152] [cursor=pointer]:
+        - /url: "#"
+      - paragraph [ref=f11e156]: A place to discuss everything regarding the care of your elders. Usually this means your parents or grandparents as they age and can no longer handle the demands of independent living.
+      - generic [ref=f11e158]:
+        - text: a community for
+        - time [ref=f11e159]: 16 years
+    - generic [ref=f11e161]:
+      - heading "MODERATORS" [level=1] [ref=f11e163]
+      - list [ref=f11e164]:
+        - listitem [ref=f11e165]:
+          - link "message the mods" [ref=f11e166] [cursor=pointer]:
+            - /url: /message/compose/?to=/r/eldercare
+    - complementary [ref=f11e167]:
+      - generic [ref=f11e168]:
+        - generic [ref=f11e169]:
+          - text: discussions in
+          - link "r/eldercare" [ref=f11e170] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/eldercare/?ref=readnext
+        - navigation [ref=f11e171]:
+          - generic [ref=f11e172] [cursor=pointer]: <
+          - generic [ref=f11e173] [cursor=pointer]: ">"
+        - generic [ref=f11e174]: X
+      - link "39 · 25 comments This reddit is unmoderated." [ref=f11e177] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/eldercare/comments/1uh60bp/this_reddit_is_unmoderated/?ref=readnext_0
+        - generic [ref=f11e178]: 39 · 25 comments
+        - generic [ref=f11e179]: This reddit is unmoderated.
+  - main [ref=f11e180]:
+    - generic [ref=f11e181]:
+      - link "Welcome to Reddit. Where a community about your favorite things is waiting for you. Become a Redditor and subscribe to one of thousands of communities." [ref=f11e182] [cursor=pointer]:
+        - /url: /login
+        - heading "Welcome to Reddit." [level=2] [ref=f11e183]
+        - paragraph [ref=f11e184]: Where a community about your favorite things is waiting for you.
+        - generic [ref=f11e185]:
+          - generic [ref=f11e186]: Become a Redditor
+          - paragraph [ref=f11e187]: and subscribe to one of thousands of communities.
+      - link "×" [ref=f11e188] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=f11e190]:
+      - paragraph
+      - generic [ref=f11e191]:
+        - button "upvote" [ref=f11e192] [cursor=pointer]
+        - generic "0" [ref=f11e193]
+        - button "downvote" [ref=f11e194] [cursor=pointer]
+      - generic [ref=f11e195]:
+        - generic [ref=f11e196]:
+          - paragraph [ref=f11e197]:
+            - link "How do you all coordinate caregiving tasks across siblings/family? (esp. for immigrant/multicultural families)" [ref=f11e198] [cursor=pointer]:
+              - /url: /r/CaregiverSupport/comments/1urf75d/how_do_you_all_coordinate_caregiving_tasks_across/
+            - generic [ref=f11e199]:
+              - text: (
+              - link:
+                - /url: /domain//
+              - text: )
+          - paragraph [ref=f11e202]:
+            - text: submitted
+            - time [ref=f11e203]: 13 days ago
+            - text: by
+            - link "Alternative-Sir-6181" [ref=f11e204] [cursor=pointer]:
+              - /url: https://old.reddit.com/user/Alternative-Sir-6181
+          - list [ref=f11e205]:
+            - listitem [ref=f11e206]:
+              - link "3 comments" [ref=f11e207] [cursor=pointer]:
+                - /url: https://old.reddit.com/r/eldercare/comments/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/
+            - listitem [ref=f11e208]:
+              - link "share" [ref=f11e209] [cursor=pointer]:
+                - /url: "javascript: void 0;"
+            - listitem [ref=f11e210]:
+              - link "save" [ref=f11e211] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=f11e212]:
+              - link "hide" [ref=f11e215] [cursor=pointer]:
+                - /url: javascript:void(0)
+            - listitem [ref=f11e216]:
+              - link "report" [ref=f11e217] [cursor=pointer]:
+                - /url: javascript:void(0)
+        - generic [ref=f11e219]:
+          - generic [ref=f11e220]:
+            - link [ref=f11e221] [cursor=pointer]:
+              - /url: /r/CaregiverSupport/comments/1urf75d/how_do_you_all_coordinate_caregiving_tasks_across/
+            - generic [ref=f11e222]:
+              - paragraph [ref=f11e223]: "[ Removed by moderator ]"
+              - generic [ref=f11e224]:
+                - text: 2 points•
+                - link "7 comments" [ref=f11e225] [cursor=pointer]:
+                  - /url: /r/CaregiverSupport/comments/1urf75d/how_do_you_all_coordinate_caregiving_tasks_across/
+                - text: •submitted
+                - time [ref=f11e226]: 13 days ago
+                - text: by
+                - link "Alternative-Sir-6181" [ref=f11e227] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Alternative-Sir-6181
+                - text: to
+                - link "r/CaregiverSupport" [ref=f11e228] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/
+          - generic [ref=f11e229]:
+            - separator [ref=f11e230]
+            - emphasis [ref=f11e233]: "[removed]"
+    - generic [ref=f11e234]:
+      - generic [ref=f11e235]: all 3 comments
+      - generic [ref=f11e237]:
+        - text: "sorted by:"
+        - generic [ref=f11e238]: best
+      - link "Want to add to the discussion? Post a comment! Create an account" [ref=f11e241] [cursor=pointer]:
+        - /url: /login
+        - textbox [ref=f11e242]
+        - generic [ref=f11e243]:
+          - heading "Want to add to the discussion?" [level=2] [ref=f11e244]
+          - paragraph [ref=f11e245]: Post a comment!
+          - generic [ref=f11e246]: Create an account
+      - generic [ref=f11e249]:
+        - paragraph
+        - generic [ref=f11e250]:
+          - button "upvote" [ref=f11e251] [cursor=pointer]
+          - button "downvote" [ref=f11e252] [cursor=pointer]
+        - generic [ref=f11e253]:
+          - paragraph [ref=f11e254]:
+            - link "[–]" [ref=f11e255] [cursor=pointer]:
+              - /url: javascript:void(0)
+            - link "finding_center" [ref=f11e256] [cursor=pointer]:
+              - /url: https://old.reddit.com/user/finding_center
+            - text: 1 point
+            - time [ref=f11e257]: 13 days ago
+          - paragraph [ref=f11e261]: Data gathering and market research aren’t allowed here for obvious reasons. There are many apps that do this sort of thing already but none are useful to me because they require downloading a dedicated app and nobody wants to do that. Using something everyone already has that’s free like a google doc is the easiest path but since I employ caregivers and they should not use their personal devices for private medical info a regular old notebook bedside is golden.
+          - list [ref=f11e262]:
+            - listitem [ref=f11e263]:
+              - link "permalink" [ref=f11e264] [cursor=pointer]:
+                - /url: https://old.reddit.com/r/eldercare/comments/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/owgxk70/
+            - listitem [ref=f11e265]:
+              - link "embed" [ref=f11e266] [cursor=pointer]:
+                - /url: javascript:void(0)
+            - listitem [ref=f11e267]:
+              - link "save" [ref=f11e268] [cursor=pointer]:
+                - /url: javascript:void(0)
+            - listitem [ref=f11e269]:
+              - link "report" [ref=f11e270] [cursor=pointer]:
+                - /url: javascript:void(0)
+            - listitem [ref=f11e271]:
+              - link "reply" [ref=f11e272] [cursor=pointer]:
+                - /url: javascript:void(0)
+        - generic [ref=f11e275]:
+          - paragraph
+          - generic [ref=f11e276]:
+            - button "upvote" [ref=f11e277] [cursor=pointer]
+            - button "downvote" [ref=f11e278] [cursor=pointer]
+          - generic [ref=f11e279]:
+            - paragraph [ref=f11e280]:
+              - link "[–]" [ref=f11e281] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Keep-on-keepin-on-1" [ref=f11e282] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Keep-on-keepin-on-1
+              - text: 1 point
+              - time [ref=f11e283]: 13 days ago
+            - generic [ref=f11e286]:
+              - paragraph [ref=f11e287]: I created an app that does this specific thing - PresentCare. You couldn’t be further from the truth and I realize this will get taken down because it’s not allowed and I’m actually not trying to sell anything on here; I’m making a point.
+              - paragraph [ref=f11e288]: I lost my mother 4 months ago and went into a very deep depression while caring for her for over 5yrs by myself! I couldn’t keep shit together including her care and feel like I failed at everything in regard which is still and always will be something I can never take back (I was incapacitated the last year or two from the stress and sometimes apps can help rather than remembering everything or jotting down while your own mind is wondering every single moment).
+              - paragraph [ref=f11e289]: Take the post down but, there are things that help but, finding the right one is damn near impossible.
+              - paragraph [ref=f11e290]: Again, not a sales pitch. I care more about the people go through it alone. I’d give away what I built for free to anyone if they couldn’t afford but, that’s not the point again. Caregivers need help and easy help and help that works and a pen and pad don’t work nor does a spreadsheet, imho.
+            - list [ref=f11e291]:
+              - listitem [ref=f11e292]:
+                - link "permalink" [ref=f11e293] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/eldercare/comments/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/owj9ip9/
+              - listitem [ref=f11e294]:
+                - link "embed" [ref=f11e295] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f11e296]:
+                - link "save" [ref=f11e297] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f11e298]:
+                - link "parent" [ref=f11e299] [cursor=pointer]:
+                  - /url: "#owgxk70"
+              - listitem [ref=f11e300]:
+                - link "report" [ref=f11e301] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f11e302]:
+                - link "reply" [ref=f11e303] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f11e306]:
+            - paragraph
+            - generic [ref=f11e307]:
+              - button "upvote" [ref=f11e308] [cursor=pointer]
+              - button "downvote" [ref=f11e309] [cursor=pointer]
+            - generic [ref=f11e310]:
+              - paragraph [ref=f11e311]:
+                - link "[–]" [ref=f11e312] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "finding_center" [ref=f11e313] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/finding_center
+                - text: 1 point
+                - time [ref=f11e314]: 13 days ago
+              - generic [ref=f11e317]:
+                - paragraph [ref=f11e318]: No. Because then I would have to ask people that work for me to put this app on their personal device or buy a device for this purpose for them to use. Then when I need to interface with EMS or a doctor at the doctor’s office, I would have to hand them my phone for them to see all of the history. It’s super cool that it works for you and you should absolutely use it.
+                - paragraph [ref=f11e319]: The rule is you’re not allowed to do market research here. And that’s exactly what you were asking for.
+              - list [ref=f11e320]:
+                - listitem [ref=f11e321]:
+                  - link "permalink" [ref=f11e322] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/eldercare/comments/1urf9hw/how_do_you_all_coordinate_caregiving_tasks_across/owjaoxq/
+                - listitem [ref=f11e323]:
+                  - link "embed" [ref=f11e324] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f11e325]:
+                  - link "save" [ref=f11e326] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f11e327]:
+                  - link "parent" [ref=f11e328] [cursor=pointer]:
+                    - /url: "#owj9ip9"
+                - listitem [ref=f11e329]:
+                  - link "report" [ref=f11e330] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f11e331]:
+                  - link "reply" [ref=f11e332] [cursor=pointer]:
+                    - /url: javascript:void(0)
+  - generic [ref=f11e333]:
+    - generic [ref=f11e334]:
+      - list [ref=f11e336]:
+        - listitem [ref=f11e337]: about
+        - listitem [ref=f11e338]:
+          - link "blog" [ref=f11e339] [cursor=pointer]:
+            - /url: https://redditblog.com
+        - listitem [ref=f11e340]:
+          - link "about" [ref=f11e341] [cursor=pointer]:
+            - /url: https://www.redditinc.com
+        - listitem [ref=f11e342]:
+          - link "advertising" [ref=f11e343] [cursor=pointer]:
+            - /url: https://www.redditinc.com/advertising
+        - listitem [ref=f11e344]:
+          - link "careers" [ref=f11e345] [cursor=pointer]:
+            - /url: https://www.redditinc.com/careers
+      - list [ref=f11e347]:
+        - listitem [ref=f11e348]: help
+        - listitem [ref=f11e349]:
+          - link "site rules" [ref=f11e350] [cursor=pointer]:
+            - /url: https://old.reddit.com/rules/
+        - listitem [ref=f11e351]:
+          - link "Reddit help center" [ref=f11e352] [cursor=pointer]:
+            - /url: https://www.reddithelp.com
+        - listitem [ref=f11e353]:
+          - link "reddiquette" [ref=f11e354] [cursor=pointer]:
+            - /url: https://old.reddit.com/wiki/reddiquette/
+        - listitem [ref=f11e355]:
+          - link "mod guidelines" [ref=f11e356] [cursor=pointer]:
+            - /url: https://old.reddit.com/help/healthycommunities/
+        - listitem [ref=f11e357]:
+          - link "contact us" [ref=f11e358] [cursor=pointer]:
+            - /url: https://old.reddit.com/contact/
+      - list [ref=f11e360]:
+        - listitem [ref=f11e361]: apps & tools
+        - listitem [ref=f11e362]:
+          - link "Reddit for iPhone" [ref=f11e363] [cursor=pointer]:
+            - /url: https://itunes.apple.com/us/app/reddit-the-official-app/id1064216828?mt=8
+        - listitem [ref=f11e364]:
+          - link "Reddit for Android" [ref=f11e365] [cursor=pointer]:
+            - /url: https://play.google.com/store/apps/details?id=com.reddit.frontpage
+        - listitem [ref=f11e366]:
+          - link "mobile website" [ref=f11e367] [cursor=pointer]:
+            - /url: "#"
+      - list [ref=f11e369]:
+        - listitem [ref=f11e370]: <3
+        - listitem [ref=f11e371]:
+          - link "reddit premium" [ref=f11e372] [cursor=pointer]:
+            - /url: https://old.reddit.com/premium/
+    - paragraph [ref=f11e373]:
+      - text: Use of this site constitutes acceptance of our
+      - link "User Agreement" [ref=f11e374] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/useragreement
+      - text: and
+      - link "Privacy Policy" [ref=f11e375] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/privacypolicy
+      - text: . © 2026 reddit inc. All rights reserved.
+    - paragraph [ref=f11e376]: REDDIT and the ALIEN Logo are registered trademarks of reddit inc.
+  - paragraph [ref=f11e378]: π

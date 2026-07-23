@@ -43,12 +43,8 @@ export function useMedicineSchedule() {
     invalidate();
   };
 
-  const deleteMedicine = async (id: string) => {
-    const { error } = await supabase.from('medicines').delete().eq('id', id);
-    if (error) { toast.error('Failed to delete medicine'); return; }
-    toast.success('Deleted');
-    invalidate();
-  };
-
-  return { medicines: medicines as MedicineSchedule[], loading, addMedicine, updateMedicine, deleteMedicine, refetch: invalidate };
+  // Deleting a medicine is intentionally not supported: its dose logs are the
+  // patient's medical record (DB enforces this with ON DELETE RESTRICT).
+  // Archiving arrives with the regimen-version model.
+  return { medicines: medicines as MedicineSchedule[], loading, addMedicine, updateMedicine, refetch: invalidate };
 }

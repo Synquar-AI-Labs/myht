@@ -1,0 +1,3025 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - link "jump to content" [ref=f1e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=f1e5]:
+      - generic [ref=f1e6]: my subreddits
+      - generic [ref=f1e8]:
+        - list [ref=f1e9]:
+          - listitem [ref=f1e10]:
+            - link "popular" [ref=f1e11] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/popular/
+          - listitem [ref=f1e12]:
+            - text: "-"
+            - link "all" [ref=f1e13] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/all/
+          - listitem [ref=f1e14]:
+            - text: "-"
+            - link "users" [ref=f1e15] [cursor=pointer]:
+              - /url: https://old.reddit.com/users/
+        - text: "|"
+        - list [ref=f1e16]:
+          - listitem [ref=f1e17]:
+            - link "AskReddit" [ref=f1e18] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/AskReddit/
+          - listitem [ref=f1e19]:
+            - text: "-"
+            - link "pics" [ref=f1e20] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/pics/
+          - listitem [ref=f1e21]:
+            - text: "-"
+            - link "funny" [ref=f1e22] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/funny/
+          - listitem [ref=f1e23]:
+            - text: "-"
+            - link "movies" [ref=f1e24] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/movies/
+          - listitem [ref=f1e25]:
+            - text: "-"
+            - link "gaming" [ref=f1e26] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gaming/
+          - listitem [ref=f1e27]:
+            - text: "-"
+            - link "worldnews" [ref=f1e28] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/worldnews/
+          - listitem [ref=f1e29]:
+            - text: "-"
+            - link "news" [ref=f1e30] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/news/
+          - listitem [ref=f1e31]:
+            - text: "-"
+            - link "todayilearned" [ref=f1e32] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/todayilearned/
+          - listitem [ref=f1e33]:
+            - text: "-"
+            - link "nottheonion" [ref=f1e34] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nottheonion/
+          - listitem [ref=f1e35]:
+            - text: "-"
+            - link "explainlikeimfive" [ref=f1e36] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/explainlikeimfive/
+          - listitem [ref=f1e37]:
+            - text: "-"
+            - link "mildlyinteresting" [ref=f1e38] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/mildlyinteresting/
+          - listitem [ref=f1e39]:
+            - text: "-"
+            - link "DIY" [ref=f1e40] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/DIY/
+          - listitem [ref=f1e41]:
+            - text: "-"
+            - link "videos" [ref=f1e42] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/videos/
+          - listitem [ref=f1e43]:
+            - text: "-"
+            - link "OldSchoolCool" [ref=f1e44] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/OldSchoolCool/
+          - listitem [ref=f1e45]:
+            - text: "-"
+            - link "TwoXChromosomes" [ref=f1e46] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/TwoXChromosomes/
+          - listitem [ref=f1e47]:
+            - text: "-"
+            - link "tifu" [ref=f1e48] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/tifu/
+          - listitem [ref=f1e49]:
+            - text: "-"
+            - link "Music" [ref=f1e50] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Music/
+          - listitem [ref=f1e51]:
+            - text: "-"
+            - link "books" [ref=f1e52] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/books/
+          - listitem [ref=f1e53]:
+            - text: "-"
+            - link "LifeProTips" [ref=f1e54] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/LifeProTips/
+          - listitem [ref=f1e55]:
+            - text: "-"
+            - link "dataisbeautiful" [ref=f1e56] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/dataisbeautiful/
+          - listitem [ref=f1e57]:
+            - text: "-"
+            - link "aww" [ref=f1e58] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/aww/
+          - listitem [ref=f1e59]:
+            - text: "-"
+            - link "science" [ref=f1e60] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/science/
+          - listitem [ref=f1e61]:
+            - text: "-"
+            - link "space" [ref=f1e62] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/space/
+          - listitem [ref=f1e63]:
+            - text: "-"
+            - link "Showerthoughts" [ref=f1e64] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Showerthoughts/
+          - listitem [ref=f1e65]:
+            - text: "-"
+            - link "askscience" [ref=f1e66] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/askscience/
+          - listitem [ref=f1e67]:
+            - text: "-"
+            - link "Jokes" [ref=f1e68] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Jokes/
+          - listitem [ref=f1e69]:
+            - text: "-"
+            - link "Art" [ref=f1e70] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Art/
+          - listitem [ref=f1e71]:
+            - text: "-"
+            - link "IAmA" [ref=f1e72] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/IAmA/
+          - listitem [ref=f1e73]:
+            - text: "-"
+            - link "Futurology" [ref=f1e74] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Futurology/
+          - listitem [ref=f1e75]:
+            - text: "-"
+            - link "sports" [ref=f1e76] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/sports/
+          - listitem [ref=f1e77]:
+            - text: "-"
+            - link "UpliftingNews" [ref=f1e78] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/UpliftingNews/
+          - listitem [ref=f1e79]:
+            - text: "-"
+            - link "food" [ref=f1e80] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/food/
+          - listitem [ref=f1e81]:
+            - text: "-"
+            - link "nosleep" [ref=f1e82] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nosleep/
+          - listitem [ref=f1e83]:
+            - text: "-"
+            - link "creepy" [ref=f1e84] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/creepy/
+          - listitem [ref=f1e85]:
+            - text: "-"
+            - link "history" [ref=f1e86] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/history/
+          - listitem [ref=f1e87]:
+            - text: "-"
+            - link "gifs" [ref=f1e88] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gifs/
+          - listitem [ref=f1e89]:
+            - text: "-"
+            - link "InternetIsBeautiful" [ref=f1e90] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/InternetIsBeautiful/
+          - listitem [ref=f1e91]:
+            - text: "-"
+            - link "GetMotivated" [ref=f1e92] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/GetMotivated/
+          - listitem [ref=f1e93]:
+            - text: "-"
+            - link "gadgets" [ref=f1e94] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gadgets/
+          - listitem [ref=f1e95]:
+            - text: "-"
+            - link "announcements" [ref=f1e96] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/announcements/
+          - listitem [ref=f1e97]:
+            - text: "-"
+            - link "WritingPrompts" [ref=f1e98] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/WritingPrompts/
+          - listitem [ref=f1e99]:
+            - text: "-"
+            - link "philosophy" [ref=f1e100] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/philosophy/
+          - listitem [ref=f1e101]:
+            - text: "-"
+            - link "Documentaries" [ref=f1e102] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Documentaries/
+          - listitem [ref=f1e103]:
+            - text: "-"
+            - link "EarthPorn" [ref=f1e104] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/EarthPorn/
+          - listitem [ref=f1e105]:
+            - text: "-"
+            - link "photoshopbattles" [ref=f1e106] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/photoshopbattles/
+          - listitem [ref=f1e107]:
+            - text: "-"
+            - link "listentothis" [ref=f1e108] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/listentothis/
+          - listitem [ref=f1e109]:
+            - text: "-"
+            - link "blog" [ref=f1e110] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/blog/
+      - link "more »" [ref=f1e111] [cursor=pointer]:
+        - /url: https://old.reddit.com/subreddits/
+    - generic [ref=f1e112]:
+      - link "reddit.com" [ref=f1e113] [cursor=pointer]:
+        - /url: /
+      - link "CaregiverSupport" [ref=f1e115] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/CaregiverSupport/
+      - list [ref=f1e116]:
+        - listitem [ref=f1e117]:
+          - link "comments" [ref=f1e118] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+    - generic [ref=f1e119]:
+      - generic [ref=f1e120]:
+        - text: Want to join?
+        - link "Log in" [ref=f1e121] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: or
+        - link "sign up" [ref=f1e122] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: in seconds.
+      - list
+  - generic [ref=f1e123]:
+    - search [ref=f1e125]:
+      - textbox "search" [ref=f1e126]
+      - button "Submit" [ref=f1e127] [cursor=pointer]
+    - generic [ref=f1e129]:
+      - generic [ref=f1e130]:
+        - text: this post was submitted on
+        - time [ref=f1e131]: 08 May 2026
+      - generic [ref=f1e132]: 36 points (98% upvoted)
+      - generic [ref=f1e133]:
+        - text: "shortlink:"
+        - textbox [ref=f1e134]: https://redd.it/1t7boem
+    - link "Submit a new link" [ref=f1e138] [cursor=pointer]:
+      - /url: https://old.reddit.com/r/CaregiverSupport/submit
+    - link "Submit a new text post" [ref=f1e143] [cursor=pointer]:
+      - /url: https://old.reddit.com/r/CaregiverSupport/submit?selftext=true
+    - generic [ref=f1e146]:
+      - heading [level=1] [ref=f1e147]:
+        - link "CaregiverSupport" [ref=f1e148] [cursor=pointer]:
+          - /url: https://old.reddit.com/r/CaregiverSupport/
+      - link "join" [ref=f1e150] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=f1e153]:
+        - paragraph [ref=f1e154]: Taking care of a loved one is a difficult task, especially if you have to try and deal with guilt, pain, and fear on your own. We are here to support you.
+        - paragraph [ref=f1e155]: Researchers/App Developers/ETC. Please only post in our weekly Research Wednesday thread. Any requests posted outside of that thread will be deleted.
+        - paragraph [ref=f1e156]: "Similar Subreddits:"
+        - paragraph [ref=f1e157]:
+          - link "/r/caregivers" [ref=f1e158] [cursor=pointer]:
+            - /url: /r/caregivers
+        - paragraph [ref=f1e159]:
+          - link "/r/caregiving" [ref=f1e160] [cursor=pointer]:
+            - /url: /r/caregiving
+        - paragraph [ref=f1e161]:
+          - link "/r/caregiversofreddit" [ref=f1e162] [cursor=pointer]:
+            - /url: /r/caregiversofreddit
+        - paragraph [ref=f1e163]:
+          - link "/r/CancerCaregivers" [ref=f1e164] [cursor=pointer]:
+            - /url: /r/CancerCaregivers
+        - paragraph [ref=f1e165]:
+          - text: DISCORD Up and Running! Come chat with us! 2/8/18
+          - link "https://discord.gg/wzydc4D" [ref=f1e166] [cursor=pointer]:
+            - /url: https://discord.gg/wzydc4D
+        - paragraph [ref=f1e167]: Link posts disabled due to spam. Text posts only, please.
+      - generic [ref=f1e169]:
+        - text: a community for
+        - time [ref=f1e170]: 13 years
+    - generic [ref=f1e172]:
+      - heading "MODERATORS" [level=1] [ref=f1e174]
+      - list [ref=f1e175]:
+        - listitem [ref=f1e176]:
+          - link "message the mods" [ref=f1e177] [cursor=pointer]:
+            - /url: /message/compose/?to=/r/CaregiverSupport
+    - complementary [ref=f1e178]:
+      - generic [ref=f1e179]:
+        - generic [ref=f1e180]:
+          - text: discussions in
+          - link "r/CaregiverSupport" [ref=f1e181] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/CaregiverSupport/?ref=readnext
+        - navigation [ref=f1e182]:
+          - generic [ref=f1e183] [cursor=pointer]: <
+          - generic [ref=f1e184] [cursor=pointer]: ">"
+        - generic [ref=f1e185]: X
+      - link "3 · 13 comments Weekly Roll Call -Caregivers, Please Check In!" [ref=f1e188] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1uobwp7/weekly_roll_call_caregivers_please_check_in/?ref=readnext_0
+        - generic [ref=f1e189]: 3 · 13 comments
+        - generic [ref=f1e190]: Weekly Roll Call -Caregivers, Please Check In!
+  - main [ref=f1e191]:
+    - generic [ref=f1e192]:
+      - link "Welcome to Reddit. Come for the cats, stay for the empathy. Become a Redditor and start exploring." [ref=f1e193] [cursor=pointer]:
+        - /url: /login
+        - heading "Welcome to Reddit." [level=2] [ref=f1e194]
+        - paragraph [ref=f1e195]: Come for the cats, stay for the empathy.
+        - generic [ref=f1e196]:
+          - generic [ref=f1e197]: Become a Redditor
+          - paragraph [ref=f1e198]: and start exploring.
+      - link "×" [ref=f1e199] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=f1e201]:
+      - paragraph
+      - generic [ref=f1e202]:
+        - button "upvote" [ref=f1e203] [cursor=pointer]
+        - generic "36" [ref=f1e204]
+        - button "downvote" [ref=f1e205] [cursor=pointer]
+      - generic [ref=f1e206]:
+        - generic [ref=f1e207]:
+          - paragraph [ref=f1e208]:
+            - link "How are you actually keeping track of your parent's meds and supplements without losing your mind?" [ref=f1e209] [cursor=pointer]:
+              - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+            - generic [ref=f1e210]:
+              - text: (
+              - link "self.CaregiverSupport" [ref=f1e211] [cursor=pointer]:
+                - /url: /r/CaregiverSupport/
+              - text: )
+          - paragraph [ref=f1e212]:
+            - text: submitted
+            - time [ref=f1e213]: 2 months ago
+            - text: by
+            - link "Greysawpark" [ref=f1e214] [cursor=pointer]:
+              - /url: https://old.reddit.com/user/Greysawpark
+        - generic [ref=f1e218]:
+          - paragraph [ref=f1e219]: Looking for real systems, not platitudes.
+          - paragraph [ref=f1e220]: My mom takes 6 supplements plus 3 prescriptions and I've been the one running point on it for the past year. Pill organizer helps but only if I remember to look at it. Notes app is chaos. I tried two of the commercial med trackers and they both assume one user managing one set of meds, neither handled "track for myself AND for her, separately, with shared visibility."
+          - paragraph [ref=f1e221]: "So: what does your actual setup look like? Whiteboard on the fridge? Calendar reminders? Some app I haven't found? Something low-tech I'm overcomplicating?"
+          - paragraph [ref=f1e222]: Really trying to figure out what works long-term, not what looks good for a week.
+        - list [ref=f1e223]:
+          - listitem [ref=f1e224]:
+            - link "76 comments" [ref=f1e225] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+          - listitem [ref=f1e226]:
+            - link "share" [ref=f1e227] [cursor=pointer]:
+              - /url: "javascript: void 0;"
+          - listitem [ref=f1e228]:
+            - link "save" [ref=f1e229] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f1e230]:
+            - link "hide" [ref=f1e233] [cursor=pointer]:
+              - /url: javascript:void(0)
+          - listitem [ref=f1e234]:
+            - link "report" [ref=f1e235] [cursor=pointer]:
+              - /url: javascript:void(0)
+    - generic [ref=f1e236]:
+      - generic [ref=f1e237]: all 76 comments
+      - generic [ref=f1e239]:
+        - text: "sorted by:"
+        - generic [ref=f1e240]: best
+      - link "Want to add to the discussion? Post a comment! Create an account" [ref=f1e243] [cursor=pointer]:
+        - /url: /login
+        - textbox [ref=f1e244]
+        - generic [ref=f1e245]:
+          - heading "Want to add to the discussion?" [level=2] [ref=f1e246]
+          - paragraph [ref=f1e247]: Post a comment!
+          - generic [ref=f1e248]: Create an account
+      - generic [ref=f1e250]:
+        - generic [ref=f1e251]:
+          - paragraph
+          - generic [ref=f1e252]:
+            - button "upvote" [ref=f1e253] [cursor=pointer]
+            - button "downvote" [ref=f1e254] [cursor=pointer]
+          - generic [ref=f1e255]:
+            - paragraph [ref=f1e256]:
+              - link "[–]" [ref=f1e257] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Successful_Tax_5385" [ref=f1e258] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Successful_Tax_5385
+              - text: 23 points
+              - time [ref=f1e259]: 2 months ago
+            - generic [ref=f1e262]:
+              - paragraph [ref=f1e263]: The person I care for takes 8 meds, plus supplements and insulin. I have a schedule. I am in charge of the meds, so only I have to worry about if they took it or not. I give them the same meds everyday at the same time. I check on drug interaction checker.com to see if any of the meds interact. If not, all the meds that don't interact with each other, I give to them at the same time. I usually dont exceed 3 meds at one time, though.
+              - paragraph [ref=f1e264]: "But this system works for me: -I am in charge of meds. So I give them meds, their only job is to swallow it. -I give them the same meds at the same time, everyday."
+              - paragraph [ref=f1e265]: I have a piece of paper that has the schedule written down, taped right in front of their bed.
+              - paragraph [ref=f1e266]: Hopefully this helps.
+            - list [ref=f1e267]:
+              - listitem [ref=f1e268]:
+                - link "permalink" [ref=f1e269] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oknugtw/
+              - listitem [ref=f1e270]:
+                - link "embed" [ref=f1e271] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e272]:
+                - link "save" [ref=f1e273] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e274]:
+                - link "report" [ref=f1e275] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e276]:
+                - link "reply" [ref=f1e277] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e279]:
+            - generic [ref=f1e280]:
+              - paragraph
+              - generic [ref=f1e281]:
+                - button "upvote" [ref=f1e282] [cursor=pointer]
+                - button "downvote" [ref=f1e283] [cursor=pointer]
+              - generic [ref=f1e284]:
+                - paragraph [ref=f1e285]:
+                  - link "[–]" [ref=f1e286] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Greysawpark" [ref=f1e287] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Greysawpark
+                  - generic [ref=f1e288]:
+                    - text: "["
+                    - link "S" [ref=f1e289] [cursor=pointer]:
+                      - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                    - text: "]"
+                  - text: 13 points
+                  - time [ref=f1e290]: 2 months ago
+                - generic [ref=f1e293]:
+                  - paragraph [ref=f1e294]: This is the cleanest system anyone's described "caregiver owns it, recipient just swallows" framing especially, that's a real shift from what I've been doing. I've been trying to make tracking easier on her end, but you're right that the cleaner version is just pulling "did you take it" off her plate entirely.
+                  - paragraph [ref=f1e295]: Quick question, when you get sick or travel, who runs the system? That's the part I keep getting tripped up on. The taped schedule covers the meds-and-times piece but the timing logic seems to live in your head. Curious how you handle backup or whether you just don't take the time off.
+                - list [ref=f1e296]:
+                  - listitem [ref=f1e297]:
+                    - link "permalink" [ref=f1e298] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oknwd5m/
+                  - listitem [ref=f1e299]:
+                    - link "embed" [ref=f1e300] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e301]:
+                    - link "save" [ref=f1e302] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e303]:
+                    - link "parent" [ref=f1e304] [cursor=pointer]:
+                      - /url: "#oknugtw"
+                  - listitem [ref=f1e305]:
+                    - link "report" [ref=f1e306] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e307]:
+                    - link "reply" [ref=f1e308] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e310]:
+                - generic [ref=f1e311]:
+                  - paragraph
+                  - generic [ref=f1e312]:
+                    - button "upvote" [ref=f1e313] [cursor=pointer]
+                    - button "downvote" [ref=f1e314] [cursor=pointer]
+                  - generic [ref=f1e315]:
+                    - paragraph [ref=f1e316]:
+                      - link "[–]" [ref=f1e317] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                      - link "Successful_Tax_5385" [ref=f1e318] [cursor=pointer]:
+                        - /url: https://old.reddit.com/user/Successful_Tax_5385
+                      - text: 9 points
+                      - time [ref=f1e319]: 2 months ago
+                    - paragraph [ref=f1e323]: I live with other caregivers for this person. So if I am not able to caregive, whether it's because I'm sick or traveling or whatever, someone else in the house knows the same exact schedule.
+                    - list [ref=f1e324]:
+                      - listitem [ref=f1e325]:
+                        - link "permalink" [ref=f1e326] [cursor=pointer]:
+                          - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko8rdg/
+                      - listitem [ref=f1e327]:
+                        - link "embed" [ref=f1e328] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e329]:
+                        - link "save" [ref=f1e330] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e331]:
+                        - link "parent" [ref=f1e332] [cursor=pointer]:
+                          - /url: "#oknwd5m"
+                      - listitem [ref=f1e333]:
+                        - link "report" [ref=f1e334] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e335]:
+                        - link "reply" [ref=f1e336] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                - generic [ref=f1e337]:
+                  - paragraph
+                  - generic [ref=f1e338]:
+                    - button "upvote" [ref=f1e339] [cursor=pointer]
+                    - button "downvote" [ref=f1e340] [cursor=pointer]
+                  - generic [ref=f1e341]:
+                    - paragraph [ref=f1e342]:
+                      - link "[–]" [ref=f1e343] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                      - link "Shandry13" [ref=f1e344] [cursor=pointer]:
+                        - /url: https://old.reddit.com/user/Shandry13
+                      - text: 10 points
+                      - time [ref=f1e345]: 2 months ago
+                    - paragraph [ref=f1e349]: Haha time off? That's a sweet idea. If only!
+                    - list [ref=f1e350]:
+                      - listitem [ref=f1e351]:
+                        - link "permalink" [ref=f1e352] [cursor=pointer]:
+                          - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko6ssm/
+                      - listitem [ref=f1e353]:
+                        - link "embed" [ref=f1e354] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e355]:
+                        - link "save" [ref=f1e356] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e357]:
+                        - link "parent" [ref=f1e358] [cursor=pointer]:
+                          - /url: "#oknwd5m"
+                      - listitem [ref=f1e359]:
+                        - link "report" [ref=f1e360] [cursor=pointer]:
+                          - /url: javascript:void(0)
+                      - listitem [ref=f1e361]:
+                        - link "reply" [ref=f1e362] [cursor=pointer]:
+                          - /url: javascript:void(0)
+            - generic [ref=f1e363]:
+              - paragraph
+              - generic [ref=f1e364]:
+                - button "upvote" [ref=f1e365] [cursor=pointer]
+                - button "downvote" [ref=f1e366] [cursor=pointer]
+              - generic [ref=f1e367]:
+                - paragraph [ref=f1e368]:
+                  - link "[–]" [ref=f1e369] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "skratchez83" [ref=f1e370] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/skratchez83
+                  - text: 7 points
+                  - time [ref=f1e371]: 2 months ago
+                - paragraph [ref=f1e375]: 1000% this. This was the only way I could keep track of the 15 medications, inhalers, and supplements.
+                - list [ref=f1e376]:
+                  - listitem [ref=f1e377]:
+                    - link "permalink" [ref=f1e378] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko5o8w/
+                  - listitem [ref=f1e379]:
+                    - link "embed" [ref=f1e380] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e381]:
+                    - link "save" [ref=f1e382] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e383]:
+                    - link "parent" [ref=f1e384] [cursor=pointer]:
+                      - /url: "#oknugtw"
+                  - listitem [ref=f1e385]:
+                    - link "report" [ref=f1e386] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e387]:
+                    - link "reply" [ref=f1e388] [cursor=pointer]:
+                      - /url: javascript:void(0)
+            - generic [ref=f1e389]:
+              - paragraph
+              - generic [ref=f1e390]:
+                - button "upvote" [ref=f1e391] [cursor=pointer]
+                - button "downvote" [ref=f1e392] [cursor=pointer]
+              - generic [ref=f1e393]:
+                - paragraph [ref=f1e394]:
+                  - link "[–]" [ref=f1e395] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "AndiPandi_" [ref=f1e396] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/AndiPandi_
+                  - text: 3 points
+                  - time [ref=f1e397]: 2 months ago
+                - generic [ref=f1e400]:
+                  - paragraph [ref=f1e401]: I do this same exact thing for my 91 MIL with dementia, my 71 hubs and myself. Total almost 30 medications taken 3x daily. I put the meds in a pillcase for each of us each Sunday, for the week. All they have to do is swallow them when I give them out. It’s so much more simple to do this way.
+                  - paragraph [ref=f1e402]: "Edit to add: I also use a recurring reminder set on my phone 3x daily do I don’t forget. If I’m sick, my reminder goes off and I can have my hubs get that dose/day pills out and give them to her himself."
+                - list [ref=f1e403]:
+                  - listitem [ref=f1e404]:
+                    - link "permalink" [ref=f1e405] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okq0b5h/
+                  - listitem [ref=f1e406]:
+                    - link "embed" [ref=f1e407] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e408]:
+                    - link "save" [ref=f1e409] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e410]:
+                    - link "parent" [ref=f1e411] [cursor=pointer]:
+                      - /url: "#oknugtw"
+                  - listitem [ref=f1e412]:
+                    - link "report" [ref=f1e413] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e414]:
+                    - link "reply" [ref=f1e415] [cursor=pointer]:
+                      - /url: javascript:void(0)
+        - generic [ref=f1e416]:
+          - paragraph
+          - generic [ref=f1e417]:
+            - button "upvote" [ref=f1e418] [cursor=pointer]
+            - button "downvote" [ref=f1e419] [cursor=pointer]
+          - generic [ref=f1e420]:
+            - paragraph [ref=f1e421]:
+              - link "[–]" [ref=f1e422] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "penalba" [ref=f1e423] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/penalba
+              - text: 19 points
+              - time [ref=f1e424]: 2 months ago
+            - generic [ref=f1e427]:
+              - paragraph [ref=f1e428]: I use pillpack, now Amazon pharmacy, that sends individual packets of meds. No bottles. I especially like that the opened packet serves as confirmation that the pills were served. It’s been a game changer for me.
+              - paragraph [ref=f1e429]: "Other pharmacies offer this too:"
+              - paragraph [ref=f1e430]:
+                - link "https://accupacrx.com/wp-content/uploads/2021/11/packet-single-labels-white@2x-1-980x612.png" [ref=f1e431] [cursor=pointer]:
+                  - /url: https://accupacrx.com/wp-content/uploads/2021/11/packet-single-labels-white@2x-1-980x612.png
+            - list [ref=f1e432]:
+              - listitem [ref=f1e433]:
+                - link "permalink" [ref=f1e434] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oknwy5q/
+              - listitem [ref=f1e435]:
+                - link "embed" [ref=f1e436] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e437]:
+                - link "save" [ref=f1e438] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e439]:
+                - link "report" [ref=f1e440] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e441]:
+                - link "reply" [ref=f1e442] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e445]:
+            - paragraph
+            - generic [ref=f1e446]:
+              - button "upvote" [ref=f1e447] [cursor=pointer]
+              - button "downvote" [ref=f1e448] [cursor=pointer]
+            - generic [ref=f1e449]:
+              - paragraph [ref=f1e450]:
+                - link "[–]" [ref=f1e451] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e452] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e453]:
+                  - text: "["
+                  - link "S" [ref=f1e454] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 9 points
+                - time [ref=f1e455]: 2 months ago
+              - generic [ref=f1e458]:
+                - paragraph [ref=f1e459]: This is great, the "opened packet = confirmation" is exactly the kind of passive verification I've been trying to engineer manually. Hadn't considered the pharmacy could solve it for me.
+                - paragraph [ref=f1e460]: Curious how it handles dose changes mid-month? Does Amazon ship a corrective set when something gets adjusted, or do you wait out the cycle? That's the friction I keep imagining with pre-pack systems.
+              - list [ref=f1e461]:
+                - listitem [ref=f1e462]:
+                  - link "permalink" [ref=f1e463] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oknxc0r/
+                - listitem [ref=f1e464]:
+                  - link "embed" [ref=f1e465] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e466]:
+                  - link "save" [ref=f1e467] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e468]:
+                  - link "parent" [ref=f1e469] [cursor=pointer]:
+                    - /url: "#oknwy5q"
+                - listitem [ref=f1e470]:
+                  - link "report" [ref=f1e471] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e472]:
+                  - link "reply" [ref=f1e473] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e475]:
+              - generic [ref=f1e476]:
+                - paragraph
+                - generic [ref=f1e477]:
+                  - button "upvote" [ref=f1e478] [cursor=pointer]
+                  - button "downvote" [ref=f1e479] [cursor=pointer]
+                - generic [ref=f1e480]:
+                  - paragraph [ref=f1e481]:
+                    - link "[–]" [ref=f1e482] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "Odd_Campaign_307" [ref=f1e483] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/Odd_Campaign_307
+                    - text: 2 points
+                    - time [ref=f1e484]: 2 months ago
+                  - generic [ref=f1e487]:
+                    - paragraph [ref=f1e488]: Ontario 🇨🇦 pharmacies order prefilled blister packs with morning-noon-evening-bedtime pill pockets. My mom passed recently this year, so I don't have an example to show you, but hers opened like a book, with the list of medications, dosage, frequency and timing on the left, and the labelled pill pockets on the right.
+                    - paragraph [ref=f1e489]:
+                      - text: Like
+                      - link "u/penabla" [ref=f1e490] [cursor=pointer]:
+                        - /url: /u/penabla
+                      - text: said, it works best for the medications that aren't changing frequently. The pharmacists check for drug interactions before the sending the order to the facility that fills them.
+                    - paragraph [ref=f1e491]: "As for knowing if/when she had her medications I had a whiteboard with a blank calendar on it so once a month I wrote the month and dates on it and used the dry erase marker to check off her doses taken with room to write in antibiotics or other temporary medications. I also bought her this clock:"
+                    - paragraph [ref=f1e492]:
+                      - link "https://www.amazon.ca/TROCOTN-Inchs-Digital-Clock-Display/dp/B0B4VB8MZM" [ref=f1e493] [cursor=pointer]:
+                        - /url: https://www.amazon.ca/TROCOTN-Inchs-Digital-Clock-Display/dp/B0B4VB8MZM
+                    - paragraph [ref=f1e494]: It has over a dozen customizable alarm slots that I used for morning pills, evening pills, care nurse, and the like. Search for a dementia care or memory loss clock and that should bring up something similar for your Amazon site.
+                    - paragraph [ref=f1e495]: As for coverage during cancer surgery and chemo, I took pictures of the pill groupings, printed them out using my colour printer and labelled them with name, then another list of name, size and description (ie apixaban tiny round orange pill) and when they were to be given to her. I popped the set of pills into this little glass bowl I bought at a chef supply store and took it to her with her water. It took me a few tries to find a system that worked, but the bowl and water worked very well until her dementia got too advanced and I transitioned to taking the pills out of her bowl and handing them to her one by one myself.
+                  - list [ref=f1e496]:
+                    - listitem [ref=f1e497]:
+                      - link "permalink" [ref=f1e498] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okrorkx/
+                    - listitem [ref=f1e499]:
+                      - link "embed" [ref=f1e500] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e501]:
+                      - link "save" [ref=f1e502] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e503]:
+                      - link "parent" [ref=f1e504] [cursor=pointer]:
+                        - /url: "#oknxc0r"
+                    - listitem [ref=f1e505]:
+                      - link "report" [ref=f1e506] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e507]:
+                      - link "reply" [ref=f1e508] [cursor=pointer]:
+                        - /url: javascript:void(0)
+              - generic [ref=f1e509]:
+                - paragraph
+                - generic [ref=f1e510]:
+                  - button "upvote" [ref=f1e511] [cursor=pointer]
+                  - button "downvote" [ref=f1e512] [cursor=pointer]
+                - generic [ref=f1e513]:
+                  - paragraph [ref=f1e514]:
+                    - link "[–]" [ref=f1e515] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "penalba" [ref=f1e516] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/penalba
+                    - text: 1 point
+                    - time [ref=f1e517]: 2 months ago
+                  - paragraph [ref=f1e521]: It works best with stable medication regimes. They can send new prescriptions by mail, in bottles, until the next round of packet-ized dosages.
+                  - list [ref=f1e522]:
+                    - listitem [ref=f1e523]:
+                      - link "permalink" [ref=f1e524] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okqu7ss/
+                    - listitem [ref=f1e525]:
+                      - link "embed" [ref=f1e526] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e527]:
+                      - link "save" [ref=f1e528] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e529]:
+                      - link "parent" [ref=f1e530] [cursor=pointer]:
+                        - /url: "#oknxc0r"
+                    - listitem [ref=f1e531]:
+                      - link "report" [ref=f1e532] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e533]:
+                      - link "reply" [ref=f1e534] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e535]:
+          - paragraph
+          - generic [ref=f1e536]:
+            - button "upvote" [ref=f1e537] [cursor=pointer]
+            - button "downvote" [ref=f1e538] [cursor=pointer]
+          - generic [ref=f1e539]:
+            - paragraph [ref=f1e540]:
+              - link "[–]" [ref=f1e541] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "brandy13271" [ref=f1e542] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/brandy13271
+              - generic "Former Caregiver" [ref=f1e543]
+              - text: 6 points
+              - time [ref=f1e544]: 2 months ago
+            - generic [ref=f1e547]:
+              - paragraph [ref=f1e548]: For my own medications, I use 7 separate containers, one for each day of the week (old pill bottles with sharpie labels). Every Sunday, I lay out all the meds with every day in its own bottle, double-checking across a master list, and then I put the actual bottles of meds away for the week. Every morning, I take the pills for the day and split it into one carry case with sections for morning, afternoon, night. End of the day, carry-case should be empty. End of the week, I will have 7 empty day-of-the-week containers, and the whole process starts again.
+              - paragraph [ref=f1e549]: I found this routine has built-in double checks and redundancies, so I don't forget or take something twice. Also, at my Sunday refill session, I make sure that I have enough meds for the future. No notes, no technology, no communication.
+              - paragraph [ref=f1e550]: "\"Is it in today's bottle? Yes? Then move it to the carry case. Is it the time labeled on the carry case? Then take it.\""
+            - list [ref=f1e551]:
+              - listitem [ref=f1e552]:
+                - link "permalink" [ref=f1e553] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko0232/
+              - listitem [ref=f1e554]:
+                - link "embed" [ref=f1e555] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e556]:
+                - link "save" [ref=f1e557] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e558]:
+                - link "report" [ref=f1e559] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e560]:
+                - link "reply" [ref=f1e561] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e563]:
+            - generic [ref=f1e564]:
+              - paragraph
+              - generic [ref=f1e565]:
+                - button "upvote" [ref=f1e566] [cursor=pointer]
+                - button "downvote" [ref=f1e567] [cursor=pointer]
+              - generic [ref=f1e568]:
+                - paragraph [ref=f1e569]:
+                  - link "[–]" [ref=f1e570] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "brandy13271" [ref=f1e571] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/brandy13271
+                  - generic "Former Caregiver" [ref=f1e572]
+                  - text: 5 points
+                  - time [ref=f1e573]: 2 months ago
+                - paragraph [ref=f1e577]: I used a similar method for taking care of my LOs. One massive lay-out session every Sunday. This would work if you had to leave -- leave a daily bottle for each day, or even 2-3 labeled bottles per day. Take the thought process out of the daily routine.
+                - list [ref=f1e578]:
+                  - listitem [ref=f1e579]:
+                    - link "permalink" [ref=f1e580] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko0lcc/
+                  - listitem [ref=f1e581]:
+                    - link "embed" [ref=f1e582] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e583]:
+                    - link "save" [ref=f1e584] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e585]:
+                    - link "parent" [ref=f1e586] [cursor=pointer]:
+                      - /url: "#oko0232"
+                  - listitem [ref=f1e587]:
+                    - link "report" [ref=f1e588] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e589]:
+                    - link "reply" [ref=f1e590] [cursor=pointer]:
+                      - /url: javascript:void(0)
+            - generic [ref=f1e591]:
+              - paragraph
+              - generic [ref=f1e592]:
+                - button "upvote" [ref=f1e593] [cursor=pointer]
+                - button "downvote" [ref=f1e594] [cursor=pointer]
+              - generic [ref=f1e595]:
+                - paragraph [ref=f1e596]:
+                  - link "[–]" [ref=f1e597] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Greysawpark" [ref=f1e598] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Greysawpark
+                  - generic [ref=f1e599]:
+                    - text: "["
+                    - link "S" [ref=f1e600] [cursor=pointer]:
+                      - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                    - text: "]"
+                  - text: 3 points
+                  - time [ref=f1e601]: 2 months ago
+                - generic [ref=f1e604]:
+                  - paragraph [ref=f1e605]: This is pretty cool, fully self-administered with built-in audits. The "end-of-week the containers should be empty" is a good passive verification system but where the verification is over the system itself, not just individual doses. Genuinely elegant.
+                  - paragraph [ref=f1e606]: One question, what's the recovery if Sunday gets disrupted? If you can't do the refill session some week (sick, traveling, holiday weekend), does the rhythm get bumped to Monday or do you have a fallback? I keep noticing that everyone's working systems depend on a key person doing a key thing on a key day, and the failure mode is what happens when that day gets blown up.
+                - list [ref=f1e607]:
+                  - listitem [ref=f1e608]:
+                    - link "permalink" [ref=f1e609] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko0uzs/
+                  - listitem [ref=f1e610]:
+                    - link "embed" [ref=f1e611] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e612]:
+                    - link "save" [ref=f1e613] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e614]:
+                    - link "parent" [ref=f1e615] [cursor=pointer]:
+                      - /url: "#oko0232"
+                  - listitem [ref=f1e616]:
+                    - link "report" [ref=f1e617] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e618]:
+                    - link "reply" [ref=f1e619] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e622]:
+                - paragraph
+                - generic [ref=f1e623]:
+                  - button "upvote" [ref=f1e624] [cursor=pointer]
+                  - button "downvote" [ref=f1e625] [cursor=pointer]
+                - generic [ref=f1e626]:
+                  - paragraph [ref=f1e627]:
+                    - link "[–]" [ref=f1e628] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "brandy13271" [ref=f1e629] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/brandy13271
+                    - generic "Former Caregiver" [ref=f1e630]
+                    - text: 6 points
+                    - time [ref=f1e631]: 2 months ago
+                  - generic [ref=f1e634]:
+                    - paragraph [ref=f1e635]: Saturday or Friday then. I'd rather have an extra stock than to have all empties. Also, I have *A LOT* of empty pill bottles. I've done up to two weeks of medications in advance, if I can see that Sunday will be a hot mess.
+                    - paragraph [ref=f1e636]: Once I've put out the week's med, I put away the big box of original prescriptions (16 rx and otc total) and don't touch them again for the week. Last thing I want to do is think about opening all those 16 bottles to find just one day's meds. So much pain.
+                  - list [ref=f1e637]:
+                    - listitem [ref=f1e638]:
+                      - link "permalink" [ref=f1e639] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko2lf1/
+                    - listitem [ref=f1e640]:
+                      - link "embed" [ref=f1e641] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e642]:
+                      - link "save" [ref=f1e643] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e644]:
+                      - link "parent" [ref=f1e645] [cursor=pointer]:
+                        - /url: "#oko0uzs"
+                    - listitem [ref=f1e646]:
+                      - link "report" [ref=f1e647] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e648]:
+                      - link "reply" [ref=f1e649] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e650]:
+          - paragraph
+          - generic [ref=f1e651]:
+            - button "upvote" [ref=f1e652] [cursor=pointer]
+            - button "downvote" [ref=f1e653] [cursor=pointer]
+          - generic [ref=f1e654]:
+            - paragraph [ref=f1e655]:
+              - link "[–]" [ref=f1e656] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "monpetitfromage54" [ref=f1e657] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/monpetitfromage54
+              - text: 6 points
+              - time [ref=f1e658]: 2 months ago
+            - paragraph [ref=f1e662]: we have reminders set on a schedule on our alexa. it announces it and sends notifications to our phones. the notification doesn't get swiped away until the pills are taken. if we get off schedule for some reason (oversleeping, vacation, etc.) because sometimes life happens, we set new reminders for the day. during times where we have extra meds (mostly post hospital visit) we have a spreadsheet with each med listed vertically in time slots and a week's worth of dates horizontally. we set reminders and check the box for each med that's taken and note the exact time, so we both know what's been taken and when.
+            - list [ref=f1e663]:
+              - listitem [ref=f1e664]:
+                - link "permalink" [ref=f1e665] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko24da/
+              - listitem [ref=f1e666]:
+                - link "embed" [ref=f1e667] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e668]:
+                - link "save" [ref=f1e669] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e670]:
+                - link "report" [ref=f1e671] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e672]:
+                - link "reply" [ref=f1e673] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e675]:
+            - generic [ref=f1e676]:
+              - paragraph
+              - generic [ref=f1e677]:
+                - button "upvote" [ref=f1e678] [cursor=pointer]
+                - button "downvote" [ref=f1e679] [cursor=pointer]
+              - generic [ref=f1e680]:
+                - paragraph [ref=f1e681]:
+                  - link "[–]" [ref=f1e682] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Greysawpark" [ref=f1e683] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Greysawpark
+                  - generic [ref=f1e684]:
+                    - text: "["
+                    - link "S" [ref=f1e685] [cursor=pointer]:
+                      - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                    - text: "]"
+                  - text: 4 points
+                  - time [ref=f1e686]: 2 months ago
+                - paragraph [ref=f1e690]: The Alexa solution is one I hadn't considered. And something we have in our house for sure. Thank you for sharing!
+                - list [ref=f1e691]:
+                  - listitem [ref=f1e692]:
+                    - link "permalink" [ref=f1e693] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko2vt7/
+                  - listitem [ref=f1e694]:
+                    - link "embed" [ref=f1e695] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e696]:
+                    - link "save" [ref=f1e697] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e698]:
+                    - link "parent" [ref=f1e699] [cursor=pointer]:
+                      - /url: "#oko24da"
+                  - listitem [ref=f1e700]:
+                    - link "report" [ref=f1e701] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e702]:
+                    - link "reply" [ref=f1e703] [cursor=pointer]:
+                      - /url: javascript:void(0)
+            - generic [ref=f1e704]:
+              - paragraph
+              - generic [ref=f1e705]:
+                - button "upvote" [ref=f1e706] [cursor=pointer]
+                - button "downvote" [ref=f1e707] [cursor=pointer]
+              - generic [ref=f1e708]:
+                - paragraph [ref=f1e709]:
+                  - link "[–]" [ref=f1e710] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "youlexa" [ref=f1e711] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/youlexa
+                  - text: 2 points
+                  - time [ref=f1e712]: 2 months ago
+                - paragraph [ref=f1e716]: How does alexa determine if the pills are taken?
+                - list [ref=f1e717]:
+                  - listitem [ref=f1e718]:
+                    - link "permalink" [ref=f1e719] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okox6lf/
+                  - listitem [ref=f1e720]:
+                    - link "embed" [ref=f1e721] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e722]:
+                    - link "save" [ref=f1e723] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e724]:
+                    - link "parent" [ref=f1e725] [cursor=pointer]:
+                      - /url: "#oko24da"
+                  - listitem [ref=f1e726]:
+                    - link "report" [ref=f1e727] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e728]:
+                    - link "reply" [ref=f1e729] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e732]:
+                - paragraph
+                - generic [ref=f1e733]:
+                  - button "upvote" [ref=f1e734] [cursor=pointer]
+                  - button "downvote" [ref=f1e735] [cursor=pointer]
+                - generic [ref=f1e736]:
+                  - paragraph [ref=f1e737]:
+                    - link "[–]" [ref=f1e738] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "monpetitfromage54" [ref=f1e739] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/monpetitfromage54
+                    - text: 2 points
+                    - time [ref=f1e740]: 2 months ago
+                  - paragraph [ref=f1e744]: it doesn't. i meant we don't swipe away the phone notification until the pills are taken. sorry that wasn't clear.
+                  - list [ref=f1e745]:
+                    - listitem [ref=f1e746]:
+                      - link "permalink" [ref=f1e747] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okoxdgg/
+                    - listitem [ref=f1e748]:
+                      - link "embed" [ref=f1e749] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e750]:
+                      - link "save" [ref=f1e751] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e752]:
+                      - link "parent" [ref=f1e753] [cursor=pointer]:
+                        - /url: "#okox6lf"
+                    - listitem [ref=f1e754]:
+                      - link "report" [ref=f1e755] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e756]:
+                      - link "reply" [ref=f1e757] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e758]:
+          - paragraph
+          - generic [ref=f1e759]:
+            - button "upvote" [ref=f1e760] [cursor=pointer]
+            - button "downvote" [ref=f1e761] [cursor=pointer]
+          - generic [ref=f1e762]:
+            - paragraph [ref=f1e763]:
+              - link "[–]" [ref=f1e764] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "saltandocean" [ref=f1e765] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/saltandocean
+              - text: 4 points
+              - time [ref=f1e766]: 2 months ago
+            - generic [ref=f1e769]:
+              - paragraph [ref=f1e770]: My mom is on about 14 -18 pills daily.
+              - paragraph [ref=f1e771]: We have three medipacks I set up about every two weeks so I’m always a week ahead.
+              - paragraph [ref=f1e772]: Her pill cases have AM/PM - and are kept inside a pill organizer case.
+              - paragraph [ref=f1e773]: Every morning I wake her up and she takes the day and am set of pills.
+              - paragraph [ref=f1e774]: When I leave- she takes the day PM pills.
+              - paragraph [ref=f1e775]: I’ve been doing this for about .. 10 years.
+              - paragraph [ref=f1e776]: ETA- all her meds I’ve put into a spreadsheet. The pill description, dose, and when to take. This is printed and kept inside her med box.
+            - list [ref=f1e777]:
+              - listitem [ref=f1e778]:
+                - link "permalink" [ref=f1e779] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko6y24/
+              - listitem [ref=f1e780]:
+                - link "embed" [ref=f1e781] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e782]:
+                - link "save" [ref=f1e783] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e784]:
+                - link "report" [ref=f1e785] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e786]:
+                - link "reply" [ref=f1e787] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e790]:
+            - paragraph
+            - generic [ref=f1e791]:
+              - button "upvote" [ref=f1e792] [cursor=pointer]
+              - button "downvote" [ref=f1e793] [cursor=pointer]
+            - generic [ref=f1e794]:
+              - paragraph [ref=f1e795]:
+                - link "[–]" [ref=f1e796] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e797] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e798]:
+                  - text: "["
+                  - link "S" [ref=f1e799] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 7 points
+                - time [ref=f1e800]: 2 months ago
+              - paragraph [ref=f1e804]: The three-medipacks-running-a-week-ahead buffer is brilliant, and 10 years of doing it is the best endorsement there is. Thanks for sharing.
+              - list [ref=f1e805]:
+                - listitem [ref=f1e806]:
+                  - link "permalink" [ref=f1e807] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko9cr5/
+                - listitem [ref=f1e808]:
+                  - link "embed" [ref=f1e809] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e810]:
+                  - link "save" [ref=f1e811] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e812]:
+                  - link "parent" [ref=f1e813] [cursor=pointer]:
+                    - /url: "#oko6y24"
+                - listitem [ref=f1e814]:
+                  - link "report" [ref=f1e815] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e816]:
+                  - link "reply" [ref=f1e817] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e818]:
+          - paragraph
+          - generic [ref=f1e819]:
+            - button "upvote" [ref=f1e820] [cursor=pointer]
+            - button "downvote" [ref=f1e821] [cursor=pointer]
+          - generic [ref=f1e822]:
+            - paragraph [ref=f1e823]:
+              - link "[–]" [ref=f1e824] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Unique_Rabbit_2031" [ref=f1e825] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Unique_Rabbit_2031
+              - text: 3 points
+              - time [ref=f1e826]: 2 months ago
+            - generic [ref=f1e829]:
+              - paragraph [ref=f1e830]: I started using Basic Intake for my mom's medications and supplements about 6 weeks ago and was honestly surprised how well it handled her meds… even though the app calls itself a supplement tracker. Same reminder system, same scheduling, same multi-day patterns. Just worked across both without any setup gymnastics.
+              - paragraph [ref=f1e831]: I like the AI assistant as well, just as a fail safe for checking interactions between her supplements and medications. We had a scare a couple years ago so I'm overly cautious. First tool I've used that handles interaction questions across the whole stack.
+            - list [ref=f1e832]:
+              - listitem [ref=f1e833]:
+                - link "permalink" [ref=f1e834] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko4o0q/
+              - listitem [ref=f1e835]:
+                - link "embed" [ref=f1e836] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e837]:
+                - link "save" [ref=f1e838] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e839]:
+                - link "report" [ref=f1e840] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e841]:
+                - link "reply" [ref=f1e842] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e845]:
+            - paragraph
+            - generic [ref=f1e846]:
+              - button "upvote" [ref=f1e847] [cursor=pointer]
+              - button "downvote" [ref=f1e848] [cursor=pointer]
+            - generic [ref=f1e849]:
+              - paragraph [ref=f1e850]:
+                - link "[–]" [ref=f1e851] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e852] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e853]:
+                  - text: "["
+                  - link "S" [ref=f1e854] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 2 points
+                - time [ref=f1e855]: 2 months ago
+              - generic [ref=f1e858]:
+                - paragraph [ref=f1e859]: Sorry to hear about the scare. Genuinely valid reason to lean on a fail-safe.
+                - paragraph [ref=f1e860]: Question on Basic Intake, does the AI assistant pull from her actual pills and supplements automatically, or do you have to type the question out with everything in it? Curious how that interaction-check works in practice. How can you be sure its reliable and not getting weird or dangerous answers?
+              - list [ref=f1e861]:
+                - listitem [ref=f1e862]:
+                  - link "permalink" [ref=f1e863] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko8hfm/
+                - listitem [ref=f1e864]:
+                  - link "embed" [ref=f1e865] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e866]:
+                  - link "save" [ref=f1e867] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e868]:
+                  - link "parent" [ref=f1e869] [cursor=pointer]:
+                    - /url: "#oko4o0q"
+                - listitem [ref=f1e870]:
+                  - link "report" [ref=f1e871] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e872]:
+                  - link "reply" [ref=f1e873] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e876]:
+              - paragraph
+              - generic [ref=f1e877]:
+                - button "upvote" [ref=f1e878] [cursor=pointer]
+                - button "downvote" [ref=f1e879] [cursor=pointer]
+              - generic [ref=f1e880]:
+                - paragraph [ref=f1e881]:
+                  - link "[–]" [ref=f1e882] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Unique_Rabbit_2031" [ref=f1e883] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Unique_Rabbit_2031
+                  - text: 3 points
+                  - time [ref=f1e884]: 2 months ago
+                - generic [ref=f1e887]:
+                  - paragraph [ref=f1e888]: Yeah, totally fair concern and definitely one I had early on. After you set it up, it pulls automatically, so I just ask my question and it checks against the whole list. No typing it out everytime... which I would absolutely not do.
+                  - paragraph [ref=f1e889]: On reliability, it hasn't been wrong on things I already knew the answer to, but I cross-check anything surprising on drugs.com just to be safe. I treat it like a faster drugs.com, not a replacement for the pharmacist. Still asking the pharmacist on anything major. The AI just speeds up figuring out what to ASK about.
+                - list [ref=f1e890]:
+                  - listitem [ref=f1e891]:
+                    - link "permalink" [ref=f1e892] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okoaahi/
+                  - listitem [ref=f1e893]:
+                    - link "embed" [ref=f1e894] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e895]:
+                    - link "save" [ref=f1e896] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e897]:
+                    - link "parent" [ref=f1e898] [cursor=pointer]:
+                      - /url: "#oko8hfm"
+                  - listitem [ref=f1e899]:
+                    - link "report" [ref=f1e900] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e901]:
+                    - link "reply" [ref=f1e902] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e905]:
+                - paragraph
+                - generic [ref=f1e906]:
+                  - button "upvote" [ref=f1e907] [cursor=pointer]
+                  - button "downvote" [ref=f1e908] [cursor=pointer]
+                - generic [ref=f1e909]:
+                  - paragraph [ref=f1e910]:
+                    - link "[–]" [ref=f1e911] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "Greysawpark" [ref=f1e912] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/Greysawpark
+                    - generic [ref=f1e913]:
+                      - text: "["
+                      - link "S" [ref=f1e914] [cursor=pointer]:
+                        - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                      - text: "]"
+                    - text: 1 point
+                    - time [ref=f1e915]: 2 months ago
+                  - paragraph [ref=f1e919]: Appreciate it, will check it out. Thanks for sharing.
+                  - list [ref=f1e920]:
+                    - listitem [ref=f1e921]:
+                      - link "permalink" [ref=f1e922] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okoan2q/
+                    - listitem [ref=f1e923]:
+                      - link "embed" [ref=f1e924] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e925]:
+                      - link "save" [ref=f1e926] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e927]:
+                      - link "parent" [ref=f1e928] [cursor=pointer]:
+                        - /url: "#okoaahi"
+                    - listitem [ref=f1e929]:
+                      - link "report" [ref=f1e930] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e931]:
+                      - link "reply" [ref=f1e932] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e933]:
+          - paragraph
+          - generic [ref=f1e934]:
+            - button "upvote" [ref=f1e935] [cursor=pointer]
+            - button "downvote" [ref=f1e936] [cursor=pointer]
+          - generic [ref=f1e937]:
+            - paragraph [ref=f1e938]:
+              - link "[–]" [ref=f1e939] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "prismacolorful_life" [ref=f1e940] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/prismacolorful_life
+              - text: 3 points
+              - time [ref=f1e941]: 2 months ago
+              - time [ref=f1e942]: "*"
+            - generic [ref=f1e945]:
+              - paragraph [ref=f1e946]: I use an automatic pill dispenser from Livefine that has alarm settings. There are 28 slots, since my mother takes prescriptions 2x a day, I refill every two weeks. I just fill it once, and lock it. You can adjust the frequency to your mom’s schedule, There’s 2 different models, the one my mom has is several years old without the WiFi. There is also a hero dispenser but that is subscription based
+              - paragraph [ref=f1e947]: With her prescription bottles, I write abbreviations on the caps with different color sharpies. I made abbreviations key with the color code, name, and frequency. One is in the box where her bottles are stored. The other is taped inside the door of a cabinet it is stored in. I loathed grabbing at different bottles looking for the right one. It was a waste of time.
+              - paragraph [ref=f1e948]: We also have one of those dementia calendar clocks. My mom doesn’t have dementia, but gets confused when she wakes up regarding AM / PM. There are different alarm category settings. So it’s set 2x a day, daily and says medicine which is easy for her to read.
+              - paragraph [ref=f1e949]: I’ve noticed the basic plastic pill boxes were much harder for to open if you have hand arthritis. You also have make sure all compartments were shut proper. Pills would be prone to flying or wind up on the ground.
+            - list [ref=f1e950]:
+              - listitem [ref=f1e951]:
+                - link "permalink" [ref=f1e952] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okol7ib/
+              - listitem [ref=f1e953]:
+                - link "embed" [ref=f1e954] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e955]:
+                - link "save" [ref=f1e956] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e957]:
+                - link "report" [ref=f1e958] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e959]:
+                - link "reply" [ref=f1e960] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e961]:
+          - paragraph
+          - generic [ref=f1e962]:
+            - button "upvote" [ref=f1e963] [cursor=pointer]
+            - button "downvote" [ref=f1e964] [cursor=pointer]
+          - generic [ref=f1e965]:
+            - paragraph [ref=f1e966]:
+              - link "[–]" [ref=f1e967] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "moomootea" [ref=f1e968] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/moomootea
+              - text: 3 points
+              - time [ref=f1e969]: 2 months ago
+            - generic [ref=f1e972]:
+              - paragraph [ref=f1e973]: "I write the instructions in a blog so the notes are accessible anywhere I go. It’s simplified to AM and PM. For eg. AM: before food: medicine A. After food: medicine B, supplement C. A printout is on a central bulletin board near the medicines. We use pillboxes with AM, PM label for entire week. At the beginning, I used a notebook so I could check off after giving meds because I was afraid of forgetting."
+              - paragraph [ref=f1e974]: Same with appointments. They are in the blog too but with initials so no names are mentioned.
+            - list [ref=f1e975]:
+              - listitem [ref=f1e976]:
+                - link "permalink" [ref=f1e977] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko2ge1/
+              - listitem [ref=f1e978]:
+                - link "embed" [ref=f1e979] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e980]:
+                - link "save" [ref=f1e981] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e982]:
+                - link "report" [ref=f1e983] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e984]:
+                - link "reply" [ref=f1e985] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e988]:
+            - paragraph
+            - generic [ref=f1e989]:
+              - button "upvote" [ref=f1e990] [cursor=pointer]
+              - button "downvote" [ref=f1e991] [cursor=pointer]
+            - generic [ref=f1e992]:
+              - paragraph [ref=f1e993]:
+                - link "[–]" [ref=f1e994] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e995] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e996]:
+                  - text: "["
+                  - link "S" [ref=f1e997] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 3 points
+                - time [ref=f1e998]: 2 months ago
+              - paragraph [ref=f1e1002]: The blog-as-cloud-doc workaround is clever. Accessible anywhere without needing to learn a new tool, and the initials approach handles the privacy piece most caregivers don't think about. Treating it like "this could be public someday, write it accordingly" is good discipline.
+              - list [ref=f1e1003]:
+                - listitem [ref=f1e1004]:
+                  - link "permalink" [ref=f1e1005] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko37y7/
+                - listitem [ref=f1e1006]:
+                  - link "embed" [ref=f1e1007] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1008]:
+                  - link "save" [ref=f1e1009] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1010]:
+                  - link "parent" [ref=f1e1011] [cursor=pointer]:
+                    - /url: "#oko2ge1"
+                - listitem [ref=f1e1012]:
+                  - link "report" [ref=f1e1013] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1014]:
+                  - link "reply" [ref=f1e1015] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e1018]:
+              - paragraph
+              - generic [ref=f1e1019]:
+                - button "upvote" [ref=f1e1020] [cursor=pointer]
+                - button "downvote" [ref=f1e1021] [cursor=pointer]
+              - generic [ref=f1e1022]:
+                - paragraph [ref=f1e1023]:
+                  - link "[–]" [ref=f1e1024] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "moomootea" [ref=f1e1025] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/moomootea
+                  - text: 3 points
+                  - time [ref=f1e1026]: 2 months ago
+                - paragraph [ref=f1e1030]: You can create a shared google spreadsheet and whoever is managing the meds can check off every time medicine is given. You can keep track that way too. We used the phone alarm as reminders at the beginning.
+                - list [ref=f1e1031]:
+                  - listitem [ref=f1e1032]:
+                    - link "permalink" [ref=f1e1033] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko6dez/
+                  - listitem [ref=f1e1034]:
+                    - link "embed" [ref=f1e1035] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1036]:
+                    - link "save" [ref=f1e1037] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1038]:
+                    - link "parent" [ref=f1e1039] [cursor=pointer]:
+                      - /url: "#oko37y7"
+                  - listitem [ref=f1e1040]:
+                    - link "report" [ref=f1e1041] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1042]:
+                    - link "reply" [ref=f1e1043] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e1046]:
+                - paragraph
+                - generic [ref=f1e1047]:
+                  - button "upvote" [ref=f1e1048] [cursor=pointer]
+                  - button "downvote" [ref=f1e1049] [cursor=pointer]
+                - generic [ref=f1e1050]:
+                  - paragraph [ref=f1e1051]:
+                    - link "[–]" [ref=f1e1052] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "Greysawpark" [ref=f1e1053] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/Greysawpark
+                    - generic [ref=f1e1054]:
+                      - text: "["
+                      - link "S" [ref=f1e1055] [cursor=pointer]:
+                        - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                      - text: "]"
+                    - text: 2 points
+                    - time [ref=f1e1056]: 2 months ago
+                  - paragraph [ref=f1e1060]: That's pretty smart, and definitely safe-guards against the one person point of failure. Thanks for sharing.
+                  - list [ref=f1e1061]:
+                    - listitem [ref=f1e1062]:
+                      - link "permalink" [ref=f1e1063] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko8v8i/
+                    - listitem [ref=f1e1064]:
+                      - link "embed" [ref=f1e1065] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1066]:
+                      - link "save" [ref=f1e1067] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1068]:
+                      - link "parent" [ref=f1e1069] [cursor=pointer]:
+                        - /url: "#oko6dez"
+                    - listitem [ref=f1e1070]:
+                      - link "report" [ref=f1e1071] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1072]:
+                      - link "reply" [ref=f1e1073] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e1074]:
+          - paragraph
+          - generic [ref=f1e1075]:
+            - button "upvote" [ref=f1e1076] [cursor=pointer]
+            - button "downvote" [ref=f1e1077] [cursor=pointer]
+          - generic [ref=f1e1078]:
+            - paragraph [ref=f1e1079]:
+              - link "[–]" [ref=f1e1080] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Larissaangel" [ref=f1e1081] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Larissaangel
+              - text: 3 points
+              - time [ref=f1e1082]: 2 months ago
+            - generic [ref=f1e1085]:
+              - paragraph [ref=f1e1086]: My mom had to take 24 meds and supplements a day. Fortunately I was able to divide into am and pm meds since she refused to do more.
+              - paragraph [ref=f1e1087]: I bought a pill organizer that had enough for a month distribution. Only time this caused a problem was with her thyroid meds when we would need to make adjustments.
+              - paragraph [ref=f1e1088]: My bf has his own sets of pill organizers that have 4 slots. 4 weekly organizers. He takes 28 caps/tabs a day. Only his Parkinson meds ever change thankfully.
+              - paragraph [ref=f1e1089]: I also have detailed lists, paper and on my phone, I use for whatever medical need there is.
+              - paragraph [ref=f1e1090]: Sitting down once a month to fill them helped me to not worry over it every single med time. It took one stressor off my shoulders until next month.
+            - list [ref=f1e1091]:
+              - listitem [ref=f1e1092]:
+                - link "permalink" [ref=f1e1093] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okoemuj/
+              - listitem [ref=f1e1094]:
+                - link "embed" [ref=f1e1095] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1096]:
+                - link "save" [ref=f1e1097] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1098]:
+                - link "report" [ref=f1e1099] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1100]:
+                - link "reply" [ref=f1e1101] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1102]:
+          - paragraph
+          - generic [ref=f1e1103]:
+            - button "upvote" [ref=f1e1104] [cursor=pointer]
+            - button "downvote" [ref=f1e1105] [cursor=pointer]
+          - generic [ref=f1e1106]:
+            - paragraph [ref=f1e1107]:
+              - link "[–]" [ref=f1e1108] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Live-Okra-9868" [ref=f1e1109] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Live-Okra-9868
+              - text: 3 points
+              - time [ref=f1e1110]: 2 months ago
+            - generic [ref=f1e1113]:
+              - paragraph [ref=f1e1114]: I hand wrote everything out on a sheet of paper. The pills she took, the dosage, and at what times, like a visual grid.
+              - paragraph [ref=f1e1115]: The organizer I used had morning, noon, evening and bedtime.
+              - paragraph [ref=f1e1116]: And then we would go to a doctor and a prescription would change, and I would update everything.
+              - paragraph [ref=f1e1117]: For me, writing it down by hand helped me remember. I started off with alarms on my phone reminding me it was time for pills.
+              - paragraph [ref=f1e1118]: But eventually I was the only one picking up, organizing and giving her her pills so it was easier for me to handle doing it. She was blind so she had to wait for me to give them to her. But she also knew what she took and when so if I was late she would remind me.
+              - paragraph [ref=f1e1119]: It also just fell into a daily routine. Every day I woke up and we did the same things.
+            - list [ref=f1e1120]:
+              - listitem [ref=f1e1121]:
+                - link "permalink" [ref=f1e1122] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okoguoj/
+              - listitem [ref=f1e1123]:
+                - link "embed" [ref=f1e1124] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1125]:
+                - link "save" [ref=f1e1126] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1127]:
+                - link "report" [ref=f1e1128] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1129]:
+                - link "reply" [ref=f1e1130] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1131]:
+          - paragraph
+          - generic [ref=f1e1132]:
+            - button "upvote" [ref=f1e1133] [cursor=pointer]
+            - button "downvote" [ref=f1e1134] [cursor=pointer]
+          - generic [ref=f1e1135]:
+            - paragraph [ref=f1e1136]:
+              - link "[–]" [ref=f1e1137] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "georgelovesgene" [ref=f1e1138] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/georgelovesgene
+              - text: 3 points
+              - time [ref=f1e1139]: 2 months ago
+            - paragraph [ref=f1e1143]: I told the schedule to ChatGPT and told it to remember. Overtime I’ve learned it. I have a 3 compartment weekly pill organizer and fill it on Monday evenings. I have the schedule memorized but have a master list in the medicine container. We also have pictures of each pill and put it into a flip photo album with the name, use and schedule written.
+            - list [ref=f1e1144]:
+              - listitem [ref=f1e1145]:
+                - link "permalink" [ref=f1e1146] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okohhoi/
+              - listitem [ref=f1e1147]:
+                - link "embed" [ref=f1e1148] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1149]:
+                - link "save" [ref=f1e1150] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1151]:
+                - link "report" [ref=f1e1152] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1153]:
+                - link "reply" [ref=f1e1154] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1155]:
+          - paragraph
+          - generic [ref=f1e1156]:
+            - button "upvote" [ref=f1e1157] [cursor=pointer]
+            - button "downvote" [ref=f1e1158] [cursor=pointer]
+          - generic [ref=f1e1159]:
+            - paragraph [ref=f1e1160]:
+              - link "[–]" [ref=f1e1161] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Fantastic-Resist-755" [ref=f1e1162] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Fantastic-Resist-755
+              - text: 3 points
+              - time [ref=f1e1163]: 2 months ago
+            - paragraph [ref=f1e1167]: Last time I filled their pill weekly container I took a pic so it would make it easier
+            - list [ref=f1e1168]:
+              - listitem [ref=f1e1169]:
+                - link "permalink" [ref=f1e1170] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okokli2/
+              - listitem [ref=f1e1171]:
+                - link "embed" [ref=f1e1172] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1173]:
+                - link "save" [ref=f1e1174] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1175]:
+                - link "report" [ref=f1e1176] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1177]:
+                - link "reply" [ref=f1e1178] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1181]:
+            - paragraph
+            - generic [ref=f1e1182]:
+              - button "upvote" [ref=f1e1183] [cursor=pointer]
+              - button "downvote" [ref=f1e1184] [cursor=pointer]
+            - generic [ref=f1e1185]:
+              - paragraph [ref=f1e1186]:
+                - link "[–]" [ref=f1e1187] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "GlenParkDeb" [ref=f1e1188] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/GlenParkDeb
+                - text: 2 points
+                - time [ref=f1e1189]: 2 months ago
+              - paragraph [ref=f1e1193]: I do the same thing!
+              - list [ref=f1e1194]:
+                - listitem [ref=f1e1195]:
+                  - link "permalink" [ref=f1e1196] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okpnko0/
+                - listitem [ref=f1e1197]:
+                  - link "embed" [ref=f1e1198] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1199]:
+                  - link "save" [ref=f1e1200] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1201]:
+                  - link "parent" [ref=f1e1202] [cursor=pointer]:
+                    - /url: "#okokli2"
+                - listitem [ref=f1e1203]:
+                  - link "report" [ref=f1e1204] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1205]:
+                  - link "reply" [ref=f1e1206] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e1207]:
+          - paragraph
+          - generic [ref=f1e1208]:
+            - button "upvote" [ref=f1e1209] [cursor=pointer]
+            - button "downvote" [ref=f1e1210] [cursor=pointer]
+          - generic [ref=f1e1211]:
+            - paragraph [ref=f1e1212]:
+              - link "[–]" [ref=f1e1213] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "cfo6" [ref=f1e1214] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/cfo6
+              - text: 3 points
+              - time [ref=f1e1215]: 2 months ago
+            - generic [ref=f1e1218]:
+              - paragraph [ref=f1e1219]: My stepmom lives at a facility that has medication management, which should be great. I just bring the refills.
+              - paragraph [ref=f1e1220]: Except that refills come from the VA, from Express Scripts, and from the local pharmacy. And it is super fun when the med techs forget to tell me she is running low.
+              - paragraph [ref=f1e1221]: They have an in-house pharmacy but it's much more expensive.
+            - list [ref=f1e1222]:
+              - listitem [ref=f1e1223]:
+                - link "permalink" [ref=f1e1224] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okom0pw/
+              - listitem [ref=f1e1225]:
+                - link "embed" [ref=f1e1226] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1227]:
+                - link "save" [ref=f1e1228] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1229]:
+                - link "report" [ref=f1e1230] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1231]:
+                - link "reply" [ref=f1e1232] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1233]:
+          - paragraph
+          - generic [ref=f1e1234]:
+            - button "upvote" [ref=f1e1235] [cursor=pointer]
+            - button "downvote" [ref=f1e1236] [cursor=pointer]
+          - generic [ref=f1e1237]:
+            - paragraph [ref=f1e1238]:
+              - link "[–]" [ref=f1e1239] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "moose0502" [ref=f1e1240] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/moose0502
+              - text: 3 points
+              - time [ref=f1e1241]: 2 months ago
+            - generic [ref=f1e1244]:
+              - paragraph [ref=f1e1245]: My sibling and I take care of our person. I am a pharmacist so I am in charge of the medical stuff. First thing I did was create a shared Google Drive file with a list of current medications and how they are taken. This is updated anytime anything changes so the info is always current.
+              - paragraph [ref=f1e1246]: I fill 2 weeks of meds at a time (it works better with my work schedule and it just as easy). The medication vials are kept in a tote box so they are all together.
+              - paragraph [ref=f1e1247]: My person will never be getting the meds themselves. And everyone who helps with caregiving knows where the pill containers are and when to give each slot (only morning and night for us).
+              - paragraph [ref=f1e1248]: I am in charge of this, but there is enough info available that my sibling could do this in a pinch (although it would probably take longer). I think you do need one person in charge, just be sure to share the knowledge!
+            - list [ref=f1e1249]:
+              - listitem [ref=f1e1250]:
+                - link "permalink" [ref=f1e1251] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okose9f/
+              - listitem [ref=f1e1252]:
+                - link "embed" [ref=f1e1253] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1254]:
+                - link "save" [ref=f1e1255] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1256]:
+                - link "report" [ref=f1e1257] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1258]:
+                - link "reply" [ref=f1e1259] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1260]:
+          - paragraph
+          - generic [ref=f1e1261]:
+            - button "upvote" [ref=f1e1262] [cursor=pointer]
+            - button "downvote" [ref=f1e1263] [cursor=pointer]
+          - generic [ref=f1e1264]:
+            - paragraph [ref=f1e1265]:
+              - link "[–]" [ref=f1e1266] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "caregiver1956" [ref=f1e1267] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/caregiver1956
+              - text: 3 points
+              - time [ref=f1e1268]: 2 months ago
+            - paragraph [ref=f1e1272]: Pharmacy packed blister packs
+            - list [ref=f1e1273]:
+              - listitem [ref=f1e1274]:
+                - link "permalink" [ref=f1e1275] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okqek9g/
+              - listitem [ref=f1e1276]:
+                - link "embed" [ref=f1e1277] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1278]:
+                - link "save" [ref=f1e1279] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1280]:
+                - link "report" [ref=f1e1281] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1282]:
+                - link "reply" [ref=f1e1283] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1286]:
+            - paragraph
+            - generic [ref=f1e1287]:
+              - button "upvote" [ref=f1e1288] [cursor=pointer]
+              - button "downvote" [ref=f1e1289] [cursor=pointer]
+            - generic [ref=f1e1290]:
+              - paragraph [ref=f1e1291]:
+                - link "[–]" [ref=f1e1292] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e1293] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e1294]:
+                  - text: "["
+                  - link "S" [ref=f1e1295] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 1 point
+                - time [ref=f1e1296]: 2 months ago
+              - paragraph [ref=f1e1300]: Analog and old school, nothing wrong with that.
+              - list [ref=f1e1301]:
+                - listitem [ref=f1e1302]:
+                  - link "permalink" [ref=f1e1303] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okrjbey/
+                - listitem [ref=f1e1304]:
+                  - link "embed" [ref=f1e1305] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1306]:
+                  - link "save" [ref=f1e1307] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1308]:
+                  - link "parent" [ref=f1e1309] [cursor=pointer]:
+                    - /url: "#okqek9g"
+                - listitem [ref=f1e1310]:
+                  - link "report" [ref=f1e1311] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1312]:
+                  - link "reply" [ref=f1e1313] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e1314]:
+          - paragraph
+          - generic [ref=f1e1315]:
+            - button "upvote" [ref=f1e1316] [cursor=pointer]
+            - button "downvote" [ref=f1e1317] [cursor=pointer]
+          - generic [ref=f1e1318]:
+            - paragraph [ref=f1e1319]:
+              - link "[–]" [ref=f1e1320] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "nonstop2nowhere" [ref=f1e1321] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/nonstop2nowhere
+              - text: 2 points
+              - time [ref=f1e1322]: 2 months ago
+            - generic [ref=f1e1325]:
+              - paragraph [ref=f1e1326]: (Husband, not parent) We have a Note I created in the Writer+ app, shared in text and email, with a printed copy on the fridge. I update when there's any changes to his meds. Once a week, I fill medicine cups (can also use condiment cups) for the next week by morning, midday, and evening. The full cups go into a safe place he can easily access when he needs to, in case I'm not available, but I usually take a dose to him when it's time. We have reminder Alarms on our phones so we don't miss any doses.
+              - paragraph [ref=f1e1327]: Every med/supplement change gets checked for interactions, side effects, and other important things. When making the cups, I use several techniques to check and recheck. Look at the Note, move meds to a different place as I use them, and count the number of cups I fill to compare the number of pills needed for the week (ex - 7 cups, 2 pills per cup, my count is 14).
+              - paragraph [ref=f1e1328]: This works for us, find the best way to make tracking meds work for you!
+            - list [ref=f1e1329]:
+              - listitem [ref=f1e1330]:
+                - link "permalink" [ref=f1e1331] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okok3p5/
+              - listitem [ref=f1e1332]:
+                - link "embed" [ref=f1e1333] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1334]:
+                - link "save" [ref=f1e1335] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1336]:
+                - link "report" [ref=f1e1337] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1338]:
+                - link "reply" [ref=f1e1339] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1340]:
+          - paragraph
+          - generic [ref=f1e1341]:
+            - button "upvote" [ref=f1e1342] [cursor=pointer]
+            - button "downvote" [ref=f1e1343] [cursor=pointer]
+          - generic [ref=f1e1344]:
+            - paragraph [ref=f1e1345]:
+              - link "[–]" [ref=f1e1346] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Own-Roof-1200" [ref=f1e1347] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Own-Roof-1200
+              - text: 2 points
+              - time [ref=f1e1348]: 2 months ago
+            - generic [ref=f1e1351]:
+              - paragraph [ref=f1e1352]: We have a whiteboard with all the specifics of the dose, what it is, time written on paper with a line that we initial on when the dose is given (and can erase at the end of the day). We update the date & reset it every day.
+              - paragraph [ref=f1e1353]: We have printed list in table form hung up in various spots.
+              - paragraph [ref=f1e1354]: Anything Rx is blister packed & supplements are in a multi compartment days of the week box. We add numbered stickers to the compartments and have a printed out key taped to the box. Set it up on the weekend and it’s ready to go.
+              - paragraph [ref=f1e1355]: Some things have to be prepped daily because they are liquids or powders but the med board means we don’t miss anything.
+              - paragraph [ref=f1e1356]: Finally - a smartphone app for meds that makes a specific noise and stores all drug and supplement info along with dosing times.
+              - paragraph [ref=f1e1357]: We’re so in the habit we don’t need the reminder app anymore but it helped.
+            - list [ref=f1e1358]:
+              - listitem [ref=f1e1359]:
+                - link "permalink" [ref=f1e1360] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okora58/
+              - listitem [ref=f1e1361]:
+                - link "embed" [ref=f1e1362] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1363]:
+                - link "save" [ref=f1e1364] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1365]:
+                - link "report" [ref=f1e1366] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1367]:
+                - link "reply" [ref=f1e1368] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1369]:
+          - paragraph
+          - generic [ref=f1e1370]:
+            - button "upvote" [ref=f1e1371] [cursor=pointer]
+            - button "downvote" [ref=f1e1372] [cursor=pointer]
+          - generic [ref=f1e1373]:
+            - paragraph [ref=f1e1374]:
+              - link "[–]" [ref=f1e1375] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "annaleigh13" [ref=f1e1376] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/annaleigh13
+              - generic "Family Caregiver" [ref=f1e1377]
+              - text: 2 points
+              - time [ref=f1e1378]: 2 months ago
+            - paragraph [ref=f1e1382]: I got a 31 day pill organizer, and have a list on my phone showing when everything is taken, when it needs a refill, and if it’s been filled that month
+            - list [ref=f1e1383]:
+              - listitem [ref=f1e1384]:
+                - link "permalink" [ref=f1e1385] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okousff/
+              - listitem [ref=f1e1386]:
+                - link "embed" [ref=f1e1387] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1388]:
+                - link "save" [ref=f1e1389] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1390]:
+                - link "report" [ref=f1e1391] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1392]:
+                - link "reply" [ref=f1e1393] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1394]:
+          - paragraph
+          - generic [ref=f1e1395]:
+            - button "upvote" [ref=f1e1396] [cursor=pointer]
+            - button "downvote" [ref=f1e1397] [cursor=pointer]
+          - generic [ref=f1e1398]:
+            - paragraph [ref=f1e1399]:
+              - link "[–]" [ref=f1e1400] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "WoodenFrosting4889" [ref=f1e1401] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/WoodenFrosting4889
+              - text: 2 points
+              - time [ref=f1e1402]: 2 months ago
+            - paragraph [ref=f1e1406]: We use a 7 day pill organizer (with 7 individual organizers inside labeled Monday-Sunday). Each one has 4 compartments for morning, afternoon, evening and one other slot for before bed. We have 2 of these and my husband fills it every two weeks. He put timers on my mother in laws phone that go off for each time she needs to take meds. We all know the schedule as well and we make sure to check after her bcuz she forgets or gets distracted after turning off her alarms. When he fills the organizers he can see what he’s running low on to request script refills. It has been challenging but this system has worked for us.
+            - list [ref=f1e1407]:
+              - listitem [ref=f1e1408]:
+                - link "permalink" [ref=f1e1409] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okp48i7/
+              - listitem [ref=f1e1410]:
+                - link "embed" [ref=f1e1411] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1412]:
+                - link "save" [ref=f1e1413] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1414]:
+                - link "report" [ref=f1e1415] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1416]:
+                - link "reply" [ref=f1e1417] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1418]:
+          - paragraph
+          - generic [ref=f1e1419]:
+            - button "upvote" [ref=f1e1420] [cursor=pointer]
+            - button "downvote" [ref=f1e1421] [cursor=pointer]
+          - generic [ref=f1e1422]:
+            - paragraph [ref=f1e1423]:
+              - link "[–]" [ref=f1e1424] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Secret-Holiday3267" [ref=f1e1425] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Secret-Holiday3267
+              - text: 2 points
+              - time [ref=f1e1426]: 2 months ago
+            - paragraph [ref=f1e1430]: 31 day pill organizers. I use 2 of them for my mom.
+            - list [ref=f1e1431]:
+              - listitem [ref=f1e1432]:
+                - link "permalink" [ref=f1e1433] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okpjsxw/
+              - listitem [ref=f1e1434]:
+                - link "embed" [ref=f1e1435] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1436]:
+                - link "save" [ref=f1e1437] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1438]:
+                - link "report" [ref=f1e1439] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1440]:
+                - link "reply" [ref=f1e1441] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1442]:
+          - paragraph
+          - generic [ref=f1e1443]:
+            - button "upvote" [ref=f1e1444] [cursor=pointer]
+            - button "downvote" [ref=f1e1445] [cursor=pointer]
+          - generic [ref=f1e1446]:
+            - paragraph [ref=f1e1447]:
+              - link "[–]" [ref=f1e1448] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Magic_Macksimus" [ref=f1e1449] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Magic_Macksimus
+              - text: 2 points
+              - time [ref=f1e1450]: 2 months ago
+            - paragraph [ref=f1e1454]: We use a Hero pill dispenser, which has been a lifesaver. It’s noisy and slow, but managed with an app so I know when meds were taken and can adjust dosages as necessary on the fly. It also pre-dispenses for vacation mode which is handy.
+            - list [ref=f1e1455]:
+              - listitem [ref=f1e1456]:
+                - link "permalink" [ref=f1e1457] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okplcql/
+              - listitem [ref=f1e1458]:
+                - link "embed" [ref=f1e1459] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1460]:
+                - link "save" [ref=f1e1461] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1462]:
+                - link "report" [ref=f1e1463] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1464]:
+                - link "reply" [ref=f1e1465] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1468]:
+            - paragraph
+            - generic [ref=f1e1469]:
+              - button "upvote" [ref=f1e1470] [cursor=pointer]
+              - button "downvote" [ref=f1e1471] [cursor=pointer]
+            - generic [ref=f1e1472]:
+              - paragraph [ref=f1e1473]:
+                - link "[–]" [ref=f1e1474] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e1475] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e1476]:
+                  - text: "["
+                  - link "S" [ref=f1e1477] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 1 point
+                - time [ref=f1e1478]: 2 months ago
+              - paragraph [ref=f1e1482]: I have never heard of that, will have to google it.
+              - list [ref=f1e1483]:
+                - listitem [ref=f1e1484]:
+                  - link "permalink" [ref=f1e1485] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okplw5y/
+                - listitem [ref=f1e1486]:
+                  - link "embed" [ref=f1e1487] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1488]:
+                  - link "save" [ref=f1e1489] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1490]:
+                  - link "parent" [ref=f1e1491] [cursor=pointer]:
+                    - /url: "#okplcql"
+                - listitem [ref=f1e1492]:
+                  - link "report" [ref=f1e1493] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1494]:
+                  - link "reply" [ref=f1e1495] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e1496]:
+          - paragraph
+          - generic [ref=f1e1497]:
+            - button "upvote" [ref=f1e1498] [cursor=pointer]
+            - button "downvote" [ref=f1e1499] [cursor=pointer]
+          - generic [ref=f1e1500]:
+            - paragraph [ref=f1e1501]:
+              - link "[–]" [ref=f1e1502] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "GoddessLeeLu" [ref=f1e1503] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/GoddessLeeLu
+              - text: 2 points
+              - time [ref=f1e1504]: 2 months ago
+            - generic [ref=f1e1507]:
+              - paragraph [ref=f1e1508]: Oy. I use medication dividers that I fill weekly. As far as tracking my Dad's meds...I use an app called "Tasks". I keep a list of every med, dosage, date of last dose, and set a reminder for 2 weeks bedore that last dose to refill from the VA.
+              - paragraph [ref=f1e1509]: And my Dad has 13 oral meds, 2 insulins, 1 nose spray, attends, wound care supplies, and a few other things.
+            - list [ref=f1e1510]:
+              - listitem [ref=f1e1511]:
+                - link "permalink" [ref=f1e1512] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okprgx7/
+              - listitem [ref=f1e1513]:
+                - link "embed" [ref=f1e1514] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1515]:
+                - link "save" [ref=f1e1516] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1517]:
+                - link "report" [ref=f1e1518] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1519]:
+                - link "reply" [ref=f1e1520] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1523]:
+            - paragraph
+            - generic [ref=f1e1524]:
+              - button "upvote" [ref=f1e1525] [cursor=pointer]
+              - button "downvote" [ref=f1e1526] [cursor=pointer]
+            - generic [ref=f1e1527]:
+              - paragraph [ref=f1e1528]:
+                - link "[–]" [ref=f1e1529] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e1530] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e1531]:
+                  - text: "["
+                  - link "S" [ref=f1e1532] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 1 point
+                - time [ref=f1e1533]: 2 months ago
+              - generic [ref=f1e1536]:
+                - paragraph [ref=f1e1537]: Two other convos in here mentioned apps as well.
+                - paragraph [ref=f1e1538]: Medisafe tracker Basic Intake
+                - paragraph [ref=f1e1539]: Both seemed pretty interesting, will add Tasks to the list to check out as well.
+              - list [ref=f1e1540]:
+                - listitem [ref=f1e1541]:
+                  - link "permalink" [ref=f1e1542] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okrj1zq/
+                - listitem [ref=f1e1543]:
+                  - link "embed" [ref=f1e1544] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1545]:
+                  - link "save" [ref=f1e1546] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1547]:
+                  - link "parent" [ref=f1e1548] [cursor=pointer]:
+                    - /url: "#okprgx7"
+                - listitem [ref=f1e1549]:
+                  - link "report" [ref=f1e1550] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1551]:
+                  - link "reply" [ref=f1e1552] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e1553]:
+          - paragraph
+          - generic [ref=f1e1554]:
+            - button "upvote" [ref=f1e1555] [cursor=pointer]
+            - button "downvote" [ref=f1e1556] [cursor=pointer]
+          - generic [ref=f1e1557]:
+            - paragraph [ref=f1e1558]:
+              - link "[–]" [ref=f1e1559] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Electronic-Milk-911" [ref=f1e1560] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Electronic-Milk-911
+              - text: 4 points
+              - time [ref=f1e1561]: 2 months ago
+            - generic [ref=f1e1564]:
+              - paragraph [ref=f1e1565]: My grandpa used to take 14 pills plus pain relief patches so I came up with this system. I have 4 weekly pill boxes with day and night slots so I can fill one full month at a time. You can expand to 3 months if you receive that much at once.
+              - paragraph [ref=f1e1566]: When the new prescriptions arrive I take all of the bottles out and I will put a D for day or N for night or D/N for day and night on the lid.
+              - paragraph [ref=f1e1567]: Lay out 14 Dixie cups and add each dose to the cups. I think it helps to prevent doubles or mix ups because you can do a quick visual check after to make sure they all look correct before you pour them into the pill organizer. You could do the full 28 cups but I find it’s easier to manage 14 at a time. This is much faster for me than trying to get them into the little tiny slots on the pill boxes.
+              - paragraph [ref=f1e1568]: I also have a visual quick reference guide that I use to confirm they’re correct. Like yep big orange one, little white round, blue oval, were good! the doctor really appreciated it too! It shows all her pills and dosages and the date so you can look back and say oh we added that in October of 2025 and before that she was taking X dosage of Y instead.
+            - list [ref=f1e1569]:
+              - listitem [ref=f1e1570]:
+                - link "permalink" [ref=f1e1571] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko4w3r/
+              - listitem [ref=f1e1572]:
+                - link "embed" [ref=f1e1573] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1574]:
+                - link "save" [ref=f1e1575] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1576]:
+                - link "report" [ref=f1e1577] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1578]:
+                - link "reply" [ref=f1e1579] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1581]:
+            - generic [ref=f1e1582]:
+              - paragraph
+              - generic [ref=f1e1583]:
+                - button "upvote" [ref=f1e1584] [cursor=pointer]
+                - button "downvote" [ref=f1e1585] [cursor=pointer]
+              - generic [ref=f1e1586]:
+                - paragraph [ref=f1e1587]:
+                  - link "[–]" [ref=f1e1588] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Greysawpark" [ref=f1e1589] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Greysawpark
+                  - generic [ref=f1e1590]:
+                    - text: "["
+                    - link "S" [ref=f1e1591] [cursor=pointer]:
+                      - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                    - text: "]"
+                  - text: 3 points
+                  - time [ref=f1e1592]: 2 months ago
+                - paragraph [ref=f1e1596]: That's a pretty awesome cheatsheet.
+                - list [ref=f1e1597]:
+                  - listitem [ref=f1e1598]:
+                    - link "permalink" [ref=f1e1599] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko8nd7/
+                  - listitem [ref=f1e1600]:
+                    - link "embed" [ref=f1e1601] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1602]:
+                    - link "save" [ref=f1e1603] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1604]:
+                    - link "parent" [ref=f1e1605] [cursor=pointer]:
+                      - /url: "#oko4w3r"
+                  - listitem [ref=f1e1606]:
+                    - link "report" [ref=f1e1607] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1608]:
+                    - link "reply" [ref=f1e1609] [cursor=pointer]:
+                      - /url: javascript:void(0)
+            - generic [ref=f1e1610]:
+              - paragraph
+              - generic [ref=f1e1611]:
+                - button "upvote" [ref=f1e1612] [cursor=pointer]
+                - button "downvote" [ref=f1e1613] [cursor=pointer]
+              - generic [ref=f1e1614]:
+                - paragraph [ref=f1e1615]:
+                  - link "[–]" [ref=f1e1616] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Electronic-Milk-911" [ref=f1e1617] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Electronic-Milk-911
+                  - text: 4 points
+                  - time [ref=f1e1618]: 2 months ago
+                - paragraph [ref=f1e1622]:
+                  - link "<image>" [ref=f1e1623] [cursor=pointer]:
+                    - /url: https://preview.redd.it/qar6f8ls0yzg1.jpeg?width=1645&format=pjpg&auto=webp&s=ffd0a72d508b38087b4c635ed68c96c8ed4cfdfd
+                - list [ref=f1e1624]:
+                  - listitem [ref=f1e1625]:
+                    - link "permalink" [ref=f1e1626] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko4znm/
+                  - listitem [ref=f1e1627]:
+                    - link "embed" [ref=f1e1628] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1629]:
+                    - link "save" [ref=f1e1630] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1631]:
+                    - link "parent" [ref=f1e1632] [cursor=pointer]:
+                      - /url: "#oko4w3r"
+                  - listitem [ref=f1e1633]:
+                    - link "report" [ref=f1e1634] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1635]:
+                    - link "reply" [ref=f1e1636] [cursor=pointer]:
+                      - /url: javascript:void(0)
+            - generic [ref=f1e1637]:
+              - paragraph
+              - generic [ref=f1e1638]:
+                - button "upvote" [ref=f1e1639] [cursor=pointer]
+                - button "downvote" [ref=f1e1640] [cursor=pointer]
+              - generic [ref=f1e1641]:
+                - paragraph [ref=f1e1642]:
+                  - link "[–]" [ref=f1e1643] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Electronic-Milk-911" [ref=f1e1644] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Electronic-Milk-911
+                  - text: 4 points
+                  - time [ref=f1e1645]: 2 months ago
+                - paragraph [ref=f1e1649]:
+                  - link "<image>" [ref=f1e1650] [cursor=pointer]:
+                    - /url: https://preview.redd.it/8qeu78ut0yzg1.jpeg?width=1645&format=pjpg&auto=webp&s=111ac50ab01fb4a405af1c10a03348a55581373b
+                - list [ref=f1e1651]:
+                  - listitem [ref=f1e1652]:
+                    - link "permalink" [ref=f1e1653] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko510l/
+                  - listitem [ref=f1e1654]:
+                    - link "embed" [ref=f1e1655] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1656]:
+                    - link "save" [ref=f1e1657] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1658]:
+                    - link "parent" [ref=f1e1659] [cursor=pointer]:
+                      - /url: "#oko4w3r"
+                  - listitem [ref=f1e1660]:
+                    - link "report" [ref=f1e1661] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1662]:
+                    - link "reply" [ref=f1e1663] [cursor=pointer]:
+                      - /url: javascript:void(0)
+        - generic [ref=f1e1664]:
+          - paragraph
+          - generic [ref=f1e1665]:
+            - button "upvote" [ref=f1e1666] [cursor=pointer]
+            - button "downvote" [ref=f1e1667] [cursor=pointer]
+          - generic [ref=f1e1668]:
+            - paragraph [ref=f1e1669]:
+              - link "[–]" [ref=f1e1670] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "sultrykitten90" [ref=f1e1671] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/sultrykitten90
+              - generic "Family Caregiver" [ref=f1e1672]
+              - text: 3 points
+              - time [ref=f1e1673]: 2 months ago
+            - generic [ref=f1e1676]:
+              - paragraph [ref=f1e1677]: With my eyeballs 👀🫩😂
+              - paragraph [ref=f1e1678]: Sorry, I keep them in a drawer where they're all labeled (AM or PM & what they're for) and make sure to have a backup in another drawer. Once we put the backup in the main drawer, I know to call in for a refill.
+              - paragraph [ref=f1e1679]: It's rudimentary but it works.
+              - paragraph [ref=f1e1680]: "Edit to add: we have two containers and the night before I set out pills for the next day for morning and night pills."
+            - list [ref=f1e1681]:
+              - listitem [ref=f1e1682]:
+                - link "permalink" [ref=f1e1683] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okojccp/
+              - listitem [ref=f1e1684]:
+                - link "embed" [ref=f1e1685] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1686]:
+                - link "save" [ref=f1e1687] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1688]:
+                - link "report" [ref=f1e1689] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1690]:
+                - link "reply" [ref=f1e1691] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1692]:
+          - paragraph
+          - generic [ref=f1e1693]:
+            - button "upvote" [ref=f1e1694] [cursor=pointer]
+            - button "downvote" [ref=f1e1695] [cursor=pointer]
+          - generic [ref=f1e1696]:
+            - paragraph [ref=f1e1697]:
+              - link "[–]" [ref=f1e1698] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Gleeful_Robot" [ref=f1e1699] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Gleeful_Robot
+              - text: 2 points
+              - time [ref=f1e1700]: 2 months ago
+              - time [ref=f1e1701]: "*"
+            - generic [ref=f1e1704]:
+              - paragraph [ref=f1e1705]: Have you used the Medisafe tracker app? It allows you to create multiple profiles with notification reminders for all of them. You can toggle between different profiles. It's great if you need phone reminders and tracking. You can mirror the app on 2 different phones by setting them up with the same login on both phones. Edit - tho I'm not sure if you can silence one profile's notification only on the 2nd phone.
+              - paragraph [ref=f1e1706]: Also, Walmart sells the tiny little pill sized ziploc style pouches, they're like $2 bucks for 50 (search for pill bags or pill pouches). You can fill each bag with meds/supplements, time and date them (eg Monday, 5/15/26 @ 8 am, Monday 5/15/26 @ 8 pm) with a sharpie and organize them in a small trays, one for AM and one for PM, dollar tree has all sorts of sized trays that can work for this, instead of the pharmacy pill packs. An empty pouch means they were taken. I usually set out that day's pouches on the table to better keep track. I like the pharmacy pill pack idea however my parents doctors frequently change or add meds and supplements, so I would have to rip thru all the pouches to reconfigure everything anyway, this system is a more flexible DIY option.
+            - list [ref=f1e1707]:
+              - listitem [ref=f1e1708]:
+                - link "permalink" [ref=f1e1709] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko0uj8/
+              - listitem [ref=f1e1710]:
+                - link "embed" [ref=f1e1711] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1712]:
+                - link "save" [ref=f1e1713] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1714]:
+                - link "report" [ref=f1e1715] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1716]:
+                - link "reply" [ref=f1e1717] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1720]:
+            - paragraph
+            - generic [ref=f1e1721]:
+              - button "upvote" [ref=f1e1722] [cursor=pointer]
+              - button "downvote" [ref=f1e1723] [cursor=pointer]
+            - generic [ref=f1e1724]:
+              - paragraph [ref=f1e1725]:
+                - link "[–]" [ref=f1e1726] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e1727] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e1728]:
+                  - text: "["
+                  - link "S" [ref=f1e1729] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 4 points
+                - time [ref=f1e1730]: 2 months ago
+              - generic [ref=f1e1733]:
+                - paragraph [ref=f1e1734]: This is an interesting hybrid — pharmacy pill pack works for stable regimens but breaks the moment a doctor changes anything, which is the actual reality of caring for parents. The DIY pouches with dates solve that elegantly. Real flexibility tradeoff.
+                - paragraph [ref=f1e1735]: Quick question on Medisafe, does the multi-profile thing actually work well for caregivers in practice? My understanding is most med-tracker apps treat "caregiver mode" as an afterthought, but you're saying it toggles cleanly between profiles?
+              - list [ref=f1e1736]:
+                - listitem [ref=f1e1737]:
+                  - link "permalink" [ref=f1e1738] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko1gqu/
+                - listitem [ref=f1e1739]:
+                  - link "embed" [ref=f1e1740] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1741]:
+                  - link "save" [ref=f1e1742] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1743]:
+                  - link "parent" [ref=f1e1744] [cursor=pointer]:
+                    - /url: "#oko0uj8"
+                - listitem [ref=f1e1745]:
+                  - link "report" [ref=f1e1746] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1747]:
+                  - link "reply" [ref=f1e1748] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e1751]:
+              - paragraph
+              - generic [ref=f1e1752]:
+                - button "upvote" [ref=f1e1753] [cursor=pointer]
+                - button "downvote" [ref=f1e1754] [cursor=pointer]
+              - generic [ref=f1e1755]:
+                - paragraph [ref=f1e1756]:
+                  - link "[–]" [ref=f1e1757] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Gleeful_Robot" [ref=f1e1758] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Gleeful_Robot
+                  - text: 2 points
+                  - time [ref=f1e1759]: 2 months ago
+                - paragraph [ref=f1e1763]: Yes it toggles cleanly between profiles. The additional profiles are set up as dependents but are separate. It also can track refill reminders, medical appointments reminders and track health metrics. It gives progress reports and has a drug interaction alert. As an alternative, you can also set it up separately and have the tracker alert the caregiver if a dose was missed. The app is free, with some capabilities offered in the paid version, I find the free version is sufficient.
+                - list [ref=f1e1764]:
+                  - listitem [ref=f1e1765]:
+                    - link "permalink" [ref=f1e1766] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko4f66/
+                  - listitem [ref=f1e1767]:
+                    - link "embed" [ref=f1e1768] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1769]:
+                    - link "save" [ref=f1e1770] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1771]:
+                    - link "parent" [ref=f1e1772] [cursor=pointer]:
+                      - /url: "#oko1gqu"
+                  - listitem [ref=f1e1773]:
+                    - link "report" [ref=f1e1774] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1775]:
+                    - link "reply" [ref=f1e1776] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e1779]:
+                - paragraph
+                - generic [ref=f1e1780]:
+                  - button "upvote" [ref=f1e1781] [cursor=pointer]
+                  - button "downvote" [ref=f1e1782] [cursor=pointer]
+                - generic [ref=f1e1783]:
+                  - paragraph [ref=f1e1784]:
+                    - link "[–]" [ref=f1e1785] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "Greysawpark" [ref=f1e1786] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/Greysawpark
+                    - generic [ref=f1e1787]:
+                      - text: "["
+                      - link "S" [ref=f1e1788] [cursor=pointer]:
+                        - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                      - text: "]"
+                    - text: 2 points
+                    - time [ref=f1e1789]: 2 months ago
+                  - paragraph [ref=f1e1793]: Interesting, will have to check it out. Thank you.
+                  - list [ref=f1e1794]:
+                    - listitem [ref=f1e1795]:
+                      - link "permalink" [ref=f1e1796] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko7onc/
+                    - listitem [ref=f1e1797]:
+                      - link "embed" [ref=f1e1798] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1799]:
+                      - link "save" [ref=f1e1800] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1801]:
+                      - link "parent" [ref=f1e1802] [cursor=pointer]:
+                        - /url: "#oko4f66"
+                    - listitem [ref=f1e1803]:
+                      - link "report" [ref=f1e1804] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1805]:
+                      - link "reply" [ref=f1e1806] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e1807]:
+          - paragraph
+          - generic [ref=f1e1808]:
+            - button "upvote" [ref=f1e1809] [cursor=pointer]
+            - button "downvote" [ref=f1e1810] [cursor=pointer]
+          - generic [ref=f1e1811]:
+            - paragraph [ref=f1e1812]:
+              - link "[–]" [ref=f1e1813] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "buxzythebeeeeeeee" [ref=f1e1814] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/buxzythebeeeeeeee
+              - text: 2 points
+              - time [ref=f1e1815]: 2 months ago
+            - paragraph [ref=f1e1819]: Hi, sorry to be suspicious, but are you a real person? This is a 6 year old account with very low karma that only became active again less than a month ago. Pill organizing is one of the most market researched questions in this subreddit and this post looks pretty much identical in formatting and wording to every other (generative ai) version of this exact same question the sub has received.
+            - list [ref=f1e1820]:
+              - listitem [ref=f1e1821]:
+                - link "permalink" [ref=f1e1822] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko6xkd/
+              - listitem [ref=f1e1823]:
+                - link "embed" [ref=f1e1824] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1825]:
+                - link "save" [ref=f1e1826] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1827]:
+                - link "report" [ref=f1e1828] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1829]:
+                - link "reply" [ref=f1e1830] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e1833]:
+            - paragraph
+            - generic [ref=f1e1834]:
+              - button "upvote" [ref=f1e1835] [cursor=pointer]
+              - button "downvote" [ref=f1e1836] [cursor=pointer]
+            - generic [ref=f1e1837]:
+              - paragraph [ref=f1e1838]:
+                - link "[–]" [ref=f1e1839] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e1840] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e1841]:
+                  - text: "["
+                  - link "S" [ref=f1e1842] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 2 points
+                - time [ref=f1e1843]: 2 months ago
+              - paragraph [ref=f1e1847]: Last time I checked. While I have been on reddit for awhile, I have not typically used it. But I always appreciate being called a robot :P
+              - list [ref=f1e1848]:
+                - listitem [ref=f1e1849]:
+                  - link "permalink" [ref=f1e1850] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oko7h6a/
+                - listitem [ref=f1e1851]:
+                  - link "embed" [ref=f1e1852] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1853]:
+                  - link "save" [ref=f1e1854] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1855]:
+                  - link "parent" [ref=f1e1856] [cursor=pointer]:
+                    - /url: "#oko6xkd"
+                - listitem [ref=f1e1857]:
+                  - link "report" [ref=f1e1858] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e1859]:
+                  - link "reply" [ref=f1e1860] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e1863]:
+              - paragraph
+              - generic [ref=f1e1864]:
+                - button "upvote" [ref=f1e1865] [cursor=pointer]
+                - button "downvote" [ref=f1e1866] [cursor=pointer]
+              - generic [ref=f1e1867]:
+                - paragraph [ref=f1e1868]:
+                  - link "[–]" [ref=f1e1869] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "buxzythebeeeeeeee" [ref=f1e1870] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/buxzythebeeeeeeee
+                  - text: 2 points
+                  - time [ref=f1e1871]: 2 months ago
+                  - time [ref=f1e1872]: "*"
+                - generic [ref=f1e1875]:
+                  - paragraph [ref=f1e1876]: "I can see I'm being too subtle. I'll try again: are you doing market research for an app? Because this post looks just like every other market research post I've seen in this sub by someone claiming they're developing an app."
+                  - paragraph [ref=f1e1877]: Your profile isn't even hidden so it's easy to check that after a handful of comments on one subreddit in January and February 2020 there was nothing until the end of April this year when the account suddenly came back to life with a lot of (generative ai looking) posting/commenting that often looks just like market research for various apps. And what do you know? You have posts/comments about using AI and creating apps (using AI).
+                  - paragraph [ref=f1e1878]: So you can see why I might not be entirely persuaded that this post is in good faith.
+                  - paragraph [ref=f1e1879]: "ETA: so the coward blocked me and made his account private lol. So weird that he would do that today after having it public for six years. I guess that answers my question about whether he's a app developer using this sub for market research."
+                  - paragraph [ref=f1e1880]:
+                    - text: "ETA2: This is a reply to the comment from"
+                    - link "u/GlenParkDeb" [ref=f1e1881] [cursor=pointer]:
+                      - /url: /u/GlenParkDeb
+                    - text: "below since being blocked means I can't directly reply:"
+                  - paragraph [ref=f1e1882]: My issue is I'm sick of people pretending they are caregivers and coming into the sub to post the exact same chatgpt generated (or whatever) market research questions because they see a potential audience for a vibecoded apps no one wants.
+                  - paragraph [ref=f1e1883]: Doing market research in this sub is against the rules. Using AI to generate posts or comments is against the rules.
+                  - paragraph [ref=f1e1884]:
+                    - text: The questions OP asked get asked in the sub
+                    - emphasis [ref=f1e1885]: all the time.
+                    - text: "I saw a completely different user post essentially the same question in essentially the same AI written way (Title:"
+                    - emphasis [ref=f1e1886]: What actually works for tracking meds and routines in elderly care?
+                    - text: ) just an hour or so ago that the reddit filters removed.
+                  - paragraph [ref=f1e1887]:
+                    - text: We're not here to help fake developers develop fake apps. This sub is supposed to be a place for
+                    - emphasis [ref=f1e1888]: caregivers
+                    - text: NOT the people who see us as a resource to be exploited.
+                - list [ref=f1e1889]:
+                  - listitem [ref=f1e1890]:
+                    - link "permalink" [ref=f1e1891] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okojcwv/
+                  - listitem [ref=f1e1892]:
+                    - link "embed" [ref=f1e1893] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1894]:
+                    - link "save" [ref=f1e1895] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1896]:
+                    - link "parent" [ref=f1e1897] [cursor=pointer]:
+                      - /url: "#oko7h6a"
+                  - listitem [ref=f1e1898]:
+                    - link "report" [ref=f1e1899] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e1900]:
+                    - link "reply" [ref=f1e1901] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e1904]:
+                - paragraph
+                - generic [ref=f1e1905]:
+                  - button "upvote" [ref=f1e1906] [cursor=pointer]
+                  - button "downvote" [ref=f1e1907] [cursor=pointer]
+                - generic [ref=f1e1908]:
+                  - paragraph [ref=f1e1909]:
+                    - link "[–]" [ref=f1e1910] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "GlenParkDeb" [ref=f1e1911] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/GlenParkDeb
+                    - text: 0 points
+                    - time [ref=f1e1912]: 2 months ago
+                  - paragraph [ref=f1e1916]: Is your real issue that they weren't upfront about their intentions? Honestly - this is a great resource for folks to find out what care givers need.
+                  - list [ref=f1e1917]:
+                    - listitem [ref=f1e1918]:
+                      - link "permalink" [ref=f1e1919] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okpo0xs/
+                    - listitem [ref=f1e1920]:
+                      - link "embed" [ref=f1e1921] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1922]:
+                      - link "save" [ref=f1e1923] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1924]:
+                      - link "parent" [ref=f1e1925] [cursor=pointer]:
+                        - /url: "#okojcwv"
+                    - listitem [ref=f1e1926]:
+                      - link "report" [ref=f1e1927] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e1928]:
+                      - link "reply" [ref=f1e1929] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e1930]:
+          - paragraph
+          - generic [ref=f1e1931]:
+            - button "upvote" [ref=f1e1932] [cursor=pointer]
+            - button "downvote" [ref=f1e1933] [cursor=pointer]
+          - generic [ref=f1e1934]:
+            - paragraph [ref=f1e1935]:
+              - link "[–]" [ref=f1e1936] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "youlexa" [ref=f1e1937] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/youlexa
+              - text: 1 point
+              - time [ref=f1e1938]: 2 months ago
+            - paragraph [ref=f1e1942]: what would a working tool for the "me and her separately, with shared visibility" look like?
+            - list [ref=f1e1943]:
+              - listitem [ref=f1e1944]:
+                - link "permalink" [ref=f1e1945] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okozn7o/
+              - listitem [ref=f1e1946]:
+                - link "embed" [ref=f1e1947] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1948]:
+                - link "save" [ref=f1e1949] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1950]:
+                - link "report" [ref=f1e1951] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1952]:
+                - link "reply" [ref=f1e1953] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1954]:
+          - paragraph
+          - generic [ref=f1e1955]:
+            - button "upvote" [ref=f1e1956] [cursor=pointer]
+            - button "downvote" [ref=f1e1957] [cursor=pointer]
+          - generic [ref=f1e1958]:
+            - paragraph [ref=f1e1959]:
+              - link "[–]" [ref=f1e1960] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "GlenParkDeb" [ref=f1e1961] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/GlenParkDeb
+              - text: 1 point
+              - time [ref=f1e1962]: 2 months ago
+              - time [ref=f1e1963]: "*"
+            - generic [ref=f1e1966]:
+              - paragraph [ref=f1e1967]: I've tried all sorts of ways to help my mom remember to take her morning and evening pills. We now use this, with amazing results. Even her care companions who visit 3x a week are starting to recommend to their other clients.
+              - paragraph [ref=f1e1968]: It does not guarantee the pills are swallowed. But it does guarantee to be a very loud and visual nuisance until the pills are removed from the device. Setting the clock and alarms take some patience, and is 100% worth it.
+              - paragraph [ref=f1e1969]: "Edit to add: Both the pill dispensing area and the alarm area are locked and need a special key. And mom and I call this device \"The Pill Boss.\" We have 2 of them."
+              - paragraph [ref=f1e1970]:
+                - link "https://a.co/d/0gWeAhvB" [ref=f1e1971] [cursor=pointer]:
+                  - /url: https://a.co/d/0gWeAhvB
+            - list [ref=f1e1972]:
+              - listitem [ref=f1e1973]:
+                - link "permalink" [ref=f1e1974] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okpm9ms/
+              - listitem [ref=f1e1975]:
+                - link "embed" [ref=f1e1976] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1977]:
+                - link "save" [ref=f1e1978] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1979]:
+                - link "report" [ref=f1e1980] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e1981]:
+                - link "reply" [ref=f1e1982] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e1983]:
+          - paragraph
+          - generic [ref=f1e1984]:
+            - button "upvote" [ref=f1e1985] [cursor=pointer]
+            - button "downvote" [ref=f1e1986] [cursor=pointer]
+          - generic [ref=f1e1987]:
+            - paragraph [ref=f1e1988]:
+              - link "[–]" [ref=f1e1989] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Top-While-4071" [ref=f1e1990] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Top-While-4071
+              - text: 1 point
+              - time [ref=f1e1991]: 2 months ago
+            - generic [ref=f1e1994]:
+              - paragraph [ref=f1e1995]: "What worked for us: I built something specifically around this which is a shared circle where multiple family members can see the same medication list, log adherence, and get reminders. Each med has its own entry with dosage, route, purpose, and schedule. You can assign reminder targets so one sibling gets pinged for morning meds, another for evening."
+              - paragraph [ref=f1e1996]: It's called CareCircle (carecircle.network) and I made it because I had the same chaos with my mum's meds across WhatsApp groups with my siblings and a notes app. Free to start if you want to try it. That said, @Successful_Tax's paper-on-the-wall system is genuinely underrated for solo caregivers who are physically present.
+              - paragraph [ref=f1e1997]: The app is more useful when there are multiple people involved who aren't in the same house.
+            - list [ref=f1e1998]:
+              - listitem [ref=f1e1999]:
+                - link "permalink" [ref=f1e2000] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okpxttz/
+              - listitem [ref=f1e2001]:
+                - link "embed" [ref=f1e2002] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2003]:
+                - link "save" [ref=f1e2004] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2005]:
+                - link "report" [ref=f1e2006] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2007]:
+                - link "reply" [ref=f1e2008] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e2009]:
+          - paragraph
+          - generic [ref=f1e2010]:
+            - button "upvote" [ref=f1e2011] [cursor=pointer]
+            - button "downvote" [ref=f1e2012] [cursor=pointer]
+          - generic [ref=f1e2013]:
+            - paragraph [ref=f1e2014]:
+              - link "[–]" [ref=f1e2015] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Formertchr" [ref=f1e2016] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Formertchr
+              - text: 1 point
+              - time [ref=f1e2017]: 2 months ago
+            - paragraph [ref=f1e2021]: My mom is in an assisted living now but when I did them they were in Ziploc bags with the number of pills labeled on it, the date and time. They were laid out in chronological order on her dresser.
+            - list [ref=f1e2022]:
+              - listitem [ref=f1e2023]:
+                - link "permalink" [ref=f1e2024] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/okr1mg4/
+              - listitem [ref=f1e2025]:
+                - link "embed" [ref=f1e2026] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2027]:
+                - link "save" [ref=f1e2028] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2029]:
+                - link "report" [ref=f1e2030] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2031]:
+                - link "reply" [ref=f1e2032] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e2033]:
+          - paragraph
+          - generic [ref=f1e2034]:
+            - button "upvote" [ref=f1e2035] [cursor=pointer]
+            - button "downvote" [ref=f1e2036] [cursor=pointer]
+          - generic [ref=f1e2037]:
+            - paragraph [ref=f1e2038]:
+              - link "[–]" [ref=f1e2039] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "FruityLegume" [ref=f1e2040] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/FruityLegume
+              - text: 1 point
+              - time [ref=f1e2041]: 2 months ago
+            - generic [ref=f1e2044]:
+              - paragraph [ref=f1e2045]: The way that works best for us is prepping the meds ahead of time. I guess it's similar to just using a am/pm pill holder thing.
+              - paragraph [ref=f1e2046]: I bought a few packs of tiny Tupperware type cups. I wrote the day of the week and the time of day on the white lids "MON AM" "WED PM" etc. and then I set them in order in a basket. A stack for each day. PM on the bottom AM on the top.
+              - paragraph [ref=f1e2047]: He takes his meds like that. It's obvious if they've been taken or not. He has a second basket he throws the containers into after they're taken and then I fill them back up once a week.
+            - list [ref=f1e2048]:
+              - listitem [ref=f1e2049]:
+                - link "permalink" [ref=f1e2050] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/ol4ll1m/
+              - listitem [ref=f1e2051]:
+                - link "embed" [ref=f1e2052] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2053]:
+                - link "save" [ref=f1e2054] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2055]:
+                - link "report" [ref=f1e2056] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2057]:
+                - link "reply" [ref=f1e2058] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e2059]:
+          - paragraph
+          - generic [ref=f1e2060]:
+            - paragraph [ref=f1e2061]:
+              - link "[–]" [ref=f1e2062] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - emphasis [ref=f1e2063]: "[deleted]"
+              - time [ref=f1e2064]: 1 month ago
+            - paragraph [ref=f1e2068]: "[removed]"
+            - list
+          - generic [ref=f1e2071]:
+            - paragraph
+            - generic [ref=f1e2072]:
+              - button "upvote" [ref=f1e2073] [cursor=pointer]
+              - button "downvote" [ref=f1e2074] [cursor=pointer]
+            - generic [ref=f1e2075]:
+              - paragraph [ref=f1e2076]:
+                - link "[–]" [ref=f1e2077] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Greysawpark" [ref=f1e2078] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Greysawpark
+                - generic [ref=f1e2079]:
+                  - text: "["
+                  - link "S" [ref=f1e2080] [cursor=pointer]:
+                    - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                  - text: "]"
+                - text: 1 point
+                - time [ref=f1e2081]: 1 month ago
+              - paragraph [ref=f1e2085]: I started using Basic Intake which was recommended in this thread. And I actually think its pretty awesome. I appreciate the pitch here, but the first turn-off for me is it looks like it was designed by AI.
+              - list [ref=f1e2086]:
+                - listitem [ref=f1e2087]:
+                  - link "permalink" [ref=f1e2088] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/ookh2vc/
+                - listitem [ref=f1e2089]:
+                  - link "embed" [ref=f1e2090] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2091]:
+                  - link "save" [ref=f1e2092] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2093]:
+                  - link "report" [ref=f1e2094] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2095]:
+                  - link "reply" [ref=f1e2096] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f1e2097]:
+          - paragraph
+          - generic [ref=f1e2098]:
+            - button "upvote" [ref=f1e2099] [cursor=pointer]
+            - button "downvote" [ref=f1e2100] [cursor=pointer]
+          - generic [ref=f1e2101]:
+            - paragraph [ref=f1e2102]:
+              - link "[–]" [ref=f1e2103] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "zivtzi" [ref=f1e2104] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/zivtzi
+              - generic "Family Caregiver" [ref=f1e2105]
+              - text: 1 point
+              - time [ref=f1e2106]: 1 month ago
+            - generic [ref=f1e2109]:
+              - paragraph [ref=f1e2110]: Hey, Ziv here. I've been the case manager for my mom (MS+dementia+random issues every week) for the past 4 years. 4 years of worrying. It's heartbreaking ❤️‍🩹 My parents live 2.5 hours commute away from me and I insist on visiting them at least once a week. I made myself the habit of organizing my mom's meds in pill organizers for 4 weeks in advance, whenever possible, so i don't have to worry about it so much.
+              - paragraph [ref=f1e2111]: "I got to a system that used to work point: i had her meds listed in a Google Doc together with names, dose, alternative names (\"Fampridine/Fampyra\"), context (\"For stability\") so I know which med does what, etc., split into morning+evenings list. For meds taken more than once a day, i added \"Add this to the evening slot as well!\" in red, and in the evening list that same med said \"You probably already added it to the pill organizer\"."
+              - paragraph [ref=f1e2112]: I have all the meds in a big bag so i can grab it, organize them in the pill organizer, and put it back in the closet. When organizing meds in advance I lay out all the meds in front of me in a row, and go med by med and fill the relevant slots. Meds I'm done with go back in the bag so I know what's left.
+              - paragraph [ref=f1e2113]: I usually get the meds for as many weeks ahead as I can (up to 3 months usually) so A) I don't have to worry about restocking so often); and 😎 I can always see how many I have left. For B, that's exactly why i use a rubberband to group med boxes of the same type together – so while filling i can estimate if it's about to run out before the next pill organizer fill.
+              - paragraph [ref=f1e2114]: When I see (on time! During filling) a med is about to run out I add a "Restock meds X, Y, and Z" to my phone's Reminders app together with day+time reminder, and also a location reminder for whenever I'm near the pharmacy.
+              - paragraph [ref=f1e2115]: Again doing it 4 weeks in advance means I need to do it less often, restock meds less often, etc., which allows me to focus on time with my parents when i visit, instead of wasting so much time on every visit.
+              - paragraph [ref=f1e2116]: I'm super experienced with filling my mom's meds into the organizer, and it still takes me ~45 minutes (but "just" once a month), and causes a lot of stress.
+              - paragraph [ref=f1e2117]: It got wayyyyyyyy more complicated when life circumstances prevented me from visiting my parents for a few weeks. That's when my older brother visited them to do it instead of me. Needless to say, as much as my list is super organized, he called me every two minutes to ask questions so I basically did it with him over the phone.
+              - paragraph [ref=f1e2118]:
+                - text: "So to summarize, a few tips that worked for me: an organized Google Docs file you keep updating (and able to share with others if needed), grouping med boxes with rubber band, having them be stored in one bag (read the med instructions first! Some need to be stored in the fridge for example), laying them in a row in front of you when filling, go med-by-med instead of day-by-day, put them back in the bag when you're done with each, and mainly set a reminder to restock meds when you see they run out"
+                - emphasis [ref=f1e2119]: before
+                - text: the next fill!
+              - paragraph [ref=f1e2120]: In the past few weeks I've been working on an iOS app that'll help me manage my mom's meds list and have clear instructions on how to fill the pill organizer. And get reminders to fill+restock meds. One thing I'm planning to add down the road is the ability to share the list+instructions with someone you trust so they can help organizing it – that brother situation is exactly why. LMK if it sounds helpful, happy to share a link if that's okay with the mods.
+              - paragraph [ref=f1e2121]: One thing I'd mention is that using a pill organizer also helps me "catch" when they forget to take the meds. I feel like there's only so much I can do. I can't track whether or not they're taking their meds on a daily basis so had to let go. But having the meds organized in a pill organizer(s) mean i can see which slots are still empty for past weeks. Forgetting once or twice a month makes sense (bad, but it can happen). There were a few weeks when I "caught" them not taking the meds because of reasons, and sat them down for a talk as if I was the parent 🤔😂
+              - paragraph [ref=f1e2122]: Anyways hope these help.
+            - list [ref=f1e2123]:
+              - listitem [ref=f1e2124]:
+                - link "permalink" [ref=f1e2125] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/osclw4f/
+              - listitem [ref=f1e2126]:
+                - link "embed" [ref=f1e2127] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2128]:
+                - link "save" [ref=f1e2129] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2130]:
+                - link "report" [ref=f1e2131] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2132]:
+                - link "reply" [ref=f1e2133] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f1e2136]:
+            - paragraph
+            - generic [ref=f1e2137]:
+              - button "upvote" [ref=f1e2138] [cursor=pointer]
+              - button "downvote" [ref=f1e2139] [cursor=pointer]
+            - generic [ref=f1e2140]:
+              - paragraph [ref=f1e2141]:
+                - link "[–]" [ref=f1e2142] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "zivtzi" [ref=f1e2143] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/zivtzi
+                - generic "Family Caregiver" [ref=f1e2144]
+                - text: 1 point
+                - time [ref=f1e2145]: 1 month ago
+              - generic [ref=f1e2148]:
+                - paragraph [ref=f1e2149]: Attaching a screenshot of the shared doc I created to keep track, hope the format helps someone
+                - paragraph [ref=f1e2150]:
+                  - link "<image>" [ref=f1e2151] [cursor=pointer]:
+                    - /url: https://preview.redd.it/gdnczwjxi08h1.png?width=1018&format=png&auto=webp&s=ab331901921a87bfc835ae0515213d8f5432f360
+              - list [ref=f1e2152]:
+                - listitem [ref=f1e2153]:
+                  - link "permalink" [ref=f1e2154] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oscmjre/
+                - listitem [ref=f1e2155]:
+                  - link "embed" [ref=f1e2156] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2157]:
+                  - link "save" [ref=f1e2158] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2159]:
+                  - link "parent" [ref=f1e2160] [cursor=pointer]:
+                    - /url: "#osclw4f"
+                - listitem [ref=f1e2161]:
+                  - link "report" [ref=f1e2162] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f1e2163]:
+                  - link "reply" [ref=f1e2164] [cursor=pointer]:
+                    - /url: javascript:void(0)
+            - generic [ref=f1e2167]:
+              - paragraph
+              - generic [ref=f1e2168]:
+                - button "upvote" [ref=f1e2169] [cursor=pointer]
+                - button "downvote" [ref=f1e2170] [cursor=pointer]
+              - generic [ref=f1e2171]:
+                - paragraph [ref=f1e2172]:
+                  - link "[–]" [ref=f1e2173] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                  - link "Greysawpark" [ref=f1e2174] [cursor=pointer]:
+                    - /url: https://old.reddit.com/user/Greysawpark
+                  - generic [ref=f1e2175]:
+                    - text: "["
+                    - link "S" [ref=f1e2176] [cursor=pointer]:
+                      - /url: /r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/
+                    - text: "]"
+                  - text: 1 point
+                  - time [ref=f1e2177]: 1 month ago
+                - generic [ref=f1e2180]:
+                  - paragraph [ref=f1e2181]: Ziv, your setup is more organized than most pharmacies, genuinely.
+                  - paragraph [ref=f1e2182]: "Funny timing that you're building an app for this. I'm pretty sure Basic Intake came up earlier in this thread, and I've been using it for my own situation since. I really like it. It does the core of what you're describing already: the full med list with doses and the \"what is this one even for\" notes, plus reminders. It handles the meds you take more than once a day cleanly, so none of the red-text workarounds you're doing in the doc. Easily the most intuitive one I've tried, and it didn't make me create an account or learn a whole system first."
+                  - paragraph [ref=f1e2183]: "I'll be honest about the one gap: it doesn't do the share-with-someone-you-trust piece yet, which is exactly the brother problem you called out, so you may still have a reason to build. But for the daily organizing and never-running-out part, it might save you a ton of time. Could be worth a look before you sink months in."
+                - list [ref=f1e2184]:
+                  - listitem [ref=f1e2185]:
+                    - link "permalink" [ref=f1e2186] [cursor=pointer]:
+                      - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/osl7erp/
+                  - listitem [ref=f1e2187]:
+                    - link "embed" [ref=f1e2188] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e2189]:
+                    - link "save" [ref=f1e2190] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e2191]:
+                    - link "parent" [ref=f1e2192] [cursor=pointer]:
+                      - /url: "#oscmjre"
+                  - listitem [ref=f1e2193]:
+                    - link "report" [ref=f1e2194] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                  - listitem [ref=f1e2195]:
+                    - link "reply" [ref=f1e2196] [cursor=pointer]:
+                      - /url: javascript:void(0)
+              - generic [ref=f1e2199]:
+                - paragraph
+                - generic [ref=f1e2200]:
+                  - button "upvote" [ref=f1e2201] [cursor=pointer]
+                  - button "downvote" [ref=f1e2202] [cursor=pointer]
+                - generic [ref=f1e2203]:
+                  - paragraph [ref=f1e2204]:
+                    - link "[–]" [ref=f1e2205] [cursor=pointer]:
+                      - /url: javascript:void(0)
+                    - link "zivtzi" [ref=f1e2206] [cursor=pointer]:
+                      - /url: https://old.reddit.com/user/zivtzi
+                    - generic "Family Caregiver" [ref=f1e2207]
+                    - text: 0 points
+                    - time [ref=f1e2208]: 1 month ago
+                  - paragraph [ref=f1e2212]:
+                    - text: Thanks! I first and foremost built the app for filling the pill organizer with multiple meds. I’ve made mistakes in the past myself though I’m super experienced and focused (and organized 😊) and having that situation with my brother pushed me to give it a try. I don’t focus on med reminders (at least for now), as there are many many great apps out there that do just that, but rather on filling a pill organizer, which for me was a stressful task now made a tiny bit easier. My app is already available on the App Store, building it was part of a goal I set for myself to solve a
+                    - emphasis [ref=f1e2213]: real
+                    - text: "problem using up-to-date tools (read: AI) while staying human and humble. Hopefully it’ll help someone else as well 🤞"
+                  - list [ref=f1e2214]:
+                    - listitem [ref=f1e2215]:
+                      - link "permalink" [ref=f1e2216] [cursor=pointer]:
+                        - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oslaqm7/
+                    - listitem [ref=f1e2217]:
+                      - link "embed" [ref=f1e2218] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e2219]:
+                      - link "save" [ref=f1e2220] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e2221]:
+                      - link "parent" [ref=f1e2222] [cursor=pointer]:
+                        - /url: "#osl7erp"
+                    - listitem [ref=f1e2223]:
+                      - link "report" [ref=f1e2224] [cursor=pointer]:
+                        - /url: javascript:void(0)
+                    - listitem [ref=f1e2225]:
+                      - link "reply" [ref=f1e2226] [cursor=pointer]:
+                        - /url: javascript:void(0)
+        - generic [ref=f1e2227]:
+          - paragraph
+          - generic [ref=f1e2228]:
+            - button "upvote" [ref=f1e2229] [cursor=pointer]
+            - button "downvote" [ref=f1e2230] [cursor=pointer]
+          - generic [ref=f1e2231]:
+            - paragraph [ref=f1e2232]:
+              - link "[–]" [ref=f1e2233] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "SwordAndScript" [ref=f1e2234] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/SwordAndScript
+              - text: 1 point
+              - time [ref=f1e2235]: 12 days ago
+            - generic [ref=f1e2238]:
+              - paragraph [ref=f1e2239]: Respect for lasting a year on this. I'm in year two with my grandmother and it took about six months to find something
+              - paragraph [ref=f1e2240]: that actually stuck.
+              - paragraph [ref=f1e2241]: "Here's what's held up for us:"
+              - paragraph [ref=f1e2242]: "The core: A shared Google Keep note with checkboxes. Two sections — one for her, one for me. Each section has AM /"
+              - paragraph [ref=f1e2243]: PM / Evening. Both of us can see and check off. That alone solved the "I don't know if she took them" problem.
+              - paragraph [ref=f1e2244]: "The trigger that made it stick: A $15 digital alarm clock in the kitchen — not phone alarms. Phone alarms get"
+              - paragraph [ref=f1e2245]: swiped. A loud clock across the room forces you to physically get up, and that movement triggers the "oh right, meds"
+              - paragraph [ref=f1e2246]: reflex.
+              - paragraph [ref=f1e2247]: "For two people: We use one 7-day AM/PM organizer with two rows — top row hers, bottom row mine. Lives next to the"
+              - paragraph [ref=f1e2248]: coffee maker, not in a cabinet. Visible = remembered.
+              - paragraph [ref=f1e2249]: "What I'd skip: Any app that requires your parent to learn a new interface. If it takes more than 10 seconds to"
+              - paragraph [ref=f1e2250]: log, they won't do it by week two.
+              - paragraph [ref=f1e2251]: We added a shared note for vitals later, but honestly just nailing the med routine first made everything else easier.
+              - paragraph [ref=f1e2252]: The habit has to come before the tool.
+            - list [ref=f1e2253]:
+              - listitem [ref=f1e2254]:
+                - link "permalink" [ref=f1e2255] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/ownlpdz/
+              - listitem [ref=f1e2256]:
+                - link "embed" [ref=f1e2257] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2258]:
+                - link "save" [ref=f1e2259] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2260]:
+                - link "report" [ref=f1e2261] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2262]:
+                - link "reply" [ref=f1e2263] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e2264]:
+          - paragraph
+          - generic [ref=f1e2265]:
+            - button "upvote" [ref=f1e2266] [cursor=pointer]
+            - button "downvote" [ref=f1e2267] [cursor=pointer]
+          - generic [ref=f1e2268]:
+            - paragraph [ref=f1e2269]:
+              - link "[–]" [ref=f1e2270] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "sandwich_gen_to" [ref=f1e2271] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/sandwich_gen_to
+              - text: 1 point
+              - time [ref=f1e2272]: 2 days ago
+            - generic [ref=f1e2275]:
+              - paragraph [ref=f1e2276]: I feel this so deeply. Caring for my dad here in Toronto, I hit an absolute breaking point trying to keep track of shifting prescriptions and dealing with fragmented ER or clinic visits. It's an invisible administrative chaos.
+              - paragraph [ref=f1e2277]: I realized paramedics and nurses don't want a mobile app; they just want a piece of paper. To save my own sanity, I made a strict 2-page offline tracker on my computer. Page 1 is emergency clinical identity and up-to-date vitals; Page 2 is an active medication grid with Refill alert. I can just print it out and hand it over to paramedic or ER doctors/nurses. It also sits right on our fridge so home care aides can see it instantly.
+              - paragraph [ref=f1e2278]: If you are drowning in the paperwork and want a copy of the layout to save yourself the time of building one from scratch, let me know. I put a basic free evaluation version online for families going through this.
+            - list [ref=f1e2279]:
+              - listitem [ref=f1e2280]:
+                - link "permalink" [ref=f1e2281] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/oymdb5l/
+              - listitem [ref=f1e2282]:
+                - link "embed" [ref=f1e2283] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2284]:
+                - link "save" [ref=f1e2285] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2286]:
+                - link "report" [ref=f1e2287] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2288]:
+                - link "reply" [ref=f1e2289] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f1e2290]:
+          - paragraph
+          - generic [ref=f1e2291]:
+            - button "upvote" [ref=f1e2292] [cursor=pointer]
+            - button "downvote" [ref=f1e2293] [cursor=pointer]
+          - generic [ref=f1e2294]:
+            - paragraph [ref=f1e2295]:
+              - link "[–]" [ref=f1e2296] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "AhrumanRx" [ref=f1e2297] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/AhrumanRx
+              - text: 0 points
+              - time [ref=f1e2298]: 13 days ago
+            - generic [ref=f1e2301]:
+              - paragraph [ref=f1e2302]:
+                - text: Hello! Not sure if you are still looking for something, but I recently just launched an app on iOS for something like this. My soon to be born daughter has HLHS, and its already a ton to manage with appts, doctors, conditions, etc. Once she gets here I know there will be so much more. The app is LivSync, you can check it out at
+                - link "livsyncapp.com" [ref=f1e2303] [cursor=pointer]:
+                  - /url: http://livsyncapp.com
+                - text: and the actual app at
+                - link "livsync.app" [ref=f1e2304] [cursor=pointer]:
+                  - /url: http://livsync.app
+              - paragraph [ref=f1e2305]: It allows you to create profiles for anyone you want/need to track, and you can track meds, symptoms, doctors, appointments, documents, get reminders etc all in one place. I also built in the ability to share profiles to anyone, with full customization so if you need someone else to know the meds someone you are caring for is taking, you can share just that info with them, and set a timeframe for how long they have access, and can revoke it at any time.
+              - paragraph [ref=f1e2306]: It may be a bit too robust for what you are needing, but if you are just tracking meds, it is still a solid tool I feel like!
+            - list [ref=f1e2307]:
+              - listitem [ref=f1e2308]:
+                - link "permalink" [ref=f1e2309] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/CaregiverSupport/comments/1t7boem/how_are_you_actually_keeping_track_of_your/owfjyyo/
+              - listitem [ref=f1e2310]:
+                - link "embed" [ref=f1e2311] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2312]:
+                - link "save" [ref=f1e2313] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2314]:
+                - link "report" [ref=f1e2315] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f1e2316]:
+                - link "reply" [ref=f1e2317] [cursor=pointer]:
+                  - /url: javascript:void(0)
+  - generic [ref=f1e2318]:
+    - generic [ref=f1e2319]:
+      - list [ref=f1e2321]:
+        - listitem [ref=f1e2322]: about
+        - listitem [ref=f1e2323]:
+          - link "blog" [ref=f1e2324] [cursor=pointer]:
+            - /url: https://redditblog.com
+        - listitem [ref=f1e2325]:
+          - link "about" [ref=f1e2326] [cursor=pointer]:
+            - /url: https://www.redditinc.com
+        - listitem [ref=f1e2327]:
+          - link "advertising" [ref=f1e2328] [cursor=pointer]:
+            - /url: https://www.redditinc.com/advertising
+        - listitem [ref=f1e2329]:
+          - link "careers" [ref=f1e2330] [cursor=pointer]:
+            - /url: https://www.redditinc.com/careers
+      - list [ref=f1e2332]:
+        - listitem [ref=f1e2333]: help
+        - listitem [ref=f1e2334]:
+          - link "site rules" [ref=f1e2335] [cursor=pointer]:
+            - /url: https://old.reddit.com/rules/
+        - listitem [ref=f1e2336]:
+          - link "Reddit help center" [ref=f1e2337] [cursor=pointer]:
+            - /url: https://www.reddithelp.com
+        - listitem [ref=f1e2338]:
+          - link "reddiquette" [ref=f1e2339] [cursor=pointer]:
+            - /url: https://old.reddit.com/wiki/reddiquette/
+        - listitem [ref=f1e2340]:
+          - link "mod guidelines" [ref=f1e2341] [cursor=pointer]:
+            - /url: https://old.reddit.com/help/healthycommunities/
+        - listitem [ref=f1e2342]:
+          - link "contact us" [ref=f1e2343] [cursor=pointer]:
+            - /url: https://old.reddit.com/contact/
+      - list [ref=f1e2345]:
+        - listitem [ref=f1e2346]: apps & tools
+        - listitem [ref=f1e2347]:
+          - link "Reddit for iPhone" [ref=f1e2348] [cursor=pointer]:
+            - /url: https://itunes.apple.com/us/app/reddit-the-official-app/id1064216828?mt=8
+        - listitem [ref=f1e2349]:
+          - link "Reddit for Android" [ref=f1e2350] [cursor=pointer]:
+            - /url: https://play.google.com/store/apps/details?id=com.reddit.frontpage
+        - listitem [ref=f1e2351]:
+          - link "mobile website" [ref=f1e2352] [cursor=pointer]:
+            - /url: "#"
+      - list [ref=f1e2354]:
+        - listitem [ref=f1e2355]: <3
+        - listitem [ref=f1e2356]:
+          - link "reddit premium" [ref=f1e2357] [cursor=pointer]:
+            - /url: https://old.reddit.com/premium/
+    - paragraph [ref=f1e2358]:
+      - text: Use of this site constitutes acceptance of our
+      - link "User Agreement" [ref=f1e2359] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/useragreement
+      - text: and
+      - link "Privacy Policy" [ref=f1e2360] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/privacypolicy
+      - text: . © 2026 reddit inc. All rights reserved.
+    - paragraph [ref=f1e2361]: REDDIT and the ALIEN Logo are registered trademarks of reddit inc.
+  - paragraph [ref=f1e2363]: π

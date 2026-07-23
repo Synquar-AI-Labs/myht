@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useMedicineSchedule, MedicineScheduleInsert } from '@/hooks/useMedicineSchedule';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil } from 'lucide-react';
 
 const MED_TYPES = ['Pain Killer', 'Pain Relief', 'Blood Thinner', 'Digestive', 'Anti-Nausea', 'Diabetes', 'Nerve Pain', 'Thyroid', 'Psych', 'Cancer', 'Vitamin', 'Antibiotic', 'Other'];
 const CATEGORIES = ['medicine', 'non-medicine'];
@@ -34,7 +33,7 @@ const emptyForm: MedicineScheduleInsert = {
 };
 
 export function MedicineScheduleTab() {
-  const { medicines, loading, addMedicine, updateMedicine, deleteMedicine } = useMedicineSchedule();
+  const { medicines, loading, addMedicine, updateMedicine } = useMedicineSchedule();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<MedicineScheduleInsert>(emptyForm);
@@ -51,17 +50,6 @@ export function MedicineScheduleTab() {
     if (editId) await updateMedicine(editId, form);
     else await addMedicine(form);
     setOpen(false);
-  };
-
-  const handleDelete = async (id: string, name: string) => {
-    const { count } = await supabase
-      .from('medicine_logs')
-      .select('*', { count: 'exact', head: true })
-      .eq('medicine_id', id);
-    const logWarning = count && count > 0
-      ? `\n\n⚠️ This medicine has ${count} existing log${count > 1 ? 's' : ''} that will lose their reference.`
-      : '';
-    if (confirm(`Delete "${name}"?${logWarning}`)) await deleteMedicine(id);
   };
 
   // Group by med_type
@@ -115,7 +103,6 @@ export function MedicineScheduleTab() {
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(med)}><Pencil className="h-3.5 w-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(med.id, med.name)}><Trash2 className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
             </Card>

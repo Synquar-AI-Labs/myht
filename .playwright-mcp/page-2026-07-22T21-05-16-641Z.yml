@@ -1,0 +1,620 @@
+- generic [active] [ref=f12e1]:
+  - banner [ref=f12e2]:
+    - link "jump to content" [ref=f12e3] [cursor=pointer]:
+      - /url: "#content"
+    - generic [ref=f12e5]:
+      - generic [ref=f12e6]: my subreddits
+      - generic [ref=f12e8]:
+        - list [ref=f12e9]:
+          - listitem [ref=f12e10]:
+            - link "popular" [ref=f12e11] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/popular/
+          - listitem [ref=f12e12]:
+            - text: "-"
+            - link "all" [ref=f12e13] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/all/
+          - listitem [ref=f12e14]:
+            - text: "-"
+            - link "users" [ref=f12e15] [cursor=pointer]:
+              - /url: https://old.reddit.com/users/
+        - text: "|"
+        - list [ref=f12e16]:
+          - listitem [ref=f12e17]:
+            - link "AskReddit" [ref=f12e18] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/AskReddit/
+          - listitem [ref=f12e19]:
+            - text: "-"
+            - link "pics" [ref=f12e20] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/pics/
+          - listitem [ref=f12e21]:
+            - text: "-"
+            - link "funny" [ref=f12e22] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/funny/
+          - listitem [ref=f12e23]:
+            - text: "-"
+            - link "movies" [ref=f12e24] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/movies/
+          - listitem [ref=f12e25]:
+            - text: "-"
+            - link "gaming" [ref=f12e26] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gaming/
+          - listitem [ref=f12e27]:
+            - text: "-"
+            - link "worldnews" [ref=f12e28] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/worldnews/
+          - listitem [ref=f12e29]:
+            - text: "-"
+            - link "news" [ref=f12e30] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/news/
+          - listitem [ref=f12e31]:
+            - text: "-"
+            - link "todayilearned" [ref=f12e32] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/todayilearned/
+          - listitem [ref=f12e33]:
+            - text: "-"
+            - link "nottheonion" [ref=f12e34] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nottheonion/
+          - listitem [ref=f12e35]:
+            - text: "-"
+            - link "explainlikeimfive" [ref=f12e36] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/explainlikeimfive/
+          - listitem [ref=f12e37]:
+            - text: "-"
+            - link "mildlyinteresting" [ref=f12e38] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/mildlyinteresting/
+          - listitem [ref=f12e39]:
+            - text: "-"
+            - link "DIY" [ref=f12e40] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/DIY/
+          - listitem [ref=f12e41]:
+            - text: "-"
+            - link "videos" [ref=f12e42] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/videos/
+          - listitem [ref=f12e43]:
+            - text: "-"
+            - link "OldSchoolCool" [ref=f12e44] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/OldSchoolCool/
+          - listitem [ref=f12e45]:
+            - text: "-"
+            - link "TwoXChromosomes" [ref=f12e46] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/TwoXChromosomes/
+          - listitem [ref=f12e47]:
+            - text: "-"
+            - link "tifu" [ref=f12e48] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/tifu/
+          - listitem [ref=f12e49]:
+            - text: "-"
+            - link "Music" [ref=f12e50] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Music/
+          - listitem [ref=f12e51]:
+            - text: "-"
+            - link "books" [ref=f12e52] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/books/
+          - listitem [ref=f12e53]:
+            - text: "-"
+            - link "LifeProTips" [ref=f12e54] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/LifeProTips/
+          - listitem [ref=f12e55]:
+            - text: "-"
+            - link "dataisbeautiful" [ref=f12e56] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/dataisbeautiful/
+          - listitem [ref=f12e57]:
+            - text: "-"
+            - link "aww" [ref=f12e58] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/aww/
+          - listitem [ref=f12e59]:
+            - text: "-"
+            - link "science" [ref=f12e60] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/science/
+          - listitem [ref=f12e61]:
+            - text: "-"
+            - link "space" [ref=f12e62] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/space/
+          - listitem [ref=f12e63]:
+            - text: "-"
+            - link "Showerthoughts" [ref=f12e64] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Showerthoughts/
+          - listitem [ref=f12e65]:
+            - text: "-"
+            - link "askscience" [ref=f12e66] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/askscience/
+          - listitem [ref=f12e67]:
+            - text: "-"
+            - link "Jokes" [ref=f12e68] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Jokes/
+          - listitem [ref=f12e69]:
+            - text: "-"
+            - link "Art" [ref=f12e70] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Art/
+          - listitem [ref=f12e71]:
+            - text: "-"
+            - link "IAmA" [ref=f12e72] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/IAmA/
+          - listitem [ref=f12e73]:
+            - text: "-"
+            - link "Futurology" [ref=f12e74] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Futurology/
+          - listitem [ref=f12e75]:
+            - text: "-"
+            - link "sports" [ref=f12e76] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/sports/
+          - listitem [ref=f12e77]:
+            - text: "-"
+            - link "UpliftingNews" [ref=f12e78] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/UpliftingNews/
+          - listitem [ref=f12e79]:
+            - text: "-"
+            - link "food" [ref=f12e80] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/food/
+          - listitem [ref=f12e81]:
+            - text: "-"
+            - link "nosleep" [ref=f12e82] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/nosleep/
+          - listitem [ref=f12e83]:
+            - text: "-"
+            - link "creepy" [ref=f12e84] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/creepy/
+          - listitem [ref=f12e85]:
+            - text: "-"
+            - link "history" [ref=f12e86] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/history/
+          - listitem [ref=f12e87]:
+            - text: "-"
+            - link "gifs" [ref=f12e88] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gifs/
+          - listitem [ref=f12e89]:
+            - text: "-"
+            - link "InternetIsBeautiful" [ref=f12e90] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/InternetIsBeautiful/
+          - listitem [ref=f12e91]:
+            - text: "-"
+            - link "GetMotivated" [ref=f12e92] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/GetMotivated/
+          - listitem [ref=f12e93]:
+            - text: "-"
+            - link "gadgets" [ref=f12e94] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/gadgets/
+          - listitem [ref=f12e95]:
+            - text: "-"
+            - link "announcements" [ref=f12e96] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/announcements/
+          - listitem [ref=f12e97]:
+            - text: "-"
+            - link "WritingPrompts" [ref=f12e98] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/WritingPrompts/
+          - listitem [ref=f12e99]:
+            - text: "-"
+            - link "philosophy" [ref=f12e100] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/philosophy/
+          - listitem [ref=f12e101]:
+            - text: "-"
+            - link "Documentaries" [ref=f12e102] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/Documentaries/
+          - listitem [ref=f12e103]:
+            - text: "-"
+            - link "EarthPorn" [ref=f12e104] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/EarthPorn/
+          - listitem [ref=f12e105]:
+            - text: "-"
+            - link "photoshopbattles" [ref=f12e106] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/photoshopbattles/
+          - listitem [ref=f12e107]:
+            - text: "-"
+            - link "listentothis" [ref=f12e108] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/listentothis/
+          - listitem [ref=f12e109]:
+            - text: "-"
+            - link "blog" [ref=f12e110] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/blog/
+      - link "more »" [ref=f12e111] [cursor=pointer]:
+        - /url: https://old.reddit.com/subreddits/
+    - generic [ref=f12e112]:
+      - link "reddit.com" [ref=f12e113] [cursor=pointer]:
+        - /url: /
+      - link "AgingParents" [ref=f12e115] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/AgingParents/
+      - list [ref=f12e116]:
+        - listitem [ref=f12e117]:
+          - link "comments" [ref=f12e118] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/
+    - generic [ref=f12e119]:
+      - generic [ref=f12e120]:
+        - text: Want to join?
+        - link "Log in" [ref=f12e121] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: or
+        - link "sign up" [ref=f12e122] [cursor=pointer]:
+          - /url: https://www.reddit.com/login
+        - text: in seconds.
+      - list
+  - generic [ref=f12e123]:
+    - search [ref=f12e125]:
+      - textbox "search" [ref=f12e126]
+      - button "Submit" [ref=f12e127] [cursor=pointer]
+    - generic [ref=f12e129]:
+      - generic [ref=f12e130]:
+        - text: this post was submitted on
+        - time [ref=f12e131]: 23 Sep 2024
+      - generic [ref=f12e132]: 5 points (100% upvoted)
+      - generic [ref=f12e133]:
+        - text: "shortlink:"
+        - textbox [ref=f12e134]: https://redd.it/1fnpo21
+    - link "Submit a new text post" [ref=f12e138] [cursor=pointer]:
+      - /url: https://old.reddit.com/r/AgingParents/submit?selftext=true
+    - generic [ref=f12e141]:
+      - heading [level=1] [ref=f12e142]:
+        - link "AgingParents" [ref=f12e143] [cursor=pointer]:
+          - /url: https://old.reddit.com/r/AgingParents/
+      - link "join" [ref=f12e145] [cursor=pointer]:
+        - /url: "#"
+      - generic [ref=f12e148]:
+        - paragraph [ref=f12e149]:
+          - strong [ref=f12e150]: We are a community of adult children dealing with our aging parents. Asking questions and venting are encouraged but discussions about why you don't want to care for a parent and app/product recommendations are off-topic here.
+        - paragraph [ref=f12e151]:
+          - strong [ref=f12e152]: RULES
+        - 'heading "1: Advertising and Commercial Posts Are Prohibited" [level=1] [ref=f12e153]'
+        - paragraph [ref=f12e154]:
+          - text: "We are a community of folks dealing with aging parents, not a focus group for app developers or student projects of any kind. This rule includes: * links to Google Docs * links to YouTube * external links to your app/business/newsletter/blog * surveys (i.e. for information about what we would like to see in an app) *"
+          - link "astroturfing" [ref=f12e155] [cursor=pointer]:
+            - /url: https://en.wikipedia.org/wiki/Astroturfing
+        - paragraph [ref=f12e156]: If you try to circumvent this rule, you may be permanently banned from this sub on first offense.
+        - 'heading "2: No AI" [level=1] [ref=f12e157]'
+        - paragraph [ref=f12e158]: We do not allow AI generated content or AI tools to be posted to this sub. Recommendations of AI, mentions of specific AI tools, and posts primarily about using AI will all be removed. Casual, generic discussion of AI is allowed in the comments if it is relevant to aging parents, but posts and comments primarily about AI and the mentioning of specific AI tools is not allowed. Advertising and/or surveys related to AI will continue to be flagged, removed, and the user banned.
+        - 'heading "3: No harassment of any kind toward any individual or group." [level=1] [ref=f12e159]'
+        - paragraph [ref=f12e160]:
+          - text: Examples include but are not limited to name-calling, threats of violence, and trolling. Racist, sexist, ableist, homophobic, and transphobic content is specifically prohibited and ageist comments about parents will get you banned.
+          - deletion [ref=f12e161]: Zero politics.
+          - text: (updated 4.5.2026. Politics are appropriate to discuss if it pertains directly to aging parents. If it's off-topic to the sub it will be removed.)
+        - 'heading "4: Stay on Topic" [level=1] [ref=f12e162]'
+        - paragraph [ref=f12e163]:
+          - text: This sub is for the discussion of adults taking care of their elderly parents. It is
+          - strong [ref=f12e164]: not
+          - text: for the discussion of other family dynamic issues or app/product recommendations. Discussions about why you don't want to care for a parent are off-topic here.
+        - 'heading "5: Failure to Human" [level=1] [ref=f12e165]'
+        - paragraph [ref=f12e166]:
+          - text: We are a community of folks dealing with aging parents and it
+          - emphasis [ref=f12e167]: is
+          - text: hard. Keep it civil here on the sub and remember the human.
+        - paragraph [ref=f12e168]:
+          - strong [ref=f12e169]: "RESOURCES:"
+          - link "r/TechForAgingParents/" [ref=f12e170] [cursor=pointer]:
+            - /url: https://www.reddit.com/r/TechForAgingParents/
+          - text: "-- for tech questions and support"
+        - paragraph [ref=f12e171]:
+          - link "US States that impose a duty, usually upon adult children, for the support of their impoverished parents or other relatives." [ref=f12e172] [cursor=pointer]:
+            - /url: https://en.wikipedia.org/wiki/Filial_responsibility_laws
+        - paragraph [ref=f12e173]:
+          - link "New Wiki section from propita106" [ref=f12e174] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/AgingParents/wiki/propita106/doc1
+        - paragraph [ref=f12e175]:
+          - link "Official Nursing Home, Hospital and Doctor ratings from Medicare" [ref=f12e176] [cursor=pointer]:
+            - /url: https://www.medicare.gov/care-compare/
+        - paragraph [ref=f12e177]:
+          - link "What Medicare covers" [ref=f12e178] [cursor=pointer]:
+            - /url: https://www.medicare.gov/what-medicare-covers
+        - paragraph [ref=f12e179]:
+          - link "National Council on Aging" [ref=f12e180] [cursor=pointer]:
+            - /url: https://www.ncoa.org/
+        - paragraph [ref=f12e181]:
+          - link "State Resources for Seniors" [ref=f12e182] [cursor=pointer]:
+            - /url: https://www.eldercaredirectory.org/state-resources.htm
+      - generic [ref=f12e184]:
+        - text: a community for
+        - time [ref=f12e185]: 12 years
+    - generic [ref=f12e187]:
+      - heading "MODERATORS" [level=1] [ref=f12e189]
+      - list [ref=f12e190]:
+        - listitem [ref=f12e191]:
+          - link "message the mods" [ref=f12e192] [cursor=pointer]:
+            - /url: /message/compose/?to=/r/AgingParents
+    - complementary [ref=f12e195]:
+      - generic [ref=f12e196]:
+        - generic [ref=f12e197]:
+          - text: discussions in
+          - link "r/AgingParents" [ref=f12e198] [cursor=pointer]:
+            - /url: https://old.reddit.com/r/AgingParents/?ref=readnext
+        - navigation [ref=f12e199]:
+          - generic [ref=f12e200] [cursor=pointer]: <
+          - generic [ref=f12e201] [cursor=pointer]: ">"
+        - generic [ref=f12e202]: X
+      - link "20 · 2 comments Adding post flair to the subreddit" [ref=f12e205] [cursor=pointer]:
+        - /url: https://old.reddit.com/r/AgingParents/comments/1u7fd1m/adding_post_flair_to_the_subreddit/?ref=readnext_0
+        - generic [ref=f12e206]: 20 · 2 comments
+        - generic [ref=f12e207]: Adding post flair to the subreddit
+  - main [ref=f12e208]:
+    - generic [ref=f12e209]:
+      - link "Welcome to Reddit, the front page of the internet. Become a Redditor and join one of thousands of communities." [ref=f12e210] [cursor=pointer]:
+        - /url: /login
+        - heading "Welcome to Reddit," [level=2] [ref=f12e211]
+        - paragraph [ref=f12e212]: the front page of the internet.
+        - generic [ref=f12e213]:
+          - generic [ref=f12e214]: Become a Redditor
+          - paragraph [ref=f12e215]: and join one of thousands of communities.
+      - link "×" [ref=f12e216] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=f12e218]:
+      - paragraph
+      - generic [ref=f12e219]:
+        - button "upvote" [ref=f12e220] [cursor=pointer]
+        - generic "5" [ref=f12e221]
+        - button "downvote" [ref=f12e222] [cursor=pointer]
+      - link [ref=f12e223] [cursor=pointer]:
+        - /url: /r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/
+      - generic [ref=f12e224]:
+        - generic [ref=f12e225]:
+          - paragraph [ref=f12e226]:
+            - link "How do you track health info as a caregiver?" [ref=f12e227] [cursor=pointer]:
+              - /url: /r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/
+            - generic [ref=f12e228]:
+              - text: (
+              - link "self.AgingParents" [ref=f12e229] [cursor=pointer]:
+                - /url: /r/AgingParents/
+              - text: )
+          - paragraph [ref=f12e230]:
+            - text: submitted
+            - time [ref=f12e231]: 1 year ago
+            - text: by
+            - link "Afraid-Buyer2897" [ref=f12e232] [cursor=pointer]:
+              - /url: https://old.reddit.com/user/Afraid-Buyer2897
+        - paragraph [ref=f12e237]: Does anyone here care for a parent with mild cognitive impairment? How do you track all their medications, appointments, care plans etc.? I'm trying to find a system that works best. Does anyone use apps or something to help with this? Thank you for your help.
+        - list [ref=f12e238]:
+          - listitem [ref=f12e239]:
+            - link "6 comments" [ref=f12e240] [cursor=pointer]:
+              - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/
+          - listitem [ref=f12e241]:
+            - link "share" [ref=f12e242] [cursor=pointer]:
+              - /url: "javascript: void 0;"
+          - listitem [ref=f12e243]:
+            - link "save" [ref=f12e244] [cursor=pointer]:
+              - /url: "#"
+          - listitem [ref=f12e245]:
+            - link "hide" [ref=f12e248] [cursor=pointer]:
+              - /url: javascript:void(0)
+          - listitem [ref=f12e249]:
+            - link "report" [ref=f12e250] [cursor=pointer]:
+              - /url: javascript:void(0)
+    - generic [ref=f12e251]:
+      - generic [ref=f12e252]: all 6 comments
+      - generic [ref=f12e254]:
+        - text: "sorted by:"
+        - generic [ref=f12e255]: best
+      - link "Want to add to the discussion? Post a comment! Create an account" [ref=f12e258] [cursor=pointer]:
+        - /url: /login
+        - textbox [ref=f12e259]
+        - generic [ref=f12e260]:
+          - heading "Want to add to the discussion?" [level=2] [ref=f12e261]
+          - paragraph [ref=f12e262]: Post a comment!
+          - generic [ref=f12e263]: Create an account
+      - generic [ref=f12e265]:
+        - generic [ref=f12e266]:
+          - paragraph
+          - generic [ref=f12e267]:
+            - button "upvote" [ref=f12e268] [cursor=pointer]
+            - button "downvote" [ref=f12e269] [cursor=pointer]
+          - generic [ref=f12e270]:
+            - paragraph [ref=f12e271]:
+              - link "[–]" [ref=f12e272] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "MannieOKelly" [ref=f12e273] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/MannieOKelly
+              - text: 2 points
+              - time [ref=f12e274]: 1 year ago
+            - paragraph [ref=f12e278]: Most large health providers (hospitals, etc.) use a system called EPIC as their health info repository. EPIC also provides "MyChart" patient portal s/w to those providers. MyChart lets a patient provide access to a family member or caregiver, and thus track the patient's appointments, test results, etc. I can track appointments at several providers , results, etc. via one of my MyChart portal accounts since all the data from those providers is in EPIC. The system is not perfect and not every provider uses EPIC by any means, but you may find it useful depending on your main service providers.
+            - list [ref=f12e279]:
+              - listitem [ref=f12e280]:
+                - link "permalink" [ref=f12e281] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/loossfs/
+              - listitem [ref=f12e282]:
+                - link "embed" [ref=f12e283] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e284]:
+                - link "save" [ref=f12e285] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e286]:
+                - link "report" [ref=f12e287] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f12e288]:
+          - paragraph
+          - generic [ref=f12e289]:
+            - button "upvote" [ref=f12e290] [cursor=pointer]
+            - button "downvote" [ref=f12e291] [cursor=pointer]
+          - generic [ref=f12e292]:
+            - paragraph [ref=f12e293]:
+              - link "[–]" [ref=f12e294] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "MissPeppingtosh" [ref=f12e295] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/MissPeppingtosh
+              - text: 1 point
+              - time [ref=f12e296]: 1 year ago
+            - generic [ref=f12e299]:
+              - paragraph [ref=f12e300]: I’m an old school writer downer. I have a physical pocket calendar. I put my appointments and his appointments in that. Keep it with me always. That way I can jot down notes in the margin quickly if I’m on a call with the dr.
+              - paragraph [ref=f12e301]: He has a large calendar in his kitchen. I write his appointments on that.
+              - paragraph [ref=f12e302]: Do you have access to their portal? All my dad’s drs are in the same hospital network for the most part. So I get test results and appointments on there. I changed his phone number to mine so they call me directly (I have poa)
+              - paragraph [ref=f12e303]: I do his meds every Sunday. He has daytime and nighttime. For a long time I kept a cheat sheet so he’d know how many there should be. I taped it to a kitchen chair. He no longer needs that.
+              - paragraph [ref=f12e304]: My dad has cognitive decline but can still be independent. That said I added myself to all his apps for bills and banks and stuff. I’ve needed access so I keep a list of all the logins.
+              - paragraph [ref=f12e305]: Hope that helps
+            - list [ref=f12e306]:
+              - listitem [ref=f12e307]:
+                - link "permalink" [ref=f12e308] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/lokce98/
+              - listitem [ref=f12e309]:
+                - link "embed" [ref=f12e310] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e311]:
+                - link "save" [ref=f12e312] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e313]:
+                - link "report" [ref=f12e314] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f12e315]:
+          - paragraph
+          - generic [ref=f12e316]:
+            - button "upvote" [ref=f12e317] [cursor=pointer]
+            - button "downvote" [ref=f12e318] [cursor=pointer]
+          - generic [ref=f12e319]:
+            - paragraph [ref=f12e320]:
+              - link "[–]" [ref=f12e321] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "Impossible_Loquat_95" [ref=f12e322] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/Impossible_Loquat_95
+              - text: 1 point
+              - time [ref=f12e323]: 1 year ago
+            - paragraph [ref=f12e327]: I have used paper tracking in the past, but I am looking for an app in the future.
+            - list [ref=f12e328]:
+              - listitem [ref=f12e329]:
+                - link "permalink" [ref=f12e330] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/lokja5d/
+              - listitem [ref=f12e331]:
+                - link "embed" [ref=f12e332] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e333]:
+                - link "save" [ref=f12e334] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e335]:
+                - link "report" [ref=f12e336] [cursor=pointer]:
+                  - /url: javascript:void(0)
+          - generic [ref=f12e339]:
+            - paragraph
+            - generic [ref=f12e340]:
+              - button "upvote" [ref=f12e341] [cursor=pointer]
+              - button "downvote" [ref=f12e342] [cursor=pointer]
+            - generic [ref=f12e343]:
+              - paragraph [ref=f12e344]:
+                - link "[–]" [ref=f12e345] [cursor=pointer]:
+                  - /url: javascript:void(0)
+                - link "Impossible_Loquat_95" [ref=f12e346] [cursor=pointer]:
+                  - /url: https://old.reddit.com/user/Impossible_Loquat_95
+                - text: 1 point
+                - time [ref=f12e347]: 1 year ago
+              - paragraph [ref=f12e351]: I am curious to hear what others use to track their medications and appointments. There can be so many to keep track of
+              - list [ref=f12e352]:
+                - listitem [ref=f12e353]:
+                  - link "permalink" [ref=f12e354] [cursor=pointer]:
+                    - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/lokjjvi/
+                - listitem [ref=f12e355]:
+                  - link "embed" [ref=f12e356] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f12e357]:
+                  - link "save" [ref=f12e358] [cursor=pointer]:
+                    - /url: javascript:void(0)
+                - listitem [ref=f12e359]:
+                  - link "parent" [ref=f12e360] [cursor=pointer]:
+                    - /url: "#lokja5d"
+                - listitem [ref=f12e361]:
+                  - link "report" [ref=f12e362] [cursor=pointer]:
+                    - /url: javascript:void(0)
+        - generic [ref=f12e363]:
+          - paragraph
+          - generic [ref=f12e364]:
+            - button "upvote" [ref=f12e365] [cursor=pointer]
+            - button "downvote" [ref=f12e366] [cursor=pointer]
+          - generic [ref=f12e367]:
+            - paragraph [ref=f12e368]:
+              - link "[–]" [ref=f12e369] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "VirginiaUSA1964" [ref=f12e370] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/VirginiaUSA1964
+              - text: 1 point
+              - time [ref=f12e371]: 1 year ago
+            - generic [ref=f12e374]:
+              - paragraph [ref=f12e375]: I use the portals. I tried to get as many doctors as I could in the same health organization so that everything is in one portal. Except for eye doctors, I was able to manage that.
+              - paragraph [ref=f12e376]: Their medications, test results, medical history is all in there. I can print out what I need to take to the eye doctors each time.
+            - list [ref=f12e377]:
+              - listitem [ref=f12e378]:
+                - link "permalink" [ref=f12e379] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/lokkxg7/
+              - listitem [ref=f12e380]:
+                - link "embed" [ref=f12e381] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e382]:
+                - link "save" [ref=f12e383] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e384]:
+                - link "report" [ref=f12e385] [cursor=pointer]:
+                  - /url: javascript:void(0)
+        - generic [ref=f12e386]:
+          - paragraph
+          - generic [ref=f12e387]:
+            - button "upvote" [ref=f12e388] [cursor=pointer]
+            - button "downvote" [ref=f12e389] [cursor=pointer]
+          - generic [ref=f12e390]:
+            - paragraph [ref=f12e391]:
+              - link "[–]" [ref=f12e392] [cursor=pointer]:
+                - /url: javascript:void(0)
+              - link "scherster" [ref=f12e393] [cursor=pointer]:
+                - /url: https://old.reddit.com/user/scherster
+              - text: 1 point
+              - time [ref=f12e394]: 1 year ago
+            - paragraph [ref=f12e398]: My family uses the app Caring Village.
+            - list [ref=f12e399]:
+              - listitem [ref=f12e400]:
+                - link "permalink" [ref=f12e401] [cursor=pointer]:
+                  - /url: https://old.reddit.com/r/AgingParents/comments/1fnpo21/how_do_you_track_health_info_as_a_caregiver/lokxcog/
+              - listitem [ref=f12e402]:
+                - link "embed" [ref=f12e403] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e404]:
+                - link "save" [ref=f12e405] [cursor=pointer]:
+                  - /url: javascript:void(0)
+              - listitem [ref=f12e406]:
+                - link "report" [ref=f12e407] [cursor=pointer]:
+                  - /url: javascript:void(0)
+  - generic [ref=f12e408]:
+    - generic [ref=f12e409]:
+      - list [ref=f12e411]:
+        - listitem [ref=f12e412]: about
+        - listitem [ref=f12e413]:
+          - link "blog" [ref=f12e414] [cursor=pointer]:
+            - /url: https://redditblog.com
+        - listitem [ref=f12e415]:
+          - link "about" [ref=f12e416] [cursor=pointer]:
+            - /url: https://www.redditinc.com
+        - listitem [ref=f12e417]:
+          - link "advertising" [ref=f12e418] [cursor=pointer]:
+            - /url: https://www.redditinc.com/advertising
+        - listitem [ref=f12e419]:
+          - link "careers" [ref=f12e420] [cursor=pointer]:
+            - /url: https://www.redditinc.com/careers
+      - list [ref=f12e422]:
+        - listitem [ref=f12e423]: help
+        - listitem [ref=f12e424]:
+          - link "site rules" [ref=f12e425] [cursor=pointer]:
+            - /url: https://old.reddit.com/rules/
+        - listitem [ref=f12e426]:
+          - link "Reddit help center" [ref=f12e427] [cursor=pointer]:
+            - /url: https://www.reddithelp.com
+        - listitem [ref=f12e428]:
+          - link "reddiquette" [ref=f12e429] [cursor=pointer]:
+            - /url: https://old.reddit.com/wiki/reddiquette/
+        - listitem [ref=f12e430]:
+          - link "mod guidelines" [ref=f12e431] [cursor=pointer]:
+            - /url: https://old.reddit.com/help/healthycommunities/
+        - listitem [ref=f12e432]:
+          - link "contact us" [ref=f12e433] [cursor=pointer]:
+            - /url: https://old.reddit.com/contact/
+      - list [ref=f12e435]:
+        - listitem [ref=f12e436]: apps & tools
+        - listitem [ref=f12e437]:
+          - link "Reddit for iPhone" [ref=f12e438] [cursor=pointer]:
+            - /url: https://itunes.apple.com/us/app/reddit-the-official-app/id1064216828?mt=8
+        - listitem [ref=f12e439]:
+          - link "Reddit for Android" [ref=f12e440] [cursor=pointer]:
+            - /url: https://play.google.com/store/apps/details?id=com.reddit.frontpage
+        - listitem [ref=f12e441]:
+          - link "mobile website" [ref=f12e442] [cursor=pointer]:
+            - /url: "#"
+      - list [ref=f12e444]:
+        - listitem [ref=f12e445]: <3
+        - listitem [ref=f12e446]:
+          - link "reddit premium" [ref=f12e447] [cursor=pointer]:
+            - /url: https://old.reddit.com/premium/
+    - paragraph [ref=f12e448]:
+      - text: Use of this site constitutes acceptance of our
+      - link "User Agreement" [ref=f12e449] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/useragreement
+      - text: and
+      - link "Privacy Policy" [ref=f12e450] [cursor=pointer]:
+        - /url: https://old.reddit.com/help/privacypolicy
+      - text: . © 2026 reddit inc. All rights reserved.
+    - paragraph [ref=f12e451]: REDDIT and the ALIEN Logo are registered trademarks of reddit inc.
+  - paragraph [ref=f12e453]: π
