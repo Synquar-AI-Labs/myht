@@ -174,7 +174,7 @@ export function HospitalStaysTab() {
                         backgroundColor: color,
                       };
 
-                  const tooltipText = `${stay.person_name}${stay.is_unavailable ? ' (Unavailable)' : ''}\n${format(new Date(stay.date + 'T00:00:00'), 'EEE, MMM d')} · ${formatHourLong(stay.start_hour)} – ${formatHourLong(stay.end_hour)}`;
+                  const tooltipText = `${stay.person_name}${stay.is_unavailable ? ' (Unavailable)' : ''}\n${format(new Date(stay.date + 'T00:00:00'), 'EEE, MMM d')} · ${formatHourLong(stay.start_hour)} – ${stay.end_hour === 24 ? 'midnight' : formatHourLong(stay.end_hour)}`;
 
                   return (
                         <ConfirmDeleteButton

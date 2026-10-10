@@ -194,7 +194,7 @@ function AppointmentCard({ appt, onDelete, showDate }: { appt: Appointment; onDe
               {appt.address && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{appt.address}</span>}
             </div>
           </div>
-          <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this appointment?" description={`${appt.doctor_name} · ${appt.date}. This permanently removes it from the record.`} onConfirm={async () => { if (await onDelete(appt.id)) toast.success('Appointment deleted'); }}>
+          <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this appointment?" description={`${appt.doctor_name} · ${format(parseISO(appt.date), 'MMM d')}. This permanently removes it from the record.`} onConfirm={async () => { if (await onDelete(appt.id)) toast.success('Appointment deleted'); }}>
             <Trash2 className="h-3.5 w-3.5" />
           </ConfirmDeleteButton>
         </div>
