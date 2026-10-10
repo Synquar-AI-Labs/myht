@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { addDays, startOfDay, eachDayOfInterval, format, isSameDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { useHospitalStays, HospitalStay } from '@/hooks/useHospitalStays';
 import { StayFormSheet } from '@/components/StayFormSheet';
 import { toast } from 'sonner';
@@ -47,13 +48,10 @@ export function HospitalStaysTab() {
 
   const { stays, isLoading, addStay, deleteStay } = useHospitalStays(baseStart, baseEnd);
 
-  const handleAddStays = (rows: Parameters<typeof addStay.mutate>[0][]) => {
-    let remaining = rows.length;
-    rows.forEach(row => {
-      addStay.mutate(row, {
-        onSuccess: () => { remaining--; if (remaining === 0) toast.success('Stay added'); },
-        onError: () => toast.error('Failed to add stay'),
-      });
+  const handleAddStays = (rows: Parameters<typeof addStay.mutate>[0]) => {
+    addStay.mutate(rows, {
+      onSuccess: () => toast.success('Stay added'),
+      onError: () => toast.error('Failed to add stay'),
     });
   };
 
@@ -179,11 +177,15 @@ export function HospitalStaysTab() {
                   const tooltipText = `${stay.person_name}${stay.is_unavailable ? ' (Unavailable)' : ''}\n${format(new Date(stay.date + 'T00:00:00'), 'EEE, MMM d')} · ${formatHourLong(stay.start_hour)} – ${formatHourLong(stay.end_hour)}`;
 
                   return (
-                    <Tooltip key={stay.id}>
-                      <TooltipTrigger asChild>
-                        <div
-                          className="absolute h-[22px] rounded-sm flex items-center px-1 group cursor-pointer"
+                        <ConfirmDeleteButton
+                          key={stay.id}
+                          variant="ghost"
+                          className="absolute h-[22px] rounded-sm flex items-center justify-start px-1 hover:opacity-90"
                           style={barStyle}
+                          title="Remove this from the schedule?"
+                          description={tooltipText}
+                          aria-label={tooltipText}
+                          onConfirm={() => handleDelete(stay.id)}
                         >
                           <span
                             className="text-[9px] font-medium truncate leading-none"
@@ -191,18 +193,7 @@ export function HospitalStaysTab() {
                           >
                             {stay.person_name}{stay.is_unavailable ? ' ✕' : ''}
                           </span>
-                          <button
-                            className="ml-auto opacity-0 group-hover:opacity-100 shrink-0"
-                            onClick={(e) => { e.stopPropagation(); handleDelete(stay.id); }}
-                          >
-                            <X className="h-3 w-3" style={{ color: stay.is_unavailable ? color : '#fff' }} />
-                          </button>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="text-xs whitespace-pre-line">
-                        {tooltipText}
-                      </TooltipContent>
-                    </Tooltip>
+                        </ConfirmDeleteButton>
                   );
                 })}
                 {/* Expand row height for stacked bars */}

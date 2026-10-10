@@ -8,18 +8,16 @@
 --      leftover test account) could read everything.
 -- This restricts ALL access to an explicit allowlist of caregiver accounts.
 --
--- MANUAL STEPS to do in the Supabase dashboard around deploying this:
---   1. Authentication → Sign-In / Providers: DISABLE new public sign-ups.
---   2. Authentication → Users: delete any account you don't recognise
---      (e.g. leftover test accounts).
---   3. AFTER deploy: confirm every real caregiver can still log in and see
---      data. Anyone missing → add their LOGIN email to the allowlist:
---         insert into public.app_allowlist (email) values ('their@email.com');
---
--- ⚠️  VERIFY the seeded emails below are the real Auth LOGIN emails BEFORE you
---     deploy. A wrong/missing email locks that caregiver out (they see empty
---     data, not an error). Edge functions use the service role and are
---     unaffected.
+-- DISABLE public sign-ups FIRST and confirm a sign-up attempt is refused.
+-- Verify the seeded emails against existing Auth login accounts before deploy.
+-- A listed email without an existing, bound account grants nothing.
+-- If users exist but none match the list, the migration stops before changing
+-- policies rather than locking everyone out. A missing individual still needs
+-- repair: confirm every caregiver can log in and see data after deploy.
+-- To add a caregiver later: create their account in the dashboard FIRST, then
+-- run scripts/emergency/allowlist-repair.sql to bind that account to the list.
+-- Review unrecognised accounts separately. Service-role access bypasses RLS;
+-- edge functions must enforce their own allowlist checks.
 -- ============================================================================
 
 -- 1) Allowlist of caregiver accounts.
@@ -27,9 +25,12 @@
 --    SECURITY DEFINER helper below (and the service role) can see it.
 CREATE TABLE IF NOT EXISTS public.app_allowlist (
   email       text PRIMARY KEY,
+  user_id     uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   note        text NOT NULL DEFAULT '',
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS app_allowlist_user_id_key
+  ON public.app_allowlist (user_id) WHERE user_id IS NOT NULL;
 ALTER TABLE public.app_allowlist ENABLE ROW LEVEL SECURITY;
 
 INSERT INTO public.app_allowlist (email, note) VALUES
@@ -38,6 +39,27 @@ INSERT INTO public.app_allowlist (email, note) VALUES
   ('shahwar@gmail.com',    'family — VERIFY this is the real login email'),
   ('affantiger@gmail.com', 'family — VERIFY this is the real login email')
 ON CONFLICT (email) DO NOTHING;
+
+UPDATE public.app_allowlist AS allowed
+SET user_id = account.id
+FROM auth.users AS account
+WHERE lower(btrim(allowed.email)) = lower(btrim(account.email));
+
+-- Abort before any policy changes if the list matches no existing account.
+DO $$
+DECLARE
+  missing_email text;
+BEGIN
+  FOR missing_email IN
+    SELECT email FROM public.app_allowlist WHERE user_id IS NULL ORDER BY email
+  LOOP
+    RAISE NOTICE 'Listed email has no account: %', missing_email;
+  END LOOP;
+  IF EXISTS (SELECT 1 FROM auth.users)
+     AND NOT EXISTS (SELECT 1 FROM public.app_allowlist WHERE user_id IS NOT NULL) THEN
+    RAISE EXCEPTION 'No listed email matches an existing account. Nothing was changed. Run select email from auth.users; to see the real login emails and correct the list.';
+  END IF;
+END $$;
 
 -- 2) Is the current caller an allowed caregiver?
 --    STABLE + SECURITY DEFINER + fixed search_path (so it can read the
@@ -51,7 +73,7 @@ SET search_path = public
 AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.app_allowlist
-    WHERE email = lower(auth.jwt() ->> 'email')
+    WHERE user_id = auth.uid()
   );
 $$;
 REVOKE ALL ON FUNCTION public.is_allowed_user() FROM PUBLIC;

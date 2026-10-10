@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format, eachDayOfInterval, isSameDay } from 'date-fns';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerDescription } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
@@ -40,14 +40,17 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
   const [endHour, setEndHour] = useState<number>(17);
   const [isUnavailable, setIsUnavailable] = useState(false);
 
-  // Reset when defaultDate changes
-  const handleOpen = (o: boolean) => {
-    if (o) {
-      setStartDate(defaultDate);
-      setEndDate(defaultDate);
+  const defaultDateTime = defaultDate.getTime();
+  useEffect(() => {
+    if (open) {
+      setPerson('');
+      setStartDate(new Date(defaultDateTime));
+      setEndDate(new Date(defaultDateTime));
+      setStartHour(9);
+      setEndHour(17);
+      setIsUnavailable(false);
     }
-    onOpenChange(o);
-  };
+  }, [open, defaultDateTime]);
 
   const isSingleDay = isSameDay(startDate, endDate);
   const isValid = person && (isSingleDay ? startHour < endHour : true);
@@ -88,7 +91,7 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
   };
 
   return (
-    <Drawer open={open} onOpenChange={handleOpen}>
+    <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>

@@ -25,11 +25,11 @@ export function useAppointments() {
     queryClient.invalidateQueries({ queryKey: ['appointments'] });
   }, [queryClient]);
 
-  const addAppointment = useCallback(async (form: AppointmentForm) => {
+  const addAppointment = useCallback(async (form: AppointmentForm): Promise<boolean> => {
     const parsed = appointmentSchema.safeParse(form);
     if (!parsed.success) {
       toast.error(parsed.error.errors[0]?.message || 'Invalid input');
-      return;
+      return false;
     }
     const { error } = await supabase.from('appointments').insert({
       date: form.date,
@@ -42,18 +42,22 @@ export function useAppointments() {
     if (error) {
       toast.error('Failed to save appointment');
       console.error(error);
+      return false;
     } else {
       invalidate();
+      return true;
     }
   }, [invalidate]);
 
-  const deleteAppointment = useCallback(async (id: string) => {
+  const deleteAppointment = useCallback(async (id: string): Promise<boolean> => {
     const { error } = await supabase.from('appointments').delete().eq('id', id);
     if (error) {
       toast.error('Failed to delete');
       console.error(error);
+      return false;
     } else {
       invalidate();
+      return true;
     }
   }, [invalidate]);
 

@@ -43,13 +43,13 @@ export const READING_TYPES: ReadingType[] = [
   {
     key: 'vomit', label: 'Vomit', metric: 'Vomiting', dot: 'bg-orange-500',
     fields: [{ key: 'vomitCount', label: 'Count', defaultValue: 1, min: 0 }],
-    dbFields: ['vomitCount', 'vomiting'],
+    dbFields: ['vomitCount'],
     todaySoFar: r => `${r?.vomit_count ?? 0} today`,
   },
   {
     key: 'stool', label: 'Stool', metric: 'Stool', dot: 'bg-amber-700',
     fields: [{ key: 'stoolCount', label: 'Count', defaultValue: 1, min: 0 }],
-    dbFields: ['stoolCount', 'stoolPassed'],
+    dbFields: ['stoolCount'],
     todaySoFar: r => `${r?.stool_count ?? 0} today`,
   },
   {

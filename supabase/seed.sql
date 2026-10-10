@@ -2,7 +2,9 @@
 -- Supabase CLI to the LOCAL stack (supabase start / db reset); it is never
 -- pushed to a remote project. Nothing here may resemble real family data.
 
--- Allow the local smoke-test login (created via the local admin API).
+-- Synthetic allowlist entry only; an unbound email grants nothing.
+-- Create the local test user first, then bind it using the repair statement
+-- in scripts/emergency/allowlist-repair.sql with smoke-test@example.local.
 INSERT INTO public.app_allowlist (email, note)
 VALUES ('smoke-test@example.local', 'local smoke testing only')
 ON CONFLICT (email) DO NOTHING;

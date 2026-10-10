@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Download } from 'lucide-react';
-import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths, addMonths } from 'date-fns';
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { getMonthOptions, countRecordedDays } from '@/lib/reportHelpers';
 import { cn } from '@/lib/utils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -16,16 +17,6 @@ import autoTable from 'jspdf-autotable';
 interface DashboardTabProps {
   records: HealthRecord[];
   bpReadings?: { date: string; systolic: number; diastolic: number }[];
-}
-
-function getMonthOptions() {
-  const now = new Date();
-  const start = subMonths(now, 12);
-  const end = addMonths(now, 1);
-  return eachMonthOfInterval({ start, end }).reverse().map(d => ({
-    value: format(d, 'yyyy-MM'),
-    label: format(d, 'MMM yyyy'),
-  }));
 }
 
 function buildRows(
@@ -69,21 +60,22 @@ function buildRows(
       stool: r?.stool_count ?? 0,
       urine: (r as any)?.urine_count ?? 0,
       flushes: (r as any)?.flush_count ?? 0,
+      flushMl: (r as any)?.flush_ml ?? 0,
       weight: Number(r?.weight ?? 0),
       hasRecord: !!r,
     };
   });
 
-  const count = rows.length || 1;
   const totals = {
     feed: rows.reduce((s, r) => s + r.feed, 0),
     bile: rows.reduce((s, r) => s + r.bile, 0),
-    bpSys: Math.round(rows.filter(r => r.bpSys > 0).reduce((s, r) => s + r.bpSys, 0) / (rows.filter(r => r.bpSys > 0).length || 1)),
-    bpDia: Math.round(rows.filter(r => r.bpDia > 0).reduce((s, r) => s + r.bpDia, 0) / (rows.filter(r => r.bpDia > 0).length || 1)),
+    bpSys: Math.round(rows.filter(r => r.hasRecord && r.bpSys > 0).reduce((s, r) => s + r.bpSys, 0) / (rows.filter(r => r.hasRecord && r.bpSys > 0).length || 1)),
+    bpDia: Math.round(rows.filter(r => r.hasRecord && r.bpDia > 0).reduce((s, r) => s + r.bpDia, 0) / (rows.filter(r => r.hasRecord && r.bpDia > 0).length || 1)),
     vomit: rows.reduce((s, r) => s + r.vomit, 0),
     stool: rows.reduce((s, r) => s + r.stool, 0),
     urine: rows.reduce((s, r) => s + r.urine, 0),
     flushes: rows.reduce((s, r) => s + r.flushes, 0),
+    flushMl: rows.reduce((s, r) => s + r.flushMl, 0),
     weight: rows.filter(r => r.weight > 0).length > 0
       ? +(rows.filter(r => r.weight > 0).reduce((s, r) => s + r.weight, 0) / rows.filter(r => r.weight > 0).length).toFixed(1)
       : 0,
@@ -102,16 +94,17 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
   doc.setFontSize(9);
   doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy h:mm a')}`, 14, 29);
 
-  const head = [['Date', 'Feed', 'Bile', 'BP (avg)', 'Vomit', 'Stool', 'Urine', 'Flushes', 'Weight (kg)']];
+  const head = [['Date', 'Feed', 'Bile', 'BP (avg)', 'Vomit', 'Stool', 'Urine', 'Flushes', 'Flush (ml)', 'Weight (kg)']];
   const body = rows.map(r => [
     r.date,
-    String(r.feed),
-    String(r.bile),
-    r.bp,
-    String(r.vomit),
-    String(r.stool),
-    String(r.urine),
-    String(r.flushes),
+    r.hasRecord ? String(r.feed) : '—',
+    r.hasRecord ? String(r.bile) : '—',
+    r.hasRecord ? r.bp : '—',
+    r.hasRecord ? String(r.vomit) : '—',
+    r.hasRecord ? String(r.stool) : '—',
+    r.hasRecord ? String(r.urine) : '—',
+    r.hasRecord ? String(r.flushes) : '—',
+    r.hasRecord ? String(r.flushMl) : '—',
     r.weight > 0 ? String(r.weight) : '—',
   ]);
 
@@ -125,6 +118,7 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
     String(totals.stool),
     String(totals.urine),
     String(totals.flushes),
+    String(totals.flushMl),
     totals.weight > 0 ? String(totals.weight) : '—',
   ]);
 
@@ -199,7 +193,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
             </Popover>
           </div>
           <p className="text-xs text-muted-foreground">
-            {weeklyData.rows.length} record(s) found for this week
+            {countRecordedDays(weeklyData.rows)} record(s) found for this week
           </p>
           <Button
             onClick={() => generatePdf(
@@ -208,7 +202,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
               weeklyData.totals,
               `weekly-report-${format(weekStart, 'yyyy-MM-dd')}.pdf`
             )}
-            disabled={weeklyData.rows.length === 0}
+            disabled={countRecordedDays(weeklyData.rows) === 0}
             className="w-full"
           >
             <Download className="mr-2 h-4 w-4" />
@@ -234,7 +228,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            {monthlyData.rows.length} record(s) found for {monthLabel}
+            {countRecordedDays(monthlyData.rows)} record(s) found for {monthLabel}
           </p>
           <Button
             onClick={() => generatePdf(
@@ -243,7 +237,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
               monthlyData.totals,
               `monthly-report-${selectedMonth}.pdf`
             )}
-            disabled={monthlyData.rows.length === 0}
+            disabled={countRecordedDays(monthlyData.rows) === 0}
             className="w-full"
           >
             <Download className="mr-2 h-4 w-4" />

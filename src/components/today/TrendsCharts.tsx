@@ -43,7 +43,7 @@ function buildWeekData(records: HealthRecord[], weekOffset: number): WeekDatum[]
       feeds: r?.feed_bags ?? 0,
       vomit: r?.vomit_count ?? 0,
       stool: r?.stool_count ?? 0,
-      flush: r?.flush_ml || r?.flush_count || 0,
+      flush: r?.flush_ml || 0,
       bpSys: r?.bp_systolic || null,
       bpDia: r?.bp_diastolic || null,
       weight: r?.weight && Number(r.weight) > 0 ? Number(r.weight) : null,

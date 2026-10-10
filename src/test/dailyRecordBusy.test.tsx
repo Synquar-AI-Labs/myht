@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import type { HealthRecord } from '@/types/health';
 
@@ -48,6 +48,14 @@ function renderEditor(overrides: Partial<Parameters<typeof DailyRecordTab>[0]> =
 }
 
 describe('DailyRecordTab save-busy boundary', () => {
+  beforeEach(() => {
+    const values = new Map<string, string>();
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => { values.set(key, value); },
+    });
+    localStorage.setItem('ht_recorder', 'Fahad');
+  });
   it('locks competing controls AND form fields during an in-flight save; failure keeps values', async () => {
     let resolveSave!: (ok: boolean) => void;
     const addRecord = vi.fn(() => new Promise<boolean>(res => { resolveSave = res; }));
@@ -57,12 +65,12 @@ describe('DailyRecordTab save-busy boundary', () => {
     // dayOnly OFF so Past Entries renders real Delete buttons to race with.
     renderEditor({ addRecord, deleteRecord, onBusyChange, dayOnly: false });
 
-    // Load the existing record into the form (fills recordedBy = Fahad).
-    fireEvent.click(screen.getByRole('button', { name: /^edit$/i }));
+    // Existing values are prefilled; make a real edit before saving.
+    fireEvent.change(screen.getByDisplayValue('61.5'), { target: { value: '62' } });
     fireEvent.click(screen.getByRole('button', { name: /update record/i }));
 
     expect(addRecord).toHaveBeenCalledTimes(1);
-    expect(addRecord).toHaveBeenCalledWith(expect.objectContaining({ date: record.date }));
+    expect(addRecord).toHaveBeenCalledWith(expect.objectContaining({ date: record.date, weight: 62 }), expect.objectContaining({ weight: 61.5, feedBags: 3 }));
     expect(onBusyChange).toHaveBeenLastCalledWith(true);
 
     // While saving: Save, Copy Previous and the date arrows are disabled…
@@ -92,18 +100,20 @@ describe('DailyRecordTab save-busy boundary', () => {
     expect(feedInput).toBeEnabled();
   });
 
-  it('resets the form only after a confirmed successful save', async () => {
+  it('keeps saved values and unlocks only after a confirmed successful save', async () => {
     let resolveSave!: (ok: boolean) => void;
     const addRecord = vi.fn(() => new Promise<boolean>(res => { resolveSave = res; }));
 
     renderEditor({ addRecord });
 
-    fireEvent.click(screen.getByRole('button', { name: /^edit$/i }));
+    fireEvent.change(screen.getByDisplayValue('61.5'), { target: { value: '62' } });
     fireEvent.click(screen.getByRole('button', { name: /update record/i }));
     resolveSave(true);
 
-    // Back to a fresh entry form for the same day.
-    await waitFor(() => expect(screen.getByRole('button', { name: /save entry/i })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole('button', { name: /update record/i })).toBeEnabled());
+    expect(screen.getByDisplayValue('62')).toBeEnabled();
+    expect(screen.getByDisplayValue('3')).toBeEnabled();
+    expect(localStorage.getItem('ht_recorder')).toBe('Fahad');
   });
 
   it('day-only mode renders no date-navigation arrows; standalone mode does', () => {

@@ -8,10 +8,7 @@ import { Heart } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-type Mode = 'signin' | 'signup';
-
 export default function Auth() {
-  const [mode, setMode] = useState<Mode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,16 +32,6 @@ export default function Auth() {
     }
     setLoading(true);
     try {
-      if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        // With auto-confirm on, sign in immediately so we land on the app.
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) {
-          toast.success('Account created. Please sign in.');
-          setMode('signin');
-        }
-      } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           if (error.message === 'Invalid login credentials') {
@@ -53,7 +40,6 @@ export default function Auth() {
             throw error;
           }
         }
-      }
     } catch (err: any) {
       toast.error(err.message || 'Something went wrong');
     } finally {
@@ -70,7 +56,7 @@ export default function Auth() {
             <CardTitle className="text-xl">Health Tracker</CardTitle>
           </div>
           <p className="text-sm text-muted-foreground">
-            {mode === 'signin' ? 'Sign in to continue' : 'Create a new account'}
+            Sign in to continue
           </p>
         </CardHeader>
         <CardContent>
@@ -84,18 +70,9 @@ export default function Auth() {
               <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1" placeholder="Enter your password" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Please wait…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+              {loading ? 'Please wait…' : 'Sign In'}
             </Button>
           </form>
-          <button
-            type="button"
-            onClick={() => setMode(m => (m === 'signin' ? 'signup' : 'signin'))}
-            className="mt-4 w-full text-center text-sm text-muted-foreground hover:text-foreground"
-          >
-            {mode === 'signin'
-              ? "Don't have an account? Create one"
-              : 'Already have an account? Sign in'}
-          </button>
         </CardContent>
       </Card>
     </div>

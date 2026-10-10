@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { useTranscripts, Transcript } from '@/hooks/useTranscripts';
 import { useRecording } from '@/hooks/RecordingProvider';
 import { Button } from '@/components/ui/button';
@@ -155,9 +156,9 @@ function TranscriptCard({ transcript, onDelete }: { transcript: Transcript; onDe
           <CardTitle className="text-sm font-medium">
             {transcript.title || format(parseISO(transcript.created_at), 'h:mm a')}
           </CardTitle>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDelete(transcript.id)}>
+          <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7" title="Delete this conversation?" description={`${transcript.title || format(parseISO(transcript.created_at), 'h:mm a')}. This permanently removes it from the record.`} onConfirm={() => onDelete(transcript.id)}>
             <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
-          </Button>
+          </ConfirmDeleteButton>
         </div>
         {transcript.recorded_by && (
           <p className="text-xs text-muted-foreground">by {transcript.recorded_by}</p>

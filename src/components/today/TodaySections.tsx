@@ -1,5 +1,6 @@
 import { ReactNode, Suspense, lazy } from 'react';
 import { format, parseISO } from 'date-fns';
+import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { Heart, Pill, Calendar, BarChart3, ChevronDown, Plus, StickyNote, CalendarDays, Clock, MapPin, Mic, Loader2 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -211,7 +212,7 @@ interface ApptNotesSectionProps {
 export function ApptNotesSection({ nextAppointments, onAddAppointment, onAddNote }: ApptNotesSectionProps) {
   const next = nextAppointments[0];
   const subtitle = next
-    ? `Next: ${next.doctor_name} — ${format(parseISO(next.date), 'EEE, MMM d')} · ${next.time}`
+    ? `Next: ${next.doctor_name} — ${format(parseISO(next.date), 'EEE, MMM d')} · ${formatAppointmentTime(next.time)}`
     : 'No upcoming appointments';
 
   return (
@@ -231,7 +232,7 @@ export function ApptNotesSection({ nextAppointments, onAddAppointment, onAddNote
             <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px] text-[#8b8175]">
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {format(parseISO(appt.date), 'EEE, MMM d')} · {appt.time}
+                {format(parseISO(appt.date), 'EEE, MMM d')} · {formatAppointmentTime(appt.time)}
               </span>
               {appt.address && (
                 <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{appt.address}</span>

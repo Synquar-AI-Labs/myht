@@ -38,6 +38,13 @@ serve(async (req) => {
       );
     }
 
+    const { data: allowed, error: allowlistError } = await supabaseUser.rpc('is_allowed_user');
+    if (allowed === false || (allowlistError && allowlistError.code !== 'PGRST202')) {
+      return new Response(JSON.stringify({ error: "This account isn't approved." }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) {
       console.error("OPENAI_API_KEY is missing");

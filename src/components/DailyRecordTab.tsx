@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { HealthRecord, HealthRecordForm, dbToHealthForm, RECORDER_OPTIONS } from '@/types/health';
 import { MedicineTracker } from '@/components/MedicineTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,7 @@ import { formatBp } from '@/lib/utils';
 
 interface DailyRecordTabProps {
   records: HealthRecord[];
-  addRecord: (form: HealthRecordForm) => Promise<boolean>;
+  addRecord: (form: HealthRecordForm, baseline: HealthRecordForm) => Promise<boolean>;
   deleteRecord: (id: string) => Promise<boolean>;
   getLatestRecord: () => HealthRecord | null;
   getRecordByDate: (date: string) => HealthRecord | null;
@@ -40,8 +41,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   // ONE authoritative day: viewDate. The form has no separate date — every
   // save targets the day shown in the navigator, and nothing else.
   const [viewDate, setViewDate] = useState(startDate);
-  const [form, setForm] = useState<HealthRecordForm>({ ...emptyForm, date: startDate });
+  const [form, setForm] = useState<HealthRecordForm>(() => ({ ...emptyForm, date: startDate, recordedBy: localStorage.getItem('ht_recorder') || '' }));
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [baseline, setBaseline] = useState<HealthRecordForm>(() => ({ ...emptyForm, date: startDate }));
+  const dirty = useRef(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   // While ANY write is in flight, every competing control locks — a save and
@@ -52,21 +55,30 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
 
   const update = <K extends keyof HealthRecordForm>(key: K, value: HealthRecordForm[K]) => {
+    dirty.current = true;
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
   const resetFormFor = (date: string) => {
-    setForm({ ...emptyForm, date });
-    setEditingId(null);
+    const record = getRecordByDate(date);
+    const saved = record ? dbToHealthForm(record) : { ...emptyForm, date };
+    setForm({ ...saved, recordedBy: localStorage.getItem('ht_recorder') || '' });
+    setBaseline(saved);
+    setEditingId(record?.id ?? null);
+    dirty.current = false;
   };
+
+  useEffect(() => {
+    if (!dirty.current) resetFormFor(viewDate);
+  }, [viewDate, viewRecord]);
 
   const handleCopyPrevious = () => {
     // Records are sorted newest-first; copy the closest record BEFORE the
     // day being edited (not the latest overall, which could be today's).
     const previous = records.find(r => r.date < viewDate);
     if (!previous) { toast.error('No earlier record to copy from'); return; }
-    setForm({ ...dbToHealthForm(previous), date: viewDate });
-    setEditingId(null);
+    dirty.current = true;
+    setForm({ ...dbToHealthForm(previous), date: viewDate, recordedBy: form.recordedBy });
     toast.success(`Copied from ${format(parseISO(previous.date), 'MMM d')}`);
   };
 
@@ -75,9 +87,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     const wasEditing = !!editingId;
     setSaving(true);
     try {
-      const ok = await addRecord({ ...form, date: viewDate });
+      const ok = await addRecord({ ...form, date: viewDate }, baseline);
       if (!ok) return; // keep the form values — nothing was saved
-      resetFormFor(viewDate);
+      setBaseline({ ...form, date: viewDate });
+      localStorage.setItem('ht_recorder', form.recordedBy);
+      dirty.current = false;
       toast.success(wasEditing ? 'Record updated' : 'Record saved');
     } finally {
       setSaving(false);
@@ -88,8 +102,10 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     // Editing a record moves the whole screen to that record's day, so the
     // header, form and save target can never disagree.
     setViewDate(record.date);
-    setForm(dbToHealthForm(record));
+    setForm({ ...dbToHealthForm(record), recordedBy: localStorage.getItem('ht_recorder') || '' });
     setEditingId(record.id);
+    setBaseline(dbToHealthForm(record));
+    dirty.current = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -137,46 +153,6 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
         </CardContent>
       </Card>
 
-      {/* View existing record for selected date */}
-      {viewRecord && !editingId && (
-        <Card className="border-none shadow-sm bg-muted/30">
-          <CardHeader className="px-4 pb-2 pt-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Record for {format(parseISO(viewRecord.date), 'MMM d')}</CardTitle>
-              <div className="flex gap-1">
-                <Button variant="outline" size="sm" onClick={() => handleEdit(viewRecord)} disabled={busy}>
-                  <Pencil className="h-3.5 w-3.5 mr-1" /> Edit
-                </Button>
-                <Button variant="outline" size="sm" className="text-destructive" aria-label="Delete record" onClick={() => handleDelete(viewRecord.id)} disabled={busy}>
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="px-4 pb-4 space-y-2 text-sm">
-            <div className="grid grid-cols-2 gap-2">
-              <div><span className="text-muted-foreground">Feed Bags:</span> {viewRecord.feed_bags}</div>
-              <div><span className="text-muted-foreground">Flushes:</span> {(viewRecord as any).flush_count ?? 0}</div>
-              <div><span className="text-muted-foreground">Weight:</span> {viewRecord.weight} kg</div>
-              <div><span className="text-muted-foreground">BP:</span> {formatBp(viewRecord.bp_systolic, viewRecord.bp_diastolic)}</div>
-              <div><span className="text-muted-foreground">Food Taken:</span> {viewRecord.food_taken ? 'Yes' : 'No'}</div>
-              {viewRecord.food_taken && viewRecord.food_description && (
-                <div className="col-span-2"><span className="text-muted-foreground">Food:</span> {viewRecord.food_description}</div>
-              )}
-              <div><span className="text-muted-foreground">Stool:</span> {viewRecord.stool_passed ? `Yes (×${viewRecord.stool_count})` : 'No'}</div>
-              <div><span className="text-muted-foreground">Vomiting:</span> {viewRecord.vomiting ? `Yes (×${(viewRecord as any).vomit_count || 0})` : 'No'}</div>
-              <div><span className="text-muted-foreground">Constipation:</span> {viewRecord.constipation ? 'Yes' : 'No'}</div>
-              {(viewRecord as any).recorded_by && (
-                <div><span className="text-muted-foreground">Recorded by:</span> {(viewRecord as any).recorded_by}</div>
-              )}
-              {(viewRecord as any).misc_notes && (
-                <div className="col-span-2"><span className="text-muted-foreground">Notes:</span> {(viewRecord as any).misc_notes}</div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Entry Form */}
       <Card className="border-none shadow-sm">
         <CardHeader className="px-4 pb-2 pt-4">
@@ -186,6 +162,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
               <Copy className="h-3.5 w-3.5" /> Copy Previous
             </Button>
           </div>
+          {viewRecord?.recorded_by && <p className="text-xs text-muted-foreground">Last saved by {viewRecord.recorded_by}</p>}
         </CardHeader>
         <CardContent className="px-4 pb-4">
           <fieldset disabled={busy} className="space-y-4">
@@ -266,6 +243,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             )}
           </div>
           </fieldset>
+          {viewRecord && (
+            <ConfirmDeleteButton variant="ghost" className="mt-3 text-destructive" aria-label="Delete record" title="Delete this day's record?" description={`This permanently removes the whole record for ${viewRecord.date}.`} onConfirm={() => handleDelete(viewRecord.id)} disabled={busy}>
+              Delete this day's record
+            </ConfirmDeleteButton>
+          )}
         </CardContent>
       </Card>
 
@@ -307,9 +289,9 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
                     <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit record" onClick={() => handleEdit(record)} disabled={busy}>
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" aria-label="Delete record" onClick={() => handleDelete(record.id)} disabled={busy}>
+                    <ConfirmDeleteButton variant="ghost" size="icon" className="h-8 w-8 text-destructive" aria-label="Delete record" description={`This permanently removes the whole record for ${record.date}.`} onConfirm={() => handleDelete(record.id)} disabled={busy}>
                       <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                    </ConfirmDeleteButton>
                   </div>
                 </CardContent>
               </Card>

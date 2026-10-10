@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { createInvalidationBatcher } from '@/lib/invalidationBatcher';
 
 // Maps each database table to the React Query keys that depend on it.
 // When Supabase pushes a change for a table, every matching query is
@@ -30,6 +31,9 @@ export function useRealtimeSync() {
 
   useEffect(() => {
     const channel = supabase.channel('db-sync');
+    const batcher = createInvalidationBatcher(queryKey => {
+      void queryClient.invalidateQueries({ queryKey });
+    });
 
     Object.entries(TABLE_KEYS).forEach(([table, keys]) => {
       // supabase-js's overloads don't narrow a dynamic event string cleanly.
@@ -38,7 +42,7 @@ export function useRealtimeSync() {
         'postgres_changes',
         { event: '*', schema: 'public', table },
         () => {
-          keys.forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+          keys.forEach(queryKey => batcher.queue(queryKey));
         }
       );
     });
@@ -46,6 +50,7 @@ export function useRealtimeSync() {
     channel.subscribe();
 
     return () => {
+      batcher.cancel();
       supabase.removeChannel(channel);
     };
   }, [queryClient]);

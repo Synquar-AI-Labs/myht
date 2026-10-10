@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { fetchAllRows } from '@/lib/fetchAll';
 
 export interface CustomAction {
   id: string;
@@ -42,12 +43,12 @@ export function useCustomActions() {
   const { data: logs = [], isLoading: logsLoading, isError: logsError } = useQuery({
     queryKey: ['custom_action_logs'],
     queryFn: async (): Promise<CustomActionLog[]> => {
-      const { data, error } = await supabase
+      return fetchAllRows<CustomActionLog>((from, to) => supabase
         .from('custom_action_logs')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data ?? [];
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to));
     },
   });
 

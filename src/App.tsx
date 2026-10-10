@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,9 +24,33 @@ const queryClient = new QueryClient({
 });
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { session, loading } = useAuth();
+  const { session, loading, signOut } = useAuth();
+  const [approval, setApproval] = useState<{ userId: string; allowed: boolean } | null>(null);
+  const userId = session?.user.id;
+  useEffect(() => {
+    let cancelled = false;
+    setApproval(null);
+    if (userId) {
+      (async () => {
+        let allowed = true;
+        try {
+          const { data, error } = await (supabase as any).rpc('is_allowed_user');
+          allowed = !!error || data !== false;
+        } catch { /* Preserve access if the migration/RPC is unavailable. */ }
+        if (!cancelled) setApproval({ userId, allowed });
+      })();
+    }
+    return () => { cancelled = true; };
+  }, [userId]);
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
   if (!session) return <Navigate to="/auth" replace />;
+  if (approval?.userId === userId && approval?.allowed === false) return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
+      <p>This account isn't approved yet.</p>
+      <p>Ask the person who manages this app to approve {session.user.email}.</p>
+      <Button onClick={signOut}>Sign out</Button>
+    </div>
+  );
   return <>{children}</>;
 }
 

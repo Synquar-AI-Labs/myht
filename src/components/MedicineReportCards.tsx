@@ -9,9 +9,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Download, Pill } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fetchAllRows } from '@/lib/fetchAll';
+import { getMonthOptions } from '@/lib/reportHelpers';
 import {
   format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth,
-  eachDayOfInterval, eachMonthOfInterval, subMonths, addMonths,
+  eachDayOfInterval,
 } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -25,15 +27,23 @@ interface MedicineInfo {
 }
 
 interface MedLog {
+  id: string;
   date: string;
   medicine_id: string;
 }
 
-function getMonthOptions() {
-  const now = new Date();
-  return eachMonthOfInterval({ start: subMonths(now, 12), end: addMonths(now, 1) })
-    .reverse()
-    .map(d => ({ value: format(d, 'yyyy-MM'), label: format(d, 'MMM yyyy') }));
+function useMedicineLogsForRange(from: string, to: string) {
+  return useQuery({
+    queryKey: ['medicine_logs_all', from, to],
+    queryFn: () => fetchAllRows<MedLog>((start, end) => supabase
+      .from('medicine_logs')
+      .select('id, date, medicine_id', { count: 'exact' })
+      .gte('date', from)
+      .lte('date', to)
+      .order('date', { ascending: true })
+      .order('id', { ascending: true })
+      .range(start, end)),
+  });
 }
 
 function buildMedRows(medicines: MedicineInfo[], logs: MedLog[], from: string, to: string) {
@@ -142,30 +152,27 @@ export function MedicineReportCards() {
     queryFn: fetchMedicinesList,
   });
 
-  const { data: logs = [], isLoading: logsLoading } = useQuery({
-    queryKey: ['medicine_logs_all'],
-    queryFn: async (): Promise<MedLog[]> => {
-      const { data, error } = await supabase.from('medicine_logs').select('date, medicine_id');
-      if (error) throw error;
-      return (data as MedLog[]) ?? [];
-    },
-  });
-
-  const loading = medsLoading || logsLoading;
-
   const weekStart = startOfWeek(weekDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(weekDate, { weekStartsOn: 1 });
   const weekLabel = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`;
+  const weekFrom = format(weekStart, 'yyyy-MM-dd');
+  const weekTo = format(weekEnd, 'yyyy-MM-dd');
+  const monthStart = startOfMonth(parseISO(selectedMonth + '-01'));
+  const monthFrom = format(monthStart, 'yyyy-MM-dd');
+  const monthTo = format(endOfMonth(monthStart), 'yyyy-MM-dd');
+  const { data: weeklyLogs = [], isLoading: weeklyLoading } = useMedicineLogsForRange(weekFrom, weekTo);
+  const { data: monthlyLogs = [], isLoading: monthlyLoading } = useMedicineLogsForRange(monthFrom, monthTo);
+  const loading = medsLoading || weeklyLoading || monthlyLoading;
 
   const weeklyData = useMemo(
-    () => buildMedRows(medicines, logs, format(weekStart, 'yyyy-MM-dd'), format(weekEnd, 'yyyy-MM-dd')),
-    [medicines, logs, weekStart, weekEnd]
+    () => buildMedRows(medicines, weeklyLogs, weekFrom, weekTo),
+    [medicines, weeklyLogs, weekFrom, weekTo]
   );
 
-  const monthlyData = useMemo(() => {
-    const ms = startOfMonth(parseISO(selectedMonth + '-01'));
-    return buildMedRows(medicines, logs, format(ms, 'yyyy-MM-dd'), format(endOfMonth(ms), 'yyyy-MM-dd'));
-  }, [medicines, logs, selectedMonth]);
+  const monthlyData = useMemo(
+    () => buildMedRows(medicines, monthlyLogs, monthFrom, monthTo),
+    [medicines, monthlyLogs, monthFrom, monthTo]
+  );
 
   const monthLabel = monthOptions.find(m => m.value === selectedMonth)?.label ?? selectedMonth;
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 import { Check, ChevronDown } from 'lucide-react';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
@@ -154,7 +155,7 @@ export function TodayScreen() {
 
   const { medicines, logs: todayLogs, addMedicineLog, deleteMedicineLog } = useMedicines(todayStr);
   const { logs: yesterdayLogs } = useMedicines(yesterdayStr);
-  const { records, bpReadings, updateField, saveBpReading, getRecordByDate } = useHealthRecords();
+  const { records, bpReadings, updateFields, saveBpReading, getRecordByDate } = useHealthRecords();
   const { appointments, addAppointment } = useAppointments();
   const { addNote } = useWrittenNotes();
   const { actions: customActions, logs: customLogs, addAction, addLog: addCustomLog, getLogCountForAction } = useCustomActions();
@@ -198,19 +199,18 @@ export function TodayScreen() {
     ? `last BP ${lastBpToday.systolic}/${lastBpToday.diastolic} at ${format(new Date(lastBpToday.created_at), 'h:mm a')}`
     : null;
 
-  const handleHealthSave = (reading: ReadingType) => (values: Record<string, number | boolean>, recordedBy: string, date: string) => {
+  const handleHealthSave = (reading: ReadingType) => async (values: Record<string, number | boolean>, recordedBy: string, date: string) => {
     if (reading.dbFields.includes('bpSystolic') && reading.dbFields.includes('bpDiastolic')) {
-      saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, recordedBy);
+      if (await saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, recordedBy)) {
+        toast.success('BP logged');
+      }
       return;
     }
+    const fields: Record<string, number | boolean> = {};
     reading.dbFields.forEach(key => {
-      let val: number | boolean = values[key] as number;
-      if (key === 'vomiting') val = (values['vomitCount'] as number) > 0;
-      else if (key === 'stoolPassed') val = (values['stoolCount'] as number) > 0;
-      if (val !== undefined) {
-        updateField(date, key, val, recordedBy);
-      }
+      if (values[key] !== undefined) fields[key] = values[key];
     });
+    if (await updateFields(date, fields, recordedBy)) toast.success(`${reading.label} logged`);
   };
 
   const inline = !isMobile && isWide;
@@ -424,7 +424,13 @@ export function TodayScreen() {
             <div className="space-y-1"><Label className="text-xs">Description</Label><Textarea value={apptForm.description} onChange={e => setApptForm(p => ({ ...p, description: e.target.value }))} placeholder="Optional notes" rows={2} /></div>
           </div>
           <DialogFooter>
-            <Button className="w-full" disabled={!apptForm.doctorName || !apptForm.reason} onClick={async () => { await addAppointment(apptForm); setApptOpen(false); }}>Save Appointment</Button>
+            <Button className="w-full" disabled={!apptForm.doctorName || !apptForm.reason} onClick={async () => {
+              if (await addAppointment(apptForm)) {
+                toast.success('Appointment added');
+                setApptOpen(false);
+                setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
+              }
+            }}>Save Appointment</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -439,7 +445,14 @@ export function TodayScreen() {
             <div className="space-y-1"><Label className="text-xs">Note</Label><Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Write your note here…" rows={4} /></div>
           </div>
           <DialogFooter>
-            <Button className="w-full" disabled={!noteContent.trim()} onClick={async () => { await addNote(noteTitle, noteContent, savedRecorder || 'Unknown'); setNoteOpen(false); }}>Save Note</Button>
+            <Button className="w-full" disabled={!noteContent.trim()} onClick={async () => {
+              try {
+                await addNote(noteTitle, noteContent, savedRecorder || 'Unknown');
+                setNoteOpen(false);
+                setNoteTitle('');
+                setNoteContent('');
+              } catch { /* The hook reports the failure; preserve the typed note. */ }
+            }}>Save Note</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

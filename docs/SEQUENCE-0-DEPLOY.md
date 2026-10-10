@@ -17,14 +17,25 @@ select email, last_sign_in_at from auth.users order by last_sign_in_at desc;
 
 Every caregiver's **login** email must appear EXACTLY in the migration's
 allowlist (fahadakbar / umairakbar / shahwar / affantiger @gmail.com).
-A mismatch means that person opens an empty app with no error. Fix mismatches
+A mismatch means that caregiver is not approved. Fix mismatches
 by editing the allowlist insert in
 `supabase/migrations/20260722153000_phase0_security_lockdown.sql` **before**
-deploying (or plan to run `scripts/emergency/allowlist-repair.sql` right after).
+deploying. The migration binds existing accounts by login email and stops if
+users exist but none match. Unbound emails grant nothing. To add a caregiver
+later, create the account in the dashboard, then run
+`scripts/emergency/allowlist-repair.sql` to insert or bind that account.
+
+Before deploying, run these read-only checks and send the results to @leader:
+
+```sql
+select date, count(*) from health_records group by date having count(*) > 1 order by date;
+select (select count(*) from bp_readings) as bp, (select count(*) from medicine_logs) as doses, (select count(*) from custom_action_logs) as custom_logs;
+```
 
 ## 2. Dashboard hardening (owner)
 
 - Authentication → Sign In / Providers → **disable new public sign-ups**.
+- Confirm a public sign-up attempt is refused **before applying the migration**.
 - Authentication → Users → **delete accounts you don't recognise**
   (including `claude-audit-test-account@gmail.com`, left from the July audit).
 
@@ -45,9 +56,13 @@ the project (Settings → Database → Backups).
 
 ## 4. Deploy
 
-Merge `release/sequence-0` → `main`; Lovable deploys. Apply the two new
-migrations to production (Lovable/Supabase migration flow or
-`supabase db push`).
+Merge `release/sequence-0` → `main`; Lovable deploys. Apply the three new
+migrations to production in this order (Lovable/Supabase migration flow or
+`supabase db push`):
+
+1. `20260722153000_phase0_security_lockdown.sql`
+2. `20260723160000_restrict_medicine_delete.sql`
+3. `20260723170000_explicit_table_grants.sql`
 
 ## 5. Post-deploy verification — OBSERVATIONAL ONLY
 

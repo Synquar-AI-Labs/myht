@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { fetchAllRows } from '@/lib/fetchAll';
 
 export function useWrittenNotes() {
   const queryClient = useQueryClient();
@@ -9,12 +10,12 @@ export function useWrittenNotes() {
   const { data: notes = [], isLoading: loading, isError: loadError } = useQuery({
     queryKey: ['written-notes'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      return fetchAllRows((from, to) => supabase
         .from('written_notes')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data;
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
+        .range(from, to));
     },
   });
 

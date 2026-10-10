@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { Appointment, AppointmentForm } from '@/types/health';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,12 +11,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { format, parseISO, isSameDay } from 'date-fns';
 import { Plus, MapPin, Clock, Trash2, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatAppointmentTime } from '@/lib/reportHelpers';
 
 interface AppointmentsTabProps {
   appointments: Appointment[];
   onAdd?: never;
-  addAppointment: (form: AppointmentForm) => Promise<void>;
-  deleteAppointment: (id: string) => Promise<void>;
+  addAppointment: (form: AppointmentForm) => Promise<boolean>;
+  deleteAppointment: (id: string) => Promise<boolean>;
   getUpcoming: () => Appointment[];
 }
 
@@ -42,7 +44,7 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
 
   const handleAdd = async () => {
     if (!form.doctorName.trim() || !form.reason.trim()) { toast.error('Please fill in doctor name and reason'); return; }
-    await addAppointment(form);
+    if (!await addAppointment(form)) return;
     setForm({ ...emptyAppt, date: format(selectedDate, 'yyyy-MM-dd') });
     setDialogOpen(false);
     toast.success('Appointment added');
@@ -143,11 +145,10 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
 
       {/* Upcoming / Filtered by selected date */}
       {(() => {
-        const selectedStr = format(selectedDate, 'yyyy-MM-dd');
         const isSelectedToday = isSameDay(selectedDate, today);
         const filtered = isSelectedToday
           ? upcoming
-          : upcoming.filter(a => a.date === selectedStr);
+          : dayAppointments;
         const label = isSelectedToday
           ? 'Upcoming'
           : `Appointments — ${format(selectedDate, 'EEEE, MMM d')}`;
@@ -179,7 +180,7 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
   );
 }
 
-function AppointmentCard({ appt, onDelete, showDate }: { appt: Appointment; onDelete: (id: string) => Promise<void>; showDate?: boolean }) {
+function AppointmentCard({ appt, onDelete, showDate }: { appt: Appointment; onDelete: (id: string) => Promise<boolean>; showDate?: boolean }) {
   return (
     <Card className="border-none shadow-sm">
       <CardContent className="p-3">
@@ -189,13 +190,13 @@ function AppointmentCard({ appt, onDelete, showDate }: { appt: Appointment; onDe
             <p className="text-xs text-muted-foreground">{appt.reason}</p>
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
               {showDate && <span className="flex items-center gap-1"><CalendarDays className="h-3 w-3" />{format(parseISO(appt.date), 'MMM d')}</span>}
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{appt.time}</span>
+              <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatAppointmentTime(appt.time)}</span>
               {appt.address && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{appt.address}</span>}
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={async () => { await onDelete(appt.id); toast.success('Appointment deleted'); }}>
+          <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this appointment?" description={`${appt.doctor_name} · ${appt.date}. This permanently removes it from the record.`} onConfirm={async () => { if (await onDelete(appt.id)) toast.success('Appointment deleted'); }}>
             <Trash2 className="h-3.5 w-3.5" />
-          </Button>
+          </ConfirmDeleteButton>
         </div>
       </CardContent>
     </Card>

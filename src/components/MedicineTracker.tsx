@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { RECORDER_OPTIONS } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -120,9 +121,9 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(log)}>
                     <Pencil className="h-3 w-3" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => deleteMedicineLog(log.id)}>
+                  <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this dose log?" description={`${getMedicineName(log.medicine_id)} · ${log.hour}:00 ${log.am_pm}. This permanently removes it from the record.`} onConfirm={() => deleteMedicineLog(log.id)}>
                     <Trash2 className="h-3 w-3" />
-                  </Button>
+                  </ConfirmDeleteButton>
                 </div>
               </div>
             ))}

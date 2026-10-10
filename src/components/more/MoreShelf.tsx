@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
+import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { useQuery } from '@tanstack/react-query';
 import {
   Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2,
@@ -118,7 +119,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
       subtitle: appointmentsData.loading
         ? 'Upcoming appointments'
         : nextAppointment
-          ? `Next: ${nextAppointment.doctor_name} — ${format(parseISO(nextAppointment.date), 'EEE, MMM d')} · ${nextAppointment.time}`
+          ? `Next: ${nextAppointment.doctor_name} — ${format(parseISO(nextAppointment.date), 'EEE, MMM d')} · ${formatAppointmentTime(nextAppointment.time)}`
           : 'No upcoming appointments',
       icon: CalendarDays,
       chip: 'bg-[#eef1f9] text-[#4f6bd6]',

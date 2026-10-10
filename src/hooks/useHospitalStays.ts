@@ -32,16 +32,16 @@ export function useHospitalStays(weekStart: Date, weekEnd: Date) {
   });
 
   const addStay = useMutation({
-    mutationFn: async (stay: {
+    mutationFn: async (stays: {
       person_name: string;
       date: string;
       start_hour: number;
       end_hour: number;
       is_unavailable: boolean;
-    }) => {
+    }[]) => {
       const { error } = await (supabase as any)
         .from('hospital_stays')
-        .insert(stay);
+        .insert(stays);
       if (error) throw error;
     },
     onSuccess: () => {

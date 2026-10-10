@@ -5,10 +5,12 @@ in the order you should reach for them.
 
 ## 1. A caregiver is locked out (sees an empty app) — `allowlist-repair.sql`
 
-By far the most likely failure: their login email isn't in `app_allowlist`
-(typo, or they sign in with a different address). This is fixed by ADDING the
-correct email — it never widens access beyond the family. Run the script's
-steps in the Supabase SQL editor. Safe to run any time.
+Their account may not be bound in `app_allowlist` (a typo or a different login
+address). Verify the person is a family caregiver, create their account in the
+dashboard if needed, then run `allowlist-repair.sql` in the SQL editor. It lists
+accounts and bound/unbound entries, then inserts or binds the specified existing
+account. Replace the placeholder email first. **0 rows affected means no account
+exists yet.** A listed email alone grants nothing; access is tied to the user ID.
 
 ## 2. The database itself is broken — restore from backup
 
