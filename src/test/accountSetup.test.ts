@@ -8,9 +8,16 @@ describe('account error messages', () => {
     ['invite_unavailable', 'This invitation is no longer available.'],
     ['name_taken', 'That name is already used. Try another name.'],
     ['admin_required', 'Only the family admin can do that.'],
+    ['invalid_email', 'That email does not look right.'],
+    ['already_member', 'That person is already in your family.'],
+    ['email_not_confirmed', 'Confirm your email first.'],
+    ['otp_expired', 'That code is not right, or it has expired. Check it, or send a new one.'],
   ])('maps %s', (message, expected) => expect(accountError({ message })).toBe(expected));
   it('does not expose arbitrary server details', () => {
     expect(accountError({ message: 'secret internal detail' })).toBe('Something went wrong. Please try again.');
+  });
+  it('maps a caregiver name constraint violation', () => {
+    expect(accountError({ code: '23505', message: 'duplicate key' })).toBe('That name is already used. Try another name.');
   });
 });
 describe('setup resolution', () => {

@@ -14,6 +14,8 @@ export default function Auth() {
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const codeInput = useRef<HTMLInputElement>(null);
   const recovering = useRef(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function Auth() {
   }, [navigate]);
   const go = (next: Screen) => {
     if (next === 'main' || next === 'signin' || next === 'signup') recovering.current = false;
-    setError(''); setCode(''); setScreen(next);
+    setError(''); setNotice(''); setCode(''); setScreen(next);
   };
   const run = async (action: () => Promise<void>) => {
     setBusy(true); setError('');
@@ -43,6 +45,13 @@ export default function Auth() {
         go('code');
       } else if (screen === 'signin') {
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error?.code === 'email_not_confirmed') {
+          const { error: resendError } = await supabase.auth.resend({ type: 'signup', email: email.trim() });
+          go('code');
+          if (resendError) setError(accountError(resendError));
+          else setNotice('Confirm your email first. We sent you a new code.');
+          return;
+        }
         if (error) throw error;
       } else if (screen === 'forgot') {
         recovering.current = true;
@@ -51,7 +60,11 @@ export default function Auth() {
         go('recovery');
       } else if (screen === 'code' || screen === 'recovery') {
         const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: code, type: screen === 'recovery' ? 'recovery' : 'email' });
-        if (error) throw error;
+        if (error) {
+          setCode('');
+          requestAnimationFrame(() => codeInput.current?.focus());
+          throw error;
+        }
         if (screen === 'recovery') { setPassword(''); go('password'); }
         else navigate('/', { replace: true });
       } else if (screen === 'password') {
@@ -68,6 +81,7 @@ export default function Auth() {
       : await supabase.auth.resend({ type: 'signup', email: email.trim() });
     if (error) throw error;
     setCode('');
+    setNotice('New code sent.');
   });
   if (screen === 'main') return <SetupLayout>
     <SetupBrand />
@@ -92,13 +106,14 @@ export default function Auth() {
         {!isCode && screen !== 'password' && <SetupField label="Email" id="email" type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} />}
         {(screen === 'signup' || screen === 'signin' || screen === 'password') && <SetupField label="Password" id="password" type="password" required minLength={screen === 'signin' ? undefined : 8} autoComplete={screen === 'signin' ? 'current-password' : 'new-password'} placeholder={screen === 'signin' ? 'Your password' : 'Choose a password'} value={password} onChange={e => setPassword(e.target.value)} />}
         {(screen === 'signup' || screen === 'password') && <p className="setup-small">At least 8 characters.</p>}
-        {isCode && <InputOTP aria-label="6-digit code" maxLength={6} pattern="[0-9]*" inputMode="numeric" autoComplete="one-time-code" value={code} onChange={setCode}>
+        {isCode && <InputOTP ref={codeInput} aria-label="6-digit code" maxLength={6} pattern="[0-9]*" inputMode="numeric" autoComplete="one-time-code" value={code} onChange={setCode}>
           <InputOTPGroup className="w-full gap-2">{Array.from({ length: 6 }, (_, i) => <InputOTPSlot key={i} index={i} className="h-[62px] flex-1 rounded-xl border border-[#b9ae9c] bg-white text-[26px] font-bold first:rounded-xl last:rounded-xl" />)}</InputOTPGroup>
         </InputOTP>}
         <button className="setup-primary" disabled={busy || (isCode && code.length !== 6)}>{busy ? 'Please wait…' : screen === 'signin' ? 'Sign in' : screen === 'password' ? 'Save password' : 'Continue'}</button>
       </fieldset>
     </form>
     {error && <p role="alert" className="setup-error">{error}</p>}
+    {notice && <p role="status">{notice}</p>}
     {isCode && <button className="setup-link" disabled={busy} onClick={resend}>Send the code again</button>}
     {(screen === 'signin' || screen === 'code') && <button className="setup-link" disabled={busy} onClick={() => { recovering.current = true; go('forgot'); }}>Forgot your password?</button>}
     {screen === 'code' && <button className="setup-link" disabled={busy} onClick={() => go('signin')}>Sign in instead</button>}

@@ -23,7 +23,7 @@ export function HouseholdSetup({ children }: { children: React.ReactNode }) {
   };
   const destination = resolveSetup({ loading: state.status === 'loading', error: state.status === 'error', member: state.status === 'ready', invite: state.status === 'no-household' && !!state.invite });
   if (destination === 'loading') return <SetupLayout><p role="status">Loading your family…</p></SetupLayout>;
-  if (state.status === 'error') return <SetupLayout><p role="alert">{state.message}</p><button className="setup-primary" onClick={() => void reload()}>Retry</button></SetupLayout>;
+  if (state.status === 'error') return <SetupLayout><p role="alert">{state.message}</p><button className="setup-primary" onClick={() => void reload()}>Retry</button><button className="setup-link" onClick={() => void supabase.auth.signOut()}>Sign out</button></SetupLayout>;
   if (destination === 'app') return <>{children}</>;
   if (state.status !== 'no-household') return null;
   const invite = state.invite;
@@ -82,12 +82,16 @@ export function HouseholdSetup({ children }: { children: React.ReactNode }) {
       <button className="setup-primary" disabled={busy}>{busy ? 'Please wait…' : createdHousehold ? 'Add' : invite ? 'Join' : 'Continue'}</button>
     </fieldset></form>
     {error && <p className="setup-error" role="alert">{error}</p>}
+    {!createdHousehold && !invite && <div className="setup-card">
+      <p className="setup-small">Joining a family someone else set up? Ask them to add this email: {user.email}. Then tap Check again.</p>
+      <button className="setup-link" disabled={busy} onClick={() => void reload()}>Check again</button>
+    </div>}
     {createdHousehold && <>
-      {invites.map(i => <div className="setup-card" key={i.id}><p>{i.email}</p><span>Invited</span><button className="setup-link" disabled={busy} onClick={() => void share(i.email)}>Share</button><button className="setup-link" aria-label={'Remove ' + i.email} disabled={busy} onClick={() => void run(async () => {
+      {invites.map(i => <div className="setup-card" key={i.id}><p style={{ overflowWrap: 'anywhere' }}>{i.email}</p><div className="setup-invite-actions"><span>Invited</span><div><button className="setup-link" disabled={busy} onClick={() => void share(i.email)}>Share</button><button className="setup-link" aria-label={'Remove ' + i.email} disabled={busy} onClick={() => void run(async () => {
         const { error } = await supabase.rpc('revoke_invite', { p_invite_id: i.id });
         if (error) throw error;
         setInvites(previous => previous.filter(item => item.id !== i.id));
-      })}>Remove</button></div>)}
+      })}>Remove</button></div></div></div>)}
       {helpers.map(helper => <p className="setup-card" key={helper}>{helper}</p>)}
       <button className="setup-link" disabled={busy} onClick={() => setNameOnly(value => !value)}>{nameOnly ? 'Invite by email instead' : 'Someone helps but has no email? Add just their name'}</button>
       {shareText && <p className="setup-card" role="status">{shareText}</p>}

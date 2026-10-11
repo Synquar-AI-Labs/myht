@@ -16,3 +16,5 @@ body:has(.setup-screen) { background: #faf7f2; }
 .setup-screen fieldset { display: flex; flex-direction: column; gap: 18px; min-width: 0; border: 0; padding: 0; margin: 0; }
 .setup-screen .setup-error { color: #a32222; font-size: 15px; }
 .setup-card { padding: 16px; background: white; border: 1px solid #e9e2d6; border-radius: 16px; }
+.setup-invite-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.setup-invite-actions > div { display: flex; gap: 20px; }

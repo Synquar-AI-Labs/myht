@@ -8,7 +8,11 @@ export function accountError(error: unknown): string {
     name_taken: 'That name is already used. Try another name.',
     admin_required: 'Only the family admin can do that.',
     invalid_credentials: 'Incorrect email or password.',
-    otp_expired: 'That code has expired. Request another one.',
+    otp_expired: 'That code is not right, or it has expired. Check it, or send a new one.',
+    email_not_confirmed: 'Confirm your email first.',
+    invalid_email: 'That email does not look right.',
+    already_member: 'That person is already in your family.',
+    '23505': 'That name is already used. Try another name.',
     over_email_send_rate_limit: 'Please wait before requesting another code.',
   };
   const code = typeof error === 'object' && error !== null && 'code' in error ? String(error.code) : '';
