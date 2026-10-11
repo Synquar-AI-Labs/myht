@@ -1,0 +1,233 @@
+import { test, expect, checked, client, family, person, uniqueEmail, password, today, tomorrow, mailCode, enterCode, signUp, signIn, finishFamily, more, reading, choose, insertMedicine } from './helpers';
+
+test('a. Sign-up, wrong code, resend, family setup and app', async ({ page, sessions }) => {
+  void sessions;
+  const email = uniqueEmail('signup');
+  await signUp(page, 'New person', email);
+  const first = await mailCode(email);
+  await enterCode(page, first === '000000' ? '111111' : '000000');
+  await expect(page.getByRole('alert')).toHaveText('That code is not right, or it has expired. Check it, or send a new one.');
+  await expect(page.getByRole('textbox', { name: '6-digit code' })).toHaveValue('');
+  const after = Date.now();
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Send the code again' }).click();
+    await expect(page.getByRole('status')).toHaveText('New code sent.', { timeout: 1000 });
+  }).toPass({ timeout: 75_000, intervals: [5000] });
+  await enterCode(page, await mailCode(email, after));
+  await finishFamily(page);
+  const signedIn = client(); await checked(signedIn.auth.signInWithPassword({ email, password }));
+  const households = await checked(signedIn.from('households').select('*'));
+  expect(households).toHaveLength(1);
+  expect(households![0].care_recipient_name).toBe('Synthetic recipient');
+});
+
+test('b. Unconfirmed sign-in, wrong password and recovery with a new password', async ({ page, sessions }) => {
+  void sessions;
+  const unconfirmed = await person('Unconfirmed person', false);
+  await signIn(page, unconfirmed, password, false);
+  await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
+  // A recent sign-up can rate-limit resend; the code screen must still be reachable.
+  await expect(page.getByRole('status').or(page.getByRole('alert'))).toContainText(/Confirm your email first|Please wait/);
+  await enterCode(page, await mailCode(unconfirmed.email));
+  await finishFamily(page);
+  await page.getByRole('button', { name: 'More', exact: true }).click();
+  await page.getByRole('button', { name: /^Sign out/ }).click();
+  await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toBeVisible();
+  await signIn(page, unconfirmed, 'Wrong-password-42!', false);
+  await expect(page.getByRole('alert')).toHaveText('Incorrect email or password.');
+  await page.getByRole('button', { name: 'Forgot your password?' }).click();
+  const after = Date.now();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
+  await enterCode(page, await mailCode(unconfirmed.email, after));
+  await expect(page.getByRole('heading', { name: 'Choose a new password' })).toBeVisible();
+  await page.getByLabel('Password', { exact: true }).fill('Changed-synthetic-42!');
+  await page.getByRole('button', { name: 'Save password' }).click();
+  await expect(page.getByRole('button', { name: /^Record a reading/ })).toBeVisible();
+  await page.getByRole('button', { name: 'More', exact: true }).click();
+  await page.getByRole('button', { name: /^Sign out/ }).click();
+  await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toBeVisible();
+  await signIn(page, unconfirmed, 'Changed-synthetic-42!');
+});
+
+test('c. Email invite joins the same family; uninvited account sees Check again', async ({ page, sessions }) => {
+  const f = await family();
+  await signIn(page, f.admin); await more(page, 'Family & people');
+  const email = uniqueEmail('invited');
+  await page.getByLabel('Invite someone by email').fill(email);
+  await page.getByRole('button', { name: 'Invite', exact: true }).click();
+  await expect(page.getByText(email, { exact: true })).toBeVisible();
+  const invited = await sessions(); await signUp(invited, 'Invited person', email);
+  await enterCode(invited, await mailCode(email));
+  await expect(invited.getByRole('heading', { name: 'Join your family' })).toBeVisible();
+  await expect(invited.getByText('Admin person invited you to help care for Synthetic recipient.')).toBeVisible();
+  await invited.getByRole('button', { name: 'Join', exact: true }).click();
+  await expect(invited.getByRole('button', { name: /^Record a reading/ })).toBeVisible();
+  const auth = client(); await checked(auth.auth.signInWithPassword({ email, password }));
+  expect((await checked(auth.from('household_members').select('household_id')))?.[0].household_id).toBe(f.id);
+  const stranger = await sessions(); const strangerEmail = uniqueEmail('uninvited');
+  await signUp(stranger, 'Uninvited person', strangerEmail); await enterCode(stranger, await mailCode(strangerEmail));
+  await expect(stranger.getByText('Joining a family someone else set up? Ask them to add this email: ' + strangerEmail + '. Then tap Check again.')).toBeVisible();
+  await expect(stranger.getByRole('button', { name: 'Check again' })).toBeVisible();
+});
+
+test('d. Medicine realtime, dose picker and attribution-preserving edits', async ({ page, sessions }) => {
+  void sessions;
+  const f = await family(); await signIn(page, f.admin);
+  await page.getByRole('button', { name: /^Record a medicine/ }).click();
+  await expect(page.getByText('Synthetic medicine', { exact: true })).toHaveCount(0);
+  const medicine = await insertMedicine(f.member, f.id);
+  await page.getByRole('button', { name: /^Synthetic medicine/ }).click();
+  const drawer = page.getByRole('dialog');
+  await expect(drawer.getByText('Recorded by', { exact: true })).toBeVisible();
+  await drawer.getByRole('combobox').click();
+  await expect(page.getByRole('option', { name: f.member.name, exact: true })).toBeVisible();
+  await page.getByRole('option', { name: f.admin.name, exact: true }).click();
+  await drawer.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect.poll(async () => (await checked(f.admin.client.from('medicine_logs').select('*').eq('medicine_id', medicine.id)))?.length).toBe(1);
+  const other = f.people.find(p => p.user_id === f.member.id)!;
+  const log = await checked(f.member.client.from('medicine_logs').insert({ household_id: f.id, medicine_id: medicine.id, date: today(), hour: 9, am_pm: 'AM', caregiver_id: other.caregiver_id, recorded_by: other.display_name }).select().single());
+  const remembered = await page.evaluate(id => localStorage.getItem('ht_caregiver:' + id), f.id);
+  await page.getByRole('button', { name: 'History', exact: true }).click();
+  await page.getByRole('button', { name: 'Edit this day' }).click();
+  const row = page.getByText(/9:00 AM.*by Member person/).locator('../..');
+  await row.getByRole('button').first().click();
+  const hour = page.getByText('Hour', { exact: true }).locator('..').getByRole('combobox');
+  await choose(page, hour, '10');
+  await page.getByRole('button', { name: 'Update', exact: true }).click();
+  await expect.poll(async () => (await checked(f.admin.client.from('medicine_logs').select('*').eq('id', log.id).single())).hour).toBe(10);
+  const saved = await checked(f.admin.client.from('medicine_logs').select('*').eq('id', log.id).single());
+  expect(saved.caregiver_id).toBe(other.caregiver_id); expect(saved.recorded_by).toBe(other.display_name);
+  expect(await page.evaluate(id => localStorage.getItem('ht_caregiver:' + id), f.id)).toBe(remembered);
+});
+
+test('e. Atomic feeds, second-session reading, BP and changed-only day editing', async ({ page, sessions }) => {
+  void sessions;
+  const f = await family(); await signIn(page, f.admin);
+  for (let i = 0; i < 2; i++) {
+    const drawer = await reading(page, 'Feed');
+    await drawer.getByRole('button', { name: 'Save', exact: true }).click();
+    await expect(page.getByRole('button', { name: `Feed ${i + 1} today`, exact: true })).toBeVisible();
+  }
+  const other = f.people.find(p => p.user_id === f.member.id)!;
+  await checked(f.member.client.rpc('log_reading', { p_household_id: f.id, p_date: today(), p_urine_count: 2, p_caregiver_id: other.caregiver_id, p_recorded_by: other.display_name }));
+  await expect(page.getByRole('button', { name: 'Urine 2 today', exact: true })).toBeVisible();
+  const bp = await reading(page, 'BP'); await bp.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'BP 120/80', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'History', exact: true }).click();
+  await expect(page.getByText(/120\/80/).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Edit this day' }).click();
+  const feeds = page.getByText('Feed Bags', { exact: true }).locator('..').locator('input');
+  await expect(feeds).toHaveValue('2');
+  await feeds.fill('3'); await page.getByRole('button', { name: 'Update Record', exact: true }).click();
+  await expect.poll(async () => (await checked(f.admin.client.from('health_records').select('*').eq('date', today())))?.[0]?.feed_bags).toBe(3);
+  const rows = await checked(f.admin.client.from('health_records').select('*').eq('date', today()));
+  expect(rows).toHaveLength(1); expect(rows![0].urine_count).toBe(2); expect(rows![0].bp_systolic).toBe(120); expect(rows![0].bp_diastolic).toBe(80);
+});
+
+test('f. Stays use family caregivers and appointments save', async ({ page, sessions }) => {
+  void sessions;
+  const f = await family(); await signIn(page, f.admin); await more(page, 'Hospital stays');
+  const dayNumber = new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: 'America/Toronto' }).format(new Date());
+  const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: 'America/Toronto' }).format(new Date());
+  await page.getByRole('button', { name: `${weekday} ${dayNumber}`, exact: true }).click();
+  const drawer = page.getByRole('dialog');
+  await drawer.getByRole('combobox').first().click();
+  await expect(page.getByRole('option', { name: f.member.name, exact: true })).toBeVisible();
+  await page.getByRole('option', { name: f.admin.name, exact: true }).click();
+  await drawer.getByRole('button', { name: 'Add Stay', exact: true }).click();
+  await expect.poll(async () => (await checked(f.admin.client.from('hospital_stays').select('*')))?.length).toBe(1);
+  const stay = (await checked(f.admin.client.from('hospital_stays').select('*')))![0];
+  expect(stay.household_id).toBe(f.id); expect(stay.caregiver_id).toBe(f.people.find(p => p.user_id === f.admin.id)!.caregiver_id);
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: /^Doctor visits/ }).click();
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.locator('input[type="date"]').fill(tomorrow());
+  await dialog.getByPlaceholder('Dr. Smith').fill('Synthetic doctor');
+  await dialog.getByPlaceholder('Check-up, follow-up...').fill('Synthetic visit');
+  await dialog.getByRole('button', { name: 'Save Appointment' }).click();
+  await expect(page.getByText('Synthetic doctor', { exact: true })).toBeVisible();
+  expect((await checked(f.admin.client.from('appointments').select('*')))![0].household_id).toBe(f.id);
+});
+
+test('g. Positive family A data remains absent from family B UI and queries', async ({ page, sessions }) => {
+  const a = await family(); const b = await family();
+  await insertMedicine(a.admin, a.id, 'Private synthetic medicine');
+  await checked(a.admin.client.rpc('log_reading', { p_household_id: a.id, p_date: today(), p_feed_bags: 3 }));
+  await checked(a.admin.client.from('appointments').insert({ household_id: a.id, date: tomorrow(), time: '09:00', doctor_name: 'Private synthetic doctor', reason: 'Synthetic visit' }));
+  await checked(a.admin.client.from('hospital_stays').insert({ household_id: a.id, caregiver_id: a.people[0].caregiver_id, person_name: 'Private synthetic helper', date: today(), start_hour: 9, end_hour: 17 }));
+  await signIn(page, a.admin); await page.getByRole('button', { name: /^Record a medicine/ }).click();
+  await expect(page.getByRole('button', { name: /^Private synthetic medicine/ })).toBeVisible();
+  await page.getByRole('button', { name: /^Record a reading/ }).click();
+  await expect(page.getByRole('button', { name: 'Feed 3 today', exact: true })).toBeVisible();
+  await more(page, 'Doctor visits'); await expect(page.getByText('Private synthetic doctor', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Back', exact: true }).click(); await page.getByRole('button', { name: /^Hospital stays/ }).click();
+  await expect(page.getByRole('button', { name: /Private synthetic helper/ })).toBeVisible();
+  const second = await sessions(); await signIn(second, b.admin);
+  await second.getByRole('button', { name: /^Record a medicine/ }).click();
+  await expect(second.getByRole('button', { name: 'Record a medicine All 0 medicines', exact: true })).toBeVisible();
+  await expect(second.getByText('Private synthetic medicine')).toHaveCount(0);
+  await second.getByRole('button', { name: /^Record a reading/ }).click();
+  await expect(second.getByRole('button', { name: 'Feed 0 today', exact: true })).toBeVisible();
+  await more(second, 'Doctor visits'); await expect(second.getByText('No upcoming appointments')).toBeVisible();
+  await expect(second.getByText('Private synthetic doctor')).toHaveCount(0);
+  await second.getByRole('button', { name: 'Back', exact: true }).click(); await second.getByRole('button', { name: /^Hospital stays/ }).click();
+  await expect(second.getByText('Private synthetic helper')).toHaveCount(0);
+  for (const table of ['medicines', 'health_records', 'hospital_stays', 'appointments']) {
+    expect((await checked(a.admin.client.from(table).select('*')))!.length).toBeGreaterThan(0);
+    expect(await checked(b.admin.client.from(table).select('*'))).toEqual([]);
+  }
+});
+
+test('h. Family admin controls, live picker changes, linked invite and removal', async ({ page, sessions }) => {
+  const f = await family(); await signIn(page, f.admin); await more(page, 'Family & people');
+  const member = await sessions(); await member.clock.install(); await signIn(member, f.member); await more(member, 'Family & people');
+  await expect(member.getByText('Only the family admin can add or remove people.')).toBeVisible();
+  await expect(member.getByRole('button', { name: 'Add person', exact: true })).toHaveCount(0);
+  await expect(member.getByRole('button', { name: 'Invite', exact: true })).toHaveCount(0);
+  await expect(member.getByRole('button', { name: /^Remove Member/ })).toHaveCount(0);
+  const cancelledEmail = uniqueEmail('cancelled');
+  await page.getByLabel('Invite someone by email').fill(cancelledEmail); await page.getByRole('button', { name: 'Invite', exact: true }).click();
+  const inviteCard = page.getByText(cancelledEmail, { exact: true }).locator('..');
+  await expect(inviteCard.getByText('Invited', { exact: true })).toBeVisible();
+  await inviteCard.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Cancel invitation', exact: true }).click();
+  await expect(page.getByText(cancelledEmail, { exact: true })).toHaveCount(0);
+  expect((await checked(f.admin.client.from('household_invites').select('*').eq('email', cancelledEmail).single())).revoked_at).not.toBeNull();
+  await member.getByRole('button', { name: 'Today', exact: true }).click();
+  const drawer = await reading(member, 'Feed'); await drawer.getByRole('combobox').click();
+  await expect(member.getByRole('option', { name: f.member.name, exact: true })).toBeVisible();
+  await page.getByLabel('Add a person without an email').fill('New helper'); await page.getByRole('button', { name: 'Add person', exact: true }).click();
+  await expect(member.getByRole('option', { name: 'New helper', exact: true })).toBeVisible();
+  const helperCard = page.getByText(/^New helper/).locator('..');
+  await helperCard.getByRole('button', { name: 'Deactivate', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Deactivate', exact: true }).click();
+  await expect(member.getByRole('option', { name: 'New helper', exact: true })).toHaveCount(0);
+  await helperCard.getByRole('button', { name: 'Reactivate', exact: true }).click();
+  await expect(member.getByRole('option', { name: 'New helper', exact: true })).toBeVisible();
+  await helperCard.getByRole('button', { name: 'Invite them', exact: true }).click();
+  await expect(page.getByLabel('Invite New helper')).toBeFocused();
+  await expect(page.getByLabel('Invite New helper')).toBeInViewport();
+  const linkedEmail = uniqueEmail('linked'); await page.getByLabel('Invite New helper').fill(linkedEmail); await page.getByRole('button', { name: 'Invite', exact: true }).click();
+  await expect(page.getByText(linkedEmail, { exact: true })).toBeVisible();
+  const helper = await checked(f.admin.client.from('caregivers').select('*').eq('display_name', 'New helper').single());
+  expect((await checked(f.admin.client.from('household_invites').select('*').eq('email', linkedEmail).single())).caregiver_id).toBe(helper.id);
+  const linked = await sessions(); await signUp(linked, 'Linked helper', linkedEmail); await enterCode(linked, await mailCode(linkedEmail));
+  await linked.getByRole('button', { name: 'Join', exact: true }).click();
+  await expect(linked.getByRole('button', { name: /^Record a reading/ })).toBeVisible();
+  const linkedAuth = client();
+  const linkedSession = await checked(linkedAuth.auth.signInWithPassword({ email: linkedEmail, password }));
+  expect((await checked(f.admin.client.from('caregivers').select('*').eq('id', helper.id).single())).user_id).toBe(linkedSession.user!.id);
+  expect(await checked(f.admin.client.from('caregivers').select('*'))).toHaveLength(3);
+  await page.getByRole('button', { name: 'Remove Member person', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Remove', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Remove Member person', exact: true })).toHaveCount(0);
+  await member.clock.fastForward(300_000); await member.clock.runFor(500);
+  await expect(member.getByText('You are no longer part of that family.')).toBeVisible();
+  await expect(member.getByRole('heading', { name: 'Who are you caring for?' })).toBeVisible();
+  await expect(member.getByRole('dialog')).toHaveCount(0);
+  await expect(member.getByRole('button', { name: /^Record a reading/ })).toHaveCount(0);
+  expect(await checked(f.member.client.from('caregivers').select('*'))).toEqual([]);
+  expect(await checked(f.member.client.from('health_records').select('*'))).toEqual([]);
+});

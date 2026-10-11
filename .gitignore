@@ -28,3 +28,6 @@ dist-ssr
 .playwright-mcp/
 supabase/.temp/
 supabase/.branches/
+test-results/
+playwright-report/
+e2e/.auth/

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,8 @@ export function FamilyPeopleTab() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [target, setTarget] = useState<string | undefined>();
+  const inviteForm = useRef<HTMLFormElement>(null);
+  const inviteEmail = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [shareText, setShareText] = useState('');
@@ -51,7 +53,11 @@ export function FamilyPeopleTab() {
             title={'Remove ' + person.display_name + '?'} description="They lose access right away. What they recorded stays." confirmLabel="Remove"
             onConfirm={() => run(async () => { const { error } = await supabase.rpc('remove_member', { p_user_id: person.user_id! }); if (error) throw error; })}>Remove {person.display_name}</ConfirmDeleteButton>}
           {!person.user_id && (person.is_active ? <>
-            <Button variant="ghost" className="min-h-11" disabled={busy} onClick={() => { setTarget(person.caregiver_id); setEmail(''); }}>Invite them</Button>
+            <Button variant="ghost" className="min-h-11" disabled={busy} onClick={() => {
+              setTarget(person.caregiver_id); setEmail('');
+              inviteForm.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              inviteEmail.current?.focus({ preventScroll: true });
+            }}>Invite them</Button>
             <ConfirmDeleteButton variant="ghost" className="min-h-11 text-destructive" disabled={busy} title={'Deactivate ' + person.display_name + '?'}
               description="They will no longer appear in the lists. What they recorded stays." confirmLabel="Deactivate"
               onConfirm={() => run(async () => { const { error } = await supabase.from('caregivers').update({ is_active: false }).eq('household_id', householdId!).eq('id', person.caregiver_id); if (error) throw error; })}>Deactivate</ConfirmDeleteButton>
@@ -62,13 +68,13 @@ export function FamilyPeopleTab() {
       </div>)}
     </div>
     {admin && <>
-      <form className={card + ' space-y-3'} onSubmit={e => { e.preventDefault(); void run(async () => {
+      <form ref={inviteForm} className={card + ' space-y-3'} onSubmit={e => { e.preventDefault(); void run(async () => {
         const { error } = await supabase.rpc('invite_member', { p_email: email.trim().toLowerCase(), ...(target ? { p_caregiver_id: target } : {}) });
         if (error) throw error;
         setEmail(''); setTarget(undefined);
       }); }}>
         <label className="block text-sm font-semibold" htmlFor="family-invite-email">{target ? 'Invite ' + caregivers.find(p => p.caregiver_id === target)?.display_name : 'Invite someone by email'}</label>
-        <Input id="family-invite-email" type="email" required value={email} disabled={busy} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" />
+        <Input ref={inviteEmail} id="family-invite-email" type="email" required value={email} disabled={busy} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" />
         <Button disabled={busy}>Invite</Button>
         {target && <Button type="button" variant="ghost" disabled={busy} onClick={() => setTarget(undefined)}>Cancel</Button>}
       </form>
