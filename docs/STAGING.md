@@ -14,7 +14,7 @@ Nothing here authorizes a login or upload. After the owner's explicit yes:
    create the one named project once:
    `HOSTING_CONFIRM=myht-staging scripts/hosting.sh create`.
    This runs the pinned tool's `pages project create myht-staging
-   --production-branch main`. Stop on any error; never guess another name.
+   --production-branch main --force`. Stop on any error; never guess another name.
 3. Coder builds AFTER committing intended changes: `npm run build:staging`,
    then runs `node scripts/test/static-staging.mjs`.
    The build reads the ignored `.env.staging.local`, requires the exact staging
@@ -25,8 +25,9 @@ Nothing here authorizes a login or upload. After the owner's explicit yes:
    This uploads static files to `myht-staging`, branch `main`; it does NOT merge
    or push our Git branch. The guard requires a current-HEAD receipt, no tracked
    changes except AGENTS.md, an unchanged artifact digest and a fresh target scan.
-   All wrapper commands use `npx --no-install wrangler`, never a freshly fetched
-   release. The exact order is login → whoami → leader/owner account check →
+   Whoami uses `npx --no-install wrangler`; create/deploy invoke the same pinned
+   `node_modules/.bin/wrangler` directly, never a freshly fetched release.
+   The exact order is login → whoami → leader/owner account check →
    create → build → static check → deploy.
 4. Leader checks the resulting HTTPS address, `/auth` refresh, response headers,
    and staging-only client target. Do not share the address while Confirm email
@@ -34,6 +35,17 @@ Nothing here authorizes a login or upload. After the owner's explicit yes:
    Entered data is TEST DATA; this Free staging project has no backups. Do not
    put irreplaceable medical records here. Undo: owner removes the staging
    deployment in Cloudflare; the Supabase database is separate and untouched.
+
+Classic Pages only: Wrangler 4.149.0's `maybeDelegatePagesToWorkers()` delegates
+agent sessions targeting a new project to Workers, including framework auto-edits.
+Both create and deploy have a hidden `--force` opt-out; it skips delegation,
+not authorization. Established Pages projects already skip delegation, but the
+wrapper explicitly opts out for both commands. Classic commands can write local
+Pages caches and generated files too. They run in a fresh `/private/tmp` directory
+with no package.json; deploy uploads a COPY of the scanned artifact there. Thus
+their cwd, caches, generated files and asset writes stay outside the repository.
+The temporary directory is removed on exit, including failures. No Workers,
+Vite upgrade or broader token permissions are required.
 
 Cloudflare's [Serving Pages docs](https://developers.cloudflare.com/pages/configuration/serving-pages/)
 say that without a top-level `404.html`, unmatched SPA routes serve the app root.

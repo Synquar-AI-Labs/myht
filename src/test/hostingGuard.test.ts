@@ -8,9 +8,11 @@ const roots: string[] = [];
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), 'myht-hosting-')); roots.push(root);
   for (const dir of ['scripts', 'bin', 'dist-staging']) mkdirSync(join(root, dir));
+  mkdirSync(join(root, 'node_modules/.bin'), { recursive: true });
   for (const name of ['hosting.sh', 'hosting-check.mjs', 'staging-artifact.mjs']) writeFileSync(join(root, 'scripts', name), readFileSync('scripts/' + name));
   writeFileSync(join(root, 'bin/git'), '#!/bin/sh\nif [ "$1" = rev-parse ]; then echo test-head; fi\n', { mode: 0o755 });
   writeFileSync(join(root, 'bin/npx'), '#!/bin/sh\nprintf "%s\\n" "$@"\n', { mode: 0o755 });
+  writeFileSync(join(root, 'node_modules/.bin/wrangler'), '#!/bin/sh\nprintf "%s\\n" "$@"\nprintf "%s\\n" "$PWD"\ntouch wrangler-local-marker\n', { mode: 0o755 });
   writeFileSync(join(root, 'dist-staging/index.html'), 'https://lefqfxkvujqnukgzaviz.supabase.co');
   const env = { ...process.env, PATH: join(root, 'bin') + ':' + process.env.PATH };
   function receipt(head = 'test-head') {
@@ -24,19 +26,20 @@ function fixture() {
 afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }); });
 describe('hosting guard (no real Wrangler)', () => {
   it('allows whoami and refuses extra arguments and unconfirmed deploy', () => {
-    const { run } = fixture();
+    const { root, run } = fixture();
     expect(run(['whoami']).stdout).toContain('--no-install\nwrangler\nwhoami');
     for (const args of [['login'], ['deploy', '--project-name', 'other'], ['whoami', '--anything'], ['deploy']]) expect(run(args).status).toBe(1);
     expect(run(['deploy'], 'other').status).toBe(1);
   });
   it('requires the exact confirmation for the fixed one-time project creation', () => {
-    const { run } = fixture();
+    const { root, run } = fixture();
     expect(run(['create']).status).toBe(1);
     expect(run(['create'], 'other').status).toBe(1);
     expect(run(['create', 'other'], 'myht-staging').status).toBe(1);
     const approved = run(['create'], 'myht-staging');
     expect(approved.status).toBe(0);
-    expect(approved.stdout).toBe('--no-install\nwrangler\npages\nproject\ncreate\nmyht-staging\n--production-branch\nmain\n');
+    expect(approved.stdout).toContain('pages\nproject\ncreate\nmyht-staging\n--production-branch\nmain\n--force\n/private/tmp/myht-pages.');
+    expect(() => readFileSync(join(root, 'wrangler-local-marker'))).toThrow();
   });
   it('refuses a wrong build URL before Vite can run', () => {
     const { root } = fixture();
@@ -54,7 +57,7 @@ describe('hosting guard (no real Wrangler)', () => {
     receipt('old-head'); expect(run(['deploy'], 'myht-staging').status).toBe(1);
     receipt(); const approved = run(['deploy'], 'myht-staging');
     expect(approved.status).toBe(0);
-    expect(approved.stdout).toContain('wrangler\npages\ndeploy\ndist-staging\n--project-name\nmyht-staging\n--branch\nmain');
+    expect(approved.stdout).toContain('pages\ndeploy\ndist-staging\n--project-name\nmyht-staging\n--branch\nmain\n--force');
     writeFileSync(join(root, 'dist-staging/changed.txt'), 'changed');
     expect(run(['deploy'], 'myht-staging').status).toBe(1);
   });
