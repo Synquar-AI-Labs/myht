@@ -7,6 +7,25 @@ Use synthetic data only. Stay on `product`; do not push, merge or deploy the app
 Stop on a different ref, password/login prompt, unexpected error, paid change,
 or any data that the owner has not approved discarding.
 
+## Parked email state — owner's decision, 2026-10-10
+
+Custom SMTP and the sign-in settings push are deferred. The staging-only plan
+while parked is "Confirm email" OFF, changed in the dashboard only after the
+owner explicitly approves that switch; coder does not change it. This document
+does not claim the switch has already been changed. Our committed config keeps
+confirmations ON as the intended final state; do not push it while parked.
+
+The six-digit confirmation-code step, forgot-password flow and verified-invite
+flow are not usable in this parked state. Staging is for the owner alone; do
+not share its address or key with anyone else. Starting the local preview does
+not authorize sign-up, sign-in or test-data creation.
+
+Before ANY other person uses staging, and before production: the owner configures
+custom SMTP, turns "Confirm email" back ON, then settings are pushed through
+preview → leader reads the full diff → approved apply. Finally verify sign-up
+and its code, password recovery, and verified invites end-to-end. Until that
+gate passes, the email-dependent setup is not ready for other users.
+
 ## 1. Local clean-build gate — coder, leader verifies
 
 From the repository, run:
