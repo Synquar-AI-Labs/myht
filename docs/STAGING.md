@@ -54,13 +54,16 @@ commands. Do not bypass it.
 
 ```sh
 scripts/staging.sh migration list --linked
-scripts/staging.sh db push --linked --dry-run
 ```
 
-Expected: the wrapper prints the staging ref; remote history is shown and the
-five new migrations are pending. Leader checks filenames. A dry-run does not
-prove the new baseline can be pushed over existing tables. Undo: nothing has
-been changed. Stop if history differs from the expected legacy baseline.
+Expected: the wrapper prints the staging ref and shows the 20 legacy remote
+versions and five new local versions. Leader checks filenames. For this first
+baseline replacement, `db push --linked --dry-run` refuses because the legacy
+remote versions are deliberately absent locally; it does not list five pending
+migrations. Do not repair history or pull the old schema. The approved reset
+in step 4 clears history before applying the baseline. Keep push dry-runs for
+later additive migrations only. Undo: nothing has been changed. Stop if history
+differs from the expected legacy baseline.
 
 ## 4. Replace the legacy staging baseline — coder, owner-approved destructive step
 
@@ -84,7 +87,35 @@ For later additive migrations, use `db push --linked --dry-run`, review it, then
 The first clean-baseline reset already applies the migrations; no redundant
 push is needed.
 
-## 5. Preview, review, then push hosted settings — coder and leader
+## 5. Configure custom SMTP before settings push — owner only
+
+The first staging settings push returned HTTP 400 with this exact message:
+
+```text
+Email template modification is not available for free tier projects using the default email provider. Please upgrade your plan or configure a custom SMTP provider.
+```
+
+The no-apply preview afterward still showed all intended Auth changes pending.
+Code templates are required by our signup/recovery screens. On this Free
+project, the owner must configure a verified sender/provider in Dashboard →
+Authentication → Email → SMTP Settings BEFORE the settings push. A paid plan
+is the platform's other option, not authorized by this runbook. Stop until
+the owner has approved and completed SMTP setup; coder never enters credentials.
+
+Our config file must NEVER contain an `[auth.email.smtp]` block, including
+under `[remotes.staging]`, or SMTP credentials. In CLI 2.109.1, absent SMTP
+preserves dashboard connection settings/credentials: `authSubsetFromConfig`
+sets SMTP undefined; `authToUpdateBody` emits no SMTP fields. A present block
+with `enabled = false` instead sends `smtp_host = ""`, disabling it. The
+separate email `max_frequency` still updates `smtp_max_frequency`; preserve
+its hosted value too. Re-audit on CLI upgrades.
+
+Expected: owner confirms SMTP is configured; leader verifies non-secret
+settings. Undo: owner removes/revokes SMTP credentials in the dashboard and
+settings push remains blocked. After step 6, verify sign-up/recovery delivery
+to non-team synthetic addresses before invitations.
+
+## 6. Preview, review, then push hosted settings — coder and leader
 
 Use CLI 2.109.1 for this source-audited procedure; re-audit before upgrading it.
 After remote approval, first run:
@@ -106,10 +137,10 @@ Leader reads the ENTIRE preview. Stop on unrelated or paid changes. For each
 omitted setting that differs, copy its current non-secret hosted value into
 the matching `[remotes.staging]` section to preserve it; preview again. Do not
 apply until only the intended URL, sign-up, password and code-template changes
-remain. The current hosted values cannot be known from CLI source; no remote
-read was authorized during preparation, so these preservation pins are pending
-the approved preview, not guessed. In particular, omission of rate limits is
-NOT a promise to retain hosted defaults.
+remain and step 5 is complete. The staging preview identified TOTP enrollment
+and verification as true and email cooldown as 60 seconds; those hosted values
+are now pinned in the remote block only. Omission of other rate limits is NOT
+a promise to retain hosted defaults; inspect every fresh preview.
 
 Only AFTER leader approves that full diff:
 
@@ -189,12 +220,17 @@ Reset delegates to `resetRemote` in
 `apps/cli-go/internal/db/reset/reset.go`, whose `Console.PromptYesNo`
 (`apps/cli-go/internal/utils/console.go`) has a false default for reset.
 
-## 6. Deploy the staging function without a key — coder
+## 7. Deploy the staging function without a key — coder
 
 ```sh
-STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh functions deploy transcribe-audio
+STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh functions deploy transcribe-audio --use-api
 scripts/staging.sh secrets list
 ```
+
+`--use-api` bundles server-side without Docker. The installed CLI 2.109.1's
+local Docker bundler failed with a missing `output.eszip`; this avoids that
+bundler, not JWT checks. Stop if server-side deployment fails; do not try
+another deployment route without approval.
 
 Expected: only `transcribe-audio` is deployed to staging, JWT verification stays
 enabled, and the secret inventory exposes names/digests, not values. Leader
@@ -206,7 +242,7 @@ Undo: delete this staging function in the dashboard (owner), or redeploy a
 reviewed prior version to staging after approval. The app still records and
 keeps audio when transcription is not configured.
 
-## 7. Staging browser preview — leader supplies public values; coder runs it
+## 8. Staging browser preview — leader supplies public values; coder runs it
 
 After approval, leader can read the staging URL and publishable key through the
 read-only Supabase connection and hand these PUBLIC values to coder for the
@@ -233,7 +269,7 @@ only sends to that team's addresses and has a low shared delivery quota (current
 two emails per hour). Do not invite arbitrary family emails until custom SMTP
 is configured. Undo: Ctrl+C, remove the local key; staging data remains isolated.
 
-## 8. Paid transcription enablement — owner only, separately approved
+## 9. Paid transcription enablement — owner only, separately approved
 
 OpenAI Platform → Project settings → Limits → Spend → Edit spend limit: set the
 owner's monthly budget and alert thresholds; enable a hard limit if the owner
@@ -249,27 +285,15 @@ is transcribed. Leader verifies the private path, transcript and attribution.
 Undo: owner removes the staging secret and revokes the OpenAI key; recording and
 Retry remain available. Coder's automated tests never use an AI key or call.
 
-## 9. Before real hosting/invites — owner and leader
+## 10. Before real hosting/invites — owner and leader
 
 Choose the hosting URL, then update BOTH `site_url` and
 `additional_redirect_urls` in `[remotes.staging.auth]` and run another approved
-config preview, leader review, then approved config push. Configure
-Authentication → Email → SMTP Settings for a verified
-sender/provider; retain confirmations and verify sign-up/recovery delivery to
-non-team synthetic addresses. Do not add SMTP credentials to this file.
-
-SMTP safety (CLI 2.109.1): an ABSENT `[auth.email.smtp]` block, including the
-remote override, preserves dashboard SMTP connection settings and credentials.
-The separate `auth.email.max_frequency` is still sent as `smtp_max_frequency`;
-preserve its hosted value through the step 5 review too.
-`authSubsetFromConfig` sets SMTP
-undefined when raw presence is false; `authToUpdateBody` then emits NO SMTP
-fields. An explicitly present block with `enabled = false` instead sends
-`smtp_host = ""`, disabling custom SMTP. Do not add even an empty/default
-SMTP block. Before every later push, preview and check there are no SMTP
-changes; retain the whole hosted-value preservation review from step 5.
-Re-audit this behavior on CLI upgrades. Credentials stay owner-managed in the
-dashboard, never copied into the repository.
+config preview, leader review, then approved config push. Retain the owner-managed
+SMTP from step 5 and confirmations; verify sign-up/recovery delivery to non-team
+synthetic addresses. Before every later push, check there are no SMTP changes
+and repeat the whole hosted-value preservation review from step 6. Never add
+an `[auth.email.smtp]` block or credentials to this file.
 Expected: exact hosted redirects and working email; leader verifies before
 inviting people. Undo: stop invitations/preview, restore prior staging URL
 settings, and remove/revoke the new SMTP credentials through the owner.

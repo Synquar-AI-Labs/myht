@@ -34,7 +34,7 @@ describe('staging command boundary (offline stand-in CLI)', () => {
   });
   it('requires per-invocation confirmation for each changing command', () => {
     const { run } = fixture();
-    for (const args of [['db', 'push', '--linked'], ['db', 'reset', '--linked'], ['functions', 'deploy', 'transcribe-audio'], ['config', 'push']]) {
+    for (const args of [['db', 'push', '--linked'], ['db', 'reset', '--linked'], ['functions', 'deploy', 'transcribe-audio'], ['functions', 'deploy', 'transcribe-audio', '--use-api'], ['config', 'push']]) {
       expect(run(args).status).toBe(1);
       expect(run(args, 'wrong-ref').status).toBe(1);
       const approved = run(args, ref);
@@ -42,6 +42,11 @@ describe('staging command boundary (offline stand-in CLI)', () => {
       expect(approved.stdout).toContain('Staging project: ' + ref);
       if (args[0] === 'config' || args[0] === 'functions') expect(approved.stdout).toContain('--project-ref\n' + ref);
     }
+  });
+  it('refuses another function or extra flags on the server-side deployment', () => {
+    const { run } = fixture();
+    expect(run(['functions', 'deploy', 'other-function', '--use-api'], ref).status).toBe(1);
+    expect(run(['functions', 'deploy', 'transcribe-audio', '--use-api', '--no-verify-jwt'], ref).status).toBe(1);
   });
   it('allows only the three listed read-only commands without confirmation', () => {
     const { run } = fixture();

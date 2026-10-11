@@ -41,6 +41,11 @@ minimum_password_length = 8
 enable_signup = true
 enable_confirmations = true
 otp_length = 6
+max_frequency = "1m0s"
+
+[remotes.staging.auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
 
 [remotes.staging.auth.email.template.confirmation]
 subject = "Your confirmation code"
@@ -51,4 +56,4 @@ subject = "Your password reset code"
 content_path = "./supabase/templates/recovery.html"
 # Omission does NOT preserve hosted Auth rate limits: config push supplies CLI
 # defaults. After approval, preview first and pin any differing hosted values
-# before applying (docs/STAGING.md section 5). Never guess remote values.
+# before applying (docs/STAGING.md section 6). Never guess remote values.
