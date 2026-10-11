@@ -1,5 +1,50 @@
 # First staging check
 
+## Hosting the staging app — preparation only
+
+Nothing here authorizes a login or upload. After the owner's explicit yes:
+
+1. Owner creates the Cloudflare account. Owner runs `npx wrangler login` and
+   presses Allow himself in the browser. No token is copied into the repository
+   or a report. Confirm the intended account; stop on unexpected billing or
+   account/project prompts. Use only the Pages project `myht-staging`.
+2. Coder builds AFTER committing intended changes: `npm run build:staging`.
+   It reads the ignored `.env.staging.local`, requires the exact staging URL,
+   scans every output file for the live ref and local API addresses, and prints
+   the Supabase host. `dist-staging/` and its build receipt are ignored.
+3. Coder runs `scripts/hosting.sh whoami`; leader checks the account. Then,
+   only with upload approval:
+   `HOSTING_CONFIRM=myht-staging scripts/hosting.sh deploy`.
+   This uploads static files to `myht-staging`, branch `main`; it does NOT merge
+   or push our Git branch. The guard requires a current-HEAD receipt, no tracked
+   changes except AGENTS.md, an unchanged artifact digest and a fresh target scan.
+   If a Pages project needs creating, owner creates that named Direct Upload
+   project in the dashboard first; do not choose another project as a fallback.
+4. Leader checks the resulting HTTPS address, `/auth` refresh, response headers,
+   and staging-only client target. Do not share the address while Confirm email
+   is OFF: it is owner-only, not a security boundary based on URL secrecy.
+   Entered data is TEST DATA; this Free staging project has no backups. Do not
+   put irreplaceable medical records here. Undo: owner removes the staging
+   deployment in Cloudflare; the Supabase database is separate and untouched.
+
+Cloudflare's [Serving Pages docs](https://developers.cloudflare.com/pages/configuration/serving-pages/)
+say that without a top-level `404.html`, unmatched SPA routes serve the app root.
+We therefore use index.html fallback, with no `_redirects` and no `404.html`.
+The [Headers docs](https://developers.cloudflare.com/pages/configuration/headers/)
+specify an output `_headers` file; Vite copies `public/_headers` into the build.
+It sets noindex, nosniff, strict-origin-when-cross-origin and frame DENY for all
+paths. No CSP or microphone-blocking Permissions-Policy is added. Pages headers
+are for static responses; there are no Pages Functions in this upload.
+
+Local static check: `node scripts/test/static-staging.mjs` serves only built
+files on a free loopback port, checks `/` and `/auth` in fresh Chromium, and
+blocks ALL remote browser requests. It never signs in or creates data.
+
+When a domain is bought: add the custom domain to this same Pages project;
+update Supabase site_url and exact redirect URLs through reviewed config push,
+and finish owner-configured email/SMTP and the email gate below. Do not create
+a second database or weaken confirmations to make the domain work.
+
 Preparation only. Nothing below authorizes a remote operation: wait for the
 owner's explicit approval. Target: `myht-staging`, organization `myht`, ref
 `lefqfxkvujqnukgzaviz`. NEVER use `fvasmrdtzqhswhowlydx` (the live Lovable app).
