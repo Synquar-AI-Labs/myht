@@ -30,7 +30,7 @@ export function useMedicineSchedule() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: MEDICINES_QUERY_KEY });
 
   const addMedicine = async (med: MedicineScheduleInsert) => {
-    const { error } = await supabase.from('medicines').insert(med);
+    const { error } = await supabase.from('medicines').insert(med as import('@/integrations/supabase/types').TablesInsert<'medicines'>); // A3 adds household_id.
     if (error) { toast.error('Failed to add medicine'); return; }
     toast.success(`Added ${med.name}`);
     invalidate();

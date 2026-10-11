@@ -7,10 +7,30 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -21,6 +41,7 @@ export type Database = {
           date: string
           description: string | null
           doctor_name: string
+          household_id: string
           id: string
           reason: string
           time: string
@@ -31,6 +52,7 @@ export type Database = {
           date: string
           description?: string | null
           doctor_name: string
+          household_id: string
           id?: string
           reason: string
           time?: string
@@ -41,19 +63,30 @@ export type Database = {
           date?: string
           description?: string | null
           doctor_name?: string
+          household_id?: string
           id?: string
           reason?: string
           time?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "appointments_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       audio_transcripts: {
         Row: {
           action_items: Json
-          audio_url: string | null
+          audio_path: string | null
+          caregiver_id: string | null
           created_at: string
           date: string
           follow_ups: Json
+          household_id: string
           id: string
           recorded_by: string
           summary: string
@@ -62,10 +95,12 @@ export type Database = {
         }
         Insert: {
           action_items?: Json
-          audio_url?: string | null
+          audio_path?: string | null
+          caregiver_id?: string | null
           created_at?: string
           date: string
           follow_ups?: Json
+          household_id: string
           id?: string
           recorded_by?: string
           summary: string
@@ -74,52 +109,163 @@ export type Database = {
         }
         Update: {
           action_items?: Json
-          audio_url?: string | null
+          audio_path?: string | null
+          caregiver_id?: string | null
           created_at?: string
           date?: string
           follow_ups?: Json
+          household_id?: string
           id?: string
           recorded_by?: string
           summary?: string
           title?: string | null
           transcript?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "audio_transcripts_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "audio_transcripts_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_log: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          at: string
+          household_id: string
+          id: number
+          new_row: Json | null
+          old_row: Json | null
+          row_key: string
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          at?: string
+          household_id: string
+          id?: never
+          new_row?: Json | null
+          old_row?: Json | null
+          row_key: string
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          at?: string
+          household_id?: string
+          id?: never
+          new_row?: Json | null
+          old_row?: Json | null
+          row_key?: string
+          table_name?: string
+        }
         Relationships: []
       }
       bp_readings: {
         Row: {
+          caregiver_id: string | null
           created_at: string
           date: string
           diastolic: number
+          household_id: string
           id: string
           recorded_by: string
           systolic: number
         }
         Insert: {
+          caregiver_id?: string | null
           created_at?: string
           date: string
           diastolic: number
+          household_id: string
           id?: string
           recorded_by?: string
           systolic: number
         }
         Update: {
+          caregiver_id?: string | null
           created_at?: string
           date?: string
           diastolic?: number
+          household_id?: string
           id?: string
           recorded_by?: string
           systolic?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bp_readings_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "bp_readings_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      caregivers: {
+        Row: {
+          created_at: string
+          display_name: string
+          household_id: string
+          id: string
+          is_active: boolean
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          household_id: string
+          id?: string
+          is_active?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          household_id?: string
+          id?: string
+          is_active?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "caregivers_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       custom_action_logs: {
         Row: {
           action_id: string
           am_pm: string
+          caregiver_id: string | null
           created_at: string
           date: string
           hour: number
+          household_id: string
           id: string
           recorded_by: string
           value: number
@@ -127,9 +273,11 @@ export type Database = {
         Insert: {
           action_id: string
           am_pm?: string
+          caregiver_id?: string | null
           created_at?: string
           date: string
           hour?: number
+          household_id: string
           id?: string
           recorded_by?: string
           value?: number
@@ -137,19 +285,35 @@ export type Database = {
         Update: {
           action_id?: string
           am_pm?: string
+          caregiver_id?: string | null
           created_at?: string
           date?: string
           hour?: number
+          household_id?: string
           id?: string
           recorded_by?: string
           value?: number
         }
         Relationships: [
           {
-            foreignKeyName: "custom_action_logs_action_id_fkey"
-            columns: ["action_id"]
+            foreignKeyName: "custom_action_logs_household_id_action_id_fkey"
+            columns: ["household_id", "action_id"]
             isOneToOne: false
             referencedRelation: "custom_actions"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "custom_action_logs_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "custom_action_logs_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
             referencedColumns: ["id"]
           },
         ]
@@ -159,6 +323,7 @@ export type Database = {
           color: string
           created_at: string
           default_value: number
+          household_id: string
           id: string
           name: string
           show_graph: boolean
@@ -168,6 +333,7 @@ export type Database = {
           color?: string
           created_at?: string
           default_value?: number
+          household_id: string
           id?: string
           name: string
           show_graph?: boolean
@@ -177,18 +343,28 @@ export type Database = {
           color?: string
           created_at?: string
           default_value?: number
+          household_id?: string
           id?: string
           name?: string
           show_graph?: boolean
           unit?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "custom_actions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       health_records: {
         Row: {
           bile_bags: number
           bp_diastolic: number
           bp_systolic: number
+          caregiver_id: string | null
           constipation: boolean
           created_at: string
           date: string
@@ -197,6 +373,7 @@ export type Database = {
           flush_ml: number
           food_description: string | null
           food_taken: boolean
+          household_id: string
           id: string
           misc_notes: string
           recorded_by: string
@@ -212,6 +389,7 @@ export type Database = {
           bile_bags?: number
           bp_diastolic?: number
           bp_systolic?: number
+          caregiver_id?: string | null
           constipation?: boolean
           created_at?: string
           date: string
@@ -220,6 +398,7 @@ export type Database = {
           flush_ml?: number
           food_description?: string | null
           food_taken?: boolean
+          household_id: string
           id?: string
           misc_notes?: string
           recorded_by?: string
@@ -235,6 +414,7 @@ export type Database = {
           bile_bags?: number
           bp_diastolic?: number
           bp_systolic?: number
+          caregiver_id?: string | null
           constipation?: boolean
           created_at?: string
           date?: string
@@ -243,6 +423,7 @@ export type Database = {
           flush_ml?: number
           food_description?: string | null
           food_taken?: boolean
+          household_id?: string
           id?: string
           misc_notes?: string
           recorded_by?: string
@@ -254,73 +435,268 @@ export type Database = {
           vomiting?: boolean
           weight?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "health_records_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "health_records_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hospital_stays: {
         Row: {
+          caregiver_id: string | null
           created_at: string
           date: string
           end_hour: number
+          household_id: string
           id: string
           is_unavailable: boolean
           person_name: string
           start_hour: number
         }
         Insert: {
+          caregiver_id?: string | null
           created_at?: string
           date: string
           end_hour: number
+          household_id: string
           id?: string
           is_unavailable?: boolean
           person_name: string
           start_hour: number
         }
         Update: {
+          caregiver_id?: string | null
           created_at?: string
           date?: string
           end_hour?: number
+          household_id?: string
           id?: string
           is_unavailable?: boolean
           person_name?: string
           start_hour?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hospital_stays_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "hospital_stays_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          caregiver_id: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          household_id: string
+          id: string
+          invited_by: string
+          revoked_at: string | null
+          role: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          caregiver_id?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          household_id: string
+          id?: string
+          invited_by: string
+          revoked_at?: string | null
+          role?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          caregiver_id?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          household_id?: string
+          id?: string
+          invited_by?: string
+          revoked_at?: string | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_invites_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "household_invites_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_members: {
+        Row: {
+          created_at: string
+          household_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_sync: {
+        Row: {
+          at: string
+          household_id: string
+          seq: number
+          table_name: string
+        }
+        Insert: {
+          at?: string
+          household_id: string
+          seq?: number
+          table_name: string
+        }
+        Update: {
+          at?: string
+          household_id?: string
+          seq?: number
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_sync_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: true
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      households: {
+        Row: {
+          care_recipient_name: string
+          created_at: string
+          created_by: string
+          id: string
+          timezone: string
+        }
+        Insert: {
+          care_recipient_name: string
+          created_at?: string
+          created_by: string
+          id?: string
+          timezone?: string
+        }
+        Update: {
+          care_recipient_name?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          timezone?: string
         }
         Relationships: []
       }
       medicine_logs: {
         Row: {
           am_pm: string
+          caregiver_id: string | null
           created_at: string
           date: string
           hour: number
+          household_id: string
           id: string
           medicine_id: string
           recorded_by: string
         }
         Insert: {
           am_pm?: string
+          caregiver_id?: string | null
           created_at?: string
           date: string
           hour?: number
+          household_id: string
           id?: string
           medicine_id: string
           recorded_by?: string
         }
         Update: {
           am_pm?: string
+          caregiver_id?: string | null
           created_at?: string
           date?: string
           hour?: number
+          household_id?: string
           id?: string
           medicine_id?: string
           recorded_by?: string
         }
         Relationships: [
           {
-            foreignKeyName: "medicine_logs_medicine_id_fkey"
-            columns: ["medicine_id"]
+            foreignKeyName: "medicine_logs_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "medicine_logs_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medicine_logs_household_id_medicine_id_fkey"
+            columns: ["household_id", "medicine_id"]
             isOneToOne: false
             referencedRelation: "medicines"
-            referencedColumns: ["id"]
+            referencedColumns: ["household_id", "id"]
           },
         ]
       }
@@ -330,6 +706,7 @@ export type Database = {
           category: string
           created_at: string
           frequency: string
+          household_id: string
           id: string
           med_type: string
           name: string
@@ -343,6 +720,7 @@ export type Database = {
           category?: string
           created_at?: string
           frequency?: string
+          household_id: string
           id?: string
           med_type?: string
           name: string
@@ -356,6 +734,7 @@ export type Database = {
           category?: string
           created_at?: string
           frequency?: string
+          household_id?: string
           id?: string
           med_type?: string
           name?: string
@@ -364,68 +743,179 @@ export type Database = {
           schedule_time?: string
           show_in_quick_log?: boolean
         }
-        Relationships: []
-      }
-      reminder_settings: {
-        Row: {
-          appointment_reminder_days: number
-          created_at: string
-          daily_reminder_time: string
-          emails: string[]
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          appointment_reminder_days?: number
-          created_at?: string
-          daily_reminder_time?: string
-          emails?: string[]
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          appointment_reminder_days?: number
-          created_at?: string
-          daily_reminder_time?: string
-          emails?: string[]
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "medicines_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       written_notes: {
         Row: {
+          caregiver_id: string | null
           content: string
           created_at: string
           date: string
+          household_id: string
           id: string
           recorded_by: string
           title: string | null
         }
         Insert: {
+          caregiver_id?: string | null
           content: string
           created_at?: string
           date?: string
+          household_id: string
           id?: string
           recorded_by?: string
           title?: string | null
         }
         Update: {
+          caregiver_id?: string | null
           content?: string
           created_at?: string
           date?: string
+          household_id?: string
           id?: string
           recorded_by?: string
           title?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "written_notes_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "written_notes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_invite: {
+        Args: { p_display_name: string; p_invite_id: string }
+        Returns: string
+      }
+      create_household: {
+        Args: {
+          p_care_recipient_name: string
+          p_display_name: string
+          p_timezone?: string
+        }
+        Returns: string
+      }
+      household_people: {
+        Args: never
+        Returns: {
+          caregiver_id: string
+          display_name: string
+          email: string
+          is_active: boolean
+          role: string
+          user_id: string
+        }[]
+      }
+      invite_member: {
+        Args: { p_caregiver_id?: string; p_email: string }
+        Returns: string
+      }
+      log_bp_reading: {
+        Args: {
+          p_caregiver_id: string
+          p_date: string
+          p_diastolic: number
+          p_household_id: string
+          p_recorded_by: string
+          p_systolic: number
+        }
+        Returns: {
+          caregiver_id: string | null
+          created_at: string
+          date: string
+          diastolic: number
+          household_id: string
+          id: string
+          recorded_by: string
+          systolic: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bp_readings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      log_reading: {
+        Args: {
+          p_bile_bags?: number
+          p_caregiver_id?: string
+          p_date: string
+          p_feed_bags?: number
+          p_flush_count?: number
+          p_flush_ml?: number
+          p_household_id: string
+          p_recorded_by?: string
+          p_stool_count?: number
+          p_urine_count?: number
+          p_vomit_count?: number
+          p_weight?: number
+        }
+        Returns: {
+          bile_bags: number
+          bp_diastolic: number
+          bp_systolic: number
+          caregiver_id: string | null
+          constipation: boolean
+          created_at: string
+          date: string
+          feed_bags: number
+          flush_count: number
+          flush_ml: number
+          food_description: string | null
+          food_taken: boolean
+          household_id: string
+          id: string
+          misc_notes: string
+          recorded_by: string
+          stool_count: number
+          stool_passed: boolean
+          updated_at: string
+          urine_count: number
+          vomit_count: number
+          vomiting: boolean
+          weight: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "health_records"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      pending_invite: {
+        Args: never
+        Returns: {
+          care_recipient_name: string
+          invite_id: string
+          inviter_display_name: string
+        }[]
+      }
+      remove_member: { Args: { p_user_id: string }; Returns: undefined }
+      revoke_invite: { Args: { p_invite_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
@@ -554,6 +1044,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

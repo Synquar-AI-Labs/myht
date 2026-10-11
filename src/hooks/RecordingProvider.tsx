@@ -138,17 +138,16 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
 
     dispatch({ type: 'SAVE_START' });
     try {
-      const { data: urlData } = supabase.storage.from('audio-files').getPublicUrl(storagePath);
       const { error } = await supabase.from('audio_transcripts').insert({
         date: metadata.date,
         title: metadata.title || null,
-        audio_url: urlData.publicUrl,
+        audio_path: storagePath,
         transcript: result.transcript,
         summary: result.summary,
         action_items: result.action_items,
         follow_ups: result.follow_ups,
         recorded_by: metadata.recordedBy || 'Unknown',
-      });
+      } as import('@/integrations/supabase/types').TablesInsert<'audio_transcripts'>); // A5 pins household_id.
       if (error) throw error;
     } catch (e) {
       dispatch({ type: 'TRANSCRIBE_FAILED', error: e instanceof Error ? e.message : 'Could not save the transcript.' });

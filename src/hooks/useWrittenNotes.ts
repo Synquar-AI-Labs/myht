@@ -27,7 +27,7 @@ export function useWrittenNotes() {
       title: title || null,
       content,
       recorded_by: recordedBy,
-    });
+    } as import('@/integrations/supabase/types').TablesInsert<'written_notes'>); // A3 adds household_id.
     if (error) { toast.error('Failed to save note'); throw error; }
     toast.success('Note saved');
     queryClient.invalidateQueries({ queryKey: ['written-notes'] });

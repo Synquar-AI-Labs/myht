@@ -8,7 +8,7 @@ export interface Transcript {
   id: string;
   date: string;
   title: string | null;
-  audio_url: string | null;
+  audio_path: string | null;
   transcript: string;
   summary: string;
   action_items: string[];

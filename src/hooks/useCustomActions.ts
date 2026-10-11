@@ -63,7 +63,7 @@ export function useCustomActions() {
   }, [queryClient]);
 
   const addAction = async (action: { name: string; unit: string; color: string; default_value: number; show_graph: boolean }) => {
-    const { error } = await supabase.from('custom_actions').insert(action);
+    const { error } = await supabase.from('custom_actions').insert(action as import('@/integrations/supabase/types').TablesInsert<'custom_actions'>); // A3 adds household_id.
     if (error) { toast.error('Failed to add custom action'); return; }
     toast.success(`Added ${action.name}`);
     invalidateActions();
@@ -78,7 +78,7 @@ export function useCustomActions() {
   };
 
   const addLog = async (data: { action_id: string; value: number; date: string; recorded_by: string; hour: number; am_pm: string }) => {
-    const { error } = await supabase.from('custom_action_logs').insert(data);
+    const { error } = await supabase.from('custom_action_logs').insert(data as import('@/integrations/supabase/types').TablesInsert<'custom_action_logs'>); // A3 adds household_id.
     if (error) { toast.error('Failed to log action'); return; }
     toast.success('Logged');
     invalidateLogs();

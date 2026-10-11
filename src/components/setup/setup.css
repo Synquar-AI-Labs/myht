@@ -1,0 +1,18 @@
+.setup-screen { min-height: 100dvh; width: 100%; max-width: 480px; margin: 0 auto; padding: 56px 28px 36px; background: #faf7f2; color: #26201a; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px; }
+body:has(.setup-screen) { background: #faf7f2; }
+.setup-screen h1 { margin: 0; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 34px; line-height: 1.12; }
+.setup-screen h1.setup-hero { font-size: 42px; line-height: 1.08; }
+.setup-screen p { margin: 0; font-size: 17px; line-height: 1.5; color: #4a4238; }
+.setup-screen .setup-small { font-size: 15px; color: #6f665b; }
+.setup-brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; }
+.setup-screen form { display: flex; flex-direction: column; gap: 18px; }
+.setup-field { display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 600; }
+.setup-field input { min-width: 0; width: 100%; height: 54px; padding: 0 16px; border: 1.5px solid #b9ae9c; border-radius: 14px; background: white; color: #26201a; font-family: inherit; font-size: 17px; font-weight: 400; }
+.setup-primary, .setup-secondary { min-height: 56px; padding: 12px 16px; border-radius: 14px; font: 700 17px 'DM Sans', sans-serif; }
+.setup-primary { border: 0; background: #26201a; color: white; }
+.setup-secondary { border: 1.5px solid #b9ae9c; background: white; color: #26201a; }
+.setup-link { min-height: 44px; padding: 4px 0; border: 0; background: none; color: #8a6240; font: 600 16px 'DM Sans', sans-serif; }
+.setup-screen button:disabled, .setup-screen input:disabled { opacity: .5; cursor: not-allowed; }
+.setup-screen fieldset { display: flex; flex-direction: column; gap: 18px; min-width: 0; border: 0; padding: 0; margin: 0; }
+.setup-screen .setup-error { color: #a32222; font-size: 15px; }
+.setup-card { padding: 16px; background: white; border: 1px solid #e9e2d6; border-radius: 16px; }

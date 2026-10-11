@@ -2,7 +2,6 @@ import { Tables } from '@/integrations/supabase/types';
 
 export type HealthRecord = Tables<'health_records'>;
 export type Appointment = Tables<'appointments'>;
-export type ReminderSettings = Tables<'reminder_settings'>;
 export type DateRange = '7' | '30' | 'custom';
 
 // Camel-case form shape used by UI components

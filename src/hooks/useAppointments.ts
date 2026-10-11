@@ -38,7 +38,7 @@ export function useAppointments() {
       address: form.address,
       reason: form.reason,
       description: form.description,
-    });
+    } as import('@/integrations/supabase/types').TablesInsert<'appointments'>); // A3 adds household_id.
     if (error) {
       toast.error('Failed to save appointment');
       console.error(error);
