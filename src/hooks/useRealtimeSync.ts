@@ -13,21 +13,33 @@ import { domainKeys } from '@/lib/domainKeys';
  */
 export function useRealtimeSync() {
   const queryClient = useQueryClient();
-  const { householdId } = useHousehold();
+  const { householdId, refresh } = useHousehold();
 
   useEffect(() => {
     if (!householdId) return;
     const channel = supabase.channel(`household-sync-${householdId}`);
     const batcher = createInvalidationBatcher(queryKey => {
+      if (queryKey[0] === 'household-refresh') {
+        void refresh();
+        return;
+      }
       void queryClient.invalidateQueries({ queryKey });
     });
+    const queueRefresh = () => {
+      batcher.queue(['household-refresh']);
+      batcher.queue([...domainKeys.invites(householdId)]);
+    };
     let subscribed = false;
 
     channel.on('postgres_changes',
       { event: '*', schema: 'public', table: 'household_sync', filter: `household_id=eq.${householdId}` },
       payload => {
         const table = (payload.new as { table_name?: string }).table_name;
+        if (['households', 'household_members', 'caregivers', 'household_invites'].includes(table ?? '')) {
+          queueRefresh();
+        }
         const keys = {
+          household_invites: [domainKeys.invites(householdId)],
           medicines: [medicineKeys.list(householdId)],
           medicine_logs: [medicineKeys.logs(householdId), medicineKeys.reports(householdId)],
           health_records: [healthKeys.records(householdId)],
@@ -46,13 +58,22 @@ export function useRealtimeSync() {
       if (status !== 'SUBSCRIBED') return;
       if (subscribed) {
         batcher.queue(['household', householdId]);
+        queueRefresh();
       }
       subscribed = true;
     });
 
+    const refreshVisible = () => {
+      if (document.visibilityState === 'visible') queueRefresh();
+    };
+    document.addEventListener('visibilitychange', refreshVisible);
+    const interval = setInterval(refreshVisible, 5 * 60_000);
+
     return () => {
       batcher.cancel();
+      document.removeEventListener('visibilitychange', refreshVisible);
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, [queryClient, householdId]);
+  }, [queryClient, householdId, refresh]);
 }

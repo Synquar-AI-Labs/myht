@@ -11,12 +11,14 @@ import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { domainKeys } from '@/lib/domainKeys';
+import { useFamilyInvites } from '@/hooks/useFamilyInvites';
 
 const MedicineScheduleTab = lazy(() => import('@/components/MedicineScheduleTab').then(m => ({ default: m.MedicineScheduleTab })));
 const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m => ({ default: m.AppointmentsTab })));
 const HospitalStaysTab = lazy(() => import('@/components/HospitalStaysTab').then(m => ({ default: m.HospitalStaysTab })));
 const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
 const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
+const FamilyPeopleTab = lazy(() => import('./FamilyPeopleTab').then(m => ({ default: m.FamilyPeopleTab })));
 
 /** Fetches the full health/BP history only when Reports is actually opened.
  *  Gated hard on load state — a half-loaded dataset must never become a
@@ -41,7 +43,7 @@ function ReportsView() {
   return <DashboardTab records={records} bpReadings={bpReadings} />;
 }
 
-type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports';
+type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family';
 
 interface MoreShelfProps {
   onPresentationMode: () => void;
@@ -57,7 +59,8 @@ interface RowSpec {
 }
 
 export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
-  const { householdId, careRecipientName } = useHousehold();
+  const { householdId, careRecipientName, caregivers, role } = useHousehold();
+  const invites = useFamilyInvites();
   const [view, setView] = useState<ShelfView>(null);
 
   // Minute tick so "next appointment" can't stay stale on a mounted shelf.
@@ -111,6 +114,11 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   }, [appointmentsData.appointments, now]);
 
   const rows: RowSpec[] = [
+    {
+      view: 'family', title: 'Family & people',
+      subtitle: `${caregivers.length} people${role === 'admin' && invites.data ? ` · ${invites.data.length} invited` : ''}`,
+      icon: Users, chip: 'bg-[#eaf3ec] text-[#2e7d4f]',
+    },
     {
       view: 'meds',
       title: 'Medicine cabinet',
@@ -168,6 +176,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
           {view === 'stays' && <HospitalStaysTab />}
           {view === 'conversations' && <TranscriptsTab />}
           {view === 'reports' && <ReportsView />}
+          {view === 'family' && <FamilyPeopleTab />}
         </Suspense>
       </div>
     );

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { accountError, resolveSetup } from '@/lib/accountSetup';
+import { familyInviteMessage } from '@/lib/familyInvite';
 import { SetupBrand, SetupField, SetupLayout } from './SetupLayout';
 
 export function HouseholdSetup({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,19 @@ export function HouseholdSetup({ children }: { children: React.ReactNode }) {
   const [nameOnly, setNameOnly] = useState(false);
   const [helperName, setHelperName] = useState('');
   const [helpers, setHelpers] = useState<string[]>([]);
+  useEffect(() => {
+    if (state.status === 'ready') {
+      setCreatedHousehold(null);
+      setInvites([]);
+      setHelpers([]);
+      setRecipient('');
+      setEmail('');
+      setHelperName('');
+      setNameOnly(false);
+      setError('');
+      setShareText('');
+    }
+  }, [state.status]);
   const run = async (action: () => Promise<void>) => {
     setBusy(true); setError('');
     try { await action(); } catch (e) { setError(accountError(e)); } finally { setBusy(false); }
@@ -59,13 +73,14 @@ export function HouseholdSetup({ children }: { children: React.ReactNode }) {
     });
   };
   const share = async (address: string) => {
-    const text = 'Join our family on Health Tracker. Create an account with ' + address + ' at ' + window.location.origin;
+    const text = familyInviteMessage(address, window.location.origin);
     try {
       if (navigator.share) await navigator.share({ title: 'Join our family', text });
       else setShareText(text);
     } catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) setShareText(text); }
   };
   return <SetupLayout>
+    {state.notice && <p role="status">{state.notice}</p>}
     {!createdHousehold && <SetupBrand />}
     <h1 className={!createdHousehold && !invite ? 'setup-hero' : undefined}>{createdHousehold ? 'Who else helps?' : invite ? 'Join your family' : 'Who are you caring for?'}</h1>
     <p>{createdHousehold ? 'Add the email of each person who helps. They create their own account with that email and choose their own password.'

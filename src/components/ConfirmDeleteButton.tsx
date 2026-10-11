@@ -6,9 +6,10 @@ type Props = Omit<React.ComponentProps<typeof Button>, 'onClick'> & {
   onConfirm: () => void | Promise<void>;
   title?: string;
   description?: string;
+  confirmLabel?: string;
 };
 
-export function ConfirmDeleteButton({ onConfirm, children, disabled, title = 'Delete this entry?', description = 'This permanently removes it from the record.', ...props }: Props) {
+export function ConfirmDeleteButton({ onConfirm, children, disabled, title = 'Delete this entry?', description = 'This permanently removes it from the record.', confirmLabel = 'Delete', ...props }: Props) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -21,7 +22,7 @@ export function ConfirmDeleteButton({ onConfirm, children, disabled, title = 'De
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Keep it</AlertDialogCancel>
-            <AlertDialogAction disabled={disabled} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { void onConfirm(); }}>Delete</AlertDialogAction>
+            <AlertDialogAction disabled={disabled} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { void onConfirm(); }}>{confirmLabel}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
