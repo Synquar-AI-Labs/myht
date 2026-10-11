@@ -51,6 +51,30 @@ describe('staging command boundary (offline stand-in CLI)', () => {
       expect(result.stdout).toContain('Staging project: ' + ref);
     }
   });
+  it('adds auto-confirm only to an approved linked reset', () => {
+    const { run } = fixture();
+    expect(run(['db', 'reset', '--linked']).status).toBe(1);
+    expect(run(['db', 'reset', '--linked'], ref).stdout.split('\n')).toContain('--yes');
+    for (const args of [['config', 'push'], ['db', 'push', '--linked'], ['functions', 'deploy', 'transcribe-audio']]) {
+      expect(run(args, ref).stdout.split('\n')).not.toContain('--yes');
+    }
+  });
+  it('previews with explicit no answers, text output and auto-confirm overridden', () => {
+    const { root, run } = fixture();
+    writeFileSync(join(root, 'bin/supabase'), '#!/bin/sh\nprintf "%s\\n" "$@"\ni=0\nwhile [ "$i" -lt 10 ]; do\n read -r answer || exit 2\n [ "$answer" = n ] || exit 3\n i=$((i + 1))\ndone\n', { mode: 0o755 });
+    const previous = process.env.SUPABASE_YES;
+    process.env.SUPABASE_YES = 'true';
+    try {
+      const result = run(['config', 'preview']);
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain('--yes=false');
+      expect(result.stdout).toContain('--agent\nno\n--output-format\ntext');
+      expect(result.stdout).toContain('config\npush\n--project-ref\n' + ref);
+    } finally {
+      if (previous === undefined) delete process.env.SUPABASE_YES;
+      else process.env.SUPABASE_YES = previous;
+    }
+  });
   it('refuses dev startup for a live, wrong or placeholder environment', () => {
     const { root } = fixture();
     writeFileSync(join(root, 'scripts/dev-staging.mjs'), readFileSync('scripts/dev-staging.mjs'));

@@ -23,7 +23,7 @@ for arg in "$@"; do
 done
 change=false
 case "$*" in
-  'migration list --linked'|'db push --linked --dry-run'|'secrets list') ;;
+  'migration list --linked'|'db push --linked --dry-run'|'secrets list'|'config preview') ;;
   'db push --linked'|'db reset --linked'|'functions deploy transcribe-audio'|'config push') change=true;;
   *) echo 'REFUSED: command is not on the staging allowlist.' >&2; exit 1;;
 esac
@@ -34,6 +34,16 @@ fi
 # Ambient workdir/project overrides must not change the checked target.
 unset SUPABASE_WORKDIR SUPABASE_PROJECT_REF SUPABASE_DB_URL
 case "$*" in
+  'config preview')
+    # config push defaults to YES on EOF and in JSON output. Explicit false
+    # beats SUPABASE_YES in both the environment and supabase/.env.
+    # Keep supplying no, including for optional paid-feature prompts.
+    set +e
+    yes n | supabase --agent no --output-format text --yes=false --workdir "$PWD" config push --project-ref "$ref"
+    result=${PIPESTATUS[1]}
+    exit "$result";;
+  'db reset --linked')
+    exec supabase --workdir "$PWD" --yes "$@";;
   'functions deploy transcribe-audio'|'config push'|'secrets list')
     exec supabase --workdir "$PWD" "$@" --project-ref "$ref";;
   *) exec supabase --workdir "$PWD" "$@";;

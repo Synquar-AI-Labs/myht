@@ -69,7 +69,9 @@ STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh db reset --linked
 scripts/staging.sh migration list --linked
 ```
 
-Expected: the staging ref is printed, confirm the CLI's reset prompt, then all
+Expected: the staging ref is printed; the wrapper adds global `--yes` ONLY for
+this approved reset, so it does not wait for an interactive answer. Without
+`--yes`, non-terminal EOF means no and the CLI cancels the reset. Then all
 five `20261011000000` through `20261011000400` migrations apply; local and remote
 history agree. Leader verifies the new RLS, private storage, ticker and quota
 function in staging, and no users/data were seeded. Do not run the local-only
@@ -82,28 +84,110 @@ For later additive migrations, use `db push --linked --dry-run`, review it, then
 The first clean-baseline reset already applies the migrations; no redundant
 push is needed.
 
-## 5. Push hosted Auth settings — coder; leader checks the dashboard
+## 5. Preview, review, then push hosted settings — coder and leader
+
+Use CLI 2.109.1 for this source-audited procedure; re-audit before upgrading it.
+After remote approval, first run:
+
+```sh
+scripts/staging.sh config preview
+```
+
+This invokes config push with `--agent no --output-format text --yes=false`
+and an unlimited stream of `n` answers. It shows the full diff but refuses
+EVERY update and paid-feature prompt. Explicit `--yes=false` overrides even
+`SUPABASE_YES` in the shell or `supabase/.env`. It is not a CLI dry-run flag:
+config push has none. Never substitute `/dev/null`: empty input defaults to
+YES for config push; JSON/stream-json output also takes that default without
+asking. `--agent yes` (or detected agents in auto mode) defaults output to JSON;
+`--agent no` disables that detection, and explicit text output wins.
+
+Leader reads the ENTIRE preview. Stop on unrelated or paid changes. For each
+omitted setting that differs, copy its current non-secret hosted value into
+the matching `[remotes.staging]` section to preserve it; preview again. Do not
+apply until only the intended URL, sign-up, password and code-template changes
+remain. The current hosted values cannot be known from CLI source; no remote
+read was authorized during preparation, so these preservation pins are pending
+the approved preview, not guessed. In particular, omission of rate limits is
+NOT a promise to retain hosted defaults.
+
+Only AFTER leader approves that full diff:
 
 ```sh
 STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh config push
 ```
 
 Expected: target is staging and `Loading config override: [remotes.staging]`.
-Review the planned diff before confirming; stop on unrelated, rate-limit or paid
-changes. Dashboard → Authentication → URL Configuration, Sign In / Providers →
+With terminal input, answer only for the approved sections. Without terminal
+input, an unanswered prompt defaults to YES and applies; the confirmation
+environment variable authorizes this form, not the preview. Dashboard →
+Authentication → URL Configuration, Sign In / Providers →
 Email, and Email Templates: verify localhost port 5188, sign-ups enabled,
 confirmation required, six-digit codes, minimum password eight, and both code
-templates. Hosted rate limits are not overridden in our file.
+templates. Verify the preserved settings too.
 
 Undo: record the previous non-secret values before pushing and restore them in
 staging's dashboard or in this remote block followed by another approved push.
 Do not restore the old allowlist architecture.
 
-The [CLI push source](https://github.com/supabase/cli/blob/develop/apps/cli/src/commands/config/push/push.handler.ts)
+The [CLI push source](https://github.com/supabase/cli/blob/v2.109.1/apps/cli/src/legacy/commands/config/push/push.handler.ts)
 loads config with the resolved project ref, merges the matching remote before
 decode, and prints the override name. This is consistent with Supabase's
 [remote configuration docs](https://supabase.com/docs/guides/deployment/branching/configuration).
 No remote config command was used to verify it during preparation.
+
+### Omitted-setting write surface (CLI 2.109.1)
+
+These sections are decoded with defaults and can be overwritten if their
+section's push is accepted. Inspect and preserve actual hosted values first:
+
+- API: exposed schemas (`public,graphql_public`), extra search path
+  (`public,extensions`), max rows (1000). Local API port/TLS/external URL are
+  not sent to the hosted API.
+- Storage: global file-size limit (50 MiB). Absent image-transformation and
+  S3 blocks are preserved; disabled analytics does not send an enable/disable
+  update. Vector storage defaults to ENABLED in this CLI: our remote override
+  explicitly sets `storage.vector.enabled = false` so it emits no vector
+  update (and does not disable any already-hosted vector feature). This is
+  the one source-proven preservation pin added now. Bucket declarations are
+  not pushed by this command.
+- Auth root: JWT expiry (3600), refresh rotation (true), reuse interval (10),
+  manual linking (false), anonymous sign-in (false), password requirements
+  (empty), plus our explicitly configured URL/sign-up/minimum password.
+- Auth rate limits: anonymous users 30, refresh 150, sign-in/sign-up 30,
+  verification 30, SMS 30, Web3 30. Email rate is NOT sent without an enabled
+  SMTP block. These are CLI defaults, not verified hosted defaults.
+- Auth MFA: TOTP, phone and WebAuthn enroll/verify default false; maximum
+  factors 10; phone OTP length 6, template `Your code is {{ .Code }}`,
+  frequency 5s. Auth sessions: timebox and inactivity timeout default empty
+  (unlimited), so absence can remove hosted restrictions.
+- Auth email: double-confirm changes true, secure password change false,
+  frequency 1s, OTP expiry 3600, plus our signup/confirmation/length/templates.
+- Auth SMS: signup/confirmation false, frequency 5s, default code template;
+  absent provider credentials/test OTP are not cleared. Auth Web3 Ethereum
+  and Solana default disabled.
+
+Preserved when absent: DB settings (empty update body; not defaults), DB SSL
+enforcement, disabled network restrictions, Auth captcha, each hook, SMTP,
+external providers, unspecified email templates/notifications. Auth passkey
+and standalone WebAuthn are undefined in this CLI mapping; OAuth server and
+third-party blocks are not emitted by `authToUpdateBody`. Local DB version,
+pooler/ports and analytics configuration are not hosted changes here.
+
+Source functions under `apps/cli/src/legacy/commands/config/push/config-sync/`:
+`apiSubsetFromConfig` / `apiToUpdateBody` (api.sync.ts),
+`dbSettingsToUpdateBody` (db.sync.ts), `storageToUpdateBody` (storage.sync.ts),
+`authSubsetFromConfig` / `authToUpdateBody` (auth.sync.ts).
+`push.raw-presence.ts` checks whether optional blocks actually exist before
+using their decoded defaults. Defaults are in `packages/config/src/`.
+`legacyConfigPush` gates every remote update through `keep()`;
+`legacyPromptYesNo` is in `legacy/shared/legacy-prompt-yes-no.ts`.
+Global precedence is `legacyResolveYesWithProjectEnv` in
+`apps/cli/src/shared/legacy/global-flags.ts`; agent JSON selection is
+`resolveAgentOutputFormat` in `apps/cli/src/shared/cli/agent-output.ts`.
+Reset delegates to `resetRemote` in
+`apps/cli-go/internal/db/reset/reset.go`, whose `Console.PromptYesNo`
+(`apps/cli-go/internal/utils/console.go`) has a false default for reset.
 
 ## 6. Deploy the staging function without a key — coder
 
@@ -122,10 +206,12 @@ Undo: delete this staging function in the dashboard (owner), or redeploy a
 reviewed prior version to staging after approval. The app still records and
 keeps audio when transcription is not configured.
 
-## 7. Staging browser preview — owner fills placeholders; coder runs it
+## 7. Staging browser preview — leader supplies public values; coder runs it
 
-Dashboard → staging Project Settings → API Keys: owner copies only the staging
-publishable key into the ignored `.env.staging.local`. Never use a secret/service
+After approval, leader can read the staging URL and publishable key through the
+read-only Supabase connection and hand these PUBLIC values to coder for the
+ignored `.env.staging.local`. Alternative: owner copies them from Dashboard →
+staging Project Settings → API Keys. Never use a secret/service
 role key, and do not change `.env`. The placeholder file is:
 
 ```dotenv
@@ -167,9 +253,23 @@ Retry remain available. Coder's automated tests never use an AI key or call.
 
 Choose the hosting URL, then update BOTH `site_url` and
 `additional_redirect_urls` in `[remotes.staging.auth]` and run another approved
-config push. Configure Authentication → Email → SMTP Settings for a verified
+config preview, leader review, then approved config push. Configure
+Authentication → Email → SMTP Settings for a verified
 sender/provider; retain confirmations and verify sign-up/recovery delivery to
 non-team synthetic addresses. Do not add SMTP credentials to this file.
+
+SMTP safety (CLI 2.109.1): an ABSENT `[auth.email.smtp]` block, including the
+remote override, preserves dashboard SMTP connection settings and credentials.
+The separate `auth.email.max_frequency` is still sent as `smtp_max_frequency`;
+preserve its hosted value through the step 5 review too.
+`authSubsetFromConfig` sets SMTP
+undefined when raw presence is false; `authToUpdateBody` then emits NO SMTP
+fields. An explicitly present block with `enabled = false` instead sends
+`smtp_host = ""`, disabling custom SMTP. Do not add even an empty/default
+SMTP block. Before every later push, preview and check there are no SMTP
+changes; retain the whole hosted-value preservation review from step 5.
+Re-audit this behavior on CLI upgrades. Credentials stay owner-managed in the
+dashboard, never copied into the repository.
 Expected: exact hosted redirects and working email; leader verifies before
 inviting people. Undo: stop invitations/preview, restore prior staging URL
 settings, and remove/revoke the new SMTP credentials through the owner.

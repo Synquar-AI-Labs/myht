@@ -25,6 +25,11 @@ enabled = false
 [remotes.staging]
 project_id = "lefqfxkvujqnukgzaviz"
 
+# CLI 2.109.1 defaults vector storage to enabled and would send an enable
+# update. False skips that feature entirely; it does not disable a hosted one.
+[remotes.staging.storage.vector]
+enabled = false
+
 # First staging check on this Mac. Replace BOTH URL settings when hosting is chosen.
 [remotes.staging.auth]
 site_url = "http://localhost:5188"
@@ -44,4 +49,6 @@ content_path = "./supabase/templates/confirmation.html"
 [remotes.staging.auth.email.template.recovery]
 subject = "Your password reset code"
 content_path = "./supabase/templates/recovery.html"
-# Do not add rate-limit overrides here: retain the hosted defaults.
+# Omission does NOT preserve hosted Auth rate limits: config push supplies CLI
+# defaults. After approval, preview first and pin any differing hosted values
+# before applying (docs/STAGING.md section 5). Never guess remote values.
