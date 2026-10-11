@@ -77,7 +77,11 @@ CREATE POLICY household_edit ON public.households FOR UPDATE TO authenticated US
 GRANT INSERT(household_id,display_name),UPDATE(display_name,is_active) ON public.caregivers TO authenticated;
 CREATE POLICY caregiver_add ON public.caregivers FOR INSERT TO authenticated WITH CHECK(app_private.is_admin(household_id));
 CREATE POLICY caregiver_edit ON public.caregivers FOR UPDATE TO authenticated USING(app_private.is_admin(household_id)) WITH CHECK(app_private.is_admin(household_id));
-INSERT INTO storage.buckets(id,name,public) VALUES('audio-files','audio-files',false);
+INSERT INTO storage.buckets(id,name,public) VALUES('audio-files','audio-files',false)
+ON CONFLICT (id) DO UPDATE SET public = false;
+DROP POLICY IF EXISTS audio_read ON storage.objects;
+DROP POLICY IF EXISTS audio_add ON storage.objects;
+DROP POLICY IF EXISTS audio_delete ON storage.objects;
 CREATE POLICY audio_read ON storage.objects FOR SELECT TO authenticated USING(bucket_id='audio-files' AND app_private.is_member(app_private.path_household(name)));
 CREATE POLICY audio_add ON storage.objects FOR INSERT TO authenticated WITH CHECK(bucket_id='audio-files' AND app_private.is_member(app_private.path_household(name)));
 CREATE POLICY audio_delete ON storage.objects FOR DELETE TO authenticated USING(bucket_id='audio-files' AND app_private.is_member(app_private.path_household(name)));
