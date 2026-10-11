@@ -9,9 +9,11 @@ import {
 } from '@/lib/recording';
 import {
   recordingJobReducer, idleJob, isBusy, isResolved, isRecoverable,
-  RecordingJob, JobMetadata,
+  RecordingJob, JobMetadata, JobAction,
 } from '@/lib/recordingJob';
 import { persistJob, loadPersistedJob, clearPersistedJob } from '@/lib/recordingJobStore';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { domainKeys } from '@/lib/domainKeys';
 
 const MIME_EXT: Record<string, string> = {
   'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'm4a', 'audio/x-caf': 'm4a',
@@ -51,19 +53,27 @@ interface RecordingContextValue {
   processFile: (file: File, metadata: JobMetadata) => Promise<void>;
   retry: () => Promise<void>;
   discard: () => void;
-  downloadAudio: () => void;
+  downloadAudio: () => Promise<void>;
 }
 
 const RecordingContext = createContext<RecordingContextValue | null>(null);
 
 export function RecordingProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
-  const [job, dispatch] = useReducer(recordingJobReducer, idleJob);
+  const { user, householdId } = useHousehold();
+  const identity = useRef({ user_id: user.id, household_id: householdId! }).current;
+  const [job, reduceDispatch] = useReducer(recordingJobReducer, idleJob);
   const [elapsed, setElapsed] = useState(0);
+  const [restoring, setRestoring] = useState(true);
 
   // Async callbacks read the LATEST job (fixes stale title/recordedBy at stop).
   const jobRef = useRef(job);
-  useEffect(() => { jobRef.current = job; }, [job]);
+  const mounted = useRef(true);
+  const recovering = useRef(true);
+  const dispatch = useCallback((action: JobAction) => {
+    jobRef.current = recordingJobReducer(jobRef.current, action);
+    if (mounted.current) reduceDispatch(action);
+  }, []);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -74,9 +84,9 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   const startingRef = useRef(false); // start lock — no double recorders
 
   const invalidate = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['audio_transcripts'] });
-    queryClient.invalidateQueries({ queryKey: ['audio_transcripts-count'] });
-  }, [queryClient]);
+    queryClient.invalidateQueries({ queryKey: domainKeys.transcripts(identity.household_id) });
+    queryClient.invalidateQueries({ queryKey: domainKeys.transcriptCount(identity.household_id) });
+  }, [queryClient, identity]);
 
   const releaseWakeLock = useCallback(() => {
     const lock = wakeLockRef.current;
@@ -111,15 +121,23 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
 
   // ── Server pipeline ────────────────────────────────────────────────
 
-  const transcribeAndSave = useCallback(async (storagePath: string, ext: string, metadata: JobMetadata) => {
-    dispatch({ type: 'TRANSCRIBE_START' });
+  const checkIdentity = useCallback(async (current: RecordingJob) => {
+    const mismatch = 'This recording belongs to another account or family. Sign back in to continue.';
+    if (!mounted.current || current.user_id !== identity.user_id || current.household_id !== identity.household_id) throw new Error(mismatch);
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) {
-      dispatch({ type: 'TRANSCRIBE_FAILED', error: 'You must be logged in to transcribe.' });
-      return;
-    }
+    if (!session || session.user.id !== current.user_id) throw new Error(mismatch);
+    const { data: membership, error } = await supabase.from('household_members').select('household_id').eq('user_id', session.user.id).maybeSingle();
+    if (error) throw new Error('Could not check your family. Your audio is kept. Please try again.');
+    if (!mounted.current || membership?.household_id !== current.household_id) throw new Error(mismatch);
+    return session;
+  }, [identity]);
+
+  const transcribeAndSave = useCallback(async (current: RecordingJob) => {
+    dispatch({ type: 'TRANSCRIBE_START' });
+    const { storagePath, ext, metadata } = current;
     let result: { transcript: string; summary: string; action_items: string[]; follow_ups: string[] };
     try {
+      const session = await checkIdentity(current);
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe-audio`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
@@ -138,7 +156,10 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
 
     dispatch({ type: 'SAVE_START' });
     try {
+      await checkIdentity(current);
       const { error } = await supabase.from('audio_transcripts').insert({
+        household_id: identity.household_id,
+        caregiver_id: metadata.caregiverId,
         date: metadata.date,
         title: metadata.title || null,
         audio_path: storagePath,
@@ -147,28 +168,29 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
         action_items: result.action_items,
         follow_ups: result.follow_ups,
         recorded_by: metadata.recordedBy || 'Unknown',
-      } as import('@/integrations/supabase/types').TablesInsert<'audio_transcripts'>); // A5 pins household_id.
+      });
       if (error) throw error;
     } catch (e) {
       dispatch({ type: 'TRANSCRIBE_FAILED', error: e instanceof Error ? e.message : 'Could not save the transcript.' });
       return;
     }
 
-    await clearPersistedJob();
+    await clearPersistedJob(identity);
     dispatch({ type: 'SAVED' });
-    invalidate();
-    toast.success('Transcript saved.');
-  }, [invalidate]);
+    if (mounted.current) { invalidate(); toast.success('Transcript saved.'); }
+  }, [invalidate, checkIdentity, dispatch, identity]);
 
   const uploadAndProcess = useCallback(async (blob: Blob, ext: string, metadata: JobMetadata) => {
     if (runningRef.current) return;
     runningRef.current = true;
+    const current = jobRef.current;
     try {
       dispatch({ type: 'UPLOAD_START' });
-      const id = jobRef.current.id || `job-${Date.now()}`;
-      await persistJob({ id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      const id = current.id;
+      await persistJob({ ...identity, id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      await checkIdentity(current);
 
-      const storagePath = `${metadata.date}/${Date.now()}.${ext}`;
+      const storagePath = `${current.household_id}/${metadata.date}/${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from('audio-files')
         .upload(storagePath, blob, { contentType: contentTypeForExt(ext) });
@@ -178,12 +200,14 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       }
 
       dispatch({ type: 'UPLOAD_OK', storagePath });
-      await persistJob({ id, metadata, ext, bytes: blob.size, storagePath, savedAt: Date.now() });
-      await transcribeAndSave(storagePath, ext, metadata);
+      await persistJob({ ...identity, id, metadata, ext, bytes: blob.size, storagePath, savedAt: Date.now() });
+      await transcribeAndSave({ ...current, storagePath, ext, metadata });
+    } catch (e) {
+      dispatch({ type: 'UPLOAD_FAILED', error: e instanceof Error ? e.message : 'Could not upload. Your audio is kept.' });
     } finally {
       runningRef.current = false;
     }
-  }, [transcribeAndSave]);
+  }, [transcribeAndSave, checkIdentity, dispatch, identity]);
 
   // ── Recording ──────────────────────────────────────────────────────
 
@@ -199,27 +223,31 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     recorderRef.current = null;
 
     if (blob.size === 0) {
-      toast.error('No audio was captured. Please try again.');
+      if (mounted.current) toast.error('No audio was captured. Please try again.');
       dispatch({ type: 'DISCARD' });
       return;
     }
 
     const ext = extFromMime(type);
     const metadata = jobRef.current.metadata; // current at STOP, not record time
+    if (!mounted.current) {
+      void persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      return;
+    }
     if (blob.size > MAX_TRANSCRIBABLE_BYTES) {
       dispatch({ type: 'TOO_LARGE', blob, bytes: blob.size, ext });
-      persistJob({ id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
       toast.error(`Recording is ${describeBytes(blob.size)} — over the ${describeBytes(MAX_TRANSCRIBABLE_BYTES)} transcription limit. You can download the audio and split it.`);
       return;
     }
 
     dispatch({ type: 'CAPTURED', blob, bytes: blob.size, ext });
     uploadAndProcess(blob, ext, metadata);
-  }, [releaseWakeLock, stopTimer, uploadAndProcess]);
+  }, [releaseWakeLock, stopTimer, uploadAndProcess, dispatch, identity]);
 
   const startRecording = useCallback(async (metadata: JobMetadata) => {
     const current = jobRef.current;
-    if (isBusy(current.status) || (!isResolved(current.status) && isRecoverable(current.status))) {
+    if (recovering.current || isBusy(current.status) || (!isResolved(current.status) && isRecoverable(current.status))) {
       toast.error('Finish or discard the current recording first.');
       return;
     }
@@ -227,7 +255,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     startingRef.current = true;
 
     const id = `rec-${Date.now()}`;
-    dispatch({ type: 'ACQUIRE', id, metadata });
+    dispatch({ type: 'ACQUIRE', id, metadata, identity });
 
     let stream: MediaStream;
     try {
@@ -240,6 +268,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     }
 
     const mimeType = pickRecordingMimeType();
+    if (!mounted.current) { stream.getTracks().forEach(t => t.stop()); startingRef.current = false; return; }
     let recorder: MediaRecorder;
     try {
       recorder = new MediaRecorder(stream, {
@@ -270,7 +299,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     timerRef.current = setInterval(() => setElapsed(s => s + 1), 1000);
     requestWakeLock();
     startingRef.current = false;
-  }, [requestWakeLock, stopTimer, finalizeRecording]);
+  }, [requestWakeLock, stopTimer, finalizeRecording, dispatch, identity]);
 
   const stopRecording = useCallback(() => {
     const recorder = recorderRef.current;
@@ -284,15 +313,17 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       return;
     }
     const ext = extFromFile(file);
-    dispatch({ type: 'ACQUIRE', id: `file-${file.name}-${file.size}`, metadata });
+    if (recovering.current) return;
+    dispatch({ type: 'ACQUIRE', id: `file-${Date.now()}`, metadata, identity });
     if (file.size > MAX_TRANSCRIBABLE_BYTES) {
       dispatch({ type: 'TOO_LARGE', blob: file, bytes: file.size, ext });
+      await persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: file.size, blob: file, savedAt: Date.now() });
       toast.error(`That file is ${describeBytes(file.size)} — over the ${describeBytes(MAX_TRANSCRIBABLE_BYTES)} transcription limit.`);
       return;
     }
     dispatch({ type: 'CAPTURED', blob: file, bytes: file.size, ext });
     await uploadAndProcess(file, ext, metadata);
-  }, [uploadAndProcess]);
+  }, [uploadAndProcess, dispatch, identity]);
 
   const retry = useCallback(async () => {
     const current = jobRef.current;
@@ -300,30 +331,41 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       if (runningRef.current) return;
       runningRef.current = true;
       try {
-        await transcribeAndSave(current.storagePath, current.ext ?? 'webm', current.metadata);
+        await transcribeAndSave(current);
       } finally {
         runningRef.current = false;
       }
-    } else if ((current.status === 'upload-failed') && current.blob) {
+    } else if ((current.status === 'upload-failed' || current.status === 'captured') && current.blob) {
       await uploadAndProcess(current.blob, current.ext ?? 'webm', current.metadata);
     }
   }, [transcribeAndSave, uploadAndProcess]);
 
   const discard = useCallback(() => {
-    clearPersistedJob();
+    if (runningRef.current || startingRef.current || isBusy(jobRef.current.status)) return;
+    clearPersistedJob(identity);
     dispatch({ type: 'DISCARD' });
-  }, []);
+  }, [dispatch, identity]);
 
-  const downloadAudio = useCallback(() => {
-    const { blob, ext } = jobRef.current;
-    if (!blob) return;
+  const downloadAudio = useCallback(async () => {
+    const current = jobRef.current;
+    let { blob } = current;
+    const { ext } = current;
+    try {
+      await checkIdentity(current);
+      if (!blob && current.storagePath) {
+        const { data, error } = await supabase.storage.from('audio-files').download(current.storagePath);
+        if (error) throw error;
+        blob = data;
+      }
+    } catch { if (mounted.current) toast.error('Could not download the audio. Sign in to the same family and try again.'); return; }
+    if (!blob || !mounted.current) return;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `conversation-${jobRef.current.metadata.date || 'recording'}.${ext ?? 'webm'}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }, []);
+  }, [checkIdentity]);
 
   const setMetadata = useCallback((m: Partial<JobMetadata>) => {
     dispatch({ type: 'UPDATE_METADATA', metadata: m });
@@ -332,8 +374,12 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   // On load, recover an interrupted job (reload/crash mid-upload).
   useEffect(() => {
     let cancelled = false;
-    loadPersistedJob().then(stored => {
-      if (cancelled || !stored) return;
+    mounted.current = true;
+    loadPersistedJob(identity).then(stored => {
+      if (cancelled) return;
+      recovering.current = false;
+      setRestoring(false);
+      if (!stored) return;
       const status = stored.storagePath ? 'transcribe-failed'
         : stored.bytes > MAX_TRANSCRIBABLE_BYTES ? 'too-large'
         : 'upload-failed';
@@ -341,19 +387,26 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
         type: 'RESTORE',
         job: {
           id: stored.id, status, metadata: stored.metadata, ext: stored.ext,
+          user_id: stored.user_id, household_id: stored.household_id,
           bytes: stored.bytes, blob: stored.blob, storagePath: stored.storagePath,
           error: 'Recovered an unfinished recording from your last session.',
         },
       });
     });
-    return () => { cancelled = true; };
-  }, []);
+    return () => {
+      cancelled = true;
+      mounted.current = false;
+      stopTimer(); releaseWakeLock();
+      if (recorderRef.current && recorderRef.current.state !== 'inactive') recorderRef.current.stop();
+      streamRef.current?.getTracks().forEach(t => t.stop());
+    };
+  }, [identity, dispatch, stopTimer, releaseWakeLock]);
 
   const value: RecordingContextValue = {
     job,
     elapsed,
     isRecording: job.status === 'recording',
-    busy: isBusy(job.status),
+    busy: restoring || isBusy(job.status),
     setMetadata,
     startRecording,
     stopRecording,

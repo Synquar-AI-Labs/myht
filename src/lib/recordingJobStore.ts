@@ -1,18 +1,18 @@
 /**
- * Durable single-slot store for an in-progress recording job, so a page
+ * Durable per-user, per-household store for an in-progress recording job, so a page
  * reload or crash mid-upload doesn't lose an unrepeatable conversation.
  *
  * Defensive by design: every operation is wrapped so a missing or blocked
  * IndexedDB can never break recording itself — persistence is belt-and-braces
  * on top of the in-memory provider, not a hard dependency.
  */
-import type { JobMetadata } from '@/lib/recordingJob';
+import type { JobMetadata, RecordingIdentity } from '@/lib/recordingJob';
 
 const DB_NAME = 'myht-recordings';
 const STORE = 'pending';
-const SLOT = 'current';
+export const recordingSlot = (identity: RecordingIdentity) => identity.user_id + ':' + identity.household_id;
 
-export interface StoredJob {
+export interface StoredJob extends RecordingIdentity {
   id: string;
   metadata: JobMetadata;
   ext: string;
@@ -48,9 +48,10 @@ async function withStore<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore
     try {
       const tx = db.transaction(STORE, mode);
       const req = fn(tx.objectStore(STORE));
-      req.onsuccess = () => resolve(req.result as T);
-      req.onerror = () => resolve(null);
-      tx.oncomplete = () => db.close();
+      let result: T | null = null;
+      req.onsuccess = () => { result = req.result as T; };
+      tx.oncomplete = () => { db.close(); resolve(result); };
+      tx.onerror = tx.onabort = () => { db.close(); resolve(null); };
     } catch {
       resolve(null);
     }
@@ -58,14 +59,14 @@ async function withStore<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore
 }
 
 export async function persistJob(job: StoredJob): Promise<void> {
-  await withStore('readwrite', store => store.put(job, SLOT));
+  await withStore('readwrite', store => store.put(job, recordingSlot(job)));
 }
 
-export async function loadPersistedJob(): Promise<StoredJob | null> {
-  const job = await withStore<StoredJob>('readonly', store => store.get(SLOT));
-  return job ?? null;
+export async function loadPersistedJob(identity: RecordingIdentity): Promise<StoredJob | null> {
+  const job = await withStore<StoredJob>('readonly', store => store.get(recordingSlot(identity)));
+  return job?.user_id === identity.user_id && job?.household_id === identity.household_id ? job : null;
 }
 
-export async function clearPersistedJob(): Promise<void> {
-  await withStore('readwrite', store => store.delete(SLOT));
+export async function clearPersistedJob(identity: RecordingIdentity): Promise<void> {
+  await withStore('readwrite', store => store.delete(recordingSlot(identity)));
 }

@@ -1,4 +1,5 @@
 import { HouseholdProvider } from '@/hooks/HouseholdProvider';
+import { useHousehold } from '@/hooks/HouseholdProvider';
 import { HouseholdSetup } from '@/components/setup/HouseholdSetup';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,13 +22,17 @@ const queryClient = new QueryClient({
     },
   },
 });
+function HouseholdRecording({ children }: { children: React.ReactNode }) {
+  const { user, householdId } = useHousehold();
+  return <RecordingProvider key={user.id + ':' + householdId}>{children}</RecordingProvider>;
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
   if (!session) return <Navigate to="/auth" replace />;
   return <HouseholdProvider key={session.user.id} user={session.user}>
-    <HouseholdSetup>{children}</HouseholdSetup>
+    <HouseholdSetup><HouseholdRecording>{children}</HouseholdRecording></HouseholdSetup>
   </HouseholdProvider>;
 }
 const App = () => (
@@ -36,15 +41,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        {/* Above the routes/tabs so an in-progress recording survives all
-            in-app navigation. */}
-        <RecordingProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </RecordingProvider>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

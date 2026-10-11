@@ -9,6 +9,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Mic, Square, Upload, Trash2, ChevronDown, ChevronRight, Loader2, RotateCcw, Download, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { formatDuration, describeBytes } from '@/lib/recording';
+import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { CaregiverPicker } from '@/components/CaregiverPicker';
 
 export function TranscriptsTab() {
   const { transcripts, selectedDate, setSelectedDate, loading, deleteTranscript } = useTranscripts();
@@ -20,9 +22,9 @@ export function TranscriptsTab() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const status = job.status;
   const title = job.metadata.title;
-  const recordedBy = job.metadata.recordedBy;
+  const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
 
-  const metaForNewJob = () => ({ title, recordedBy, date: selectedDate });
+  const metaForNewJob = () => ({ title, recordedBy: caregiver?.display_name ?? '', caregiverId: caregiver?.caregiver_id ?? '', date: selectedDate });
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,25 +55,24 @@ export function TranscriptsTab() {
             value={title}
             onChange={(e) => setMetadata({ title: e.target.value })}
           />
-          <Input
-            placeholder="Recorded by"
-            value={recordedBy}
-            onChange={(e) => setMetadata({ recordedBy: e.target.value })}
-          />
+          <div><p className="mb-1 text-xs text-muted-foreground">Recorded by</p>
+            {status === 'idle' ? <CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} />
+              : <p className="text-sm">{job.metadata.recordedBy}</p>}
+          </div>
           <div className="flex gap-2">
             {isRecording ? (
               <Button variant="destructive" onClick={stopRecording} className="flex-1">
                 <Square className="h-4 w-4 mr-1" /> Stop · {formatDuration(elapsed)}
               </Button>
             ) : (
-              <Button onClick={() => startRecording(metaForNewJob())} disabled={busy} className="flex-1">
+              <Button onClick={() => startRecording(metaForNewJob())} disabled={busy || !caregiver || status !== 'idle'} className="flex-1">
                 <Mic className="h-4 w-4 mr-1" /> Record
               </Button>
             )}
             <Button
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
-              disabled={busy}
+              disabled={busy || !caregiver || status !== 'idle'}
               className="flex-1"
             >
               <Upload className="h-4 w-4 mr-1" /> Upload
@@ -101,6 +102,7 @@ export function TranscriptsTab() {
           {/* Recoverable failure: the audio is never lost. */}
           {(status === 'upload-failed' || status === 'transcribe-failed' || status === 'too-large' || status === 'captured') && !busy && (
             <div className="space-y-2 rounded-lg border border-[#f0c9ae] bg-[#fdf0e6] p-3">
+              {job.error && <p role="alert" className="text-sm">{job.error}</p>}
               <p className="text-sm font-medium text-[#c2740c]">
                 {status === 'transcribe-failed' && 'Uploaded, but transcription failed. Your audio is safe.'}
                 {status === 'upload-failed' && "Couldn't upload the recording. It's still on this device."}
@@ -114,7 +116,7 @@ export function TranscriptsTab() {
                     {status === 'transcribe-failed' ? 'Try transcribing again' : 'Try again'}
                   </Button>
                 )}
-                {job.blob && (
+                {(job.blob || job.storagePath) && (
                   <Button size="sm" variant="outline" onClick={downloadAudio}>
                     <Download className="h-4 w-4 mr-1" /> Download audio
                   </Button>

@@ -24,7 +24,6 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
@@ -38,46 +37,26 @@ serve(async (req) => {
       );
     }
 
-    const { data: allowed, error: allowlistError } = await supabaseUser.rpc('is_allowed_user');
-    if (allowed === false || (allowlistError && allowlistError.code !== 'PGRST202')) {
-      return new Response(JSON.stringify({ error: "This account isn't approved." }), {
+    const refused = () => new Response(JSON.stringify({ error: "Audio is unavailable or you do not have access." }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
-    }
-
+    let body;
+    try { body = await req.json(); } catch { return refused(); }
+    const storagePath = body?.storagePath;
+    // Exactly household/date/timestamp.extension; no traversal or alternate paths.
+    if (typeof storagePath !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/\d{4}-\d{2}-\d{2}\/\d+\.(m4a|mp4|mp3|mpeg|mpga|wav|webm|ogg|oga|flac)$/i.test(storagePath)) return refused();
+    const fileName = storagePath.split('/').pop()!;
+    // The caller's Storage RLS is the authorization boundary, before AI config.
+    let fileData: Blob;
+    try {
+      const { data, error } = await supabaseUser.storage.from("audio-files").download(storagePath);
+      if (error || !data) return refused();
+      fileData = data;
+    } catch { return refused(); }
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is missing");
-      return new Response(JSON.stringify({ error: "OPENAI_API_KEY is not configured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Parse JSON body with storage path
-    const { storagePath, fileName } = await req.json();
-    if (!storagePath || !fileName) {
-      return new Response(JSON.stringify({ error: "storagePath and fileName are required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    console.log("Downloading audio from storage:", { storagePath, fileName });
-
-    // Download file from storage using service role key
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: fileData, error: downloadError } = await supabaseAdmin.storage
-      .from("audio-files")
-      .download(storagePath);
-
-    if (downloadError || !fileData) {
-      console.error("Storage download error:", downloadError);
-      return new Response(JSON.stringify({ error: "Failed to download audio file" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    if (!OPENAI_API_KEY) return new Response(JSON.stringify({ error: "OPENAI_API_KEY is not configured" }), {
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
 
     const audioBytes = new Uint8Array(await fileData.arrayBuffer());
     console.log("Downloaded file:", { size: audioBytes.length, type: fileData.type });
@@ -158,21 +137,14 @@ serve(async (req) => {
     console.log("Transcription successful, length:", transcript.length);
 
     // Step 2: Analyze with ChatGPT
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    const analysisUrl = LOVABLE_API_KEY
-      ? "https://ai.gateway.lovable.dev/v1/chat/completions"
-      : "https://api.openai.com/v1/chat/completions";
-    const analysisKey = LOVABLE_API_KEY || OPENAI_API_KEY;
-    const analysisModel = LOVABLE_API_KEY ? "google/gemini-3-flash-preview" : "gpt-5.2";
-
-    const chatRes = await fetch(analysisUrl, {
+    const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${analysisKey}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: analysisModel,
+        model: "gpt-5.2",
         messages: [
           {
             role: "system",

@@ -122,7 +122,22 @@ await check('3 storage isolation and malformed paths',async()=>{
  good(await request(A.admin.token,'/storage/v1/object/audio-files','DELETE',{prefixes:[path]}));
  for(const p of ['nofolder','not-a-uuid/day/file','../file']) assert(!(await upload(B.member,p)).ok);
 });
-await check('4 transcribe-audio tenant boundary — not implemented (A5)',()=>{throw new Error('not implemented');});
+await check('4 transcribe-audio tenant boundary and malformed paths',async()=>{
+ const path=A.hid+'/2026-01-01/'+Date.now()+'.webm';
+ const upload=await fetch(api+'/storage/v1/object/audio-files/'+path,{method:'POST',headers:{apikey:anon,Authorization:'Bearer '+A.admin.token,'Content-Type':'audio/webm'},body:'synthetic-audio-only'});
+ assert(upload.ok);
+ const transcribe=(u,p)=>request(u.token,'/functions/v1/transcribe-audio','POST',{storagePath:p});
+ const own=await transcribe(A.admin,path);
+ assert.equal(own.status,500,JSON.stringify(own));
+ assert.deepEqual(own.data,{error:'OPENAI_API_KEY is not configured'});
+ const expected={error:'Audio is unavailable or you do not have access.'};
+ for(const p of [path,'nofolder.webm','not-a-uuid/2026-01-01/1.webm',A.hid+'/../1.webm',A.hid+'/2026-01-01/0.webm']) {
+  const result=await transcribe(B.member,p);assert.equal(result.status,403,JSON.stringify(result));assert.deepEqual(result.data,expected);
+ }
+ const missing=await transcribe(A.admin,A.hid+'/2026-01-01/0.webm');
+ assert.equal(missing.status,403);assert.deepEqual(missing.data,expected);
+ good(await request(A.admin.token,'/storage/v1/object/audio-files','DELETE',{prefixes:[path]}));
+});
 await check('5 composite medicine and caregiver foreign keys',async()=>{
  denied(await insert(B.member,'medicine_logs',{household_id:B.hid,date:'2026-01-01',medicine_id:fixtures.medicines.id}));
  for(const t of ['health_records','bp_readings','medicine_logs','custom_action_logs','written_notes','audio_transcripts','hospital_stays']){

@@ -25,9 +25,11 @@ export interface JobMetadata {
   title: string;
   recordedBy: string;
   date: string; // yyyy-MM-dd — the day this conversation is filed under
+  caregiverId: string;
 }
+export interface RecordingIdentity { user_id: string; household_id: string }
 
-export interface RecordingJob {
+export interface RecordingJob extends Partial<RecordingIdentity> {
   id: string;
   status: JobStatus;
   metadata: JobMetadata;
@@ -41,7 +43,7 @@ export interface RecordingJob {
 }
 
 export type JobAction =
-  | { type: 'ACQUIRE'; id: string; metadata: JobMetadata }
+  | { type: 'ACQUIRE'; id: string; metadata: JobMetadata; identity: RecordingIdentity }
   | { type: 'ACQUIRE_FAILED'; error: string }
   | { type: 'RECORDING_STARTED' }
   | { type: 'UPDATE_METADATA'; metadata: Partial<JobMetadata> }
@@ -57,7 +59,7 @@ export type JobAction =
   | { type: 'RESTORE'; job: RecordingJob }
   | { type: 'DISCARD' };
 
-export const idleJob: RecordingJob = { id: '', status: 'idle', metadata: { title: '', recordedBy: '', date: '' } };
+export const idleJob: RecordingJob = { id: '', status: 'idle', metadata: { title: '', recordedBy: '', date: '', caregiverId: '' } };
 
 /** True while any work is in flight — the UI blocks starting a second job. */
 export function isBusy(status: JobStatus): boolean {
@@ -79,7 +81,7 @@ export function isRecoverable(status: JobStatus): boolean {
 export function recordingJobReducer(state: RecordingJob, action: JobAction): RecordingJob {
   switch (action.type) {
     case 'ACQUIRE':
-      return { id: action.id, status: 'acquiring', metadata: action.metadata };
+      return { id: action.id, status: 'acquiring', metadata: action.metadata, ...action.identity };
     case 'ACQUIRE_FAILED':
       return { ...idleJob, error: action.error };
     case 'RECORDING_STARTED':

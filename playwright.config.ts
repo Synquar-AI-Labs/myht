@@ -17,6 +17,8 @@ export default defineConfig({
     actionTimeout: 15_000,
     viewport: { width: 390, height: 844 },
     timezoneId: 'America/Toronto',
+    permissions: ['microphone'],
+    launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },

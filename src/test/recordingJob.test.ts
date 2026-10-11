@@ -4,7 +4,8 @@ import {
   RecordingJob,
 } from '@/lib/recordingJob';
 
-const meta = { title: 'Doctor conversation', recordedBy: 'Caregiver A', date: '2026-07-14' };
+const meta = { title: 'Doctor conversation', recordedBy: 'Caregiver A', date: '2026-07-14', caregiverId: 'caregiver-a' };
+const identity = { user_id: 'user-a', household_id: 'household-a' };
 const blob = new Blob(['x'], { type: 'audio/mp4' });
 
 describe('status predicates', () => {
@@ -29,9 +30,15 @@ describe('status predicates', () => {
 });
 
 describe('recordingJobReducer — happy path', () => {
+  it('pins identity when acquired and never changes it with metadata', () => {
+    const job = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'pinned', metadata: meta, identity });
+    const updated = recordingJobReducer(job, { type: 'UPDATE_METADATA', metadata: { title: 'Updated title' } });
+    expect(updated.user_id).toBe(identity.user_id);
+    expect(updated.household_id).toBe(identity.household_id);
+  });
   it('acquire → recording → captured → upload → transcribe → save → saved(idle)', () => {
     let s: RecordingJob = idleJob;
-    s = recordingJobReducer(s, { type: 'ACQUIRE', id: 'j1', metadata: meta });
+    s = recordingJobReducer(s, { type: 'ACQUIRE', id: 'j1', metadata: meta, identity });
     expect(s.status).toBe('acquiring');
     s = recordingJobReducer(s, { type: 'RECORDING_STARTED' });
     expect(s.status).toBe('recording');
@@ -54,7 +61,7 @@ describe('recordingJobReducer — happy path', () => {
 
 describe('recordingJobReducer — failures keep the audio recoverable', () => {
   it('upload failure retains the blob for retry/download', () => {
-    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta });
+    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta, identity });
     s = recordingJobReducer(s, { type: 'CAPTURED', blob, bytes: 10, ext: 'm4a' });
     s = recordingJobReducer(s, { type: 'UPLOAD_START' });
     s = recordingJobReducer(s, { type: 'UPLOAD_FAILED', error: 'network' });
@@ -64,7 +71,7 @@ describe('recordingJobReducer — failures keep the audio recoverable', () => {
   });
 
   it('transcription failure after upload keeps the storagePath (retry needs no re-upload)', () => {
-    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta });
+    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta, identity });
     s = recordingJobReducer(s, { type: 'CAPTURED', blob, bytes: 10, ext: 'm4a' });
     s = recordingJobReducer(s, { type: 'UPLOAD_OK', storagePath: 'p.m4a' });
     s = recordingJobReducer(s, { type: 'TRANSCRIBE_FAILED', error: 'whisper 500' });
@@ -73,7 +80,7 @@ describe('recordingJobReducer — failures keep the audio recoverable', () => {
   });
 
   it('oversize recording keeps the blob so it can be downloaded and split', () => {
-    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta });
+    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta, identity });
     s = recordingJobReducer(s, { type: 'TOO_LARGE', blob, bytes: 30_000_000, ext: 'm4a' });
     expect(s.status).toBe('too-large');
     expect(s.blob).toBe(blob);
@@ -82,7 +89,7 @@ describe('recordingJobReducer — failures keep the audio recoverable', () => {
 
 describe('recordingJobReducer — metadata stays current', () => {
   it('UPDATE_METADATA merges without touching the audio', () => {
-    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta });
+    let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta, identity });
     s = recordingJobReducer(s, { type: 'CAPTURED', blob, bytes: 1, ext: 'm4a' });
     s = recordingJobReducer(s, { type: 'UPDATE_METADATA', metadata: { recordedBy: 'Caregiver B' } });
     expect(s.metadata.recordedBy).toBe('Caregiver B');
