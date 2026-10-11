@@ -6,6 +6,8 @@ import { useMedicines, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
+import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { CaregiverPicker } from '@/components/CaregiverPicker';
 import { useCustomActions, CustomAction } from '@/hooks/useCustomActions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { QuickLogSheet } from '@/components/QuickLogSheet';
@@ -173,7 +175,7 @@ export function TodayScreen() {
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
-  const savedRecorder = localStorage.getItem('ht_recorder') || '';
+  const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
 
   const allLogs = useMemo(() => [...todayLogs, ...yesterdayLogs], [todayLogs, yesterdayLogs]);
   const given = useMemo(() => buildGivenList(allLogs, medicines, now), [allLogs, medicines, now]);
@@ -371,14 +373,14 @@ export function TodayScreen() {
           mode={{
             type: 'health',
             metric: customLogSheet.name,
-            legacyRecorder: true,
             fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.default_value, min: 0 }],
-            onSave: (values, recordedBy, date, time) => {
+            onSave: (values, _recordedBy, date, time, caregiverId) => {
+              if (!caregiverId) return;
               addCustomLog({
                 action_id: customLogSheet.id,
                 value: values['value'] as number,
                 date,
-                recorded_by: recordedBy,
+                caregiver_id: caregiverId,
                 hour: time.hour,
                 am_pm: time.amPm,
               });
@@ -442,14 +444,15 @@ export function TodayScreen() {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Add Note</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <div className="space-y-1"><Label className="text-xs">Recorded By</Label><Input value={savedRecorder} readOnly className="bg-muted text-xs" placeholder="Set when logging" /></div>
+            <div className="space-y-1"><Label className="text-xs">Recorded By</Label><CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} /></div>
             <div className="space-y-1"><Label className="text-xs">Title (optional)</Label><Input value={noteTitle} onChange={e => setNoteTitle(e.target.value)} placeholder="e.g. Doctor visit notes" /></div>
             <div className="space-y-1"><Label className="text-xs">Note</Label><Textarea value={noteContent} onChange={e => setNoteContent(e.target.value)} placeholder="Write your note here…" rows={4} /></div>
           </div>
           <DialogFooter>
-            <Button className="w-full" disabled={!noteContent.trim()} onClick={async () => {
+            <Button className="w-full" disabled={!noteContent.trim() || !caregiver} onClick={async () => {
+              if (!caregiver) return;
               try {
-                await addNote(noteTitle, noteContent, savedRecorder || 'Unknown');
+                await addNote(noteTitle, noteContent, caregiver.caregiver_id);
                 setNoteOpen(false);
                 setNoteTitle('');
                 setNoteContent('');

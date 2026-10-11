@@ -3,6 +3,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { domainKeys } from '@/lib/domainKeys';
+import { fetchAllRows } from '@/lib/fetchAll';
 
 export interface Transcript {
   id: string;
@@ -18,16 +21,17 @@ export interface Transcript {
 }
 
 /**
- * The ONLY fetcher for `['audio_transcripts', date]` — HistoryTab shares the
+ * The ONLY fetcher for household-scoped transcripts — HistoryTab shares the
  * cache key, so the result shape must stay identical everywhere.
  */
-export async function fetchTranscriptsForDate(date: string): Promise<Transcript[]> {
-  const { data, error } = await supabase
+export async function fetchTranscriptsForDate(date: string, householdId: string): Promise<Transcript[]> {
+  const data = await fetchAllRows((from, to) => supabase
     .from('audio_transcripts')
-    .select('*')
+    .select('*', { count: 'exact' })
+    .eq('household_id', householdId)
     .eq('date', date)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
+    .order('created_at', { ascending: false }).order('id', { ascending: false })
+    .range(from, to));
   return (data || []).map(d => ({
     ...d,
     action_items: Array.isArray(d.action_items) ? (d.action_items as string[]) : [],
@@ -39,21 +43,24 @@ export async function fetchTranscriptsForDate(date: string): Promise<Transcript[
  *  app-level RecordingProvider so it can survive navigation. */
 export function useTranscripts() {
   const queryClient = useQueryClient();
+  const { householdId } = useHousehold();
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
   const { data: transcripts = [], isLoading: loading } = useQuery({
-    queryKey: ['audio_transcripts', selectedDate],
-    queryFn: () => fetchTranscriptsForDate(selectedDate),
+    queryKey: [...domainKeys.transcripts(householdId), selectedDate],
+    queryFn: () => fetchTranscriptsForDate(selectedDate, householdId!),
+    enabled: !!householdId,
   });
 
   const deleteTranscript = async (id: string) => {
-    const { error } = await supabase.from('audio_transcripts').delete().eq('id', id);
+    if (!householdId) return;
+    const { error } = await supabase.from('audio_transcripts').delete().eq('household_id', householdId).eq('id', id);
     if (error) {
       toast({ title: 'Error', description: 'Failed to delete transcript', variant: 'destructive' });
     } else {
       toast({ title: 'Deleted' });
-      queryClient.invalidateQueries({ queryKey: ['audio_transcripts'] });
-      queryClient.invalidateQueries({ queryKey: ['audio_transcripts-count'] });
+      queryClient.invalidateQueries({ queryKey: domainKeys.transcripts(householdId) });
+      queryClient.invalidateQueries({ queryKey: domainKeys.transcriptCount(householdId) });
     }
   };
 

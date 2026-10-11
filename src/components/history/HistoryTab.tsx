@@ -10,6 +10,8 @@ import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useCustomActions } from '@/hooks/useCustomActions';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
 import { fetchTranscriptsForDate } from '@/hooks/useTranscripts';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { domainKeys } from '@/lib/domainKeys';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -44,6 +46,7 @@ interface HistoryTabProps {
 }
 
 export function HistoryTab({ onBusyChange }: HistoryTabProps) {
+  const { householdId } = useHousehold();
   const todayStr = format(new Date(), 'yyyy-MM-dd');
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [view, setView] = useState<View>('diary');
@@ -63,8 +66,9 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
 
   // Shares useTranscripts' cache key AND fetcher, so the shapes can't drift.
   const { data: transcripts = [], isLoading: transcriptsLoading, isError: transcriptsError } = useQuery({
-    queryKey: ['audio_transcripts', selectedDate],
-    queryFn: () => fetchTranscriptsForDate(selectedDate),
+    queryKey: [...domainKeys.transcripts(householdId), selectedDate],
+    queryFn: () => fetchTranscriptsForDate(selectedDate, householdId!),
+    enabled: !!householdId,
   });
 
   // Never present "nothing recorded" (or zeros) while any source is pending.

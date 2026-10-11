@@ -24,10 +24,6 @@ export interface HealthRecordForm {
   miscNotes: string;
 }
 
-export const RECORDER_OPTIONS = ['Umair', 'Shaharyar', 'Affan', 'Fahad', 'Shahwar'] as const;
-
-export const STAY_PEOPLE = ['Fahad', 'Shahwar', 'Umair', 'Affan', 'Azra', 'Nayab', 'Shaheryar'] as const;
-
 export interface AppointmentForm {
   date: string;
   time: string;

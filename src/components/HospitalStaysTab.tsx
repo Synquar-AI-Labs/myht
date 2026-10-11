@@ -7,16 +7,8 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { useHospitalStays, HospitalStay } from '@/hooks/useHospitalStays';
 import { StayFormSheet } from '@/components/StayFormSheet';
 import { toast } from 'sonner';
-
-const PERSON_COLORS: Record<string, string> = {
-  Fahad: '#3B82F6',
-  Shahwar: '#22C55E',
-  Umair: '#F97316',
-  Affan: '#A855F7',
-  Azra: '#EC4899',
-  Nayab: '#14B8A6',
-  Shaheryar: '#EAB308',
-};
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { caregiverColor } from '@/lib/caregiverColor';
 
 const TIMELINE_START = 0;
 const TIMELINE_HOURS = 24;
@@ -36,6 +28,7 @@ function formatHourLong(h: number) {
 }
 
 export function HospitalStaysTab() {
+  const { caregivers } = useHousehold();
   const DAYS_PER_PAGE = 2;
   const [pageOffset, setPageOffset] = useState(0);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -88,10 +81,10 @@ export function HospitalStaysTab() {
 
       {/* Legend */}
       <div className="flex flex-wrap gap-2 px-1">
-        {Object.entries(PERSON_COLORS).map(([name, color]) => (
-          <div key={name} className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: color }} />
-            <span className="text-[10px] text-muted-foreground">{name}</span>
+        {caregivers.filter(p => p.is_active || stays.some(s => s.caregiver_id === p.caregiver_id)).map(person => (
+          <div key={person.caregiver_id} className="flex items-center gap-1">
+            <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: caregiverColor(person.caregiver_id) }} />
+            <span className="text-[10px] text-muted-foreground">{person.display_name}</span>
           </div>
         ))}
       </div>
@@ -155,7 +148,7 @@ export function HospitalStaysTab() {
                   </button>
                 )}
                 {dayStays.map((stay, idx) => {
-                  const color = PERSON_COLORS[stay.person_name] || '#888';
+                  const color = caregiverColor(stay.caregiver_id);
                   const left = ((Math.max(stay.start_hour, TIMELINE_START) - TIMELINE_START) / TIMELINE_HOURS) * 100;
                   const width = ((Math.min(stay.end_hour, TIMELINE_START + TIMELINE_HOURS) - Math.max(stay.start_hour, TIMELINE_START)) / TIMELINE_HOURS) * 100;
 

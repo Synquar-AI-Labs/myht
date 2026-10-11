@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RECORDER_OPTIONS } from '@/types/health';
 import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
 import { CaregiverPicker } from '@/components/CaregiverPicker';
 
@@ -21,8 +20,6 @@ type HealthMode = {
   type: 'health';
   metric: string;
   fields: HealthField[];
-  /** Custom actions retain their old recorder flow until A3d. */
-  legacyRecorder?: boolean;
   onSave: (
     values: Record<string, number | boolean>,
     recordedBy: string,
@@ -48,8 +45,6 @@ type Props = {
 
 export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
-  const savedRecorder = localStorage.getItem('ht_recorder') || '';
-  const [recorder, setRecorder] = useState(savedRecorder);
   const [editingTime, setEditingTime] = useState(false);
 
   const now = new Date();
@@ -87,10 +82,6 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
     if (mode.type === 'medicine') {
       if (!caregiver) return;
       mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate });
-    } else if (mode.legacyRecorder) {
-      if (!recorder) return;
-      localStorage.setItem('ht_recorder', recorder);
-      mode.onSave(fieldValues, recorder, selectedDate, { hour, amPm });
     } else {
       if (!caregiver) return;
       mode.onSave(fieldValues, caregiver.display_name, selectedDate, { hour, amPm }, caregiver.caregiver_id);
@@ -114,12 +105,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
           {/* Recorder */}
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Recorded by</Label>
-            {mode.type === 'medicine' || !mode.legacyRecorder ? <CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} /> : <Select value={recorder} onValueChange={setRecorder}>
-              <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-              <SelectContent>
-                {RECORDER_OPTIONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-              </SelectContent>
-            </Select>}
+            <CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} />
           </div>
 
           {/* Date & Time display */}
@@ -181,12 +167,12 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
         </div>
 
         <DrawerFooter>
-          {!(mode.type === 'medicine' || !mode.legacyRecorder ? caregiver : recorder) && (
+          {!caregiver && (
             <p className="text-center text-xs text-muted-foreground">
               Choose who's logging above to enable Save
             </p>
           )}
-          <Button onClick={handleSave} disabled={!(mode.type === 'medicine' || !mode.legacyRecorder ? caregiver : recorder)} className="w-full">Save</Button>
+          <Button onClick={handleSave} disabled={!caregiver} className="w-full">Save</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

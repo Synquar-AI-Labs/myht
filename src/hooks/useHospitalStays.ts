@@ -1,10 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { domainKeys } from '@/lib/domainKeys';
+import { fetchAllRows } from '@/lib/fetchAll';
 
 export interface HospitalStay {
   id: string;
   person_name: string;
+  caregiver_id: string | null;
   date: string;
   start_hour: number;
   end_hour: number;
@@ -14,53 +18,64 @@ export interface HospitalStay {
 
 export function useHospitalStays(weekStart: Date, weekEnd: Date) {
   const queryClient = useQueryClient();
+  const { householdId, caregivers } = useHousehold();
   const startStr = format(weekStart, 'yyyy-MM-dd');
   const endStr = format(weekEnd, 'yyyy-MM-dd');
 
   const { data: stays = [], isLoading } = useQuery({
-    queryKey: ['hospital-stays', startStr, endStr],
+    queryKey: [...domainKeys.stays(householdId), startStr, endStr],
+    enabled: !!householdId,
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      return fetchAllRows<HospitalStay>((from, to) => supabase
         .from('hospital_stays')
-        .select('*')
+        .select('*', { count: 'exact' })
+        .eq('household_id', householdId!)
         .gte('date', startStr)
         .lte('date', endStr)
-        .order('start_hour', { ascending: true });
-      if (error) throw error;
-      return data as HospitalStay[];
+        .order('start_hour', { ascending: true }).order('id')
+        .range(from, to));
     },
   });
 
   const addStay = useMutation({
     mutationFn: async (stays: {
       person_name: string;
+      caregiver_id: string;
       date: string;
       start_hour: number;
       end_hour: number;
       is_unavailable: boolean;
     }[]) => {
-      const { error } = await (supabase as any)
+      if (!householdId) throw new Error('No family selected');
+      const rows = stays.map(stay => {
+        const person = caregivers.find(p => p.is_active && p.caregiver_id === stay.caregiver_id);
+        if (!person) throw new Error('Choose a person in this family');
+        return { ...stay, household_id: householdId, person_name: person.display_name };
+      });
+      const { error } = await supabase
         .from('hospital_stays')
-        .insert(stays);
+        .insert(rows);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hospital-stays'] });
-      queryClient.invalidateQueries({ queryKey: ['hospital-stays-summary'] });
+      queryClient.invalidateQueries({ queryKey: domainKeys.stays(householdId) });
+      queryClient.invalidateQueries({ queryKey: domainKeys.staysSummary(householdId) });
     },
   });
 
   const deleteStay = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any)
+      if (!householdId) throw new Error('No family selected');
+      const { error } = await supabase
         .from('hospital_stays')
         .delete()
+        .eq('household_id', householdId)
         .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hospital-stays'] });
-      queryClient.invalidateQueries({ queryKey: ['hospital-stays-summary'] });
+      queryClient.invalidateQueries({ queryKey: domainKeys.stays(householdId) });
+      queryClient.invalidateQueries({ queryKey: domainKeys.staysSummary(householdId) });
     },
   });
 

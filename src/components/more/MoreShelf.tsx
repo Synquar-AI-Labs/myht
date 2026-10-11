@@ -10,6 +10,7 @@ import { useAppointments } from '@/hooks/useAppointments';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
 import { useHousehold } from '@/hooks/HouseholdProvider';
+import { domainKeys } from '@/lib/domainKeys';
 
 const MedicineScheduleTab = lazy(() => import('@/components/MedicineScheduleTab').then(m => ({ default: m.MedicineScheduleTab })));
 const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m => ({ default: m.AppointmentsTab })));
@@ -73,11 +74,13 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   // Rows are caregiver coverage blocks (incl. unavailability), NOT "stays" —
   // so the subtitle talks about coverage, and skips unavailable blocks.
   const { data: staysSummary } = useQuery({
-    queryKey: ['hospital-stays-summary'],
+    queryKey: domainKeys.staysSummary(householdId),
+    enabled: !!householdId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('hospital_stays')
         .select('date')
+        .eq('household_id', householdId!)
         .eq('is_unavailable', false)
         .order('date', { ascending: false })
         .limit(1);
@@ -87,11 +90,13 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   });
 
   const { data: transcriptCount } = useQuery({
-    queryKey: ['audio_transcripts-count'],
+    queryKey: domainKeys.transcriptCount(householdId),
+    enabled: !!householdId,
     queryFn: async () => {
       const { count, error } = await supabase
         .from('audio_transcripts')
-        .select('id', { count: 'exact', head: true });
+        .select('id', { count: 'exact', head: true })
+        .eq('household_id', householdId!);
       if (error) throw error;
       return count ?? 0;
     },

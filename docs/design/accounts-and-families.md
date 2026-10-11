@@ -212,6 +212,8 @@ Plus unit tests, tsc and build, a recording test (A has a pending job, signs out
 - Dates are the device's local dates; `households.timezone` is stored for later server-side use.
 - Invites are shared by message, not emailed by us.
 - Deletes are permanent in the app; the audit log keeps the deleted row for support.
+- A day's record carries one name ("Last saved by"). Quick logs set it to the person logging; correcting the day in the form keeps the existing name unless the editor picks another. Who changed what, exactly, is in the audit log, and reaches the screen with the Activity view.
+- BP readings cannot be deleted in the app yet; that needs a database function that also recalculates the day's average.
 
 ## 12. Before any public launch (not this design)
 

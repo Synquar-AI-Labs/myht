@@ -5,16 +5,7 @@ import { createInvalidationBatcher } from '@/lib/invalidationBatcher';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { medicineKeys } from '@/hooks/useMedicines';
 import { healthKeys } from '@/hooks/useHealthRecords';
-
-// Domains awaiting household scoping retain their existing cache keys.
-const TABLE_KEYS: Record<string, string[][]> = {
-  appointments: [['appointments']],
-  custom_actions: [['custom_actions']],
-  custom_action_logs: [['custom_action_logs']],
-  hospital_stays: [['hospital-stays'], ['hospital-stays-summary']],
-  written_notes: [['written-notes']],
-  audio_transcripts: [['audio_transcripts'], ['audio_transcripts-count']],
-};
+import { domainKeys } from '@/lib/domainKeys';
 
 /**
  * Only the household ticker is published; medical rows never travel over
@@ -36,11 +27,18 @@ export function useRealtimeSync() {
       { event: '*', schema: 'public', table: 'household_sync', filter: `household_id=eq.${householdId}` },
       payload => {
         const table = (payload.new as { table_name?: string }).table_name;
-        const keys = table === 'medicines' ? [medicineKeys.list(householdId)]
-          : table === 'medicine_logs' ? [medicineKeys.logs(householdId), medicineKeys.reports(householdId)]
-          : table === 'health_records' ? [healthKeys.records(householdId)]
-          : table === 'bp_readings' ? [healthKeys.bp(householdId)]
-          : TABLE_KEYS[table ?? ''] ?? [];
+        const keys = {
+          medicines: [medicineKeys.list(householdId)],
+          medicine_logs: [medicineKeys.logs(householdId), medicineKeys.reports(householdId)],
+          health_records: [healthKeys.records(householdId)],
+          bp_readings: [healthKeys.bp(householdId)],
+          appointments: [domainKeys.appointments(householdId)],
+          hospital_stays: [domainKeys.stays(householdId), domainKeys.staysSummary(householdId)],
+          written_notes: [domainKeys.notes(householdId)],
+          custom_actions: [domainKeys.actions(householdId)],
+          custom_action_logs: [domainKeys.actionLogs(householdId)],
+          audio_transcripts: [domainKeys.transcripts(householdId), domainKeys.transcriptCount(householdId)],
+        }[table ?? ''] ?? [];
         keys.forEach(queryKey => batcher.queue([...queryKey]));
       });
 
@@ -48,7 +46,6 @@ export function useRealtimeSync() {
       if (status !== 'SUBSCRIBED') return;
       if (subscribed) {
         batcher.queue(['household', householdId]);
-        Object.values(TABLE_KEYS).flat().forEach(key => batcher.queue(key));
       }
       subscribed = true;
     });

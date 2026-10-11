@@ -9,7 +9,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { STAY_PEOPLE } from '@/types/health';
+import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { CaregiverPicker } from '@/components/CaregiverPicker';
 
 const HOURS = Array.from({ length: 25 }, (_, i) => i); // 0..24
 
@@ -25,6 +26,7 @@ interface Props {
   defaultDate: Date;
   onSave: (rows: {
     person_name: string;
+    caregiver_id: string;
     date: string;
     start_hour: number;
     end_hour: number;
@@ -33,6 +35,7 @@ interface Props {
 }
 
 export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props) {
+  const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
   const [person, setPerson] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(defaultDate);
   const [endDate, setEndDate] = useState<Date>(defaultDate);
@@ -43,7 +46,7 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
   const defaultDateTime = defaultDate.getTime();
   useEffect(() => {
     if (open) {
-      setPerson('');
+      setPerson(caregiver?.caregiver_id ?? '');
       setStartDate(new Date(defaultDateTime));
       setEndDate(new Date(defaultDateTime));
       setStartHour(9);
@@ -53,14 +56,16 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
   }, [open, defaultDateTime]);
 
   const isSingleDay = isSameDay(startDate, endDate);
-  const isValid = person && (isSingleDay ? startHour < endHour : true);
+  const selectedPerson = activeCaregivers.find(p => p.caregiver_id === person);
+  const isValid = selectedPerson && (isSingleDay ? startHour < endHour : true);
 
   const handleSave = () => {
-    if (!isValid) return;
+    if (!isValid || !selectedPerson) return;
 
     if (isSingleDay) {
       onSave([{
-        person_name: person,
+        person_name: selectedPerson.display_name,
+        caregiver_id: selectedPerson.caregiver_id,
         date: format(startDate, 'yyyy-MM-dd'),
         start_hour: startHour,
         end_hour: endHour,
@@ -73,7 +78,8 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
         const isFirst = idx === 0;
         const isLast = idx === days.length - 1;
         return {
-          person_name: person,
+          person_name: selectedPerson.display_name,
+          caregiver_id: selectedPerson.caregiver_id,
           date: format(day, 'yyyy-MM-dd'),
           start_hour: isFirst ? startHour : 0,
           end_hour: isLast ? endHour : 24,
@@ -104,14 +110,7 @@ export function StayFormSheet({ open, onOpenChange, defaultDate, onSave }: Props
           {/* Person */}
           <div>
             <Label>Person</Label>
-            <Select value={person} onValueChange={setPerson}>
-              <SelectTrigger><SelectValue placeholder="Select person" /></SelectTrigger>
-              <SelectContent>
-                {STAY_PEOPLE.map(p => (
-                  <SelectItem key={p} value={p}>{p}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CaregiverPicker people={activeCaregivers} value={person} onChange={id => { setPerson(id); selectCaregiver(id); }} />
           </div>
 
           {/* Date pickers */}
