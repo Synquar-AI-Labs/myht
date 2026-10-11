@@ -21,3 +21,27 @@ content_path = "./supabase/templates/recovery.html"
 verify_jwt = true
 [analytics]
 enabled = false
+
+[remotes.staging]
+project_id = "lefqfxkvujqnukgzaviz"
+
+# First staging check on this Mac. Replace BOTH URL settings when hosting is chosen.
+[remotes.staging.auth]
+site_url = "http://localhost:5188"
+additional_redirect_urls = ["http://localhost:5188", "http://localhost:5188/auth"]
+enable_signup = true
+minimum_password_length = 8
+
+[remotes.staging.auth.email]
+enable_signup = true
+enable_confirmations = true
+otp_length = 6
+
+[remotes.staging.auth.email.template.confirmation]
+subject = "Your confirmation code"
+content_path = "./supabase/templates/confirmation.html"
+
+[remotes.staging.auth.email.template.recovery]
+subject = "Your password reset code"
+content_path = "./supabase/templates/recovery.html"
+# Do not add rate-limit overrides here: retain the hosted defaults.
