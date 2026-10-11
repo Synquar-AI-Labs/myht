@@ -14,6 +14,7 @@ import {
 import { persistJob, loadPersistedJob, clearPersistedJob } from '@/lib/recordingJobStore';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { domainKeys } from '@/lib/domainKeys';
+import { transcriptionError } from '@/lib/transcriptionError';
 
 const MIME_EXT: Record<string, string> = {
   'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'm4a', 'audio/x-caf': 'm4a',
@@ -145,7 +146,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       });
       if (!res.ok) {
         let msg = `Server error (${res.status})`;
-        try { msg = (await res.json()).error || msg; } catch { /* keep default */ }
+        try { msg = transcriptionError(await res.json(), msg); } catch { /* keep default */ }
         throw new Error(msg);
       }
       result = await res.json();

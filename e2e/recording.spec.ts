@@ -11,7 +11,7 @@ test('i. Recording stays private, survives account switches and retries without 
   await expect(page.getByRole('button', { name: /Stop · 0:0[2-9]/ })).toBeVisible();
   await page.getByRole('button', { name: /^Stop ·/ }).click();
   await expect(page.getByText('Uploaded, but transcription failed. Your audio is safe.')).toBeVisible();
-  await expect(page.getByRole('alert')).toHaveText('OPENAI_API_KEY is not configured');
+  await expect(page.getByRole('alert')).toHaveText('Transcription is not set up on this server yet. Your audio is safe.');
   await expect(page.getByRole('button', { name: 'Try transcribing again', exact: true })).toBeVisible();
   const files = await checked(a.admin.client.storage.from('audio-files').list(a.id + '/' + today()));
   expect(files).toHaveLength(1);
@@ -20,7 +20,7 @@ test('i. Recording stays private, survives account switches and retries without 
   const audio = await checked(a.admin.client.storage.from('audio-files').download(path));
   expect(audio.size).toBeGreaterThan(0);
   await page.getByRole('button', { name: 'Try transcribing again', exact: true }).click();
-  await expect(page.getByRole('alert')).toHaveText('OPENAI_API_KEY is not configured');
+  await expect(page.getByRole('alert')).toHaveText('Transcription is not set up on this server yet. Your audio is safe.');
   expect(await checked(a.admin.client.storage.from('audio-files').list(a.id + '/' + today()))).toHaveLength(1);
   expect(await checked(b.admin.client.storage.from('audio-files').list(a.id + '/' + today()))).toEqual([]);
   const foreignDownload = await b.admin.client.storage.from('audio-files').download(path);

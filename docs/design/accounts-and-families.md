@@ -79,6 +79,15 @@ Composite FKs make it impossible for a row in one household to point at a medici
 
 ### 5.3 Security
 
+Transcription cost guard: private `transcription_usage` (identity id, household_id,
+user_id, at), indexed by household/time, with RLS and no client policies or table
+grants. `claim_transcription(household_id)` is authenticated-only, SECURITY
+DEFINER with an empty search_path: verifies membership, locks the household and
+allows 20 attempts in a rolling 24 hours. Attempts remain spent if AI fails.
+The edge function claims after caller Storage authorization and the AI-key
+check, before any OpenAI request; exhaustion returns 429 with
+`transcription_limit_reached`. The app keeps audio and Retry available.
+
 - Schema `app_private`, **not** exposed through the API. `GRANT USAGE` to `authenticated` only, and `GRANT EXECUTE` only on the helpers that policies call. It holds:
   - `is_member(hid uuid) returns boolean`, `is_admin(hid uuid) returns boolean`: STABLE, SECURITY DEFINER, `SET search_path = ''`, fully qualified names, reading `public.household_members` for `auth.uid()`.
   - `verified_email() returns text`: the caller's `lower(btrim(email))` from `auth.users` **only if `email_confirmed_at is not null`**, else null. Never trusts an email or metadata supplied by the client.
@@ -190,6 +199,9 @@ Sign-ups on. Email confirmation on. OTP length 6. Minimum password length 8. Con
 **Audit and live updates**
 18. Insert, update and delete on a data table each write one `audit_log` row with the right actor and key; so do `create_household`, `accept_invite` and `remove_member`. A client cannot insert, change or delete audit rows.
 19. Hostile subscription: B subscribes, with NO filter, to every table and to `household_sync`, while A inserts, updates, deletes and removes a member. B receives zero events. Assert on the payloads received, not on the UI.
+
+**Transcription cost guard**
+25. Transcription claims: B cannot claim for A; the 21st claim in 24 hours is refused; 30 parallel claims allow exactly 20. Old claims do not consume the allowance. Neither anon nor authenticated can read/write the usage table. Quota-response unit tests cover the edge 429 code and friendly UI text without an AI key or call; local recording e2e stops at the missing-key response.
 
 Plus unit tests, tsc and build, a recording test (A has a pending job, signs out, B signs in on the same device: B sees no job, nothing uploads under B, A recovers it after signing back in), and an end-to-end browser pass of sections 6 and 7 by @leader on the local stack.
 

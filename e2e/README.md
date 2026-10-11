@@ -9,6 +9,8 @@ For recording and transcription authorization checks, also serve
 JWT verification enabled. On this Mac, CLI 2.109.1 fails to bootstrap the edge
 runtime; `npx --yes supabase@2.120.0 functions serve transcribe-audio --env-file
 <path-to-empty-key-env>` works. This command targets the local stack only.
+Both browser and isolation commands check for a token-free 401 before creating
+test data; if the runtime is unavailable they stop with this start command.
 
 The runner reads keys from `supabase status`, refuses any API other than
 `http://127.0.0.1:54321`, and starts its own Vite server on port 5187 with

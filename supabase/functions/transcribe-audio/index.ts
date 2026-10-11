@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { claimBeforeTranscription } from './claim.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -54,9 +55,15 @@ serve(async (req) => {
       fileData = data;
     } catch { return refused(); }
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) return new Response(JSON.stringify({ error: "OPENAI_API_KEY is not configured" }), {
+    if (!OPENAI_API_KEY) return new Response(JSON.stringify({ error: "OPENAI_API_KEY is not configured", code: 'transcription_not_configured' }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
+    const claimFailure = await claimBeforeTranscription(
+      () => supabaseUser.rpc('claim_transcription', { p_household_id: storagePath.split('/')[0] }),
+      corsHeaders,
+    );
+    if (claimFailure) return claimFailure;
 
     const audioBytes = new Uint8Array(await fileData.arrayBuffer());
     console.log("Downloaded file:", { size: audioBytes.length, type: fileData.type });

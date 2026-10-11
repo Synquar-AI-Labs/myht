@@ -753,6 +753,35 @@ export type Database = {
           },
         ]
       }
+      transcription_usage: {
+        Row: {
+          at: string
+          household_id: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          at?: string
+          household_id: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          at?: string
+          household_id?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transcription_usage_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       written_notes: {
         Row: {
           caregiver_id: string | null
@@ -809,6 +838,10 @@ export type Database = {
       accept_invite: {
         Args: { p_display_name: string; p_invite_id: string }
         Returns: string
+      }
+      claim_transcription: {
+        Args: { p_household_id: string }
+        Returns: undefined
       }
       create_household: {
         Args: {
@@ -1050,4 +1083,4 @@ export const Constants = {
   public: {
     Enums: {},
   },
-} as const
+}

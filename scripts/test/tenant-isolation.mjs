@@ -3,10 +3,12 @@
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { createClient } from '@supabase/supabase-js';
+import { requireFunctionRuntime } from './function-preflight.mjs';
 const status=JSON.parse(execFileSync('supabase',['status','-o','json'],{encoding:'utf8'}));
 if(status.API_URL!=='http://127.0.0.1:54321') throw new Error('REFUSED: API must be http://127.0.0.1:54321');
 if(status.DB_URL!=='postgresql://postgres:postgres@127.0.0.1:54322/postgres') throw new Error('REFUSED: unexpected local DB URL');
 const api=status.API_URL, anon=status.ANON_KEY, service=status.SERVICE_ROLE_KEY;
+await requireFunctionRuntime(api);
 const tag=Date.now().toString(36), password='Synthetic-only-42!';
 let failures=0;
 async function request(token,path,method='GET',body,headers={}) {
@@ -129,7 +131,7 @@ await check('4 transcribe-audio tenant boundary and malformed paths',async()=>{
  const transcribe=(u,p)=>request(u.token,'/functions/v1/transcribe-audio','POST',{storagePath:p});
  const own=await transcribe(A.admin,path);
  assert.equal(own.status,500,JSON.stringify(own));
- assert.deepEqual(own.data,{error:'OPENAI_API_KEY is not configured'});
+ assert.deepEqual(own.data,{error:'OPENAI_API_KEY is not configured',code:'transcription_not_configured'});
  const expected={error:'Audio is unavailable or you do not have access.'};
  for(const p of [path,'nofolder.webm','not-a-uuid/2026-01-01/1.webm',A.hid+'/../1.webm',A.hid+'/2026-01-01/0.webm']) {
   const result=await transcribe(B.member,p);assert.equal(result.status,403,JSON.stringify(result));assert.deepEqual(result.data,expected);
@@ -404,6 +406,32 @@ await check('24 partial day upsert preserves untouched values and attribution',a
   household_id:A.hid,date:'2026-07-04',weight:60,caregiver_id:A.caregiver,recorded_by:'Original caregiver',
  },{Prefer:'resolution=merge-duplicates,return=representation'}))[0];
  assert.equal(created.feed_bags,0);assert.equal(created.weight,60);assert.equal(created.caregiver_id,A.caregiver);
+});
+await check('25 transcription quota, concurrency and private usage table',async()=>{
+ const deniedClaim=await rpc(B.admin,'claim_transcription',{p_household_id:A.hid});
+ assert.equal(deniedClaim.status,400);assert.equal(deniedClaim.data.message,'household_access_denied');
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${A.hid}'`),'0');
+ for(let i=0;i<20;i++) good(await rpc(A.admin,'claim_transcription',{p_household_id:A.hid}));
+ const twentyFirst=await rpc(A.member,'claim_transcription',{p_household_id:A.hid});
+ assert.equal(twentyFirst.status,400);assert.equal(twentyFirst.data.message,'transcription_limit_reached');
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${A.hid}' AND user_id='${A.admin.id}'`),'20');
+ // Old claims must not consume today's allowance. The SQL is local test setup only.
+ sql(`UPDATE public.transcription_usage SET at=now()-interval '25 hours' WHERE household_id='${A.hid}'`);
+ const results=await Promise.all(Array.from({length:30},()=>rpc(A.admin,'claim_transcription',{p_household_id:A.hid})));
+ assert.equal(results.filter(r=>r.ok).length,20);
+ for(const r of results.filter(r=>!r.ok)) {assert.equal(r.status,400);assert.equal(r.data.message,'transcription_limit_reached');}
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${A.hid}' AND at>=now()-interval '24 hours'`),'20');
+ const before=sql(`SELECT count(*) FROM public.transcription_usage`);
+ for(const token of [anon,A.admin.token]) {
+  const forbidden=[
+   await rows(token,'transcription_usage'),
+   await insert(token,'transcription_usage',{household_id:A.hid,user_id:A.admin.id}),
+   await request(token,'/rest/v1/transcription_usage?household_id=eq.'+A.hid,'PATCH',{at:'2026-01-01T00:00:00Z'}),
+   await request(token,'/rest/v1/transcription_usage?household_id=eq.'+A.hid,'DELETE'),
+  ];
+  for(const r of forbidden) {assert.equal(r.status,token===anon?401:403,JSON.stringify(r));assert.equal(r.data?.code,'42501');}
+ }
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage`),before);
 });
 console.log('Failures: '+failures);
 process.exitCode=failures;
