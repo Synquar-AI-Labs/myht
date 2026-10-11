@@ -1,18 +1,6 @@
-export const ADDITIVE_FIELDS = new Set([
-  'feed_bags', 'bile_bags', 'stool_count', 'vomit_count', 'urine_count', 'flush_ml', 'flush_count',
-]);
-
-export function buildDayRecordWrite(existing: Record<string, unknown> | null, fields: Record<string, number | boolean | string>, recordedBy: string) {
-  const write: Record<string, number | boolean | string> = { ...fields, recorded_by: recordedBy };
-  for (const [key, value] of Object.entries(fields)) {
-    if (ADDITIVE_FIELDS.has(key) && typeof value === 'number') {
-      write[key] = Math.max(0, Number(existing?.[key] ?? 0) + value);
-    }
-  }
-  if ('vomit_count' in fields) write.vomiting = Number(write.vomit_count) > 0;
-  if ('stool_count' in fields) write.stool_passed = Number(write.stool_count) > 0;
-  return write;
-}
+import type { HealthRecordForm } from '@/types/health';
+import type { HouseholdPerson } from '@/hooks/HouseholdProvider';
+import { attributionForEdit, changedCaregiverId } from '@/lib/caregiverChoice';
 
 export const FORM_COLUMNS = {
   feedBags: 'feed_bags', flushCount: 'flush_count', weight: 'weight',
@@ -28,4 +16,9 @@ export function changedFormFields(form: Record<string, unknown>, baseline: Recor
     if (key !== 'recordedBy' && form[key] !== baseline[key]) result[column] = form[key];
   }
   return result;
+}
+
+export function changedDayFields(form: HealthRecordForm, baseline: HealthRecordForm, people: HouseholdPerson[]) {
+  const { recorded_by: _name, ...fields } = changedFormFields(form as unknown as Record<string, unknown>, baseline as unknown as Record<string, unknown>);
+  return { ...fields, ...attributionForEdit(people, changedCaregiverId(form.caregiverId, baseline.caregiverId), baseline.caregiverId ?? null) };
 }

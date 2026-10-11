@@ -4,11 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { createInvalidationBatcher } from '@/lib/invalidationBatcher';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { medicineKeys } from '@/hooks/useMedicines';
+import { healthKeys } from '@/hooks/useHealthRecords';
 
 // Domains awaiting household scoping retain their existing cache keys.
 const TABLE_KEYS: Record<string, string[][]> = {
-  health_records: [['health_records']],
-  bp_readings: [['bp_readings']],
   appointments: [['appointments']],
   custom_actions: [['custom_actions']],
   custom_action_logs: [['custom_action_logs']],
@@ -39,6 +38,8 @@ export function useRealtimeSync() {
         const table = (payload.new as { table_name?: string }).table_name;
         const keys = table === 'medicines' ? [medicineKeys.list(householdId)]
           : table === 'medicine_logs' ? [medicineKeys.logs(householdId), medicineKeys.reports(householdId)]
+          : table === 'health_records' ? [healthKeys.records(householdId)]
+          : table === 'bp_readings' ? [healthKeys.bp(householdId)]
           : TABLE_KEYS[table ?? ''] ?? [];
         keys.forEach(queryKey => batcher.queue([...queryKey]));
       });

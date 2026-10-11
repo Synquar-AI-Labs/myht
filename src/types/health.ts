@@ -20,6 +20,7 @@ export interface HealthRecordForm {
   vomitCount: number;
   constipation: boolean;
   recordedBy: string;
+  caregiverId?: string | null;
   miscNotes: string;
 }
 
@@ -53,6 +54,7 @@ export function dbToHealthForm(r: HealthRecord): HealthRecordForm {
     vomitCount: (r as any).vomit_count ?? 0,
     constipation: r.constipation,
     recordedBy: (r as any).recorded_by ?? '',
+    caregiverId: r.caregiver_id,
     miscNotes: (r as any).misc_notes ?? '',
   };
 }

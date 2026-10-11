@@ -22,7 +22,7 @@ const log = (over: Partial<MedicineLog>): MedicineLog => ({
   medicine_id: 'm1',
   hour: 8,
   am_pm: 'AM',
-  recorded_by: 'Fahad',
+  recorded_by: 'Caregiver',
   created_at: '2026-07-13T08:00:00Z',
   ...over,
 });

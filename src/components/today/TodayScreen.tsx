@@ -199,9 +199,10 @@ export function TodayScreen() {
     ? `last BP ${lastBpToday.systolic}/${lastBpToday.diastolic} at ${format(new Date(lastBpToday.created_at), 'h:mm a')}`
     : null;
 
-  const handleHealthSave = (reading: ReadingType) => async (values: Record<string, number | boolean>, recordedBy: string, date: string) => {
+  const handleHealthSave = (reading: ReadingType) => async (values: Record<string, number | boolean>, _recordedBy: string, date: string, _time: { hour: number; amPm: string }, caregiverId?: string) => {
+    if (!caregiverId) return;
     if (reading.dbFields.includes('bpSystolic') && reading.dbFields.includes('bpDiastolic')) {
-      if (await saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, recordedBy)) {
+      if (await saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, caregiverId)) {
         toast.success('BP logged');
       }
       return;
@@ -210,7 +211,7 @@ export function TodayScreen() {
     reading.dbFields.forEach(key => {
       if (values[key] !== undefined) fields[key] = values[key];
     });
-    if (await updateFields(date, fields, recordedBy)) toast.success(`${reading.label} logged`);
+    if (await updateFields(date, fields, caregiverId)) toast.success(`${reading.label} logged`);
   };
 
   const inline = !isMobile && isWide;
@@ -370,6 +371,7 @@ export function TodayScreen() {
           mode={{
             type: 'health',
             metric: customLogSheet.name,
+            legacyRecorder: true,
             fields: [{ key: 'value', label: customLogSheet.unit || 'Value', defaultValue: customLogSheet.default_value, min: 0 }],
             onSave: (values, recordedBy, date, time) => {
               addCustomLog({

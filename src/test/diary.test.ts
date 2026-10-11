@@ -12,7 +12,7 @@ const flushMed: Medicine = { ...med, id: 'm2', name: 'Flush', category: 'non-med
 
 const medLog: MedicineLog = {
   id: 'l1', date: '2026-07-13', medicine_id: 'm1', hour: 8, am_pm: 'PM',
-  recorded_by: 'Affan', created_at: '2026-07-13T20:05:00',
+  recorded_by: 'Caregiver A', created_at: '2026-07-13T20:05:00',
 };
 
 const DAY = '2026-07-13';
@@ -37,17 +37,17 @@ describe('buildDiaryEntries', () => {
       date: DAY,
       medLogs: [medLog],
       medicines: [med],
-      bpReadings: [{ id: 'b1', date: DAY, systolic: 118, diastolic: 76, recorded_by: 'Umair', created_at: '2026-07-13T14:15:00' }],
+      bpReadings: [{ id: 'b1', date: DAY, systolic: 118, diastolic: 76, recorded_by: 'Caregiver B', created_at: '2026-07-13T14:15:00' }],
       customActions: [{ id: 'a1', name: 'Walk', unit: 'min', color: '', default_value: 10, show_graph: false, created_at: '' }],
-      customLogs: [{ id: 'c1', action_id: 'a1', value: 15, date: DAY, recorded_by: 'Fahad', hour: 9, am_pm: 'AM', created_at: '2026-07-13T09:00:00' }],
-      notes: [{ id: 'n1', date: DAY, title: 'Chair', content: 'Moved to chair fine', recorded_by: 'Umair', created_at: '2026-07-13T11:30:00' }],
-      transcripts: [{ id: 't1', title: null, summary: 'Discussed dosage', recorded_by: 'Fahad', created_at: '2026-07-13T10:30:00' }],
+      customLogs: [{ id: 'c1', action_id: 'a1', value: 15, date: DAY, recorded_by: 'Caregiver C', hour: 9, am_pm: 'AM', created_at: '2026-07-13T09:00:00' }],
+      notes: [{ id: 'n1', date: DAY, title: 'Chair', content: 'Moved to chair fine', recorded_by: 'Caregiver B', created_at: '2026-07-13T11:30:00' }],
+      transcripts: [{ id: 't1', title: null, summary: 'Discussed dosage', recorded_by: 'Caregiver C', created_at: '2026-07-13T10:30:00' }],
     });
 
     expect(entries.map(e => e.kind)).toEqual(['medicine', 'bp', 'note', 'transcript', 'custom']);
     expect(entries[0].title).toBe('Metoclopramide 5mg given');
     expect(entries[0].detail).toBe('5mg · 2');
-    expect(entries[0].by).toBe('Affan');
+    expect(entries[0].by).toBe('Caregiver A');
     expect(entries[0].timeKind).toBe('event');
     expect(entries[1].title).toBe('Blood pressure 118/76');
     expect(entries[1].timeKind).toBe('entered');
@@ -69,7 +69,7 @@ describe('buildDiaryEntries', () => {
     const entries = buildDiaryEntries({
       ...empty,
       date: '2026-07-12',
-      bpReadings: [{ id: 'b1', date: '2026-07-12', systolic: 120, diastolic: 80, recorded_by: 'Umair', created_at: '2026-07-13T14:15:00' }],
+      bpReadings: [{ id: 'b1', date: '2026-07-12', systolic: 120, diastolic: 80, recorded_by: 'Caregiver B', created_at: '2026-07-13T14:15:00' }],
     });
     expect(entries[0].untimed).toBe(true);
   });
@@ -93,7 +93,7 @@ describe('groupDiary', () => {
     const entries = buildDiaryEntries({
       ...empty,
       date: DAY,
-      medLogs: [medLog, { ...medLog, id: 'l2', hour: 9, am_pm: 'AM', recorded_by: 'Umair' }],
+      medLogs: [medLog, { ...medLog, id: 'l2', hour: 9, am_pm: 'AM', recorded_by: 'Caregiver B' }],
       medicines: [med],
     });
     const groups = groupDiary(entries);
@@ -106,7 +106,7 @@ describe('groupDiary', () => {
       date: '2026-07-12',
       medLogs: [{ ...medLog, date: '2026-07-12' }],
       medicines: [med],
-      notes: [{ id: 'n1', date: '2026-07-12', title: null, content: 'Backfilled', recorded_by: 'Umair', created_at: '2026-07-13T09:00:00' }],
+      notes: [{ id: 'n1', date: '2026-07-12', title: null, content: 'Backfilled', recorded_by: 'Caregiver B', created_at: '2026-07-13T09:00:00' }],
     });
     const groups = groupDiary(entries);
     expect(groups.map(g => g.key)).toEqual(['evening', 'untimed']);

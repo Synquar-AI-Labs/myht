@@ -1,6 +1,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
-import { HealthRecord, HealthRecordForm, dbToHealthForm, RECORDER_OPTIONS } from '@/types/health';
+import { HealthRecord, HealthRecordForm, dbToHealthForm } from '@/types/health';
+import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { CaregiverPicker } from '@/components/CaregiverPicker';
 import { MedicineTracker } from '@/components/MedicineTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, parseISO, addDays, subDays } from 'date-fns';
 import { Copy, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -37,11 +39,13 @@ const emptyForm: HealthRecordForm = {
 };
 
 export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly, onBusyChange }: DailyRecordTabProps) {
+  const { caregiver, activeCaregivers, selectCaregiver } = useCaregiverChoice();
+  const { caregivers } = useHousehold();
   const startDate = initialDate ?? format(new Date(), 'yyyy-MM-dd');
   // ONE authoritative day: viewDate. The form has no separate date — every
   // save targets the day shown in the navigator, and nothing else.
   const [viewDate, setViewDate] = useState(startDate);
-  const [form, setForm] = useState<HealthRecordForm>(() => ({ ...emptyForm, date: startDate, recordedBy: localStorage.getItem('ht_recorder') || '' }));
+  const [form, setForm] = useState<HealthRecordForm>(() => ({ ...emptyForm, date: startDate, recordedBy: caregiver?.display_name ?? '', caregiverId: caregiver?.caregiver_id }));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [baseline, setBaseline] = useState<HealthRecordForm>(() => ({ ...emptyForm, date: startDate }));
   const dirty = useRef(false);
@@ -62,7 +66,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const resetFormFor = (date: string) => {
     const record = getRecordByDate(date);
     const saved = record ? dbToHealthForm(record) : { ...emptyForm, date };
-    setForm({ ...saved, recordedBy: localStorage.getItem('ht_recorder') || '' });
+    setForm(record ? saved : { ...saved, recordedBy: caregiver?.display_name ?? '', caregiverId: caregiver?.caregiver_id });
     setBaseline(saved);
     setEditingId(record?.id ?? null);
     dirty.current = false;
@@ -78,19 +82,18 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     const previous = records.find(r => r.date < viewDate);
     if (!previous) { toast.error('No earlier record to copy from'); return; }
     dirty.current = true;
-    setForm({ ...dbToHealthForm(previous), date: viewDate, recordedBy: form.recordedBy });
+    setForm({ ...dbToHealthForm(previous), date: viewDate, recordedBy: form.recordedBy, caregiverId: form.caregiverId });
     toast.success(`Copied from ${format(parseISO(previous.date), 'MMM d')}`);
   };
 
   const handleSubmit = async () => {
-    if (!form.recordedBy) { toast.error('Please select who is recording'); return; }
+    if (!editingId && !form.caregiverId) { toast.error('Please select who is recording'); return; }
     const wasEditing = !!editingId;
     setSaving(true);
     try {
       const ok = await addRecord({ ...form, date: viewDate }, baseline);
       if (!ok) return; // keep the form values — nothing was saved
       setBaseline({ ...form, date: viewDate });
-      localStorage.setItem('ht_recorder', form.recordedBy);
       dirty.current = false;
       toast.success(wasEditing ? 'Record updated' : 'Record saved');
     } finally {
@@ -102,7 +105,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
     // Editing a record moves the whole screen to that record's day, so the
     // header, form and save target can never disagree.
     setViewDate(record.date);
-    setForm({ ...dbToHealthForm(record), recordedBy: localStorage.getItem('ht_recorder') || '' });
+    setForm(dbToHealthForm(record));
     setEditingId(record.id);
     setBaseline(dbToHealthForm(record));
     dirty.current = false;
@@ -168,16 +171,13 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           <fieldset disabled={busy} className="space-y-4">
           <div>
             <Label className="text-xs text-muted-foreground">Recorded By</Label>
-            <Select value={form.recordedBy} onValueChange={v => update('recordedBy', v)}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select name" />
-              </SelectTrigger>
-              <SelectContent>
-                {RECORDER_OPTIONS.map(name => (
-                  <SelectItem key={name} value={name}>{name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CaregiverPicker people={editingId ? caregivers.filter(p => p.is_active || p.caregiver_id === baseline.caregiverId) : activeCaregivers} value={form.caregiverId ?? undefined} onChange={id => {
+              const person = caregivers.find(p => p.caregiver_id === id);
+              if (!person) return;
+              dirty.current = true;
+              setForm(previous => ({ ...previous, caregiverId: id, recordedBy: person.display_name }));
+              if (!editingId) selectCaregiver(id);
+            }} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>

@@ -4,7 +4,7 @@ import {
   RecordingJob,
 } from '@/lib/recordingJob';
 
-const meta = { title: 'Dr Chen', recordedBy: 'Fahad', date: '2026-07-14' };
+const meta = { title: 'Doctor conversation', recordedBy: 'Caregiver A', date: '2026-07-14' };
 const blob = new Blob(['x'], { type: 'audio/mp4' });
 
 describe('status predicates', () => {
@@ -84,9 +84,9 @@ describe('recordingJobReducer — metadata stays current', () => {
   it('UPDATE_METADATA merges without touching the audio', () => {
     let s = recordingJobReducer(idleJob, { type: 'ACQUIRE', id: 'j', metadata: meta });
     s = recordingJobReducer(s, { type: 'CAPTURED', blob, bytes: 1, ext: 'm4a' });
-    s = recordingJobReducer(s, { type: 'UPDATE_METADATA', metadata: { recordedBy: 'Umair' } });
-    expect(s.metadata.recordedBy).toBe('Umair');
-    expect(s.metadata.title).toBe('Dr Chen');
+    s = recordingJobReducer(s, { type: 'UPDATE_METADATA', metadata: { recordedBy: 'Caregiver B' } });
+    expect(s.metadata.recordedBy).toBe('Caregiver B');
+    expect(s.metadata.title).toBe('Doctor conversation');
     expect(s.blob).toBe(blob);
   });
 

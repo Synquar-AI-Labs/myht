@@ -21,11 +21,14 @@ type HealthMode = {
   type: 'health';
   metric: string;
   fields: HealthField[];
+  /** Custom actions retain their old recorder flow until A3d. */
+  legacyRecorder?: boolean;
   onSave: (
     values: Record<string, number | boolean>,
     recordedBy: string,
     date: string,
     time: { hour: number; amPm: string },
+    caregiverId?: string,
   ) => void;
 };
 
@@ -84,10 +87,13 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
     if (mode.type === 'medicine') {
       if (!caregiver) return;
       mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate });
-    } else {
+    } else if (mode.legacyRecorder) {
       if (!recorder) return;
       localStorage.setItem('ht_recorder', recorder);
       mode.onSave(fieldValues, recorder, selectedDate, { hour, amPm });
+    } else {
+      if (!caregiver) return;
+      mode.onSave(fieldValues, caregiver.display_name, selectedDate, { hour, amPm }, caregiver.caregiver_id);
     }
     onOpenChange(false);
   };
@@ -108,7 +114,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
           {/* Recorder */}
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Recorded by</Label>
-            {mode.type === 'medicine' ? <CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} /> : <Select value={recorder} onValueChange={setRecorder}>
+            {mode.type === 'medicine' || !mode.legacyRecorder ? <CaregiverPicker people={activeCaregivers} value={caregiver?.caregiver_id} onChange={selectCaregiver} /> : <Select value={recorder} onValueChange={setRecorder}>
               <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
               <SelectContent>
                 {RECORDER_OPTIONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
@@ -175,12 +181,12 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
         </div>
 
         <DrawerFooter>
-          {!(mode.type === 'medicine' ? caregiver : recorder) && (
+          {!(mode.type === 'medicine' || !mode.legacyRecorder ? caregiver : recorder) && (
             <p className="text-center text-xs text-muted-foreground">
               Choose who's logging above to enable Save
             </p>
           )}
-          <Button onClick={handleSave} disabled={!(mode.type === 'medicine' ? caregiver : recorder)} className="w-full">Save</Button>
+          <Button onClick={handleSave} disabled={!(mode.type === 'medicine' || !mode.legacyRecorder ? caregiver : recorder)} className="w-full">Save</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

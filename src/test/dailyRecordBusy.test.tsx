@@ -5,6 +5,14 @@ import type { HealthRecord } from '@/types/health';
 // MedicineTracker pulls in supabase/react-query; the busy boundary under
 // test lives entirely in DailyRecordTab.
 vi.mock('@/components/MedicineTracker', () => ({ MedicineTracker: () => null }));
+vi.mock('@/hooks/useCaregiverChoice', () => ({ useCaregiverChoice: () => ({
+  caregiver: { caregiver_id: 'device-person', display_name: 'Current caregiver', is_active: true },
+  activeCaregivers: [{ caregiver_id: 'device-person', display_name: 'Current caregiver', is_active: true }], selectCaregiver: vi.fn(),
+}) }));
+vi.mock('@/hooks/HouseholdProvider', () => ({ useHousehold: () => ({ caregivers: [
+  { caregiver_id: 'original-person', display_name: 'Original caregiver', is_active: true },
+  { caregiver_id: 'device-person', display_name: 'Current caregiver', is_active: true },
+] }) }));
 
 import { DailyRecordTab } from '@/components/DailyRecordTab';
 
@@ -26,7 +34,8 @@ const record = {
   vomiting: false,
   vomit_count: 0,
   constipation: false,
-  recorded_by: 'Fahad',
+  recorded_by: 'Original caregiver',
+  caregiver_id: 'original-person',
   misc_notes: '',
   created_at: '2026-07-12T10:00:00Z',
   updated_at: '2026-07-12T10:00:00Z',
@@ -54,7 +63,6 @@ describe('DailyRecordTab save-busy boundary', () => {
       getItem: (key: string) => values.get(key) ?? null,
       setItem: (key: string, value: string) => { values.set(key, value); },
     });
-    localStorage.setItem('ht_recorder', 'Fahad');
   });
   it('locks competing controls AND form fields during an in-flight save; failure keeps values', async () => {
     let resolveSave!: (ok: boolean) => void;
@@ -113,7 +121,7 @@ describe('DailyRecordTab save-busy boundary', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: /update record/i })).toBeEnabled());
     expect(screen.getByDisplayValue('62')).toBeEnabled();
     expect(screen.getByDisplayValue('3')).toBeEnabled();
-    expect(localStorage.getItem('ht_recorder')).toBe('Fahad');
+    expect(addRecord).toHaveBeenCalledWith(expect.objectContaining({ caregiverId: 'original-person', recordedBy: 'Original caregiver' }), expect.objectContaining({ caregiverId: 'original-person' }));
   });
 
   it('day-only mode renders no date-navigation arrows; standalone mode does', () => {
@@ -121,6 +129,17 @@ describe('DailyRecordTab save-busy boundary', () => {
     expect(screen.getByText('Sunday, Jul 12, 2026')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /previous day/i })).toBeNull();
     expect(screen.queryByRole('button', { name: /next day/i })).toBeNull();
+  });
+
+  it('cancel restores the saved values and the original caregiver, not the device choice', async () => {
+    const { addRecord } = renderEditor();
+    fireEvent.change(screen.getByDisplayValue('61.5'), { target: { value: '62' } });
+    fireEvent.click(screen.getByRole('button', { name: /^cancel$/i }));
+    expect(screen.getByDisplayValue('61.5')).toBeInTheDocument();
+    fireEvent.change(screen.getByDisplayValue('61.5'), { target: { value: '63' } });
+    fireEvent.click(screen.getByRole('button', { name: /update record/i }));
+    expect(addRecord).toHaveBeenCalledWith(expect.objectContaining({ caregiverId: 'original-person', recordedBy: 'Original caregiver', weight: 63 }), expect.objectContaining({ caregiverId: 'original-person', weight: 61.5 }));
+    await waitFor(() => expect(screen.getByRole('button', { name: /update record/i })).toBeEnabled());
   });
 
   it('standalone mode has named, working arrows', () => {

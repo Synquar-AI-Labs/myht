@@ -373,6 +373,23 @@ await check('23 future objects default to no client privileges',()=>{
  END $probe$;
  ROLLBACK;`);
 });
+await check('24 partial day upsert preserves untouched values and attribution',async()=>{
+ const date='2026-07-03';
+ const existing=good(await insert(A.admin,'health_records',{
+  household_id:A.hid,date,feed_bags:3,stool_count:2,stool_passed:true,
+  misc_notes:'Preserve notes',weight:61,caregiver_id:A.caregiver,recorded_by:'Original caregiver',
+ }))[0];
+ const saved=good(await request(A.member.token,'/rest/v1/health_records?on_conflict=household_id,date','POST',{
+  household_id:A.hid,date,weight:62,
+ },{Prefer:'resolution=merge-duplicates,return=representation'}))[0];
+ assert.equal(saved.id,existing.id);assert.equal(saved.weight,62);
+ assert.equal(saved.feed_bags,3);assert.equal(saved.stool_count,2);assert.equal(saved.stool_passed,true);
+ assert.equal(saved.misc_notes,'Preserve notes');assert.equal(saved.caregiver_id,A.caregiver);assert.equal(saved.recorded_by,'Original caregiver');
+ const created=good(await request(A.admin.token,'/rest/v1/health_records?on_conflict=household_id,date','POST',{
+  household_id:A.hid,date:'2026-07-04',weight:60,caregiver_id:A.caregiver,recorded_by:'Original caregiver',
+ },{Prefer:'resolution=merge-duplicates,return=representation'}))[0];
+ assert.equal(created.feed_bags,0);assert.equal(created.weight,60);assert.equal(created.caregiver_id,A.caregiver);
+});
 console.log('Failures: '+failures);
 process.exitCode=failures;
 
