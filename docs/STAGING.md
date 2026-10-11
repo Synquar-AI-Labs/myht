@@ -4,22 +4,30 @@
 
 Nothing here authorizes a login or upload. After the owner's explicit yes:
 
-1. Owner creates the Cloudflare account. Owner runs `npx wrangler login` and
+1. Owner creates the Cloudflare account. Wrangler is pinned to **4.149.0** in
+   package.json and the lockfile. Owner runs `npx --no-install wrangler login` and
    presses Allow himself in the browser. No token is copied into the repository
    or a report. Confirm the intended account; stop on unexpected billing or
    account/project prompts. Use only the Pages project `myht-staging`.
-2. Coder builds AFTER committing intended changes: `npm run build:staging`.
-   It reads the ignored `.env.staging.local`, requires the exact staging URL,
-   scans every output file for the live ref and local API addresses, and prints
-   the Supabase host. `dist-staging/` and its build receipt are ignored.
-3. Coder runs `scripts/hosting.sh whoami`; leader checks the account. Then,
-   only with upload approval:
+2. Before building/uploading, coder runs `scripts/hosting.sh whoami`; leader
+   confirms the displayed account email with the owner. Only after approval,
+   create the one named project once:
+   `HOSTING_CONFIRM=myht-staging scripts/hosting.sh create`.
+   This runs the pinned tool's `pages project create myht-staging
+   --production-branch main`. Stop on any error; never guess another name.
+3. Coder builds AFTER committing intended changes: `npm run build:staging`,
+   then runs `node scripts/test/static-staging.mjs`.
+   The build reads the ignored `.env.staging.local`, requires the exact staging
+   URL, scans every output file for the live ref and local API addresses, and
+   prints the Supabase host. `dist-staging/` and its build receipt are ignored.
+   Finally, only with upload approval:
    `HOSTING_CONFIRM=myht-staging scripts/hosting.sh deploy`.
    This uploads static files to `myht-staging`, branch `main`; it does NOT merge
    or push our Git branch. The guard requires a current-HEAD receipt, no tracked
    changes except AGENTS.md, an unchanged artifact digest and a fresh target scan.
-   If a Pages project needs creating, owner creates that named Direct Upload
-   project in the dashboard first; do not choose another project as a fallback.
+   All wrapper commands use `npx --no-install wrangler`, never a freshly fetched
+   release. The exact order is login → whoami → leader/owner account check →
+   create → build → static check → deploy.
 4. Leader checks the resulting HTTPS address, `/auth` refresh, response headers,
    and staging-only client target. Do not share the address while Confirm email
    is OFF: it is owner-only, not a security boundary based on URL secrecy.
@@ -44,6 +52,14 @@ When a domain is bought: add the custom domain to this same Pages project;
 update Supabase site_url and exact redirect URLs through reviewed config push,
 and finish owner-configured email/SMTP and the email gate below. Do not create
 a second database or weaken confirmations to make the domain work.
+
+Login storage on this Mac: the pinned tool's `getGlobalConfigPath()` selects
+`~/Library/Preferences/.wrangler` (XDG_CONFIG_HOME is unset and no legacy
+`~/.wrangler` directory exists). Default-profile login is stored in
+`config/default.toml` there, outside the repo. If keyring storage is enabled,
+the encrypted profile uses a key held in macOS Keychain instead. Do not read,
+copy or report token contents. A subsequently created legacy directory or
+XDG_CONFIG_HOME override changes the location, so re-check paths if needed.
 
 Preparation only. Nothing below authorizes a remote operation: wait for the
 owner's explicit approval. Target: `myht-staging`, organization `myht`, ref

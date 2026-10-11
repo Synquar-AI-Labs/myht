@@ -25,9 +25,18 @@ afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: 
 describe('hosting guard (no real Wrangler)', () => {
   it('allows whoami and refuses extra arguments and unconfirmed deploy', () => {
     const { run } = fixture();
-    expect(run(['whoami']).stdout).toContain('wrangler\nwhoami');
+    expect(run(['whoami']).stdout).toContain('--no-install\nwrangler\nwhoami');
     for (const args of [['login'], ['deploy', '--project-name', 'other'], ['whoami', '--anything'], ['deploy']]) expect(run(args).status).toBe(1);
     expect(run(['deploy'], 'other').status).toBe(1);
+  });
+  it('requires the exact confirmation for the fixed one-time project creation', () => {
+    const { run } = fixture();
+    expect(run(['create']).status).toBe(1);
+    expect(run(['create'], 'other').status).toBe(1);
+    expect(run(['create', 'other'], 'myht-staging').status).toBe(1);
+    const approved = run(['create'], 'myht-staging');
+    expect(approved.status).toBe(0);
+    expect(approved.stdout).toBe('--no-install\nwrangler\npages\nproject\ncreate\nmyht-staging\n--production-branch\nmain\n');
   });
   it('refuses a wrong build URL before Vite can run', () => {
     const { root } = fixture();
