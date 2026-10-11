@@ -231,6 +231,8 @@ Plus unit tests, tsc and build, a recording test (A has a pending job, signs out
 
 Privacy policy and terms; consent for sending recordings to OpenAI; account deletion and data export; sign-up abuse protection (CAPTCHA, rate limits); backups on a paid plan; admin transfer; in-app restore; the medicine-record rebuild (Design B).
 
+**Email is a hard gate, before the first other person is invited (owner decision 2026-10-10).** Staging runs for the owner alone with email confirmation switched off, because the free plan with Supabase's built-in email cannot send our code emails. Before anyone else signs up, on staging or production: a proper email-sending service on a domain the owner controls, email confirmation ON, the sign-in settings applied (6-digit codes, both templates), and the sign-up, forgot-password and invite checks passed against real inboxes. With confirmation off, an invite can be claimed by anyone who types the invited address, so the family boundary depends on this gate.
+
 ## 13. Reviewer's answers to the original questions
 
 Clean baseline: yes, the simplest path. Tokenless invites: sound with the server checks and row locks above. `recorded_by` + `caregiver_id`: keep both. Audit: stays in A1 so onboarding and membership changes are audited from the first build.
