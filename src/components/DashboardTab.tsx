@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { eachDayOfInterval } from 'date-fns';
 import { MedicineReportCards } from '@/components/MedicineReportCards';
+import { useHousehold } from '@/hooks/HouseholdProvider';
 import { HealthRecord } from '@/types/health';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -84,11 +85,11 @@ function buildRows(
   return { rows, totals };
 }
 
-function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string) {
+function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string, careRecipientName: string) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
   doc.setFontSize(18);
-  doc.text('Muhammad Idrees', 14, 15);
+  doc.text(careRecipientName, 14, 15);
   doc.setFontSize(13);
   doc.text(title, 14, 23);
   doc.setFontSize(9);
@@ -144,6 +145,7 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
 }
 
 export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
+  const { careRecipientName } = useHousehold();
   const monthOptions = useMemo(() => getMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]?.value ?? format(new Date(), 'yyyy-MM'));
   const [weekDate, setWeekDate] = useState<Date>(new Date());
@@ -200,7 +202,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
               `Weekly Health Report — ${weekLabel}`,
               weeklyData.rows,
               weeklyData.totals,
-              `weekly-report-${format(weekStart, 'yyyy-MM-dd')}.pdf`
+              `weekly-report-${format(weekStart, 'yyyy-MM-dd')}.pdf`, careRecipientName
             )}
             disabled={countRecordedDays(weeklyData.rows) === 0}
             className="w-full"
@@ -235,7 +237,7 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
               `Monthly Health Report — ${monthLabel}`,
               monthlyData.rows,
               monthlyData.totals,
-              `monthly-report-${selectedMonth}.pdf`
+              `monthly-report-${selectedMonth}.pdf`, careRecipientName
             )}
             disabled={countRecordedDays(monthlyData.rows) === 0}
             className="w-full"

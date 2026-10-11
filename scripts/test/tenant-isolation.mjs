@@ -2,6 +2,7 @@
 // Integration tests against real local Auth, PostgREST, Storage and PostgreSQL.
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
+import { createClient } from '@supabase/supabase-js';
 const status=JSON.parse(execFileSync('supabase',['status','-o','json'],{encoding:'utf8'}));
 if(status.API_URL!=='http://127.0.0.1:54321') throw new Error('REFUSED: API must be http://127.0.0.1:54321');
 if(status.DB_URL!=='postgresql://postgres:postgres@127.0.0.1:54322/postgres') throw new Error('REFUSED: unexpected local DB URL');
@@ -286,7 +287,52 @@ await check('18 audit insert/update/delete, membership keys, actor and immutabil
  denied(await request(A.admin.token,'/rest/v1/audit_log?id=eq.'+events[0].id,'DELETE'));
  assert.equal(sql("SELECT count(*) FROM pg_publication_tables WHERE pubname='supabase_realtime' AND NOT(schemaname='public' AND tablename='household_sync')"),'0');
 });
-await check('19 hostile realtime subscriptions — not implemented (A3)',()=>{throw new Error('not implemented');});
+await check('19 hostile realtime subscriptions with own-family positive control',async()=>{
+ const client=u=>createClient(api,anon,{accessToken:async()=>u.token,auth:{persistSession:false,autoRefreshToken:false}});
+ const a=client(A.admin), b=client(B.admin), own=[], foreign=[], system=[];
+ await Promise.all([a.realtime.setAuth(A.admin.token),b.realtime.setAuth(B.admin.token)]);
+ const ca=a.channel('own-'+tag).on('postgres_changes',{event:'*',schema:'public',table:'household_sync',filter:'household_id=eq.'+A.hid},e=>own.push(e));
+ const cb=b.channel('hostile-'+tag);
+ const bt=b.channel('hostile-ticker-'+tag).on('postgres_changes',{event:'*',schema:'public',table:'household_sync'},e=>foreign.push(e));
+ const readyTimers=[];
+ const postgresReady=channel=>new Promise((resolve,reject)=>{
+  const timer=setTimeout(()=>reject(new Error('PostgreSQL subscription not ready')),10000);
+  readyTimers.push(timer);
+  channel.on('system',{},e=>{
+   system.push(e);
+   if(e.extension!=='postgres_changes')return;
+   clearTimeout(timer);
+   if(e.status==='ok')resolve();else reject(new Error(e.message));
+  });
+ });
+ // Unpublished data-table subscriptions are refused by the server. Await the
+ // dedicated hostile ticker separately so those expected refusals cannot make
+ // the published-table isolation check vacuous.
+ const ready=Promise.all([postgresReady(ca),postgresReady(bt)]);
+ const tables=sql("SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename").split('\n');
+ for(const table of tables) cb.on('postgres_changes',{event:'*',schema:'public',table},e=>foreign.push(e));
+ const subscribed=channel=>new Promise((resolve,reject)=>{
+  const timeout=setTimeout(()=>reject(new Error('realtime subscription timed out')),10000);
+  channel.subscribe(state=>{
+   if(state==='SUBSCRIBED'){clearTimeout(timeout);resolve();}
+   else if(state==='CHANNEL_ERROR'||state==='TIMED_OUT'){clearTimeout(timeout);reject(new Error(state));}
+  });
+ });
+ try {
+  await Promise.all([subscribed(ca),subscribed(cb),subscribed(bt)]);
+  await ready;
+  const note=good(await insert(A.admin,'written_notes',{household_id:A.hid,date:'2026-07-02',content:'Realtime control'}))[0];
+  good(await request(A.admin.token,'/rest/v1/written_notes?id=eq.'+note.id,'PATCH',{content:'Updated'}));
+  good(await request(A.admin.token,'/rest/v1/written_notes?id=eq.'+note.id,'DELETE'));
+  const member=await user('realtime-member');
+  const invite=good(await rpc(A.admin,'invite_member',{p_email:member.email}));
+  good(await rpc(member,'accept_invite',{p_invite_id:invite,p_display_name:'Realtime member'}));
+  good(await rpc(A.admin,'remove_member',{p_user_id:member.id}));
+  await new Promise(resolve=>setTimeout(resolve,5000));
+  assert(own.length>0,'own-family ticker must receive events: '+JSON.stringify(system));
+  assert.equal(foreign.length,0,'hostile unfiltered subscriptions must receive no events');
+ } finally {readyTimers.forEach(clearTimeout);await Promise.all([a.removeAllChannels(),b.removeAllChannels()]);a.realtime.disconnect();b.realtime.disconnect();}
+});
 await check('20 explicit NULL deltas preserve totals and flags',async()=>{
  const date='2026-07-01';
  good(await rpc(A.admin,'log_reading',{p_household_id:A.hid,p_date:date,p_feed_bags:3,p_vomit_count:1,p_stool_count:2}));

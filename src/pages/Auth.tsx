@@ -32,7 +32,7 @@ export default function Auth() {
     setError(''); setNotice(''); setCode(''); setScreen(next);
   };
   const run = async (action: () => Promise<void>) => {
-    setBusy(true); setError('');
+    setBusy(true); setError(''); setNotice('');
     try { await action(); } catch (e) { setError(accountError(e)); } finally { setBusy(false); }
   };
   const submit = (event: React.FormEvent) => {

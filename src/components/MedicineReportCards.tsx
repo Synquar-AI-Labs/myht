@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { MEDICINES_QUERY_KEY, fetchMedicinesList } from '@/hooks/useMedicines';
+import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
+import { useHousehold } from '@/hooks/HouseholdProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -33,11 +34,14 @@ interface MedLog {
 }
 
 function useMedicineLogsForRange(from: string, to: string) {
+  const { householdId } = useHousehold();
   return useQuery({
-    queryKey: ['medicine_logs_all', from, to],
+    queryKey: [...medicineKeys.reports(householdId), from, to],
+    enabled: !!householdId,
     queryFn: () => fetchAllRows<MedLog>((start, end) => supabase
       .from('medicine_logs')
       .select('id, date, medicine_id', { count: 'exact' })
+      .eq('household_id', householdId!)
       .gte('date', from)
       .lte('date', to)
       .order('date', { ascending: true })
@@ -102,12 +106,13 @@ function generateMedPdf(
   title: string,
   medicines: MedicineInfo[],
   data: ReturnType<typeof buildMedRows>,
-  filename: string
+  filename: string,
+  careRecipientName: string
 ) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
   doc.setFontSize(18);
-  doc.text('Muhammad Idrees', 14, 15);
+  doc.text(careRecipientName, 14, 15);
   doc.setFontSize(13);
   doc.text(title, 14, 23);
   doc.setFontSize(9);
@@ -143,13 +148,15 @@ function generateMedPdf(
 }
 
 export function MedicineReportCards() {
+  const { householdId, careRecipientName } = useHousehold();
   const monthOptions = useMemo(() => getMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]?.value ?? format(new Date(), 'yyyy-MM'));
   const [weekDate, setWeekDate] = useState<Date>(new Date());
 
   const { data: medicines = [], isLoading: medsLoading } = useQuery({
-    queryKey: MEDICINES_QUERY_KEY,
-    queryFn: fetchMedicinesList,
+    queryKey: medicineKeys.list(householdId),
+    queryFn: () => fetchMedicinesList(householdId!),
+    enabled: !!householdId,
   });
 
   const weekStart = startOfWeek(weekDate, { weekStartsOn: 1 });
@@ -223,7 +230,7 @@ export function MedicineReportCards() {
               `Weekly Medicine Report — ${weekLabel}`,
               medicines,
               weeklyData,
-              `weekly-medicine-${format(weekStart, 'yyyy-MM-dd')}.pdf`
+              `weekly-medicine-${format(weekStart, 'yyyy-MM-dd')}.pdf`, careRecipientName
             )}
             disabled={weeklyData.totalDoses === 0}
             className="w-full"
@@ -270,7 +277,7 @@ export function MedicineReportCards() {
               `Monthly Medicine Report — ${monthLabel}`,
               medicines,
               monthlyData,
-              `monthly-medicine-${selectedMonth}.pdf`
+              `monthly-medicine-${selectedMonth}.pdf`, careRecipientName
             )}
             disabled={monthlyData.totalDoses === 0}
             className="w-full"

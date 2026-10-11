@@ -2,15 +2,13 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { createInvalidationBatcher } from '@/lib/invalidationBatcher';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { medicineKeys } from '@/hooks/useMedicines';
 
-// Maps each database table to the React Query keys that depend on it.
-// When Supabase pushes a change for a table, every matching query is
-// invalidated so *all* open screens (and other caregivers' phones) refresh.
+// Domains awaiting household scoping retain their existing cache keys.
 const TABLE_KEYS: Record<string, string[][]> = {
   health_records: [['health_records']],
   bp_readings: [['bp_readings']],
-  medicines: [['medicines']],
-  medicine_logs: [['medicine_logs_by_date'], ['medicine_logs_all']],
   appointments: [['appointments']],
   custom_actions: [['custom_actions']],
   custom_action_logs: [['custom_action_logs']],
@@ -20,38 +18,43 @@ const TABLE_KEYS: Record<string, string[][]> = {
 };
 
 /**
- * Subscribes to Postgres change events for every shared table and invalidates
- * the relevant React Query caches. Mount this once, high in the tree.
- *
- * If realtime is not enabled on the tables server-side, this simply receives
- * no events (harmless) — React Query's refetch-on-focus still keeps data fresh.
+ * Only the household ticker is published; medical rows never travel over
+ * realtime. Mount once and refresh the affected domain through its queries.
  */
 export function useRealtimeSync() {
   const queryClient = useQueryClient();
+  const { householdId } = useHousehold();
 
   useEffect(() => {
-    const channel = supabase.channel('db-sync');
+    if (!householdId) return;
+    const channel = supabase.channel(`household-sync-${householdId}`);
     const batcher = createInvalidationBatcher(queryKey => {
       void queryClient.invalidateQueries({ queryKey });
     });
+    let subscribed = false;
 
-    Object.entries(TABLE_KEYS).forEach(([table, keys]) => {
-      // supabase-js's overloads don't narrow a dynamic event string cleanly.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (channel.on as any)(
-        'postgres_changes',
-        { event: '*', schema: 'public', table },
-        () => {
-          keys.forEach(queryKey => batcher.queue(queryKey));
-        }
-      );
+    channel.on('postgres_changes',
+      { event: '*', schema: 'public', table: 'household_sync', filter: `household_id=eq.${householdId}` },
+      payload => {
+        const table = (payload.new as { table_name?: string }).table_name;
+        const keys = table === 'medicines' ? [medicineKeys.list(householdId)]
+          : table === 'medicine_logs' ? [medicineKeys.logs(householdId), medicineKeys.reports(householdId)]
+          : TABLE_KEYS[table ?? ''] ?? [];
+        keys.forEach(queryKey => batcher.queue([...queryKey]));
+      });
+
+    channel.subscribe(status => {
+      if (status !== 'SUBSCRIBED') return;
+      if (subscribed) {
+        batcher.queue(['household', householdId]);
+        Object.values(TABLE_KEYS).flat().forEach(key => batcher.queue(key));
+      }
+      subscribed = true;
     });
-
-    channel.subscribe();
 
     return () => {
       batcher.cancel();
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, householdId]);
 }

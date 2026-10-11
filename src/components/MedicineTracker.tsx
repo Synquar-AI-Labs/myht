@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
-import { useMedicines, Medicine } from '@/hooks/useMedicines';
-import { RECORDER_OPTIONS } from '@/types/health';
+import { useMedicines, MedicineLog } from '@/hooks/useMedicines';
+import { useHousehold } from '@/hooks/HouseholdProvider';
+import { changedCaregiverId } from '@/lib/caregiverChoice';
+import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { CaregiverPicker } from '@/components/CaregiverPicker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,9 +27,13 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [hour, setHour] = useState(12);
   const [amPm, setAmPm] = useState<'AM' | 'PM'>('AM');
-  const [recordedBy, setRecordedBy] = useState(() => localStorage.getItem('ht_recorder') || '');
+  const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const { caregivers } = useHousehold();
+  const [editCaregiverId, setEditCaregiverId] = useState<string | null>(null);
+  const [originalCaregiverId, setOriginalCaregiverId] = useState<string | null>(null);
+  const editPeople = caregivers.filter(p => p.is_active || p.caregiver_id === originalCaregiverId);
   const [showNewMedicineDialog, setShowNewMedicineDialog] = useState(false);
   const [newMedName, setNewMedName] = useState('');
   const [newMedNote, setNewMedNote] = useState('');
@@ -35,28 +42,27 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
     setSelectedMedicine('');
     setHour(12);
     setAmPm('AM');
-    setRecordedBy(localStorage.getItem('ht_recorder') || '');
     setEditingId(null);
     setShowForm(false);
   };
 
   const handleSubmit = async () => {
-    if (!selectedMedicine) return;
-    if (recordedBy) localStorage.setItem('ht_recorder', recordedBy);
+    if (!selectedMedicine || (!editingId && !caregiver)) return;
     if (editingId) {
-      await updateMedicineLog(editingId, { medicine_id: selectedMedicine, hour, am_pm: amPm, recorded_by: recordedBy });
+      await updateMedicineLog(editingId, { medicine_id: selectedMedicine, hour, am_pm: amPm, caregiver_id: changedCaregiverId(editCaregiverId, originalCaregiverId) });
     } else {
-      await addMedicineLog({ medicine_id: selectedMedicine, hour, am_pm: amPm, recorded_by: recordedBy });
+      await addMedicineLog({ medicine_id: selectedMedicine, hour, am_pm: amPm, recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id });
     }
     resetForm();
   };
 
-  const handleEdit = (log: any) => {
+  const handleEdit = (log: MedicineLog) => {
     setSelectedMedicine(log.medicine_id);
     setHour(log.hour);
-    setAmPm(log.am_pm);
-    setRecordedBy(log.recorded_by);
+    setAmPm(log.am_pm === 'PM' ? 'PM' : 'AM');
     setEditingId(log.id);
+    setEditCaregiverId(log.caregiver_id ?? null);
+    setOriginalCaregiverId(log.caregiver_id ?? null);
     setShowForm(true);
   };
 
@@ -188,20 +194,11 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
 
             <div>
               <Label className="text-xs text-muted-foreground">Recorded By</Label>
-              <Select value={recordedBy} onValueChange={setRecordedBy}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select name" />
-                </SelectTrigger>
-                <SelectContent>
-                  {RECORDER_OPTIONS.map(name => (
-                    <SelectItem key={name} value={name}>{name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CaregiverPicker people={editingId ? editPeople : activeCaregivers} value={editingId ? editCaregiverId ?? undefined : caregiver?.caregiver_id} onChange={editingId ? setEditCaregiverId : selectCaregiver} />
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSubmit} className="flex-1 gap-1" size="sm" disabled={!selectedMedicine}>
+              <Button onClick={handleSubmit} className="flex-1 gap-1" size="sm" disabled={!selectedMedicine || (!editingId && !caregiver)}>
                 <Plus className="h-3.5 w-3.5" />
                 {editingId ? 'Update' : 'Log Medicine'}
               </Button>

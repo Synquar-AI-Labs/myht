@@ -8,7 +8,8 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
-import { MEDICINES_QUERY_KEY, fetchMedicinesList } from '@/hooks/useMedicines';
+import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
+import { useHousehold } from '@/hooks/HouseholdProvider';
 
 const MedicineScheduleTab = lazy(() => import('@/components/MedicineScheduleTab').then(m => ({ default: m.MedicineScheduleTab })));
 const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m => ({ default: m.AppointmentsTab })));
@@ -55,6 +56,7 @@ interface RowSpec {
 }
 
 export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
+  const { householdId, careRecipientName } = useHousehold();
   const [view, setView] = useState<ShelfView>(null);
 
   // Minute tick so "next appointment" can't stay stale on a mounted shelf.
@@ -66,7 +68,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
 
   const appointmentsData = useAppointments();
 
-  const { data: medicines = [], isLoading: medsLoading } = useQuery({ queryKey: MEDICINES_QUERY_KEY, queryFn: fetchMedicinesList });
+  const { data: medicines = [], isLoading: medsLoading } = useQuery({ queryKey: medicineKeys.list(householdId), queryFn: () => fetchMedicinesList(householdId!), enabled: !!householdId });
 
   // Rows are caregiver coverage blocks (incl. unavailability), NOT "stays" —
   // so the subtitle talks about coverage, and skips unavailable blocks.
@@ -129,7 +131,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
       title: 'Hospital stays',
       subtitle: staysSummary?.latest
         ? `Coverage scheduled through ${format(parseISO(staysSummary.latest), 'MMM d')}`
-        : "Who's with Dad, and when",
+        : `Who's with ${careRecipientName}, and when`,
       icon: Users,
       chip: 'bg-[#eaf3ec] text-[#2e7d4f]',
     },

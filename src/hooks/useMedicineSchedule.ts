@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { MEDICINES_QUERY_KEY, fetchMedicinesList } from '@/hooks/useMedicines';
+import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
+import { useHousehold } from '@/hooks/HouseholdProvider';
 
 export interface MedicineSchedule {
   id: string;
@@ -21,23 +22,27 @@ export type MedicineScheduleInsert = Omit<MedicineSchedule, 'id' | 'created_at'>
 
 export function useMedicineSchedule() {
   const queryClient = useQueryClient();
+  const { householdId } = useHousehold();
 
   const { data: medicines = [], isLoading: loading } = useQuery({
-    queryKey: MEDICINES_QUERY_KEY,
-    queryFn: fetchMedicinesList,
+    queryKey: medicineKeys.list(householdId),
+    queryFn: () => fetchMedicinesList(householdId),
+    enabled: !!householdId,
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: MEDICINES_QUERY_KEY });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: medicineKeys.list(householdId) });
 
   const addMedicine = async (med: MedicineScheduleInsert) => {
-    const { error } = await supabase.from('medicines').insert(med as import('@/integrations/supabase/types').TablesInsert<'medicines'>); // A3 adds household_id.
+    if (!householdId) return;
+    const { error } = await supabase.from('medicines').insert({ ...med, household_id: householdId });
     if (error) { toast.error('Failed to add medicine'); return; }
     toast.success(`Added ${med.name}`);
     invalidate();
   };
 
   const updateMedicine = async (id: string, med: Partial<MedicineScheduleInsert>) => {
-    const { error } = await supabase.from('medicines').update(med).eq('id', id);
+    if (!householdId) return;
+    const { error } = await supabase.from('medicines').update(med).eq('household_id', householdId).eq('id', id);
     if (error) { toast.error('Failed to update medicine'); return; }
     toast.success('Updated');
     invalidate();
