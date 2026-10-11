@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First screen, look 1: quiet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8a6240}a:hover{color:#6b4a2d}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 72px 28px 36px; background: #faf7f2; color: #26201a; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 28px">
+  <div style="display: flex; align-items: center; gap: 10px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8a6240" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+    <span style="font-size: 17px; font-weight: 700">Health Tracker</span>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 18px; padding-top: 44px">
+    <h1 style="margin: 0; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 42px; line-height: 1.08">Look after someone, together.</h1>
+    <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #4a4238">One shared place for medicines, feeds and readings. Everyone who helps can see what was given and what is due next.</p>
+  </div>
+  <div style="flex-grow: 1"></div>
+  <div style="display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: #ffffff; border: 1px solid #e9e2d6; border-radius: 16px">
+    <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2e7d4f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+    <span style="font-size: 15px; line-height: 1.45; color: #4a4238">Private to your family. Only the people you invite can see it.</span>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <button type="button" style="height: 56px; border: 0; border-radius: 14px; background: #26201a; color: #ffffff; font-family: inherit; font-size: 17px; font-weight: 700">Create an account</button>
+    <button type="button" style="height: 56px; box-sizing: border-box; border: 1.5px solid #b9ae9c; border-radius: 14px; background: #ffffff; color: #26201a; font-family: inherit; font-size: 17px; font-weight: 700">I already have an account</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

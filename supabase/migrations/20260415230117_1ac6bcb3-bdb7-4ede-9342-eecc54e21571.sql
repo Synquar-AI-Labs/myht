@@ -1,1 +1,0 @@
-UPDATE public.medicines SET show_in_quick_log = false WHERE category = 'non-medicine';

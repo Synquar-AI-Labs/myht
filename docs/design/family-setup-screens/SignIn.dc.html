@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow A: sign in later</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8a6240}a:hover{color:#6b4a2d}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 72px 28px 36px; background: #faf7f2; color: #26201a; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px">
+  <div style="display: flex; align-items: center; gap: 10px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8a6240" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+    <span style="font-size: 17px; font-weight: 700">Health Tracker</span>
+  </div>
+  <h1 style="margin: 0; padding-top: 28px; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 34px; line-height: 1.12">Welcome back</h1>
+  <div style="display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="a3-email" style="font-size: 15px; font-weight: 600">Email</label>
+      <input id="a3-email" type="email" placeholder="you@example.com" style="height: 54px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #b9ae9c; border-radius: 14px; background: #ffffff; font-family: inherit; font-size: 17px; color: #26201a">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="a3-password" style="font-size: 15px; font-weight: 600">Password</label>
+      <input id="a3-password" type="password" placeholder="Your password" style="height: 54px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #b9ae9c; border-radius: 14px; background: #ffffff; font-family: inherit; font-size: 17px; color: #26201a">
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <button type="button" style="height: 56px; border: 0; border-radius: 14px; background: #26201a; color: #ffffff; font-family: inherit; font-size: 17px; font-weight: 700">Sign in</button>
+    <button type="button" style="height: 48px; background: none; border: 0; font-family: inherit; font-size: 16px; font-weight: 600; color: #8a6240">Forgot your password?</button>
+  </div>
+  <p style="margin: 0; font-size: 15px; line-height: 1.45; color: #6f665b">A phone or tablet stays signed in, so most days nobody types this.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

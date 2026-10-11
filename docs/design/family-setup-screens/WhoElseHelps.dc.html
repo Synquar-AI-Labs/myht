@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Flow A: add family</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8a6240}a:hover{color:#6b4a2d}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 64px 28px 36px; background: #faf7f2; color: #26201a; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 22px">
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <h1 style="margin: 0; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 34px; line-height: 1.12">Who else helps?</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #4a4238">Add the email of each person who helps. They create their own account with that email and choose their own password.</p>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <label for="a2-email" style="font-size: 15px; font-weight: 600">Email</label>
+    <div style="display: flex; gap: 10px">
+      <input id="a2-email" type="email" placeholder="name@example.com" style="flex-grow: 1; min-width: 0; height: 54px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #b9ae9c; border-radius: 14px; background: #ffffff; font-family: inherit; font-size: 17px; color: #26201a">
+      <button type="button" style="flex: none; width: 84px; height: 54px; box-sizing: border-box; border: 1.5px solid #26201a; border-radius: 14px; background: #ffffff; color: #26201a; font-family: inherit; font-size: 17px; font-weight: 700">Add</button>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; background: #ffffff; border: 1px solid #e9e2d6; border-radius: 16px; padding: 4px 16px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; border-bottom: 1px solid #f3ede2">
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <span style="font-size: 16px; font-weight: 700">sara@example.com</span>
+        <span style="font-size: 14px; color: #6f665b">Invited</span>
+      </div>
+      <button type="button" aria-label="Remove sara@example.com" style="flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: #6f665b">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px">
+      <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+        <span style="font-size: 16px; font-weight: 700">omar@example.com</span>
+        <span style="font-size: 14px; color: #6f665b">Invited</span>
+      </div>
+      <button type="button" aria-label="Remove omar@example.com" style="flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: #6f665b">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </div>
+  </div>
+  <button type="button" style="align-self: flex-start; min-height: 44px; padding: 0; background: none; border: 0; font-family: inherit; font-size: 15px; font-weight: 600; text-align: left; color: #8a6240">Someone helps but has no email? Add just their name</button>
+  <div style="flex-grow: 1"></div>
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <button type="button" style="height: 56px; border: 0; border-radius: 14px; background: #26201a; color: #ffffff; font-family: inherit; font-size: 17px; font-weight: 700">Done</button>
+    <button type="button" style="height: 48px; background: none; border: 0; font-family: inherit; font-size: 16px; font-weight: 600; color: #8a6240">Skip for now</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

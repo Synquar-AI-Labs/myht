@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>First screen, look 3: starts with a question</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8a6240}a:hover{color:#6b4a2d}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 64px 28px 36px; background: #faf7f2; color: #26201a; font-family: 'DM Sans', system-ui, sans-serif; display: flex; flex-direction: column; gap: 28px">
+  <div style="display: flex; align-items: center; gap: 10px">
+    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8a6240" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+    <span style="font-size: 17px; font-weight: 700">Health Tracker</span>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 56px">
+    <h1 style="margin: 0; font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 42px; line-height: 1.08">Who are you caring for?</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #4a4238">We will set up a private place for the people who look after them.</p>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <label for="look3-name" style="font-size: 15px; font-weight: 600">Their name</label>
+    <input id="look3-name" type="text" placeholder="For example: Dad" style="height: 58px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #b9ae9c; border-radius: 14px; background: #ffffff; font-family: inherit; font-size: 19px; color: #26201a">
+  </div>
+  <button type="button" style="height: 56px; border: 0; border-radius: 14px; background: #26201a; color: #ffffff; font-family: inherit; font-size: 17px; font-weight: 700">Continue</button>
+  <p style="margin: 0; font-size: 15px; line-height: 1.45; color: #6f665b">Next you will create your account. It takes about a minute.</p>
+  <div style="flex-grow: 1"></div>
+  <button type="button" style="height: 48px; background: none; border: 0; font-family: inherit; font-size: 16px; font-weight: 600; color: #8a6240">I already have an account</button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

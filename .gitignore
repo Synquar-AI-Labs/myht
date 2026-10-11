@@ -25,3 +25,6 @@ dist-ssr
 
 # Local-stack overrides (never commit)
 .env.local
+.playwright-mcp/
+supabase/.temp/
+supabase/.branches/
