@@ -335,8 +335,8 @@ export function TodayScreen() {
       ) : (
         <>
           {/* Header row: date + clock left; the floating nav pills sit top-right */}
-          <div className="flex items-baseline gap-4 pt-6 pr-[300px]">
-            <h1 className="text-[32px] font-normal leading-tight text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
+          <div className="flex flex-wrap items-baseline gap-4 pt-6 pr-[21rem]">
+            <h1 className="min-w-0 max-w-full text-[32px] font-normal leading-tight text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
             <span className="text-[19px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
           {/* Band 1: Coming up ↔ the four record pills */}

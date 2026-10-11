@@ -38,3 +38,22 @@ Failures save screenshots and traces under `test-results/`; the HTML report is
 under `playwright-report/`. Both are ignored by git. Additional sessions also
 get screenshots on failure. No external browser requests are allowed, including
 font downloads, so tests do not require third-party network access.
+
+# Screen-size audit
+
+`SCREEN_PHASE=before npm run test:screens` captures the baseline; `npm run test:screens`
+captures the current UI and builds a before/after contact sheet. This suite is excluded
+from `test:e2e`. It uses the same local-only stack guard and browser network block
+and creates synthetic data only. Screen artifacts are separate from the normal
+runner's `test-results/e2e/` cleanup directory. Outputs are ignored under `test-results/screens/`:
+`report.md`, `index.html`, machine-readable `before.json`/`after.json`, and full-page
+screenshots by viewport. The 130% pass enlarges all computed fonts (including px
+typography) and the root size. Automated findings need visual triage: intentional
+truncation and dense calendar/timeline controls are not automatically redesigned.
+
+## Later
+
+- Calendar cells need a layout redesign to reach 44px on small phones; keep the current cells for now.
+- Coverage timeline controls need a redesign to reach 44px; keep the current bars for now.
+- Keep intentional subtitle and medicine-row truncation; revisit it only with a layout review.
+- Keep two-line History note previews; revisit full-text access in a later design review.

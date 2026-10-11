@@ -53,7 +53,7 @@ const Index = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 disabled={navLocked}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[15px] transition-colors disabled:opacity-40 ${
+                className={`flex min-h-[44px] items-center gap-2 rounded-xl px-4 py-2.5 text-[15px] transition-colors disabled:opacity-40 ${
                   active ? 'bg-[#26201a] font-bold text-white' : 'font-semibold text-[#8b8175] hover:bg-[#f3ede2]'
                 }`}
               >

@@ -159,7 +159,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
       {/* Entry Form */}
       <Card className="border-none shadow-sm">
         <CardHeader className="px-4 pb-2 pt-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-base">{editingId ? 'Edit Record' : 'New Entry'} — {format(parseISO(viewDate), 'MMM d')}</CardTitle>
             <Button variant="outline" size="sm" onClick={handleCopyPrevious} className="gap-1.5 text-xs" disabled={busy}>
               <Copy className="h-3.5 w-3.5" /> Copy Previous
@@ -168,7 +168,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           {viewRecord?.recorded_by && <p className="text-xs text-muted-foreground">Last saved by {viewRecord.recorded_by}</p>}
         </CardHeader>
         <CardContent className="px-4 pb-4">
-          <fieldset disabled={busy} className="space-y-4">
+          <fieldset disabled={busy} className="min-w-0 space-y-4">
           <div>
             <Label className="text-xs text-muted-foreground">Recorded By</Label>
             <CaregiverPicker people={editingId ? caregivers.filter(p => p.is_active || p.caregiver_id === baseline.caregiverId) : activeCaregivers} value={form.caregiverId ?? undefined} onChange={id => {
@@ -231,7 +231,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
             <Label className="text-xs text-muted-foreground">Constipation</Label>
             <Switch checked={form.constipation} onCheckedChange={v => update('constipation', v)} />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={handleSubmit} className="flex-1 gap-2" disabled={busy}>
               <Plus className="h-4 w-4" />
               {saving ? 'Saving...' : editingId ? 'Update Record' : 'Save Entry'}
@@ -257,7 +257,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           <CardTitle className="text-base">Misc Notes</CardTitle>
         </CardHeader>
         <CardContent className="px-4 pb-4">
-          <fieldset disabled={busy}>
+          <fieldset disabled={busy} className="min-w-0">
             <Textarea value={form.miscNotes} onChange={e => update('miscNotes', e.target.value)} placeholder="Any additional notes or observations..." className="min-h-[80px] text-sm" maxLength={1000} />
           </fieldset>
         </CardContent>

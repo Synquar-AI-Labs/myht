@@ -86,7 +86,7 @@ export function ReadingSection({
             <span className={`h-3 w-3 flex-none rounded-full ${rt.dot}`} />
             <span className="min-w-0">
               <span className="block text-[16px] font-bold text-[#26201a]">{rt.label}</span>
-              <span className="block truncate text-xs text-[#8b8175]">{rt.todaySoFar(todayRecord)}</span>
+              <span className="block break-words text-xs text-[#8b8175]">{rt.todaySoFar(todayRecord)}</span>
             </span>
           </button>
         ))}

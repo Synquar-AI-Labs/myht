@@ -4,6 +4,7 @@ body:has(.setup-screen) { background: #faf7f2; }
 .setup-screen h1.setup-hero { font-size: 42px; line-height: 1.08; }
 .setup-screen p { margin: 0; font-size: 17px; line-height: 1.5; color: #4a4238; }
 .setup-screen .setup-small { font-size: 15px; color: #6f665b; }
+.setup-screen strong { overflow-wrap: anywhere; }
 .setup-brand { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; }
 .setup-screen form { display: flex; flex-direction: column; gap: 18px; }
 .setup-field { display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 600; }

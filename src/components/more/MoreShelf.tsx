@@ -167,7 +167,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   if (view !== null) {
     return (
       <div className={view === 'stays' || view === 'reports' ? 'mx-auto max-w-4xl' : 'mx-auto max-w-[640px]'}>
-        <button onClick={() => setView(null)} className="mb-3 flex items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
+        <button onClick={() => setView(null)} className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
           <ChevronLeft className="h-4 w-4" /> Back
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>

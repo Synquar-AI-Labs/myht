@@ -60,14 +60,14 @@ function WeekNav({ weekOffset, setWeekOffset }: { weekOffset: number; setWeekOff
 
   return (
     <div className="flex items-center justify-between">
-      <button onClick={() => setWeekOffset(w => w + 1)} className="p-1.5 rounded hover:bg-muted">
+      <button onClick={() => setWeekOffset(w => w + 1)} className="flex min-h-[44px] min-w-[44px] items-center justify-center p-1.5 rounded hover:bg-muted">
         <ChevronLeft className="h-4 w-4" />
       </button>
       <h3 className="text-xs font-medium text-[#8b8175]">{label}</h3>
       <button
         onClick={() => setWeekOffset(w => Math.max(0, w - 1))}
         disabled={weekOffset === 0}
-        className="p-1.5 rounded hover:bg-muted disabled:opacity-30"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center p-1.5 rounded hover:bg-muted disabled:opacity-30"
       >
         <ChevronRight className="h-4 w-4" />
       </button>
@@ -206,7 +206,7 @@ export function TrendsOpenPanel({ records, customActions, customLogs }: TrendsDa
       <WeekNav weekOffset={weekOffset} setWeekOffset={setWeekOffset} />
       <BpChart data={data} />
       <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
-        <CollapsibleTrigger className="flex w-full items-center justify-center gap-1.5 py-1 text-[15px] font-semibold text-[#8a6240]">
+        <CollapsibleTrigger className="flex min-h-[44px] w-full items-center justify-center gap-1.5 py-1 text-[15px] font-semibold text-[#8a6240]">
           {moreOpen ? 'Show less' : 'More charts — weight, feeds, flush & custom'}
           <ChevronDown className={`h-4 w-4 transition-transform ${moreOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
         </CollapsibleTrigger>

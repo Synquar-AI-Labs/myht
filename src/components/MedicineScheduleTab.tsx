@@ -87,7 +87,7 @@ export function MedicineScheduleTab() {
               <CardContent className="p-3 flex items-start gap-3">
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-sm truncate">{med.name}</span>
+                    <span className="min-w-0 break-words font-medium text-sm">{med.name}</span>
                     {med.category === 'non-medicine' && <Badge variant="outline" className="text-[10px] px-1.5 py-0">Non-med</Badge>}
                   </div>
                   <div className="flex flex-wrap gap-1.5 text-[11px]">

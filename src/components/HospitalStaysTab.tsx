@@ -173,7 +173,7 @@ export function HospitalStaysTab() {
                         <ConfirmDeleteButton
                           key={stay.id}
                           variant="ghost"
-                          className="absolute h-[22px] rounded-sm flex items-center justify-start px-1 hover:opacity-90"
+                          className="absolute min-h-0 min-w-0 h-[22px] rounded-sm flex items-center justify-start px-1 hover:opacity-90"
                           style={barStyle}
                           title="Remove this from the schedule?"
                           description={tooltipText}

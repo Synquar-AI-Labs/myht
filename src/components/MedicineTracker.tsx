@@ -91,7 +91,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   return (
     <Card className="border-none shadow-sm">
       <CardHeader className="px-4 pb-2 pt-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-base flex items-center gap-2">
             <Pill className="h-4 w-4" /> Medicines
           </CardTitle>
@@ -116,7 +116,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
             {logs.map(log => (
               <div key={log.id} className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium truncate">{getMedicineName(log.medicine_id)}</p>
+                  <p className="text-sm font-medium break-words">{getMedicineName(log.medicine_id)}</p>
                   <p className="text-xs text-muted-foreground">
                     {log.hour}:00 {log.am_pm}
                     {getMedicineNote(log.medicine_id) && ` · ${getMedicineNote(log.medicine_id)}`}

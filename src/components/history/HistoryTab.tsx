@@ -151,7 +151,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   if (view === 'charts') {
     return (
       <div className="mx-auto max-w-[560px]">
-        <button onClick={() => setView('diary')} className="mb-3 flex items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
+        <button onClick={() => setView('diary')} className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
           <ChevronLeft className="h-4 w-4" /> Back to the diary
         </button>
         <TrendsCharts records={records} customActions={customActions} customLogs={customLogs} />
@@ -165,7 +165,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
         <button
           onClick={() => setView('diary')}
           disabled={editorBusy}
-          className="mb-3 flex items-center gap-1 text-[15px] font-semibold text-[#8a6240] disabled:opacity-40"
+          className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240] disabled:opacity-40"
         >
           <ChevronLeft className="h-4 w-4" /> {editorBusy ? 'Saving…' : 'Back to the diary'}
         </button>
@@ -283,7 +283,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
           const defaultOpen = gi < 2;
           return (
             <Collapsible key={group.key} defaultOpen={defaultOpen}>
-              <CollapsibleTrigger className="group flex w-full items-center gap-2 pb-2">
+              <CollapsibleTrigger className="group flex min-h-[44px] w-full items-center gap-2 pb-2">
                 <PeriodIcon className="h-4 w-4 text-[#8b8175]" />
                 <span className="text-[13px] font-bold uppercase tracking-[0.06em] text-[#8b8175]">
                   {group.label}
