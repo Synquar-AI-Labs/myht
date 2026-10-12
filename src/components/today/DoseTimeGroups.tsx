@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { urgencyFor, urgencyStyle } from '@/lib/medicineUrgency';
 import { UrgencyBadge } from './UrgencyBadge';
-import { groupDoseTimes, groupUpcoming, relativeDoseTime, elapsedDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
+import { groupDoseTimes, groupUpcoming, headerDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
 import { doseLabel, timeLabel, scheduledDoseDetail, type GivenItem, type UpcomingItem, type SlotState, type DoseSkip } from './todaySchedule';
 import type { Medicine } from '@/hooks/useMedicines';
 
@@ -22,15 +22,21 @@ export function DoseTimeGroups({ given, upcoming, skipped = [], now, onGiven, on
       const key = group.at.getTime();
       const state = group.state ?? 'scheduled';
       const urgency = urgencyFor(state);
+      const count = upcoming ? group.items.length : group.items.filter(item => 'log' in item).length;
+      const skippedCount = group.items.filter(item => 'skip' in item).length;
+      const countLabel = upcoming ? `${count} ${count === 1 ? 'medicine' : 'medicines'}` : `${count} given`;
       const isOpen = open[key] ?? (!!urgency || key === nearest);
       return <div key={key} data-dose-group className="border-b border-[#f3ede2] last:border-b-0">
-        <button style={urgencyStyle(state)} className={`dose-time-header ${upcoming ? 'dose-upcoming-header' : 'dose-given-header'} min-h-11 w-full rounded-xl px-2 text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
+        <button style={urgencyStyle(state)} className={`dose-time-header ${urgency ? 'dose-tinted' : ''} ${upcoming ? 'dose-upcoming-header' : 'dose-given-header'} min-h-11 w-full rounded-xl text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
           <span className="dose-time whitespace-nowrap font-bold">{timeLabel(group.at)}</span>
-          <span className="dose-relative text-sm">{upcoming ? relativeDoseTime(group.at, now) : elapsedDoseTime(group.at, now)}</span>
-          <span className="dose-count text-right text-sm">{upcoming ? `${group.items.length} ${group.items.length === 1 ? 'medicine' : 'medicines'}` : `${group.items.filter(item => 'log' in item).length} given${group.items.some(item => 'skip' in item) ? ` · ${group.items.filter(item => 'skip' in item).length} skipped` : ''}`}</span>
-          <span className="dose-controls flex items-center justify-end gap-2"><span className="dose-status flex justify-end"><UrgencyBadge state={state} /></span><ChevronDown aria-hidden="true" className={`dose-chevron h-4 w-4 flex-none transition-transform ${isOpen ? 'rotate-180' : ''}`} /></span>
+          <span className="dose-relative text-sm">{headerDoseTime(group.at, now, upcoming ? state : undefined)}</span>
+          <span className="dose-controls flex items-center justify-end gap-[6px]">
+            <span className="dose-status flex justify-end">{upcoming ? <UrgencyBadge state={state} /> : skippedCount > 0 ? <span className="dose-skipped-count whitespace-nowrap text-sm text-[#8b8175]">{skippedCount} skipped</span> : null}</span>
+            <span className="dose-count flex w-[28px] flex-none justify-center">{(upcoming || count > 0) && <span aria-label={countLabel} style={{ backgroundColor: urgency ? '#ffffff' : '#f3f0ec' }} className="flex min-h-6 w-full items-center justify-center rounded-full text-sm">{count}</span>}</span>
+            <ChevronDown aria-hidden="true" className={`dose-chevron h-[16px] w-[16px] flex-none transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          </span>
         </button>
-        {isOpen && <div className="px-2 pb-2">{group.items.map(item => {
+        {isOpen && <div className="dose-group-rows relative pb-2 pl-[18px] before:absolute before:inset-y-0 before:left-[6px] before:w-[2px] before:bg-[#e9e2d6]">{group.items.map(item => {
           const medicine = item.medicine;
           if ('skip' in item) return <div key={item.skip.id} className="flex items-center gap-2 py-2 text-sm text-[#8b8175]">
             <span className="dose-skip min-w-0 flex-1">Skipped: {medicine?.name ?? 'Medicine'} ({timeLabel(item.at)}){item.skip.reason ? `, ${item.skip.reason.toLowerCase()}` : ''}, by {item.skip.recorded_by}</span>
@@ -38,7 +44,7 @@ export function DoseTimeGroups({ given, upcoming, skipped = [], now, onGiven, on
           </div>;
           return <button key={'log' in item ? item.log.id : item.medicine.id} className="flex min-h-11 w-full items-center gap-3 py-2 text-left" onClick={() => 'log' in item ? onGiven?.(item) : onUpcoming?.(item)}>
             <span className="min-w-0 flex-1 break-words">
-            <span className="dose-name block font-bold">{medicine?.name ?? 'Unknown'}</span>
+            <span className="dose-name block font-semibold">{medicine?.name ?? 'Unknown'}</span>
             <span className="dose-detail block text-sm text-[#8b8175]">{doseLabel(medicine)}{'log' in item && item.log.recorded_by ? ` · ${item.log.recorded_by}` : ''}{'log' in item && scheduledDoseDetail(item.log) ? ` · ${scheduledDoseDetail(item.log)}` : ''}</span>
             </span>
             {!('log' in item) && <span className="dose-record flex-none text-sm font-semibold text-[#8a6240]">Record</span>}

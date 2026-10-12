@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { currentQuarter, doseTimeFields, doseTimeLabel, doseTimeValue, QUARTER_HOURS } from '@/lib/doseTime';
 import { logDateTime, buildUpcomingList, type GivenItem, type UpcomingItem } from '@/components/today/todaySchedule';
-import { groupGiven, groupUpcoming, relativeDoseTime, elapsedDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
+import { groupGiven, groupUpcoming, relativeDoseTime, elapsedDoseTime, headerDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
 import type { Medicine } from '@/hooks/useMedicines';
 
 describe('medicine dose minutes', () => {
@@ -33,6 +33,22 @@ describe('medicine dose minutes', () => {
 
 describe('dose time grouping', () => {
   const now = new Date('2026-10-11T12:00:00');
+  it('uses short header labels without changing the long logging labels', () => {
+    const at = (minutes: number) => new Date(now.getTime() + minutes * 60_000);
+    expect(headerDoseTime(at(20), now, 'scheduled')).toBe('in 20 min');
+    expect(headerDoseTime(at(179), now, 'scheduled')).toBe('in 2 h 59 min');
+    expect(headerDoseTime(at(90), now, 'scheduled')).toBe('in 1 h 30 min');
+    expect(headerDoseTime(at(165), now, 'scheduled')).toBe('in 2 h 45 min');
+    expect(headerDoseTime(at(120), now, 'scheduled')).toBe('in 2 h');
+    expect(headerDoseTime(at(719), now, 'scheduled')).toBe('in 11 h 59 min');
+    expect(headerDoseTime(at(-20), now, 'late')).toBe('20 min ago');
+    expect(headerDoseTime(at(-239), now, 'missed')).toBe('3 h ago');
+    expect(headerDoseTime(at(-59), now)).toBe('59 min ago');
+    expect(headerDoseTime(at(-60), now)).toBe('1 h ago');
+    expect(headerDoseTime(now, now)).toBe('now');
+    expect(headerDoseTime(at(5), now, 'due')).toBe('');
+    expect(relativeDoseTime(at(20), now)).toBe('in 20 minutes');
+  });
   it('formats future, late, current and elapsed labels', () => {
     expect(relativeDoseTime(new Date('2026-10-11T12:20:00'), now)).toBe('in 20 minutes');
     expect(relativeDoseTime(new Date('2026-10-11T14:00:00'), now)).toBe('in 2 hours');

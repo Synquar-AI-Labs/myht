@@ -19,7 +19,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
   const upcoming = page.locator('section').filter({ hasText: 'Coming up · next 12 hours' });
   const given = page.locator('section').filter({ hasText: 'Given · last 12 hours' });
   const widths: unknown[] = [];
-  for (const [width, height] of [[393, 852], [800, 1280], [1024, 768], [1280, 800]]) {
+  for (const [width, height] of [[320, 568], [360, 800], [393, 852], [800, 1280], [1280, 800]]) {
     await page.setViewportSize({ width, height });
     for (const scale of [100, 130]) {
       await page.evaluate(scale => document.documentElement.style.fontSize = `${16 * scale / 100}px`, scale);
@@ -40,10 +40,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
         return [...document.querySelectorAll<HTMLElement>('.dose-card')].map(card => {
           const headers = [...card.querySelectorAll<HTMLElement>('.dose-time-header')];
           if (!headers.length) throw new Error(`Cannot measure dose card with no headers: ${card.closest('section')!.textContent}`);
-          const sameLine = (header: Element) => {
-            const a = rect(header.querySelector('.dose-time')!), b = rect(header.querySelector('.dose-relative')!);
-            return near(a.y + a.height / 2, b.y + b.height / 2);
-          };
+          const sameLine = (header: Element) => getComputedStyle(header).gridTemplateAreas.includes('time relative status count chevron');
           const single = headers.map(sameLine);
           const relativeXs = headers.map(header => rect(header.querySelector('.dose-relative')!).x);
           const countRights = headers.map(header => rect(header.querySelector('.dose-count')!).right);
@@ -52,55 +49,78 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
           headers.forEach((header, i) => {
             const time = rect(header.querySelector('.dose-time')!);
             const relative = rect(header.querySelector('.dose-relative')!);
-            const controls = rect(header.querySelector('.dose-controls svg')!);
+            const controls = rect(header.querySelector('.dose-chevron')!);
             const count = rect(header.querySelector('.dose-count')!);
+            if (header.classList.contains('dose-tinted')) {
+              if (!near(time.x - rect(header).x, 6) || !near(rect(header).right - controls.right, 6)) errors.push('tint padding');
+              if (getComputedStyle(card).overflowX !== 'hidden') errors.push('pulse not contained');
+              const chip = header.querySelector('.dose-count > span');
+              if (chip && getComputedStyle(chip).backgroundColor !== 'rgb(255, 255, 255)') errors.push('tinted chip not white');
+            }
+            if (single[i] && !near(relative.y + relative.height / 2, time.y + time.height / 2)) errors.push('not physically one line');
+            if (!single[i] && relative.y < time.bottom) errors.push('not physically two lines');
             if (!near(relative.x, relativeXs[0])) errors.push('relative column');
-            if (single[i] && !near(count.right, countRights[0])) errors.push('count column');
-            if (!single[i] && (!near(relative.x, time.x) || !near(count.right, controls.right))) errors.push('two-line edges');
-            header.parentElement!.querySelectorAll('.dose-name,.dose-detail,.dose-skip').forEach(el => { if (!near(rect(el).x, time.x)) errors.push('left edge'); });
+            if (!near(count.right, countRights[0])) errors.push('count column');
+            if (!single[i] && !near(relative.x, time.x)) errors.push('two-line label edge');
+            header.parentElement!.querySelectorAll('.dose-name,.dose-detail,.dose-skip').forEach(el => { if (!near(rect(el).x, time.x + 18)) errors.push('18px indent'); });
+            header.parentElement!.querySelectorAll('.dose-name').forEach(el => { if (getComputedStyle(el).fontWeight !== '600') errors.push('medicine name not semibold'); });
             header.parentElement!.querySelectorAll('.dose-record,.dose-undo').forEach(el => { if (!near(rect(el).right, controls.right)) errors.push('right edge'); });
+            const rows = header.parentElement!.querySelector('.dose-group-rows');
+            if (rows) {
+              const line = getComputedStyle(rows, '::before');
+              if (parseFloat(line.left) !== 6 || parseFloat(line.width) !== 2 || line.backgroundColor !== 'rgb(233, 226, 214)') errors.push('indent line');
+            }
             header.parentElement!.querySelectorAll<HTMLElement>('.dose-name,.dose-detail,.dose-skip,.dose-record,.dose-undo').forEach(el => {
               if (el.scrollWidth > el.clientWidth + 1) errors.push('clipped entry');
             });
             const undo = header.parentElement!.querySelector('.dose-undo');
             if (undo) { const range = document.createRange(); range.selectNodeContents(undo); if (!near(range.getBoundingClientRect().right, controls.right)) errors.push('Undo text edge'); }
-            header.querySelectorAll<HTMLElement>('span').forEach(el => { if (el.scrollWidth > el.clientWidth + 1) errors.push(`clipped header: ${el.className} ${el.textContent} (${el.scrollWidth}/${el.clientWidth})`); });
+            header.querySelectorAll<HTMLElement>('span').forEach(el => { if (el.scrollWidth > el.clientWidth + 1) errors.push('clipped header: ' + el.className + ' ' + el.scrollWidth + '/' + el.clientWidth); });
             if (header.scrollWidth > header.clientWidth + 1 || rect(header).right > rect(card).right) errors.push('overflow');
             if (rect(header).height < 44) errors.push('touch height');
           });
-          // Use real rendered header styles at the exact 30em threshold,
-          // including the widest specified strings and badge/count content.
+          const isUpcoming = card.closest('section')!.textContent!.includes('Coming up');
           const probe = document.createElement('div');
           probe.className = 'dose-card';
-          probe.style.cssText = 'position:absolute;visibility:hidden;width:30em;';
-          const fixture = headers.find(h => h.textContent?.includes('MISSED'))?.cloneNode(true) as HTMLElement ?? headers[0].cloneNode(true) as HTMLElement;
+          probe.style.cssText = 'position:absolute;visibility:hidden;width:18.25em;';
+          const fixture = (headers.find(h => h.textContent?.includes('MISSED')) ?? headers[0]).cloneNode(true) as HTMLElement;
           fixture.querySelector('.dose-time')!.textContent = '12:45 PM';
-          fixture.querySelector('.dose-relative')!.textContent = card.closest('section')!.textContent!.includes('Coming up') ? '11 hours 59 minutes late' : '11 hours 59 minutes ago';
-          fixture.querySelector('.dose-count')!.textContent = card.closest('section')!.textContent!.includes('Coming up') ? '99 medicines' : '12 given · 12 skipped';
+          fixture.querySelector('.dose-count > span')!.textContent = '99';
           probe.append(fixture); document.body.append(probe);
           const textWidth = (selector: string) => { const range = document.createRange(); range.selectNodeContents(fixture.querySelector(selector)!); return range.getBoundingClientRect().width; };
-          const fixtureStyle = getComputedStyle(fixture);
-          const isUpcoming = fixture.classList.contains('dose-upcoming-header');
-          const statusWidth = rect(fixture.querySelector('.dose-status')!).width;
-          const required = rect(fixture.querySelector('.dose-time')!).width + textWidth('.dose-relative') + textWidth('.dose-count') + statusWidth + rect(fixture.querySelector('.dose-chevron')!).width + (isUpcoming ? 4 : 3) * 8 + parseFloat(fixtureStyle.paddingLeft) + parseFloat(fixtureStyle.paddingRight);
-          const widestBadge = Math.max(0, ...headers.flatMap(header => [...header.querySelectorAll('.dose-status > span')].map(badge => rect(badge).width)));
-          if (isUpcoming && statusWidth < widestBadge) errors.push('status column narrower than badge');
+          const badge = fixture.querySelector('.dose-status > span')?.cloneNode(true) as HTMLElement;
+          const fixtures = (isUpcoming ? [['59 min ago', 'LATE'], ['11 h ago', 'MISSED'], ['', 'DUE NOW'], ['in 11 h 59 min', '']] : [['59 min ago', '12 skipped']]).map(([label, status]) => {
+            fixture.querySelector('.dose-relative')!.textContent = label;
+            if (isUpcoming) {
+              fixture.querySelector('.dose-status')!.replaceChildren();
+              fixture.classList.toggle('dose-tinted', !!status);
+              if (status) { const copy = badge.cloneNode(true) as HTMLElement; copy.textContent = status; fixture.querySelector('.dose-status')!.append(copy); }
+            }
+            else fixture.querySelector('.dose-status')!.innerHTML = '<span class="dose-skipped-count whitespace-nowrap text-sm text-[#8b8175]">12 skipped</span>';
+            const statusWidth = rect(fixture.querySelector('.dose-status')!).width;
+            const required = rect(fixture.querySelector('.dose-time')!).width + textWidth('.dose-relative') + statusWidth + rect(fixture.querySelector('.dose-count')!).width + rect(fixture.querySelector('.dose-chevron')!).width + 24;
+            if (fixture.scrollWidth > fixture.clientWidth + 1 || fixture.querySelector<HTMLElement>('.dose-relative')!.scrollWidth > fixture.querySelector<HTMLElement>('.dose-relative')!.clientWidth + 1) errors.push('longest fixture overflow');
+            return { label, status, required, statusWidth, single: sameLine(fixture) };
+          });
           const threshold = rect(probe).width;
-          if (fixture.scrollWidth > fixture.clientWidth + 1 || fixture.querySelector<HTMLElement>('.dose-relative')!.scrollWidth > fixture.querySelector<HTMLElement>('.dose-relative')!.clientWidth + 1) errors.push('longest fixture overflow');
-          const fixtureSingle = sameLine(fixture);
           probe.remove();
           const style = getComputedStyle(card);
-          return { card: card.closest('section')!.textContent!.includes('Coming up') ? 'Coming up' : 'Given', width: card.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight), single, errors, threshold, required, statusWidth, widestBadge, countRights, fixtureSingle };
+          return { card: isUpcoming ? 'Coming up' : 'Given', width: card.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight), single, errors, threshold, fixtures, countRights };
         });
       });
       widths.push({ viewport: width, scale, cards: result });
+      if (width < 768) {
+        const clock = page.locator('[data-today-clock]');
+        await expect(clock).toHaveCSS('white-space', 'nowrap');
+        expect(await clock.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+      }
       for (const card of result) {
         expect(card.errors, JSON.stringify({ width, scale, card })).toEqual([]);
         expect(new Set(card.single).size).toBe(1);
-        expect(card.fixtureSingle).toBe(true);
-        expect(card.required).toBeLessThanOrEqual(card.threshold);
-        if (width === 393 || width === 800) expect(card.single.every(value => !value)).toBe(true);
-        if (width === 1280 && scale === 100) expect(card.single.every(Boolean)).toBe(true);
+        for (const fixture of card.fixtures) { expect(fixture.single).toBe(true); expect(fixture.required).toBeLessThanOrEqual(card.threshold); }
+        expect(card.single.every(Boolean)).toBe(card.width >= card.threshold);
+        if (width === 320) expect(card.single.every(value => !value)).toBe(true);
+        if (width >= 360 && scale === 100) expect(card.single.every(Boolean)).toBe(true);
       }
       const dir = `test-results/today-layout/${width}x${height}`;
       const suffix = scale === 130 ? '-text130' : '';
@@ -110,7 +130,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
       await expect(missed).toHaveCSS('background-color', 'rgb(243, 240, 236)');
       await expect(missed).toHaveCSS('animation-name', 'none');
       // Close every group, then open only a calm scheduled group.
-      for (const header of await upcoming.locator('.dose-time-header').all()) if (await header.getAttribute('aria-expanded') === 'true') await header.click();
+      for (const section of [upcoming, given]) for (const header of await section.locator('.dose-time-header').all()) if (await header.getAttribute('aria-expanded') === 'true') await header.click();
       await page.screenshot({ path: `${dir}/closed${suffix}.png`, fullPage: true, animations: 'disabled' });
       await upcoming.getByRole('button', { name: /^1:00 PM/ }).click();
       await page.screenshot({ path: `${dir}/calm-open${suffix}.png`, fullPage: true, animations: 'disabled' });

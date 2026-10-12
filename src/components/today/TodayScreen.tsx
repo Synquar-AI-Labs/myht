@@ -133,7 +133,7 @@ export function TodayScreen() {
       <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#2e7d4f]">
         Given · last 12 hours
       </div>
-      <div className="dose-card rounded-2xl border border-[#e9e2d6] bg-white px-4 py-0.5">
+      <div className="dose-card rounded-2xl border border-[#e9e2d6] bg-white px-[12px] py-0.5 md:px-4">
         {!doseReady && <p className="py-3 text-center text-sm text-[#8b8175]">{doseError ? 'Dose history unavailable. Check the connection.' : 'Loading dose history…'}</p>}
         {doseReady && given.length === 0 && skipped.length === 0 && (
           <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing given in the last 12 hours.</p>
@@ -151,7 +151,7 @@ export function TodayScreen() {
           Coming up · next 12 hours
         </span>
       </div>
-      <div className="dose-card rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-4 py-0.5">
+      <div className="dose-card rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-[12px] py-0.5 md:px-4">
         {!doseReady && <p role={doseError ? 'alert' : 'status'} className="py-3 text-center text-sm text-[#8b8175]">{doseError ? "Couldn't load doses. Check the connection." : 'Loading doses…'}</p>}
         {doseReady && upcoming.length === 0 && (
           <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing scheduled in the next 12 hours.</p>
@@ -206,13 +206,13 @@ export function TodayScreen() {
       {isMobile ? (
         <>
           {/* Header: date + live clock */}
-          <div className="flex items-baseline justify-between px-5 pt-5">
-            <h1 className="text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
-            <span className="text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
+          <div className="flex items-baseline justify-between gap-3 px-[20px] pt-5">
+            <h1 className="min-w-0 text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
+            <span data-today-clock className="flex-none whitespace-nowrap text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
-          <div className="px-5 pt-[18px]">{givenCard}</div>
-          <div className="px-5 pt-[22px]">{upcomingCard}</div>
-          <div className="px-5 pb-6 pt-[22px]">
+          <div className="px-[20px] pt-[18px]">{givenCard}</div>
+          <div className="px-[20px] pt-[22px]">{upcomingCard}</div>
+          <div className="px-[20px] pb-6 pt-[22px]">
             {recordPills}
           </div>
         </>

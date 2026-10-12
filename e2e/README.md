@@ -64,10 +64,12 @@ production artifact with the local stack's URL and serves it on loopback; only
 that production test can reload. The normal Vite/e2e app has updates disabled.
 
 The Today card-layout test checks shared text edges and longest-header fixtures
-at 393, 800, 1024 and 1280 px, with normal and 130% text. Full-size captures
+at 320, 360, 393, 800 and 1280 px, with normal and 130% text. Full-size captures
 and `measurements.json` are in `test-results/today-layout/`. Every header in a
-card uses the same 30em container threshold; no viewport breakpoint or per-row
+card uses the same 18.25em container threshold; no viewport breakpoint or per-row
 measurement selects the layout.
+Names, dose details and skipped lines are indented 18px; the group line is
+6px in and 2px wide. Record/Undo retain the chevron's right edge.
 
 Type-check the application and build configuration explicitly:
 `npx tsc -p tsconfig.app.json --noEmit` and

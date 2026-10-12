@@ -9,10 +9,21 @@ const now = new Date('2026-10-11T12:00:00');
 const medicine = { id: 'a', name: 'Synthetic medicine', potency: '', amount: '1 tablet' } as Medicine;
 
 describe('dose group controls', () => {
+  it('shows a numbered chip with its full accessible name', () => {
+    render(<DoseTimeGroups upcoming={[{ at: now, medicine, state: 'due' }, { at: now, medicine: { ...medicine, id: 'b' }, state: 'due' }]} now={now} />);
+    expect(screen.getByLabelText('2 medicines')).toHaveTextContent('2');
+    expect(screen.getByRole('button', { name: /2 medicines/ })).toBeInTheDocument();
+  });
+  it('shows skipped words but no given chip when nothing was given', () => {
+    render(<DoseTimeGroups given={[]} skipped={[{ at: now, medicine, skip: { id: 'skip', medicine_id: medicine.id, for_date: '2026-10-11', for_minute: 720, reason: 'Not needed', recorded_by: 'Synthetic caregiver', created_at: '' } }]} now={now} />);
+    expect(screen.getByText('1 skipped')).toBeVisible();
+    expect(screen.queryByLabelText('0 given')).not.toBeInTheDocument();
+  });
   it('keeps MISSED neutral and steady, unlike pulsing pink LATE', () => {
     render(<DoseTimeGroups upcoming={[{ at: now, medicine, state: 'missed' }]} now={now} />);
     const row = screen.getByRole('button', { name: /MISSED/ });
     expect(row).toHaveStyle({ backgroundColor: '#f3f0ec', color: '#7f1d1d' });
+    expect(screen.getByLabelText('1 medicine')).toHaveStyle({ backgroundColor: '#ffffff' });
     expect(row).not.toHaveClass('medicine-pulse-fast', 'medicine-pulse-slow');
     expect(URGENCY.missed.tint).not.toBe(URGENCY.late.tint);
     fireEvent.click(row);
@@ -50,6 +61,7 @@ describe('dose group controls', () => {
     const item = { at: now, medicine, log: { id: 'log', recorded_by: 'Synthetic caregiver' } } as GivenItem;
     render(<DoseTimeGroups given={[item]} now={now} />);
     const time = screen.getByRole('button', { name: /12:00 PM.*1 given/ });
+    expect(screen.getByLabelText('1 given')).toHaveStyle({ backgroundColor: '#f3f0ec' });
     expect(time).toHaveAttribute('aria-expanded', 'false');
     fireEvent.click(time);
     expect(time).toHaveAttribute('aria-expanded', 'true');

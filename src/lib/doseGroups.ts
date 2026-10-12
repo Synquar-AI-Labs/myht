@@ -14,6 +14,16 @@ export function relativeDoseTime(at: Date, now: Date): string {
   return minutes > 0 ? `in ${units}` : `${units} late`;
 }
 
+/** Compact copy for time headers only; the logging flows keep the full wording. */
+export function headerDoseTime(at: Date, now: Date, state?: SlotState): string {
+  if (state === 'due') return '';
+  const difference = at.getTime() - now.getTime();
+  const minutes = Math.floor(Math.abs(difference) / 60_000);
+  if (!minutes) return state ? '' : 'now';
+  const amount = minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h${difference > 0 && minutes % 60 ? ` ${minutes % 60} min` : ''}`;
+  return difference > 0 ? `in ${amount}` : `${amount} ago`;
+}
+
 export function groupDoseTimes<T extends { at: Date }>(items: T[]) {
   const groups = new Map<number, { at: Date; items: T[] }>();
   items.forEach(item => {
