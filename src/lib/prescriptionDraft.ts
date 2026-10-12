@@ -10,10 +10,11 @@ export function prescriptionDraft(medicine: PrescriptionMedicine, today: string)
   if (medicine.days === 'unknown' || (medicine.days === 'every_n_days' && !interval)) marks.add('frequency');
   if (interval) marks.add('start_date');
   const count = medicine.every_hours ? fillMedicineTimes(medicine.every_hours, 480).length : medicine.times_per_day ?? 1;
+  const duration = medicine.duration && !medicine.instructions.toLowerCase().includes(medicine.duration.toLowerCase()) ? medicine.duration : '';
   const form: MedicineScheduleInsert = {
     name: medicine.name, potency: medicine.strength, amount: medicine.amount,
     med_type: '', category: 'medicine', frequency, start_date: interval ? today : null,
-    schedule_time: '', schedule_note: [medicine.instructions, medicine.duration].filter(Boolean).join(', '),
+    schedule_time: '', schedule_note: [medicine.instructions, duration].filter(Boolean).join(', '),
     show_in_quick_log: true, source: 'prescription_photo',
   };
   return { form, times: frequency === 'as needed' ? [] : Array.from({ length: count }, () => undefined as number | undefined),

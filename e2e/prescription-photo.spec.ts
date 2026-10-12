@@ -76,6 +76,7 @@ test('s. Photos are shrunk, ordered, reviewed in the existing form and added wit
   await expect(viewer.getByRole('heading', { name: 'Photo 2', exact: true })).toBeVisible();
   await expect(viewer.getByRole('button', { name: 'Next photo', exact: true })).toBeDisabled();
   await page.keyboard.press('Escape');
+  await expect(page.getByRole('heading', { name: 'Photo 2', exact: true })).toHaveCount(0);
   await expect(form.getByRole('button', { name: 'View photos', exact: true })).toBeVisible();
   await form.getByRole('button', { name: 'Fill times', exact: true }).click();
   await expect(form.getByText('Replace the times you picked?', { exact: true })).toHaveCount(0);
@@ -96,7 +97,9 @@ test('s. Photos are shrunk, ordered, reviewed in the existing form and added wit
   await already.getByRole('button', { name: 'Open it', exact: true }).click();
   await expect(form.getByRole('heading', { name: 'Edit Medicine', exact: true })).toBeVisible();
   await expect(form.getByPlaceholder('Medicine name')).toHaveValue('Existing synthetic tablet');
+  await expect(form.getByPlaceholder('Medicine name')).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(form).toHaveCount(0);
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   const stored = await page.evaluate(async () => {
     const values: unknown[] = Object.values(localStorage);

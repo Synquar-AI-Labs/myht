@@ -18,7 +18,8 @@ export function validatePrescription(value: unknown, photoCount: number): Prescr
     const unsure = new Set(entry.unsure.filter((field): field is string => typeof field === 'string' && FIELDS.includes(field)));
     const text = (field: string, max: number, mark = field) => {
       if (typeof entry[field] !== 'string') throw new ReaderFailed();
-      const raw = entry[field].trim();
+      const trimmed = entry[field].trim();
+      const raw = ['amount', 'instructions', 'duration'].includes(field) ? trimmed.replace(/[.,;]$/, '').trimEnd() : trimmed;
       if (raw.length > max && FIELDS.includes(mark)) unsure.add(mark);
       return raw.slice(0, max);
     };

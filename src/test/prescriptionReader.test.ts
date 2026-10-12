@@ -45,6 +45,12 @@ describe('bounded photo request', () => {
   });
 });
 describe('prescription validation', () => {
+  it.each(['.', ',', ';'])('removes one trailing %s after trimming only the three direction fields', punctuation => {
+    const med = validatePrescription(result({ ...medicine, name: 'Synthetic tablet.', strength: '5 mg.', amount: ` 1 tablet${punctuation} `, instructions: ` with food${punctuation} `, duration: ` for 5 days${punctuation} ` }), 1).medicines[0];
+    expect([med.amount, med.instructions, med.duration]).toEqual(['1 tablet', 'with food', 'for 5 days']);
+    expect(med.name).toBe('Synthetic tablet.');expect(med.strength).toBe('5 mg.');
+    expect(validatePrescription(result({ ...medicine, amount: '1.5 ml..' }), 1).medicines[0].amount).toBe('1.5 ml.');
+  });
   it('trims text, bounds lengths and combines instructions/duration within 300', () => {
     const med = validatePrescription(result({ ...medicine, name: 'x'.repeat(121), strength: 'x'.repeat(61), amount: 'x'.repeat(61), instructions: 'x'.repeat(299), duration: 'for 7 days', source_text: 'x'.repeat(301) }), 1).medicines[0];
     expect([med.name.length, med.strength.length, med.amount.length, med.source_text.length]).toEqual([120, 60, 60, 300]);
@@ -82,6 +88,10 @@ describe('prescription validation', () => {
 describe('upstream boundaries without a key or network', () => {
   it('builds one ordered high-detail request, explicitly unstored, with a strict schema', () => {
     const body = prescriptionRequest(['first', 'second']);
+    expect(body.messages[0].content).toContain('amount is the quantity for one dose only, as written but without the verb');
+    expect(body.messages[0].content).toContain('instructions contains only extra directions that have no field of their own');
+    expect(body.messages[0].content).toContain('never the amount, how often, or for how long');
+    expect(body.messages[0].content).toContain('days is "daily" when the medicine is taken a number of times a day or every N hours and nothing else is said about days');
     expect(body).toMatchObject({ model: 'gpt-5.2', store: false, max_completion_tokens: 6000 });
     expect(body).not.toHaveProperty('temperature');
     expect(body.messages[1].content).toEqual(['first', 'second'].map(photo => ({ type: 'image_url', image_url: { url: `data:image/jpeg;base64,${photo}`, detail: 'high' } })));

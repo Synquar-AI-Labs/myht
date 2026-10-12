@@ -5,6 +5,11 @@ import { hasPickedMedicineTimes, fillMedicineTimes } from '@/lib/medicineForm';
 import type { PrescriptionMedicine } from '../../supabase/functions/read-prescription/validation';
 const medicine: PrescriptionMedicine = { name: 'Synthetic tablet', strength: '5 mg', amount: '1 tablet', days: 'daily', every_days: null, times_per_day: 2, every_hours: null, instructions: 'after meals', duration: 'for 7 days', source_text: 'Synthetic tablet', unsure: ['strength'], photos: [1] };
 describe('photo draft for the one medicine form', () => {
+  it('does not repeat a duration already in the instructions, ignoring capitals', () => {
+    expect(prescriptionDraft({ ...medicine, instructions: 'With food FOR 7 DAYS' }, '2026-10-12').form.schedule_note).toBe('With food FOR 7 DAYS');
+    expect(prescriptionDraft({ ...medicine, instructions: '', duration: 'for 7 days' }, '2026-10-12').form.schedule_note).toBe('for 7 days');
+    expect(prescriptionDraft({ ...medicine, instructions: 'after meals', duration: '' }, '2026-10-12').form.schedule_note).toBe('after meals');
+  });
   it('uses plain once-a-day wording and always marks an unread name', () => {
     const draft = prescriptionDraft({ ...medicine, name: '', unsure: [], times_per_day: 1 }, '2026-10-12');
     expect(draft.frequencyNote).toBe('The prescription says: once a day. Pick the time.');
