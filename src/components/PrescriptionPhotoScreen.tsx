@@ -10,6 +10,7 @@ import { preparePhoto, PHOTO_OPEN_ERROR } from '@/lib/preparePhoto';
 import { photoSources, prescriptionDraft, prescriptionMessage, samePrescriptionName } from '@/lib/prescriptionDraft';
 import { validatePrescription, type PrescriptionMedicine, type PrescriptionResult } from '../../supabase/functions/read-prescription/validation';
 import { toast } from 'sonner';
+import { useNativeBack } from '@/native/back';
 
 export type PrescriptionPhoto = { blob: Blob; url: string; number: number };
 export type PhotoFormContext = {
@@ -47,6 +48,11 @@ export function PrescriptionPhotoScreen({ medicines, loaded, loadError, onRetry,
   const urls = useRef(new Set<string>());
   const mounted = useRef(true);
   const pendingRead = useRef<AbortController>();
+  useNativeBack(() => {
+    if (reading || preparing || pendingRead.current) return true;
+    if (document.querySelector('[role="dialog"][data-state="open"]')) return false;
+    onBack(); return true;
+  }, 2, true);
   useEffect(() => {
     mounted.current = true;
     return () => { mounted.current = false; pendingRead.current?.abort(); for (const url of urls.current) URL.revokeObjectURL(url); urls.current.clear(); };

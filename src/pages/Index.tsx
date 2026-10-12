@@ -4,6 +4,8 @@ import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { Minimize, Loader2, Clock, BarChart3, MoreHorizontal } from 'lucide-react';
 import { TodayScreen } from '@/components/today/TodayScreen';
 import { RecordingIndicator } from '@/components/RecordingIndicator';
+import { useNativeBack } from '@/native/back';
+import { isNativeApp } from '@/native/platform';
 
 const HistoryTab = lazy(() => import('@/components/history/HistoryTab').then(m => ({ default: m.HistoryTab })));
 const MoreShelf = lazy(() => import('@/components/more/MoreShelf').then(m => ({ default: m.MoreShelf })));
@@ -22,10 +24,18 @@ const Index = () => {
   // True while the day editor has a save in flight — switching tabs then
   // would unmount the form and orphan (or lose) the write.
   const [navLocked, setNavLocked] = useState(false);
+  useNativeBack(useCallback(() => {
+    if (navLocked) return true;
+    if (activeTab !== 'today') { setActiveTab('today'); return true; }
+    return false;
+  }, [activeTab, navLocked]), 0);
   useRealtimeSync();
   const { signOut } = useAuth();
 
   const toggleFullscreen = useCallback(() => {
+    // A native WebView already fills the app window; browser Fullscreen is
+    // unavailable on iOS. Reuse the same presentation layout without it.
+    if (isNativeApp()) { setIsFullscreen(value => !value); return; }
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
     } else {

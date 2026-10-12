@@ -4,8 +4,9 @@ import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
 import { scanArtifact } from '../staging-artifact.mjs';
 
-scanArtifact('dist-staging');
-const root = resolve('dist-staging');
+const artifactDir = process.argv[2] ?? 'dist-staging';
+scanArtifact(artifactDir);
+const root = resolve(artifactDir);
 const types = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.svg': 'image/svg+xml' };
 const server = createServer((req, res) => {
   let file = resolve(root, '.' + new URL(req.url, 'http://localhost').pathname);
@@ -28,5 +29,5 @@ try {
     await page.getByRole('button', { name: 'Create an account', exact: true }).waitFor({ state: 'visible' });
     console.log(`PASS static ${path}: HTTP 200, account screen rendered (all remote requests blocked)`);
   }
-  console.log('PASS client target: ' + scanArtifact('dist-staging').host);
+  console.log('PASS client target: ' + scanArtifact(artifactDir).host);
 } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

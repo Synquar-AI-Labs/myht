@@ -20,7 +20,18 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), mode === "development" && componentTagger(), buildVersionPlugin].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger(), buildVersionPlugin,
+    process.env.VITE_NATIVE_APP === 'true' && {
+      name: 'native-html',
+      transformIndexHtml(html: string) {
+        const api = process.env.VITE_SUPABASE_URL!;
+        const socket = api.replace(/^http/, 'ws');
+        const policy = `default-src 'self'; connect-src 'self' ${api} ${socket}; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'`;
+        return html.replace('<head>', `<head><meta http-equiv="Content-Security-Policy" content="${policy}">`).replace('width=device-width, initial-scale=1.0', 'width=device-width, initial-scale=1.0, viewport-fit=cover')
+          .replace(/\s*<link[\s\S]*?\/>/g, '');
+      },
+    },
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

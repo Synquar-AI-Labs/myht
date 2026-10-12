@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { savePdf } from '@/native/files';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
@@ -144,7 +145,7 @@ function generateMedPdf(
     },
   });
 
-  doc.save(filename);
+  void savePdf(doc, filename);
 }
 
 export function MedicineReportCards() {

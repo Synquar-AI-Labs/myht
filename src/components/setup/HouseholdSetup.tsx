@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { accountError, resolveSetup } from '@/lib/accountSetup';
 import { familyInviteMessage } from '@/lib/familyInvite';
+import { inviteOrigin } from '@/native/platform';
+import { shareInvite } from '@/native/share';
 import { SetupBrand, SetupField, SetupLayout } from './SetupLayout';
 
 export function HouseholdSetup({ children }: { children: React.ReactNode }) {
@@ -73,10 +75,9 @@ export function HouseholdSetup({ children }: { children: React.ReactNode }) {
     });
   };
   const share = async (address: string) => {
-    const text = familyInviteMessage(address, window.location.origin);
+    const text = familyInviteMessage(address, inviteOrigin());
     try {
-      if (navigator.share) await navigator.share({ title: 'Join our family', text });
-      else setShareText(text);
+      if (!await shareInvite(text)) setShareText(text);
     } catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) setShareText(text); }
   };
   return <SetupLayout>

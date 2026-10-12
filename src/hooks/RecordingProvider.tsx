@@ -16,6 +16,7 @@ import { useHousehold } from '@/hooks/HouseholdProvider';
 import { useUpdateBusy, holdUpdateWork, withUpdateWork } from '@/hooks/useUpdateBusy';
 import { domainKeys } from '@/lib/domainKeys';
 import { transcriptionError } from '@/lib/transcriptionError';
+import { saveAudio } from '@/native/files';
 
 const MIME_EXT: Record<string, string> = {
   'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'm4a', 'audio/x-caf': 'm4a',
@@ -369,12 +370,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       }
     } catch { if (mounted.current) toast.error('Could not download the audio. Sign in to the same family and try again.'); return; }
     if (!blob || !mounted.current) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `conversation-${jobRef.current.metadata.date || 'recording'}.${ext ?? 'webm'}`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    await saveAudio(blob, `conversation-${jobRef.current.metadata.date || 'recording'}.${ext ?? 'webm'}`);
   }, [checkIdentity]);
 
   const setMetadata = useCallback((m: Partial<JobMetadata>) => {

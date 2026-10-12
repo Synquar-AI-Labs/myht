@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AppUpdate } from '@/components/AppUpdate';
+import { isNativeApp } from '@/native/platform';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,7 +42,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AppUpdate />
+      {!isNativeApp() && <AppUpdate />}
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />

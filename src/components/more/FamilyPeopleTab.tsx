@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+import { useNativeBack } from '@/native/back';
+import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +10,8 @@ import { useFamilyInvites } from '@/hooks/useFamilyInvites';
 import { supabase } from '@/integrations/supabase/client';
 import { accountError } from '@/lib/accountSetup';
 import { familyInviteMessage } from '@/lib/familyInvite';
+import { inviteOrigin } from '@/native/platform';
+import { shareInvite } from '@/native/share';
 import { domainKeys } from '@/lib/domainKeys';
 import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
@@ -23,6 +27,11 @@ export function FamilyPeopleTab() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [shareText, setShareText] = useState('');
+  useNativeBack(() => {
+    if (!email && !name && !target) return false;
+    toast.info('Save or cancel your changes first.');
+    return true;
+  }, 3, true);
   useUpdateBusy(busy || !!email || !!name || !!target);
   const admin = role === 'admin';
   const run = async (action: () => Promise<void>) => {
@@ -35,10 +44,9 @@ export function FamilyPeopleTab() {
     } catch (e) { setError(accountError(e)); } finally { setBusy(false); }
   };
   const share = async (address: string) => {
-    const text = familyInviteMessage(address, window.location.origin);
+    const text = familyInviteMessage(address, inviteOrigin());
     try {
-      if (navigator.share) await navigator.share({ title: 'Join our family', text });
-      else setShareText(text);
+      if (!await shareInvite(text)) setShareText(text);
     } catch (e) { if (!(e instanceof DOMException && e.name === 'AbortError')) setShareText(text); }
   };
   const card = 'rounded-2xl border border-[#e9e2d6] bg-white p-4';

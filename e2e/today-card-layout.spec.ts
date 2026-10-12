@@ -1,4 +1,5 @@
 import { test, expect, family, checked, signIn, today } from './helpers';
+import { closeDialog } from './dismiss';
 import { writeFile, mkdir } from 'node:fs/promises';
 
 test('r. Card-width headers share edges, fit longest labels and show corrected dose states', async ({ page, sessions }) => {
@@ -149,7 +150,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
       await expect(sheet.getByRole('combobox', { name: 'Dose time' })).toBeVisible();
       await expect(async () => { const r = await sheet.boundingBox(); expect(r!.y + r!.height).toBeLessThanOrEqual(height + 1); }).toPass();
       await page.screenshot({ path: `${dir}/late-another-time${suffix}.png`, animations: 'disabled' });
-      await page.keyboard.press('Escape');
+      await closeDialog(page, sheet);
       await expect(sheet).toHaveCount(0);
       if (width === 393 || width === 1280) {
         const medicinePill = page.getByRole('button', { name: /^Record a medicine/ });
@@ -163,7 +164,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
         await expect(answer).toHaveCSS('background-color', 'rgb(246, 238, 228)');
         await expect(answer.locator('svg[aria-hidden="true"]')).toHaveCount(1);
         await page.screenshot({ path: `${dir}/which-dose-selected${suffix}.png`, animations: 'disabled' });
-        await page.keyboard.press('Escape');
+        await closeDialog(page, sheet);
         await expect(sheet).toHaveCount(0);
         if (await medicinePill.getAttribute('aria-expanded') === 'true') await medicinePill.click();
         await upcoming.getByRole('button', { name: /^Late tablet/ }).click();
@@ -174,7 +175,7 @@ test('r. Card-width headers share edges, fit longest labels and show corrected d
         await expect(answer).toHaveCSS('background-color', 'rgb(246, 238, 228)');
         await expect(answer.locator('svg[aria-hidden="true"]')).toHaveCount(1);
         await page.screenshot({ path: `${dir}/skip-reason-selected${suffix}.png`, animations: 'disabled' });
-        await page.keyboard.press('Escape');
+        await closeDialog(page, sheet);
         await expect(sheet).toHaveCount(0);
       }
     }

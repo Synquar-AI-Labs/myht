@@ -5,6 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { accountError } from '@/lib/accountSetup';
 import { SetupBrand, SetupField, SetupLayout } from '@/components/setup/SetupLayout';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { useNativeBack } from '@/native/back';
+import { isNativeApp } from '@/native/platform';
 
 type Screen = 'main' | 'signup' | 'signin' | 'code' | 'forgot' | 'recovery' | 'password';
 export default function Auth() {
@@ -20,6 +22,7 @@ export default function Auth() {
   const codeInput = useRef<HTMLInputElement>(null);
   const recovering = useRef(false);
   const navigate = useNavigate();
+  const steps = useRef<Screen[]>([]);
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session && !recovering.current) navigate('/', { replace: true });
@@ -29,10 +32,19 @@ export default function Auth() {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
-  const go = (next: Screen) => {
+  const go = (next: Screen, remember = true) => {
+    if (next === 'main') steps.current = [];
+    else if (remember && next !== screen) steps.current.push(screen);
     if (next === 'main' || next === 'signin' || next === 'signup') recovering.current = false;
     setError(''); setNotice(''); setCode(''); setScreen(next);
   };
+  const back = () => {
+    if (busy) return true;
+    if (screen === 'main') return false;
+    go(steps.current.pop() ?? 'main', false);
+    return true;
+  };
+  useNativeBack(back, 2, true);
   const run = async (action: () => Promise<void>) => {
     setBusy(true); setError(''); setNotice('');
     try { await action(); } catch (e) { setError(accountError(e)); } finally { setBusy(false); }
@@ -98,7 +110,7 @@ export default function Auth() {
   const title = screen === 'signup' ? 'Create your account' : screen === 'signin' ? 'Welcome back'
     : screen === 'forgot' ? 'Forgot your password?' : screen === 'password' ? 'Choose a new password' : 'Check your email';
   return <SetupLayout>
-    <button className="setup-link" style={{ alignSelf: 'flex-start' }} disabled={busy} onClick={() => go('main')}>‹ Back</button>
+    <button className="setup-link" style={{ alignSelf: 'flex-start' }} disabled={busy} onClick={() => { if (isNativeApp()) back(); else go('main'); }}>‹ Back</button>
     {screen === 'signin' && <SetupBrand />}
     <h1>{title}</h1>
     {isCode && <p>Enter the 6-digit code for <strong>{email}</strong> {screen === 'code' ? 'to finish creating your account.' : 'to reset your password.'}</p>}

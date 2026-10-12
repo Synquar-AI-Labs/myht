@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { closeDialog } from './dismiss';
 import { test, expect, family, checked, person, signIn, today, tomorrow, choose } from './helpers';
 import type { Page } from '@playwright/test';
 
@@ -166,14 +167,14 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
     await capture(page, 'reading-tiles', `${width}x${height}`, scale);
     await page.getByRole('button', { name: /^Feed / }).click();
     await capture(page, 'reading-sheet', `${width}x${height}`, scale);
-    await page.keyboard.press('Escape');
+    await closeDialog(page, page.getByRole('dialog'));
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.getByRole('button', { name: /^Record a medicine/ }).click();
     await capture(page, 'medicine-list', `${width}x${height}`, scale);
     await page.locator('.collapsible-content[data-state="open"]').getByRole('button', { name: /^Synthetic morning medicine/ }).click();
     await expect(page.getByRole('dialog').getByRole('heading', { name: 'Log Synthetic morning medicine', exact: true })).toBeVisible();
     await capture(page, 'dose-sheet', `${width}x${height}`, scale);
-    await page.keyboard.press('Escape');
+    await closeDialog(page, page.getByRole('dialog'));
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.getByRole('button', { name: 'History', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Edit this day' })).toBeVisible();
@@ -205,7 +206,7 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
         await capture(page, 'medicine-form', `${width}x${height}`, scale);
         await form.getByRole('button', { name: 'Add Medicine', exact: true }).scrollIntoViewIfNeeded();
         await capture(page, 'medicine-form-bottom', `${width}x${height}`, scale);
-        await page.keyboard.press('Escape');
+        await closeDialog(page, form);
         await expect(page.getByRole('dialog')).toHaveCount(0);
       }
       await page.getByRole('button', { name: 'Back', exact: true }).click();

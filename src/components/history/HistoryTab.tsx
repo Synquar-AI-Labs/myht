@@ -1,4 +1,5 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { useNativeBack } from '@/native/back';
 import { format, parseISO, subDays } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -54,6 +55,11 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   const [view, setView] = useState<View>('diary');
   const [pickerOpen, setPickerOpen] = useState(false);
   const [editorBusy, setEditorBusy] = useState(false);
+  useNativeBack(useCallback(() => {
+    if (editorBusy) return true;
+    if (view !== 'diary') { setView('diary'); return true; }
+    return false;
+  }, [view, editorBusy]));
 
   const handleEditorBusy = (busy: boolean) => {
     setEditorBusy(busy);

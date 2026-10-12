@@ -1,4 +1,5 @@
 import { test, expect, family, checked, signIn, today, choose, more } from './helpers';
+import { dismissWithEscape } from './dismiss';
 
 test('k. Medicine form times, filler replacement, read-back, Other and legacy values', async ({ page, sessions }) => {
   void sessions;
@@ -20,7 +21,7 @@ test('k. Medicine form times, filler replacement, read-back, Other and legacy va
   await form.getByRole('combobox', { name: 'Medicine time 2', exact: true }).click();
   await expect(page.getByRole('option', { name: '6:00 AM', exact: true })).toBeDisabled();
   await expect(page.getByRole('option', { name: '10:00 AM', exact: true })).toBeFocused();
-  await page.keyboard.press('Escape');
+  await dismissWithEscape(page, page.getByRole('listbox'));
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await form.getByRole('button', { name: 'Given every few hours? Fill the times in for me.' }).click();
   await form.getByRole('button', { name: 'Fill times', exact: true }).click();

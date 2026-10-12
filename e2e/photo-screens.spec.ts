@@ -1,4 +1,5 @@
 import { test, expect, family, checked, signIn, more } from './helpers';
+import { closeDialog } from './dismiss';
 import { photoResult, syntheticPhoto, choosePhotos } from './prescription-fixtures';
 
 for (const [width, height] of [[320, 568], [393, 852], [800, 1280], [1280, 800]]) test(`${width}x${height} prescription photo screen audit`, async ({ page, sessions }) => {
@@ -66,7 +67,7 @@ for (const [width, height] of [[320, 568], [393, 852], [800, 1280], [1280, 800]]
     await form.getByRole('button', { name: 'Add Medicine', exact: true }).scrollIntoViewIfNeeded();
     await expect(form.getByRole('button', { name: 'Add Medicine', exact: true })).toBeInViewport({ ratio: 1 });
     await capture('filled-form-bottom', scale, false);
-    await page.keyboard.press('Escape');await expect(form).toHaveCount(0);
+    await closeDialog(page, form);
   }
   await page.evaluate(() => document.documentElement.style.fontSize = '');await page.getByRole('button', { name: 'Done', exact: true }).click();
   for (const scale of [100, 130]) {
@@ -104,7 +105,7 @@ for (const [width, height] of [[320, 568], [393, 852], [800, 1280], [1280, 800]]
     expect(await viewer.locator('[data-photo-scroll]').evaluate(el => [el.scrollLeft, el.scrollTop])).toEqual([0, 0]);
     await capture('viewer-bigger', scale, false);
     await viewer.getByRole('button', { name: 'Fit to screen', exact: true }).click();
-    await page.keyboard.press('Escape');await expect(viewer).toHaveCount(0);
+    await closeDialog(page, viewer);
     await choosePhotos(page, [{ ...photo, name: 'synthetic-2.png' }, { ...photo, name: 'synthetic-3.png' }]);
     await expect(page.getByRole('button', { name: 'Read 4 photos', exact: true })).toBeVisible();await capture('photo-four', scale);
     await page.getByRole('button', { name: 'Back to medicines', exact: true }).click();

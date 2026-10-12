@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useNativeBack } from '@/native/back';
 import { format, parseISO } from 'date-fns';
 import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { useQuery } from '@tanstack/react-query';
@@ -62,6 +63,10 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   const { householdId, careRecipientName, caregivers, role } = useHousehold();
   const invites = useFamilyInvites();
   const [view, setView] = useState<ShelfView>(null);
+  useNativeBack(useCallback(() => {
+    if (!view) return false;
+    setView(null); return true;
+  }, [view]));
 
   // Minute tick so "next appointment" can't stay stale on a mounted shelf.
   const [now, setNow] = useState(() => new Date());

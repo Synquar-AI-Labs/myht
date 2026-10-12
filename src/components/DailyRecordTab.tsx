@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { useNativeBack } from '@/native/back';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { HealthRecord, HealthRecordForm, dbToHealthForm } from '@/types/health';
 import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
@@ -55,6 +56,11 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   // While ANY write is in flight, every competing control locks — a save and
   // a delete of the same record must never race.
   const busy = saving || deleting;
+  useNativeBack(() => {
+    if (!dirty.current) return false;
+    toast.info('Save or cancel your changes first.');
+    return true;
+  }, 3, true);
   useUpdateBusy(busy || dirty.current);
   useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
 

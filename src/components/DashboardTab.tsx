@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { savePdf } from '@/native/files';
 import { eachDayOfInterval } from 'date-fns';
 import { MedicineReportCards } from '@/components/MedicineReportCards';
 import { useHousehold } from '@/hooks/HouseholdProvider';
@@ -141,7 +142,7 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
     },
   });
 
-  doc.save(filename);
+  void savePdf(doc, filename);
 }
 
 export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {

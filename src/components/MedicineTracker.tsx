@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNativeBack } from '@/native/back';
+import { toast } from 'sonner';
 import { DoseTimePicker } from '@/components/DoseTimePicker';
 import { currentQuarter, doseTimeFields, doseTimeValue, doseTimeLabel } from '@/lib/doseTime';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
@@ -35,6 +37,12 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const { caregivers } = useHousehold();
   const [editCaregiverId, setEditCaregiverId] = useState<string | null>(null);
   const [originalCaregiverId, setOriginalCaregiverId] = useState<string | null>(null);
+  const [editBaseline, setEditBaseline] = useState<{ medicine: string; time: number } | null>(null);
+  useNativeBack(() => {
+    if (!editingId || !editBaseline || (selectedMedicine === editBaseline.medicine && doseTime === editBaseline.time && editCaregiverId === originalCaregiverId)) return false;
+    toast.info('Save or cancel your changes first.');
+    return true;
+  }, 4, true);
   const editPeople = caregivers.filter(p => p.is_active || p.caregiver_id === originalCaregiverId);
   const [showNewMedicineDialog, setShowNewMedicineDialog] = useState(false);
   useUpdateBusy(showForm || showNewMedicineDialog);
@@ -61,6 +69,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const handleEdit = (log: MedicineLog) => {
     setSelectedMedicine(log.medicine_id);
     setDoseTime(doseTimeValue(log));
+    setEditBaseline({ medicine: log.medicine_id, time: doseTimeValue(log) });
     setEditingId(log.id);
     setEditCaregiverId(log.caregiver_id ?? null);
     setOriginalCaregiverId(log.caregiver_id ?? null);
