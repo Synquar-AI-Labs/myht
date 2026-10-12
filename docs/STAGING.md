@@ -117,7 +117,7 @@ The recording suites require the local function runtime, with JWT verification
 and an env file containing only an empty `OPENAI_API_KEY=`:
 
 ```sh
-npx --yes supabase@2.120.0 functions serve transcribe-audio --env-file <path-to-empty-key-env>
+npx --yes supabase@2.120.0 functions serve --env-file <path-to-empty-key-env>
 ```
 
 Expected: five migrations apply from nothing, TypeScript is clean, unit/build
@@ -316,6 +316,7 @@ Reset delegates to `resetRemote` in
 
 ```sh
 STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh functions deploy transcribe-audio --use-api
+STAGING_CONFIRM=lefqfxkvujqnukgzaviz scripts/staging.sh functions deploy read-prescription --use-api
 scripts/staging.sh secrets list
 ```
 
@@ -324,11 +325,15 @@ local Docker bundler failed with a missing `output.eszip`; this avoids that
 bundler, not JWT checks. Stop if server-side deployment fails; do not try
 another deployment route without approval.
 
-Expected: only `transcribe-audio` is deployed to staging, JWT verification stays
+Expected: `transcribe-audio` and `read-prescription` are deployed to staging, JWT verification stays
 enabled, and the secret inventory exposes names/digests, not values. Leader
 checks Edge Functions → transcribe-audio. An authorized call without an AI key
 returns `transcription_not_configured`; foreign/malformed storage paths receive
 the generic refusal. Do not make paid calls yet.
+
+For `read-prescription`, an authorized JPEG request without an AI key returns
+`prescription_not_configured`; foreign households receive its fixed generic
+refusal. Deploy it only after the prescription-read migration is applied.
 
 Undo: delete this staging function in the dashboard (owner), or redeploy a
 reviewed prior version to staging after approval. The app still records and

@@ -24,7 +24,7 @@ done
 change=false
 case "$*" in
   'migration list --linked'|'db push --linked --dry-run'|'secrets list'|'config preview') ;;
-  'db push --linked'|'db reset --linked'|'functions deploy transcribe-audio'|'functions deploy transcribe-audio --use-api'|'config push') change=true;;
+  'db push --linked'|'db reset --linked'|'functions deploy transcribe-audio'|'functions deploy transcribe-audio --use-api'|'functions deploy read-prescription'|'functions deploy read-prescription --use-api'|'config push') change=true;;
   *) echo 'REFUSED: command is not on the staging allowlist.' >&2; exit 1;;
 esac
 if [[ "$change" == true && "${STAGING_CONFIRM:-}" != "$ref" ]]; then
@@ -44,7 +44,7 @@ case "$*" in
     exit "$result";;
   'db reset --linked')
     exec supabase --workdir "$PWD" --yes "$@";;
-  'functions deploy transcribe-audio'|'functions deploy transcribe-audio --use-api'|'config push'|'secrets list')
+  'functions deploy transcribe-audio'|'functions deploy transcribe-audio --use-api'|'functions deploy read-prescription'|'functions deploy read-prescription --use-api'|'config push'|'secrets list')
     exec supabase --workdir "$PWD" "$@" --project-ref "$ref";;
   *) exec supabase --workdir "$PWD" "$@";;
 esac

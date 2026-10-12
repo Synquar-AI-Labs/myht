@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/test/e2e-preflight.mjs && playwright test",
-    "test:screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.screens.config.ts"
+    "test:screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.screens.config.ts",
+    "test:photo-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.photo-screens.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -784,6 +784,7 @@ export type Database = {
           schedule_note: string
           schedule_time: string
           show_in_quick_log: boolean
+          source: string
           start_date: string | null
         }
         Insert: {
@@ -799,6 +800,7 @@ export type Database = {
           schedule_note?: string
           schedule_time?: string
           show_in_quick_log?: boolean
+          source?: string
           start_date?: string | null
         }
         Update: {
@@ -814,6 +816,7 @@ export type Database = {
           schedule_note?: string
           schedule_time?: string
           show_in_quick_log?: boolean
+          source?: string
           start_date?: string | null
         }
         Relationships: [
@@ -831,18 +834,21 @@ export type Database = {
           at: string
           household_id: string
           id: number
+          kind: string
           user_id: string
         }
         Insert: {
           at?: string
           household_id: string
           id?: never
+          kind?: string
           user_id: string
         }
         Update: {
           at?: string
           household_id?: string
           id?: never
+          kind?: string
           user_id?: string
         }
         Relationships: [
@@ -911,6 +917,10 @@ export type Database = {
       accept_invite: {
         Args: { p_display_name: string; p_invite_id: string }
         Returns: string
+      }
+      claim_prescription_read: {
+        Args: { p_household_id: string }
+        Returns: undefined
       }
       claim_transcription: {
         Args: { p_household_id: string }

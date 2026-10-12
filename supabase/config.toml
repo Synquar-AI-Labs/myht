@@ -19,6 +19,8 @@ content_path = "./supabase/templates/recovery.html"
 
 [functions.transcribe-audio]
 verify_jwt = true
+[functions.read-prescription]
+verify_jwt = true
 [analytics]
 enabled = false
 

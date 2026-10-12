@@ -34,7 +34,7 @@ describe('staging command boundary (offline stand-in CLI)', () => {
   });
   it('requires per-invocation confirmation for each changing command', () => {
     const { run } = fixture();
-    for (const args of [['db', 'push', '--linked'], ['db', 'reset', '--linked'], ['functions', 'deploy', 'transcribe-audio'], ['functions', 'deploy', 'transcribe-audio', '--use-api'], ['config', 'push']]) {
+    for (const args of [['db', 'push', '--linked'], ['db', 'reset', '--linked'], ['functions', 'deploy', 'transcribe-audio'], ['functions', 'deploy', 'transcribe-audio', '--use-api'], ['functions', 'deploy', 'read-prescription'], ['functions', 'deploy', 'read-prescription', '--use-api'], ['config', 'push']]) {
       expect(run(args).status).toBe(1);
       expect(run(args, 'wrong-ref').status).toBe(1);
       const approved = run(args, ref);

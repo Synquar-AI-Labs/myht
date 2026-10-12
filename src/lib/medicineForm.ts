@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { medicineIntervalDays, nextMedicineDay } from '@/lib/medicineDays';
 
 export const MAX_MEDICINE_TIMES = 24;
+export const hasPickedMedicineTimes = (times: (number | undefined)[]) => times.some(time => time !== undefined);
 export const FREQUENCY_LABELS: Record<string, string> = {
   daily: 'Every day',
   ...Object.fromEntries(Array.from({ length: 6 }, (_, i) => [`every ${i + 2} days`, `Every ${i + 2} days`])),

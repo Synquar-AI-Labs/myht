@@ -3,11 +3,11 @@
 Run `npm run test:e2e` with the synthetic local Supabase stack running.
 Install the browser once with `npx playwright install chromium`.
 
-For recording and transcription authorization checks, also serve
-`transcribe-audio` locally with an env file containing only `OPENAI_API_KEY=`
+For recording, transcription and photo authorization checks, also serve
+`transcribe-audio` and `read-prescription` locally with an env file containing only `OPENAI_API_KEY=`
 (empty). Never supply an AI key for these tests. The local runtime must keep
 JWT verification enabled. On this Mac, CLI 2.109.1 fails to bootstrap the edge
-runtime; `npx --yes supabase@2.120.0 functions serve transcribe-audio --env-file
+runtime; `npx --yes supabase@2.120.0 functions serve --env-file
 <path-to-empty-key-env>` works. This command targets the local stack only.
 Both browser and isolation commands check for a token-free 401 before creating
 test data; if the runtime is unavailable they stop with this start command.
@@ -75,6 +75,12 @@ Type-check the application and build configuration explicitly:
 files; invoking it with `--noEmit` alone is not a type-check of either project.
 The e2e files and Playwright configs are currently transpiled by Playwright,
 not included in either TypeScript project or otherwise type-checked.
+
+Photo-import captures: `npm run test:photo-screens` checks eleven states at 320,
+393, 800 and 1280px, at normal and 130% text. Full-size images are under
+`test-results/prescription-photos/`. OCR answers are supplied fixtures; the
+normal e2e suite also checks the real local function's missing-key response.
+No test calls OpenAI.
 
 ## Later
 

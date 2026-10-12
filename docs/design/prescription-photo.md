@@ -40,18 +40,22 @@ fit in one picture, so several pictures must be able to cover one medicine.
    the medicine form can open over it.
    - One line, always shown: "The photos are sent to OpenAI to be read. This
      app does not keep them."
-   - **Take or choose a photo** (camera or library).
+   - Two buttons: **Take a photo** (single-image input with `capture="environment"`)
+     and **Choose photos** (multiple-image library input, no capture).
    - One line of help: "One photo is usually enough. For a round bottle or a
      long page, add more photos so that every word is in one of them."
    - After the first photo: each photo small, with its number and **Remove**;
-     **Add another photo** until there are 4; and the main button, **Read
+     both buttons keep the same labels until there are 4; and the main button, **Read
      1 photo** or **Read 2 photos**. Nothing is sent before that button.
    - **Back to medicines**.
 3. "Reading the photos…" While it reads, no second read can be started.
 4. **Check each medicine**
    - At the top, always: "Read by a computer. Check every line against the
      photos before adding."
-   - The photos, small and numbered. Tap one to see it full size.
+   - The photos, small and numbered. Tap one for a nearly full-screen viewer,
+     fitted first. **Make bigger** shows natural pixels with two-way scrolling;
+     **Fit to screen** returns to fitted. Previous/Next stay available. The form's
+     **View photos** uses this same viewer.
    - One short card per medicine found: the name, the strength and amount,
      then "The prescription says: …" with the words as read. With more than
      one photo the card also says where it was read: "From photos 1 and 2".
@@ -63,7 +67,21 @@ fit in one picture, so several pictures must be able to cover one medicine.
    - A name already in the cabinet: the card says "Already in your medicines:
      <that medicine>" and offers **Open it** (the normal edit form) instead of
      adding a second one.
+   - The app must know the family's medicines before it can say which ones
+     are new. While that list is loading, or if it could not be loaded,
+     **Check and add** is off and one line says why: "Loading your
+     medicines…", or "Your medicines could not be loaded, so the app cannot
+     tell which of these you already have. Check the connection." with
+     **Try again**.
+   - A medicine added from this list counts as in the cabinet at once,
+     without waiting for the list to refresh: its card says "Added", and
+     another card with the same name says "Already in your medicines".
 5. **Done** returns to the cabinet. Cards that were not added are forgotten.
+
+The cabinet itself gets the same honesty: when its list could not be loaded
+it says "Couldn't load medicines. Check the connection." Today it shows
+nothing, which looks like an empty cabinet and invites adding a medicine a
+second time.
 
 The form, when opened from a card:
 
@@ -74,6 +92,8 @@ The form, when opened from a card:
   (instructions as written, then the duration: "after meals, for 7 days") are
   filled in. Type is left empty: the reader does not classify medicines.
 - "At what times?" has empty boxes and never a time:
+  - "once a day" → 1 empty box and "The prescription says: once a day. Pick the time."
+    An unread name always has **Check this** on Name.
   - "2 times a day" → 2 empty boxes and the line "The prescription says:
     2 times a day. Pick the 2 times."
   - "every 8 hours" → the fill-in helper is open at 8 hours, with as many
@@ -126,11 +146,14 @@ Messages:
 **Edge function `read-prescription`** (`verify_jwt = true`), in this order:
 
 1. No valid user → 401.
-2. The request itself: a declared length over 9 MB → 413 before reading it;
-   then form data with a household id and 1 to 4 files; each file is at most
-   2 MB and starts with JPEG bytes. Anything else → 400 `photo_invalid`.
-   Supabase states no body limit for functions, so these are ours; they also
-   keep the work well inside its 2 seconds of processor time per request.
+2. The request itself. A declared length over 9 MB → 413 at once. The body
+   is then read with a real ceiling of 9 MB, counted as it arrives and cut
+   off with 413 when it goes over, so a request that declares no length gets
+   the same ceiling. Only then is it parsed as form data: a household id and
+   1 to 4 files; each file is at most 2 MB and starts with JPEG bytes.
+   Anything else → 400 `photo_invalid`. Supabase states no body limit for
+   functions, so these are ours; they also keep the work well inside its
+   2 seconds of processor time per request.
 3. Membership, proven with the caller's own client under row security (for
    example reading that household's row), before any AI setting is looked at.
    Not a member, or an id that is not a household → 403 with one fixed body:
@@ -196,7 +219,8 @@ and is marked unsure. `is_prescription: false`, or no medicines, is a normal
 200 with an empty list; the app shows the "could not read" message.
 
 Logs hold the number of photos, sizes, timings, the number of medicines, the
-status and OpenAI's error type. Never a photo, any text that was read, or
+status, OpenAI's error type and the token counts OpenAI reports for the call
+(numbers only, to check the cost). Never a photo, any text that was read, or
 OpenAI's error body.
 
 The daily limit counts reads, not photos: one read of four photos is one of
@@ -210,7 +234,11 @@ the family's ten.
 - Time boxes as in §2. Notes are the instructions, then the duration.
 - "Already in your medicines" when the names are the same ignoring capitals
   and outer spaces, or when one name begins with the other as whole words
-  ("Metformin" and "Metformin 500mg").
+  ("Metformin" and "Metformin 500mg"). The comparison runs against the loaded
+  cabinet plus the names added in this photo read. `useMedicineSchedule`
+  returns an empty list after a failed first load and reports no error
+  today; it must report the error, and the photo list must not offer Check
+  and add until the cabinet has loaded successfully.
 - Saved with `source: 'prescription_photo'`.
 
 **Database** (one migration, after M2b's)
@@ -260,7 +288,8 @@ hand.
   401; own family with 1 photo and with 4 → `prescription_not_configured`;
   another family's id and a malformed id → the fixed 403, byte for byte; a
   file that is not a JPEG, no file, 5 files and one file over 2 MB →
-  `photo_invalid`; an oversized request → 413. In the database: family B
+  `photo_invalid`; an oversized request → 413, both when it declares its
+  length and when it declares none. In the database: family B
   cannot claim for family A; the 11th read is refused; 30 claims at once leave
   exactly 10; 10 photo reads leave all 20 transcriptions and 20 transcriptions
   leave all 10 photo reads; clients still cannot read or write the usage
@@ -270,7 +299,7 @@ hand.
   - a 4000×3000 picture leaves the browser as a JPEG no larger than 2048 px
     and 1.5 MB;
   - the photo tray: add a second and a third photo, remove one, the button
-    counts them ("Read 2 photos"), "Add another photo" is gone at 4, five
+    counts them ("Read 2 photos"), both photo buttons are gone at 4, five
     chosen at once keep four with the message, and nothing is sent before
     the Read button;
   - the request carries exactly the photos shown, in that order;
@@ -285,6 +314,11 @@ hand.
     shows under Coming up;
   - a name already in the cabinet: "Open it" opens that medicine and no
     second row is created;
+  - two cards with the same name: after the first is added, the second says
+    "Already in your medicines" before the cabinet has refreshed;
+  - the cabinet list fails to load: Check and add is off with the reason,
+    and comes back after Try again succeeds; the cabinet screen itself says
+    it could not load instead of looking empty;
   - the limit, "could not read" and "did not work" messages;
   - one call left to the real local function: "Reading photos is not set up
     on this server yet.";
@@ -316,8 +350,13 @@ hand.
   function today.
 - An account belongs to one family (`household_members` allows one row per
   user), so a limit per family is also a limit per account.
-- Cost: about 2 to 6 cents a read at today's `gpt-5.2` prices (more photos,
-  more cost), so at most about 60 cents a day per family.
+- Cost at today's `gpt-5.2` prices: a usual read is about 2 to 6 cents (more
+  photos, more cost). That is an estimate, not a limit. The limit comes from
+  the caps: 6,000 answer tokens cost at most 8.4 cents and four photos at the
+  model's largest size about 5 cents, so one read can cost about 14 cents at
+  the very most, and ten reads about 1.40 dollars a day per family. Check the
+  real cost of the two staging reads against this. The owner's spending limit
+  at OpenAI is the hard stop.
 - Supabase's limits for a function (their limits page, 2026-10-11): 2 seconds
   of processor time per request, 150 seconds in all on the free plan, 256 MB
   of memory, and no stated limit on the size of a request. Four small photos

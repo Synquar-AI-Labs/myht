@@ -12,7 +12,9 @@ import { Plus, Pencil } from 'lucide-react';
 import { DoseTimePicker } from '@/components/DoseTimePicker';
 import { format } from 'date-fns';
 import { medicineIntervalDays, nextMedicineDay } from '@/lib/medicineDays';
-import { canonicalSchedule, readStoredSchedule, preserveEarlierNote, fillMedicineTimes, medicineReadBack, FREQUENCY_LABELS, MAX_MEDICINE_TIMES } from '@/lib/medicineForm';
+import { canonicalSchedule, readStoredSchedule, preserveEarlierNote, fillMedicineTimes, medicineReadBack, FREQUENCY_LABELS, MAX_MEDICINE_TIMES, hasPickedMedicineTimes } from '@/lib/medicineForm';
+import { PrescriptionPhotoScreen, PrescriptionPhotoViewer, type PhotoFormContext } from '@/components/PrescriptionPhotoScreen';
+import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
 const MED_TYPES = ['Pain Killer', 'Pain Relief', 'Blood Thinner', 'Digestive', 'Anti-Nausea', 'Diabetes', 'Nerve Pain', 'Thyroid', 'Psych', 'Cancer', 'Vitamin', 'Antibiotic', 'Other'];
 const CATEGORIES = ['medicine', 'non-medicine'];
@@ -38,7 +40,7 @@ const emptyForm: MedicineScheduleInsert = {
 };
 
 export function MedicineScheduleTab() {
-  const { medicines, loading, addMedicine, updateMedicine } = useMedicineSchedule();
+  const { medicines, loading, loaded, loadError, addMedicine, updateMedicine, refetch } = useMedicineSchedule();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<MedicineScheduleInsert>(emptyForm);
@@ -51,19 +53,36 @@ export function MedicineScheduleTab() {
   const [startTime, setStartTime] = useState(480);
   const [replacePending, setReplacePending] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
+  const [photoContext, setPhotoContext] = useState<PhotoFormContext | null>(null);
+  const [viewPhotos, setViewPhotos] = useState(false);
+  useUpdateBusy(photoOpen || saving);
+  const mark = (field: string) => photoContext?.draft.marks.includes(field) ? <span className="ml-2 text-xs font-semibold text-[#8a6240]">Check this</span> : null;
 
   const resetHelpers = () => { setHelperOpen(false); setReplacePending(false); setIntervalHours(4); setStartTime(480); };
   const openAdd = () => {
+    setPhotoContext(null);
     setEditId(null); setForm(emptyForm); setTimes([]); setEarlier(''); setOtherType('');
     resetHelpers(); setOpen(true);
   };
   const openEdit = (med: typeof medicines[0]) => {
+    setPhotoContext(null);
     setEditId(med.id);
-    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log, start_date: med.start_date ?? null });
+    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log, start_date: med.start_date ?? null, source: med.source });
     const stored = readStoredSchedule(med.schedule_time);
     setTimes(stored.times); setEarlier(stored.earlier);
     setOtherType(MED_TYPES.includes(med.med_type) ? '' : med.med_type);
     resetHelpers(); setOpen(true);
+  };
+  const openPhotoForm = (context: PhotoFormContext) => {
+    setEditId(null); setForm(context.draft.form); setTimes(context.draft.times);
+    setEarlier(''); setOtherType(''); resetHelpers();
+    if (context.draft.helperHours) { setIntervalHours(context.draft.helperHours); setHelperOpen(true); }
+    setPhotoContext(context); setOpen(true);
+  };
+  const leavePhotos = () => {
+    setPhotoOpen(false); setPhotoContext(null); setViewPhotos(false); setOpen(false);
+    setForm(emptyForm); setTimes([]); setEarlier(''); setOtherType(''); resetHelpers();
   };
 
   const handleSave = async () => {
@@ -76,7 +95,7 @@ export function MedicineScheduleTab() {
     };
     setSaving(true);
     try {
-      const saved = editId ? await updateMedicine(editId, input) : await addMedicine(input);
+      const saved = editId ? await updateMedicine(editId, input) : await addMedicine(input, photoContext?.onSaved);
       if (saved) setOpen(false);
     } finally { setSaving(false); }
   };
@@ -107,12 +126,17 @@ export function MedicineScheduleTab() {
 
   return (
     <div className="pb-4 space-y-4">
-      <div className="flex items-center justify-between">
+      {photoOpen ? <PrescriptionPhotoScreen medicines={medicines} loaded={loaded} loadError={loadError} onRetry={() => void refetch()} onAdd={openPhotoForm} onEdit={openEdit} onBack={leavePhotos} /> : <>
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold">Medicine Schedule</h2>
+        <div className="flex flex-wrap gap-2">
         <Button size="sm" onClick={openAdd}><Plus className="h-4 w-4 mr-1" /> Add</Button>
+        <Button size="sm" variant="outline" onClick={() => setPhotoOpen(true)}>Add from a photo</Button>
+        </div>
       </div>
 
       {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
+      {loadError && <div role="alert" className="space-y-2"><p>Couldn't load medicines. Check the connection.</p><Button variant="outline" onClick={() => void refetch()}>Try again</Button></div>}
 
       {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([type, meds]) => (
         <div key={type} className="space-y-2">
@@ -146,21 +170,28 @@ export function MedicineScheduleTab() {
           ))}
         </div>
       ))}
+      </>}
 
-      <Sheet open={open} onOpenChange={setOpen}>
+      <Sheet open={open} onOpenChange={value => { if (!saving) setOpen(value); }}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl [&>button]:flex [&>button]:h-11 [&>button]:w-11 [&>button]:items-center [&>button]:justify-center">
           <SheetHeader>
             <SheetTitle>{editId ? 'Edit Medicine' : 'Add Medicine'}</SheetTitle>
             <SheetDescription>Fill in the medicine details below.</SheetDescription>
           </SheetHeader>
+          {photoContext && <div className="mt-3 space-y-2 rounded-xl bg-[#f6eee4] p-3">
+            <p className="font-semibold">From the photo. Check every line.</p>
+            <p className="break-words text-sm">The prescription says: {photoContext.medicine.source_text}</p>
+            <Button variant="outline" onClick={() => setViewPhotos(true)}>View photos</Button>
+          </div>}
+          <fieldset disabled={saving} className="min-w-0">
           <div className="space-y-3 mt-4">
-            <div><Label className="text-xs">Name</Label><Input value={form.name} onChange={e => setField('name', e.target.value)} placeholder="Medicine name" /></div>
+            <div><Label className="text-xs">Name{mark('name')}</Label><Input value={form.name} onChange={e => setField('name', e.target.value)} placeholder="Medicine name" /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div><Label className="text-xs">Potency</Label><Input value={form.potency} onChange={e => setField('potency', e.target.value)} placeholder="e.g. 500mg" /></div>
-              <div><Label className="text-xs">Amount</Label><Input value={form.amount} onChange={e => setField('amount', e.target.value)} placeholder="e.g. 2 pills" /></div>
+              <div><Label className="text-xs">Potency{mark('potency')}</Label><Input value={form.potency} onChange={e => setField('potency', e.target.value)} placeholder="e.g. 500mg" /></div>
+              <div><Label className="text-xs">Amount{mark('amount')}</Label><Input value={form.amount} onChange={e => setField('amount', e.target.value)} placeholder="e.g. 2 pills" /></div>
             </div>
             <div>
-              <Label className="text-sm font-semibold">Which days is it given?</Label>
+              <Label className="text-sm font-semibold">Which days is it given?{mark('frequency')}</Label>
               <Select value={form.frequency || 'daily'} onValueChange={v => { setField('frequency', v); setReplacePending(false); }}>
                 <SelectTrigger aria-label="Which days is it given?"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -170,12 +201,13 @@ export function MedicineScheduleTab() {
               </Select>
             </div>
             {medicineIntervalDays(form.frequency) && <div>
-              <Label htmlFor="medicine-start-date" className="text-sm font-semibold">Which day does it start?</Label>
+              <Label htmlFor="medicine-start-date" className="text-sm font-semibold">Which day does it start?{mark('start_date')}</Label>
               <Input id="medicine-start-date" type="date" value={form.start_date ?? ''} onChange={event => setForm(previous => ({ ...previous, start_date: event.target.value || null }))} />
               {!form.start_date && <p className="text-sm">Pick a start day to see this under Coming up.</p>}
             </div>}
             {form.frequency !== 'as needed' && <div className="space-y-2">
-              <Label className="text-sm font-semibold">At what times?</Label>
+              <Label className="text-sm font-semibold">At what times?{mark('times')}</Label>
+              {photoContext?.draft.frequencyNote && <p className="text-sm">{photoContext.draft.frequencyNote}</p>}
               {times.map((time, index) => <div key={index} className="flex items-center gap-2">
                 <div className="min-w-0 flex-1"><DoseTimePicker label={`Medicine time ${index + 1}`} value={time} excluded={times.filter((_, i) => i !== index && times[i] !== undefined) as number[]} onChange={value => setTimes(previous => previous.map((old, i) => i === index ? value : old))} /></div>
                 <Button variant="ghost" aria-label={`Remove time ${index + 1}`} onClick={() => setTimes(previous => previous.filter((_, i) => i !== index))}>Remove</Button>
@@ -195,7 +227,7 @@ export function MedicineScheduleTab() {
                 {replacePending ? <div className="space-y-2">
                   <p className="text-sm">Replace the times you picked?</p>
                   <div className="flex flex-wrap gap-2"><Button onClick={fillTimes}>Replace times</Button><Button variant="outline" onClick={() => setReplacePending(false)}>Keep my times</Button></div>
-                </div> : <Button onClick={() => times.length ? setReplacePending(true) : fillTimes()}>Fill times</Button>}
+                </div> : <Button onClick={() => hasPickedMedicineTimes(times) ? setReplacePending(true) : fillTimes()}>Fill times</Button>}
               </div>}
             </div>}
             <div className="grid grid-cols-2 gap-3">
@@ -220,7 +252,7 @@ export function MedicineScheduleTab() {
             </div>}
             {earlier && <p className="break-words text-sm text-muted-foreground">Earlier entry: {earlier}</p>}
             <div>
-              <Label className="text-xs">Notes</Label>
+              <Label className="text-xs">Notes{mark('schedule_note')}</Label>
               <Input value={form.schedule_note} onChange={e => setField('schedule_note', e.target.value)} placeholder="Optional notes" />
             </div>
             <div className="flex items-center gap-2">
@@ -234,8 +266,10 @@ export function MedicineScheduleTab() {
             <p role="status" className="text-sm">{medicineReadBack(form.frequency, times.filter(time => time !== undefined) as number[], form.start_date)}</p>
             <Button className="w-full" disabled={saving || !form.name.trim() || (form.frequency !== 'as needed' && (times.includes(undefined) || times.length > MAX_MEDICINE_TIMES))} onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
           </div>
+          </fieldset>
         </SheetContent>
       </Sheet>
+      {viewPhotos && photoContext && <PrescriptionPhotoViewer photos={photoContext.photos} onClose={() => setViewPhotos(false)} />}
     </div>
   );
 }

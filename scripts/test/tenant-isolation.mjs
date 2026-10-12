@@ -453,6 +453,53 @@ await check('26 dose skips are unique, audited, ticker-backed and links are well
  }
  assert.deepEqual(good(await rows(A.admin,'medicine_logs','&date=eq.2026-06-01')),[]);
 });
+await check('27 prescription quota, concurrency and independent allowances',async()=>{
+ const P=await family('photo-quota'), Q=await family('audio-first');
+ const claim=(u,hid,kind)=>rpc(u,kind==='prescription_read'?'claim_prescription_read':'claim_transcription',{p_household_id:hid});
+ const foreign=await claim(B.admin,P.hid,'prescription_read');
+ assert.equal(foreign.status,400);assert.equal(foreign.data.message,'household_access_denied');
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${P.hid}'`),'0');
+ const anonymous=await claim(anon,P.hid,'prescription_read');assert.equal(anonymous.status,401);assert.equal(anonymous.data.code,'42501');
+ for(const [f,order] of [[P,['prescription_read','transcription']],[Q,['transcription','prescription_read']]]) {
+  for(const kind of order) {
+   const limit=kind==='transcription'?20:10;
+   for(let i=0;i<limit;i++) good(await claim(f.admin,f.hid,kind));
+   const extra=await claim(f.member,f.hid,kind);
+   assert.equal(extra.status,400);assert.equal(extra.data.message,kind==='transcription'?'transcription_limit_reached':'prescription_limit_reached');
+   assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${f.hid}' AND kind='${kind}'`),String(limit));
+  }
+ }
+ sql(`UPDATE public.transcription_usage SET at=now()-interval '25 hours' WHERE household_id='${P.hid}'`);
+ const results=await Promise.all(Array.from({length:30},()=>claim(P.admin,P.hid,'prescription_read')));
+ assert.equal(results.filter(r=>r.ok).length,10);
+ for(const r of results.filter(r=>!r.ok)) {assert.equal(r.status,400);assert.equal(r.data.message,'prescription_limit_reached');}
+ assert.equal(sql(`SELECT count(*) FROM public.transcription_usage WHERE household_id='${P.hid}' AND kind='prescription_read' AND at>=now()-interval '24 hours'`),'10');
+ for(const token of [anon,P.admin.token]) {
+  const read=await rows(token,'transcription_usage');assert.equal(read.status,token===anon?401:403);assert.equal(read.data.code,'42501');
+  const write=await insert(token,'transcription_usage',{household_id:P.hid,user_id:P.admin.id,kind:'prescription_read'});assert.equal(write.status,token===anon?401:403);assert.equal(write.data.code,'42501');
+ }
+});
+await check('28 prescription function authentication, membership and bounded photos without an AI key',async()=>{
+ const jpeg=Buffer.from([255,216,255,224,0,0]);
+ const call=async(token,hid=A.hid,count=1,bytes=jpeg)=>{
+  const form=new FormData();form.append('household_id',hid);
+  for(let i=0;i<count;i++)form.append('photo',new Blob([bytes],{type:'image/jpeg'}),'synthetic.jpg');
+  const r=await fetch(api+'/functions/v1/read-prescription',{method:'POST',headers:{apikey:anon,...(token?{Authorization:'Bearer '+token}:{})},body:form});
+  return {status:r.status,text:await r.text()};
+ };
+ assert.equal((await call(null)).status,401);
+ for(const count of [1,4]) {const r=await call(A.admin.token,A.hid,count);assert.equal(r.status,500,r.text);assert.equal(JSON.parse(r.text).code,'prescription_not_configured');}
+ const refusal=JSON.stringify({error:'Reading is unavailable or you do not have access.'});
+ for(const [token,hid] of [[B.admin.token,A.hid],[A.admin.token,'malformed-id']]) {const r=await call(token,hid);assert.equal(r.status,403,r.text);assert.equal(r.text,refusal);}
+ for(const [count,bytes] of [[0,jpeg],[5,jpeg],[1,Buffer.from('not JPEG')],[1,Buffer.concat([jpeg,Buffer.alloc(2*1024*1024)])]]) {
+  const r=await call(A.admin.token,A.hid,count,bytes);assert.equal(r.status,400,r.text);assert.equal(JSON.parse(r.text).code,'photo_invalid');
+ }
+ const huge=Buffer.concat([jpeg,Buffer.alloc(9*1024*1024)]);
+ const declared=await call(A.admin.token,A.hid,1,huge);assert.equal(declared.status,413,declared.text);
+ const stream=new ReadableStream({start(controller){controller.enqueue(new Uint8Array(5*1024*1024));controller.enqueue(new Uint8Array(5*1024*1024));controller.close();}});
+ const undeclared=await fetch(api+'/functions/v1/read-prescription',{method:'POST',headers:{apikey:anon,Authorization:'Bearer '+A.admin.token,'Content-Type':'application/octet-stream'},body:stream,duplex:'half'});
+ assert.equal(undeclared.status,413,await undeclared.text());
+});
 console.log('Failures: '+failures);
 process.exitCode=failures;
 
