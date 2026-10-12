@@ -9,6 +9,16 @@ const now = new Date('2026-10-11T12:00:00');
 const medicine = { id: 'a', name: 'Synthetic medicine', potency: '', amount: '1 tablet' } as Medicine;
 
 describe('dose group controls', () => {
+  it('keeps MISSED neutral and steady, unlike pulsing pink LATE', () => {
+    render(<DoseTimeGroups upcoming={[{ at: now, medicine, state: 'missed' }]} now={now} />);
+    const row = screen.getByRole('button', { name: /MISSED/ });
+    expect(row).toHaveStyle({ backgroundColor: '#f3f0ec', color: '#7f1d1d' });
+    expect(row).not.toHaveClass('medicine-pulse-fast', 'medicine-pulse-slow');
+    expect(URGENCY.missed.tint).not.toBe(URGENCY.late.tint);
+    fireEvent.click(row);
+    expect(row).toHaveAttribute('aria-expanded', 'false');
+    expect(row).toHaveStyle({ backgroundColor: '#f3f0ec' });
+  });
   it.each(['soon', 'due', 'late'] as const)('keeps %s tinted and pulsing even when closed', state => {
     render(<DoseTimeGroups upcoming={[{ at: now, medicine, state }]} now={now} />);
     const row = screen.getByRole('button', { name: new RegExp(URGENCY[state].label) });

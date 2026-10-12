@@ -105,8 +105,8 @@ From the repository, run:
 
 ```sh
 supabase db reset --local
-npx tsc --noEmit
 npx tsc -p tsconfig.app.json --noEmit
+npx tsc -p tsconfig.node.json --noEmit
 npx vitest run
 npm run build
 scripts/test/tenant-isolation.sh

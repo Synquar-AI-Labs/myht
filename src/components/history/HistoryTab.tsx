@@ -5,13 +5,14 @@ import {
   Pill, Heart, Zap, StickyNote, Mic, CalendarDays, ChevronDown, ChevronLeft,
   ChevronRight, BarChart3, Pencil, Moon, Sun, Sunrise, MoonStar, Loader2, AlertTriangle,
 } from 'lucide-react';
-import { useMedicines } from '@/hooks/useMedicines';
+import { useMedicines, useLinkedDoseLogs } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useCustomActions } from '@/hooks/useCustomActions';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
 import { fetchTranscriptsForDate } from '@/hooks/useTranscripts';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { domainKeys } from '@/lib/domainKeys';
+import { useDoseSkips } from '@/hooks/useDoseSkips';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -23,6 +24,7 @@ import { buildDiaryEntries, groupDiary, DiaryEntry, PeriodKey } from '@/componen
 const DailyRecordTab = lazy(() => import('@/components/DailyRecordTab').then(m => ({ default: m.DailyRecordTab })));
 
 const KIND_STYLE: Record<DiaryEntry['kind'], { icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>; chip: string }> = {
+  skip: { icon: Pill, chip: 'bg-[#f3ede2] text-[#8b8175]' },
   medicine: { icon: Pill, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
   bp: { icon: Heart, chip: 'bg-[#fdecec] text-[#c0392b]' },
   custom: { icon: Zap, chip: 'bg-[#fdf0e6] text-[#c2740c]' },
@@ -61,6 +63,8 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   const healthRecords = useHealthRecords();
   const { records, bpReadings, loading: recordsLoading, bpLoading, loadError: recordsBpError } = healthRecords;
   const { medicines, logs: medLogs, loading: medLogsLoading, loadError: medLogsError } = useMedicines(selectedDate);
+  const { skips, loading: skipsLoading, loadError: skipsError, undoSkip } = useDoseSkips(selectedDate);
+  const resolution = useLinkedDoseLogs(selectedDate, selectedDate);
   const { actions: customActions, logs: customLogs, loading: customLoading, loadError: customError } = useCustomActions();
   const { notes, loading: notesLoading, loadError: notesError } = useWrittenNotes();
 
@@ -72,8 +76,8 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   });
 
   // Never present "nothing recorded" (or zeros) while any source is pending.
-  const diaryLoading = medLogsLoading || customLoading || notesLoading || transcriptsLoading || recordsLoading || bpLoading;
-  const diaryError = medLogsError || customError || notesError || transcriptsError || recordsBpError;
+  const diaryLoading = medLogsLoading || skipsLoading || resolution.isLoading || customLoading || notesLoading || transcriptsLoading || recordsLoading || bpLoading;
+  const diaryError = medLogsError || skipsError || resolution.isError || customError || notesError || transcriptsError || recordsBpError;
 
   const dayRecord = useMemo(() => records.find(r => r.date === selectedDate) ?? null, [records, selectedDate]);
   const dayBp = useMemo(() => bpReadings.filter(r => r.date === selectedDate), [bpReadings, selectedDate]);
@@ -86,13 +90,13 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   const entries = useMemo(
     () => buildDiaryEntries({
       date: selectedDate,
-      medLogs, medicines,
+      medLogs, medicines, skips, resolutionLogs: resolution.data,
       bpReadings: dayBp,
       customActions, customLogs: dayCustomLogs,
       notes: dayNotes,
       transcripts,
     }),
-    [selectedDate, medLogs, medicines, dayBp, customActions, dayCustomLogs, dayNotes, transcripts],
+    [selectedDate, medLogs, medicines, skips, resolution.data, dayBp, customActions, dayCustomLogs, dayNotes, transcripts],
   );
   const groups = useMemo(() => groupDiary(entries), [entries]);
 
@@ -315,6 +319,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
                           {entry.detail && (
                             <div className="mt-0.5 line-clamp-2 text-[13px] text-[#8b8175]">{entry.detail}</div>
                           )}
+                          {entry.skipId && <button className="min-h-11 min-w-11 text-sm font-semibold text-[#8b8175]" onClick={() => void undoSkip(entry.skipId!)}>Undo</button>}
                         </div>
                       </div>
                     );

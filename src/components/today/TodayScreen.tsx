@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { toast } from 'sonner';
-import { useMedicines, Medicine } from '@/hooks/useMedicines';
+import { useMedicines, useLinkedDoseLogs, Medicine } from '@/hooks/useMedicines';
 import { useHealthRecords } from '@/hooks/useHealthRecords';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useWrittenNotes } from '@/hooks/useWrittenNotes';
@@ -28,9 +28,13 @@ import { ReadingSection, MedicineSection, ApptNotesSection, TranscriptsSection, 
 import { ReadingType } from '@/components/today/readingTypes';
 import { DoseTimeGroups } from '@/components/today/DoseTimeGroups';
 import { URGENCY_RANK, urgencyFor } from '@/lib/medicineUrgency';
+import { MedicineDoseSheet } from '@/components/MedicineDoseSheet';
+import { useDoseSkips } from '@/hooks/useDoseSkips';
+import { doseCandidates } from '@/lib/doseRecording';
+import { occurrenceTime, visibleSkips } from './todaySchedule';
 
 type SheetState =
-  | { type: 'medicine'; medicine: Medicine }
+  | { type: 'medicine'; medicine: Medicine; slot?: UpcomingItem }
   | { type: 'health'; reading: ReadingType }
   | null;
 
@@ -46,9 +50,18 @@ export function TodayScreen() {
 
   const todayStr = format(now, 'yyyy-MM-dd');
   const yesterdayStr = previousDay(now);
+  const tomorrowStr = format(addDays(now, 1), 'yyyy-MM-dd');
 
-  const { medicines, logs: todayLogs, addMedicineLog, deleteMedicineLog } = useMedicines(todayStr);
-  const { logs: yesterdayLogs } = useMedicines(yesterdayStr);
+  const { medicines, medicinesLoading, medicinesError, logs: todayLogs, loading: todayLoading, loadError: todayError, deleteMedicineLog } = useMedicines(todayStr);
+  const { logs: yesterdayLogs, loading: yesterdayLoading, loadError: yesterdayError } = useMedicines(yesterdayStr);
+  const linkedQuery = useLinkedDoseLogs(yesterdayStr, tomorrowStr);
+  const linkedLogs = linkedQuery.data ?? [];
+  const { skips: todaySkips, loading: todaySkipLoading, loadError: todaySkipError, undoSkip } = useDoseSkips(todayStr);
+  const { skips: yesterdaySkips, loading: yesterdaySkipLoading, loadError: yesterdaySkipError } = useDoseSkips(yesterdayStr);
+  const { skips: tomorrowSkips, loading: tomorrowSkipLoading, loadError: tomorrowSkipError } = useDoseSkips(tomorrowStr);
+  const doseLoading = medicinesLoading || todayLoading || yesterdayLoading || linkedQuery.isLoading || todaySkipLoading || yesterdaySkipLoading || tomorrowSkipLoading;
+  const doseError = medicinesError || todayError || yesterdayError || linkedQuery.isError || todaySkipError || yesterdaySkipError || tomorrowSkipError;
+  const doseReady = !doseLoading && !doseError;
   const { records, bpReadings, updateFields, saveBpReading, getRecordByDate } = useHealthRecords();
   const { appointments, addAppointment } = useAppointments();
   const { addNote } = useWrittenNotes();
@@ -67,9 +80,12 @@ export function TodayScreen() {
   const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
   const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
 
-  const allLogs = useMemo(() => [...todayLogs, ...yesterdayLogs], [todayLogs, yesterdayLogs]);
+  const allLogs = useMemo(() => [...new Map([...todayLogs, ...yesterdayLogs, ...linkedLogs].map(log => [log.id, log])).values()], [todayLogs, yesterdayLogs, linkedLogs]);
   const given = useMemo(() => buildGivenList(allLogs, medicines, now), [allLogs, medicines, now]);
-  const upcoming = useMemo(() => buildUpcomingList(medicines, allLogs, now), [medicines, allLogs, now]);
+  const allSkips = useMemo(() => [...todaySkips, ...yesterdaySkips, ...tomorrowSkips], [todaySkips, yesterdaySkips, tomorrowSkips]);
+  const upcoming = useMemo(() => doseReady ? buildUpcomingList(medicines, allLogs, now, allSkips) : [], [medicines, allLogs, now, allSkips, doseReady]);
+  const skipped = useMemo(() => visibleSkips(allSkips, allLogs, medicines, now).map(skip => ({ skip, at: occurrenceTime(skip), medicine: medicines.find(m => m.id === skip.medicine_id) }))
+    .filter(item => item.at.getTime() >= now.getTime() - 12 * 60 * 60_000 && item.at.getTime() <= now.getTime() + 12 * 60 * 60_000), [allSkips, medicines, now, allLogs]);
   const urgentState = upcoming.reduce((state, item) => URGENCY_RANK[item.state] > URGENCY_RANK[state] ? item.state : state, 'scheduled' as UpcomingItem['state']);
   const urgency = urgencyFor(urgentState);
 
@@ -93,18 +109,21 @@ export function TodayScreen() {
     : null;
 
   const handleHealthSave = (reading: ReadingType) => async (values: Record<string, number | boolean>, _recordedBy: string, date: string, _time: { hour: number; amPm: string }, caregiverId?: string) => {
-    if (!caregiverId) return;
+    if (!caregiverId) return false;
     if (reading.dbFields.includes('bpSystolic') && reading.dbFields.includes('bpDiastolic')) {
-      if (await saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, caregiverId)) {
+      const saved = await saveBpReading(date, values['bpSystolic'] as number, values['bpDiastolic'] as number, caregiverId);
+      if (saved) {
         toast.success('BP logged');
       }
-      return;
+      return saved;
     }
     const fields: Record<string, number | boolean> = {};
     reading.dbFields.forEach(key => {
       if (values[key] !== undefined) fields[key] = values[key];
     });
-    if (await updateFields(date, fields, caregiverId)) toast.success(`${reading.label} logged`);
+    const saved = await updateFields(date, fields, caregiverId);
+    if (saved) toast.success(`${reading.label} logged`);
+    return saved;
   };
 
   /* ── Shared building blocks (rendered exactly once per arrangement) ── */
@@ -114,11 +133,12 @@ export function TodayScreen() {
       <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#2e7d4f]">
         Given · last 12 hours
       </div>
-      <div className="rounded-2xl border border-[#e9e2d6] bg-white px-4 py-0.5">
-        {given.length === 0 && (
+      <div className="dose-card rounded-2xl border border-[#e9e2d6] bg-white px-4 py-0.5">
+        {!doseReady && <p className="py-3 text-center text-sm text-[#8b8175]">{doseError ? 'Dose history unavailable. Check the connection.' : 'Loading dose history…'}</p>}
+        {doseReady && given.length === 0 && skipped.length === 0 && (
           <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing given in the last 12 hours.</p>
         )}
-        <DoseTimeGroups given={given} now={now} onGiven={setUndoTarget} />
+        {doseReady && <DoseTimeGroups given={given} skipped={skipped} now={now} onGiven={setUndoTarget} onUndoSkip={id => void undoSkip(id)} />}
       </div>
     </section>
   );
@@ -131,11 +151,12 @@ export function TodayScreen() {
           Coming up · next 12 hours
         </span>
       </div>
-      <div className="rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-4 py-0.5">
-        {upcoming.length === 0 && (
+      <div className="dose-card rounded-2xl border-[1.5px] border-[#f0c9ae] bg-white px-4 py-0.5">
+        {!doseReady && <p role={doseError ? 'alert' : 'status'} className="py-3 text-center text-sm text-[#8b8175]">{doseError ? "Couldn't load doses. Check the connection." : 'Loading doses…'}</p>}
+        {doseReady && upcoming.length === 0 && (
           <p className="py-3 text-center text-[14px] text-[#8b8175]">Nothing scheduled in the next 12 hours.</p>
         )}
-        <DoseTimeGroups upcoming={upcoming} now={now} onUpcoming={u => setSheet({ type: 'medicine', medicine: u.medicine })} />
+        <DoseTimeGroups upcoming={upcoming} now={now} onUpcoming={u => setSheet({ type: 'medicine', medicine: u.medicine, slot: u })} />
       </div>
     </section>
   );
@@ -162,7 +183,10 @@ export function TodayScreen() {
         given={given}
         upcoming={upcoming}
         now={now}
-        onPickMedicine={med => setSheet({ type: 'medicine', medicine: med })}
+        onPickMedicine={med => {
+          if (!doseReady) { toast.error(doseError ? "Couldn't load doses. Check the connection." : 'Still loading doses. Try again.'); return; }
+          setSheet({ type: 'medicine', medicine: med });
+        }}
       />
       <ApptNotesSection
         nextAppointments={upcomingAppointments}
@@ -214,8 +238,7 @@ export function TodayScreen() {
 
       {/* Log drawers (existing components) */}
       {sheet?.type === 'medicine' && (
-        <QuickLogSheet open onOpenChange={o => { if (!o) setSheet(null); }}
-          mode={{ type: 'medicine', medicineName: sheet.medicine.name, medicineId: sheet.medicine.id, medicineAmount: sheet.medicine.amount, onSave: addMedicineLog }} />
+        <MedicineDoseSheet medicine={sheet.medicine} slot={sheet.slot} candidates={doseCandidates(upcoming, sheet.medicine.id, now)} onClose={() => setSheet(null)} />
       )}
       {sheet?.type === 'health' && (
         <QuickLogSheet open onOpenChange={o => { if (!o) setSheet(null); }}

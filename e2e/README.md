@@ -57,6 +57,25 @@ Selecting `medicine-form` includes top and bottom views of the scrollable form.
 Add `SCREEN_URGENCY=1` to freeze the clock and include SOON, DUE NOW and LATE
 fixtures, plus the interval start-day question in the medicine form.
 
+M2b's dose-resolution flow captures the late-time question, dose choice,
+MISSED row, skip reasons and Undo at 393×852 and 800×1280, at 100% and 130%
+text, under `test-results/dose-resolution/`. The update test builds a separate
+production artifact with the local stack's URL and serves it on loopback; only
+that production test can reload. The normal Vite/e2e app has updates disabled.
+
+The Today card-layout test checks shared text edges and longest-header fixtures
+at 393, 800, 1024 and 1280 px, with normal and 130% text. Full-size captures
+and `measurements.json` are in `test-results/today-layout/`. Every header in a
+card uses the same 30em container threshold; no viewport breakpoint or per-row
+measurement selects the layout.
+
+Type-check the application and build configuration explicitly:
+`npx tsc -p tsconfig.app.json --noEmit` and
+`npx tsc -p tsconfig.node.json --noEmit`. The root solution config has no
+files; invoking it with `--noEmit` alone is not a type-check of either project.
+The e2e files and Playwright configs are currently transpiled by Playwright,
+not included in either TypeScript project or otherwise type-checked.
+
 ## Later
 
 - Calendar cells need a layout redesign to reach 44px on small phones; keep the current cells for now.

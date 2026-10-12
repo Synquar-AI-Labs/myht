@@ -185,3 +185,37 @@
 .collapsible-content[data-state='closed'] {
   animation: collapsibleUp 200ms ease-out;
 }
+
+/* One decision for every header in a card; em follows enlarged text. */
+.dose-card {
+  container: dose-card / inline-size;
+}
+.dose-time-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "time controls" "relative count";
+  align-items: center;
+  gap: 4px 8px;
+  padding-block: 8px;
+}
+.dose-time { grid-area: time; }
+.dose-relative { grid-area: relative; }
+.dose-count { grid-area: count; }
+.dose-controls { grid-area: controls; min-width: max-content; }
+@container dose-card (min-width: 30em) {
+  .dose-time-header {
+    grid-template-columns: 5.25em minmax(0, 1fr) auto 5em auto;
+    grid-template-areas: "time relative count status chevron";
+    row-gap: 0;
+  }
+  .dose-controls { display: contents; }
+  .dose-status { grid-area: status; }
+  .dose-chevron { grid-area: chevron; }
+  /* Given has no status badges; only scheduled rows need the reserved slot. */
+  .dose-given-header {
+    grid-template-columns: 5.25em minmax(0, 1fr) auto auto;
+    grid-template-areas: "time relative count chevron";
+  }
+  .dose-given-header .dose-status { display: none; }
+  .dose-relative, .dose-count { white-space: nowrap; }
+}

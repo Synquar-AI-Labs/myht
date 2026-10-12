@@ -11,7 +11,38 @@ export interface GivenItem {
   at: Date;
 }
 
-export type SlotState = 'scheduled' | 'soon' | 'due' | 'late';
+export type SlotState = 'scheduled' | 'soon' | 'due' | 'late' | 'missed';
+
+export interface DoseSkip {
+  id: string; medicine_id: string; for_date: string; for_minute: number;
+  reason: string; recorded_by: string; caregiver_id?: string | null; created_at: string;
+}
+
+export const occurrenceLink = (at: Date) => ({ for_date: format(at, 'yyyy-MM-dd'), for_minute: at.getHours() * 60 + at.getMinutes() });
+export function occurrenceTime(link: { for_date: string; for_minute: number }): Date {
+  return new Date(`${link.for_date}T${String(Math.floor(link.for_minute / 60)).padStart(2, '0')}:${String(link.for_minute % 60).padStart(2, '0')}:00`);
+}
+export function scheduledDoseDetail(log: MedicineLog): string {
+  if (log.for_date == null || log.for_minute == null) return '';
+  const at = occurrenceTime({ for_date: log.for_date, for_minute: log.for_minute });
+  if (at.getTime() === logDateTime(log).getTime()) return '';
+  return `due ${timeLabel(at)}${log.for_date !== log.date ? `, ${format(at, 'MMM d')}` : ''}`;
+}
+
+/** A given slot wins over a concurrent skip, including legacy time matches. */
+export function visibleSkips(skips: DoseSkip[], logs: MedicineLog[], medicines: Medicine[], now: Date) {
+  const remaining = buildUpcomingList(medicines, logs, now);
+  return skips.filter(skip => {
+    if (logs.some(log => !log.is_extra && log.medicine_id === skip.medicine_id && log.for_date === skip.for_date && log.for_minute === skip.for_minute)) return false;
+    const medicine = medicines.find(m => m.id === skip.medicine_id);
+    const at = occurrenceTime(skip);
+    const scheduled = medicine && isAutoScheduled(medicine) && isMedicineScheduledOnDate(medicine, at)
+      && parseScheduleTime(medicine.schedule_time).some(time => time.hour24 * 60 + time.minute === skip.for_minute);
+    // Outside Today's window, the historical skip is still a valid entry.
+    const inWindow = Math.abs(now.getTime() - at.getTime()) <= GIVEN_WINDOW_MS;
+    return !scheduled || !inWindow || remaining.some(item => item.medicine.id === skip.medicine_id && item.at.getTime() === at.getTime());
+  });
+}
 
 /** A scheduled, not-yet-administered dose inside the upcoming window. */
 export interface UpcomingItem {
@@ -32,7 +63,7 @@ const UPCOMING_WINDOW_MS = 12 * 60 * 60 * 1000;
 /** Flash window around the scheduled time. */
 const DUE_BEFORE_MS = 15 * 60 * 1000;
 const DUE_AFTER_MS = 15 * 60 * 1000;
-/** How long an unlogged dose stays visible after its time (LATE after 15 min). */
+/** LATE ends here; unresolved doses then become steady MISSED. */
 const OVERDUE_TRAIL_MS = 120 * 60 * 1000;
 /** A log within this distance of a slot marks that slot as administered. */
 const MATCH_TOLERANCE_MS = 60 * 60 * 1000;
@@ -93,11 +124,12 @@ export function slotStateAt(at: Date, now: Date): SlotState {
   if (delta > DUE_BEFORE_MS) return 'scheduled';
   if (delta > 0) return 'soon';
   if (delta >= -DUE_AFTER_MS) return 'due';
+  if (delta < -OVERDUE_TRAIL_MS) return 'missed';
   return 'late';
 }
 
 /**
- * Scheduled occurrences within (now - 2h … now + 12h), soonest first.
+ * Scheduled occurrences within (now - 12h … now + 12h), soonest first.
  *
  * Rules (per adversarial review):
  * - Daily medicines and anchored every-N-day medicines are auto-scheduled.
@@ -106,19 +138,21 @@ export function slotStateAt(at: Date, now: Date): SlotState {
  *   nearest unmatched slot within ±1 h). One administration can never clear
  *   two expected administrations.
  * - An unlogged slot is SOON in the 15 min lead, DUE NOW until 15 min after,
- *   then LATE until 2 h after, when it drops off.
+ *   then LATE until 2 h after, then MISSED until 12 h after.
  */
 export function buildUpcomingList(
   medicines: Medicine[],
   logs: MedicineLog[],
   now: Date,
+  skips: DoseSkip[] = [],
 ): UpcomingItem[] {
   const nowMs = now.getTime();
-  const windowStart = nowMs - OVERDUE_TRAIL_MS;
+  const windowStart = nowMs - GIVEN_WINDOW_MS;
   const windowEnd = nowMs + UPCOMING_WINDOW_MS;
 
   const logTimesByMed = new Map<string, number[]>();
   logs.forEach(log => {
+    if (log.is_extra || log.for_date != null) return;
     const list = logTimesByMed.get(log.medicine_id) ?? [];
     list.push(logDateTime(log).getTime());
     logTimesByMed.set(log.medicine_id, list);
@@ -153,6 +187,8 @@ export function buildUpcomingList(
     const usedLogs = new Set<number>();
 
     for (const t of slotTimes) {
+      const link = occurrenceLink(new Date(t));
+      if (logs.some(log => !log.is_extra && log.medicine_id === med.id && log.for_date === link.for_date && log.for_minute === link.for_minute)) continue;
       let bestIdx = -1;
       let bestDist = MATCH_TOLERANCE_MS + 1;
       for (let i = 0; i < medLogs.length; i++) {
@@ -167,6 +203,9 @@ export function buildUpcomingList(
         usedLogs.add(bestIdx);
         continue; // administered — drop the slot
       }
+
+      // A given record wins over a skip, including the legacy time match.
+      if (skips.some(skip => skip.medicine_id === med.id && skip.for_date === link.for_date && skip.for_minute === link.for_minute)) continue;
 
       if (t < windowStart || t > windowEnd) continue;
 

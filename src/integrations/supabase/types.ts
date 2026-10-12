@@ -359,6 +359,64 @@ export type Database = {
           },
         ]
       }
+      dose_skips: {
+        Row: {
+          caregiver_id: string | null
+          created_at: string
+          for_date: string
+          for_minute: number
+          household_id: string
+          id: string
+          medicine_id: string
+          reason: string
+          recorded_by: string
+        }
+        Insert: {
+          caregiver_id?: string | null
+          created_at?: string
+          for_date: string
+          for_minute: number
+          household_id: string
+          id?: string
+          medicine_id: string
+          reason?: string
+          recorded_by?: string
+        }
+        Update: {
+          caregiver_id?: string | null
+          created_at?: string
+          for_date?: string
+          for_minute?: number
+          household_id?: string
+          id?: string
+          medicine_id?: string
+          reason?: string
+          recorded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dose_skips_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "dose_skips_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dose_skips_household_id_medicine_id_fkey"
+            columns: ["household_id", "medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["household_id", "id"]
+          },
+        ]
+      }
       health_records: {
         Row: {
           bile_bags: number
@@ -648,9 +706,12 @@ export type Database = {
           caregiver_id: string | null
           created_at: string
           date: string
+          for_date: string | null
+          for_minute: number | null
           hour: number
           household_id: string
           id: string
+          is_extra: boolean
           medicine_id: string
           minute: number
           recorded_by: string
@@ -660,9 +721,12 @@ export type Database = {
           caregiver_id?: string | null
           created_at?: string
           date: string
+          for_date?: string | null
+          for_minute?: number | null
           hour?: number
           household_id: string
           id?: string
+          is_extra?: boolean
           medicine_id: string
           minute?: number
           recorded_by?: string
@@ -672,9 +736,12 @@ export type Database = {
           caregiver_id?: string | null
           created_at?: string
           date?: string
+          for_date?: string | null
+          for_minute?: number | null
           hour?: number
           household_id?: string
           id?: string
+          is_extra?: boolean
           medicine_id?: string
           minute?: number
           recorded_by?: string

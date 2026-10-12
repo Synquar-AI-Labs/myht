@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { accountError } from '@/lib/accountSetup';
@@ -15,6 +16,7 @@ export default function Auth() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  useUpdateBusy(busy || screen !== 'main');
   const codeInput = useRef<HTMLInputElement>(null);
   const recovering = useRef(false);
   const navigate = useNavigate();

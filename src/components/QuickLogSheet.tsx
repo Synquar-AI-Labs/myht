@@ -9,13 +9,15 @@ import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
 import { CaregiverPicker } from '@/components/CaregiverPicker';
 import { DoseTimePicker } from '@/components/DoseTimePicker';
 import { currentQuarter, doseTimeFields, doseTimeLabel } from '@/lib/doseTime';
+import { withUpdateWork } from '@/hooks/useUpdateBusy';
+import { toast } from 'sonner';
 
 type MedicineMode = {
   type: 'medicine';
   medicineName: string;
   medicineId: string;
   medicineAmount?: string;
-  onSave: (data: { medicine_id: string; hour: number; minute: number; am_pm: string; recorded_by: string; caregiver_id: string; date: string }) => void;
+  onSave: (data: { medicine_id: string; hour: number; minute: number; am_pm: string; recorded_by: string; caregiver_id: string; date: string }) => void | boolean | Promise<void | boolean>;
 };
 
 type HealthMode = {
@@ -28,7 +30,7 @@ type HealthMode = {
     date: string,
     time: { hour: number; amPm: string },
     caregiverId?: string,
-  ) => void;
+  ) => void | boolean | Promise<void | boolean>;
 };
 
 export interface HealthField {
@@ -48,6 +50,7 @@ type Props = {
 export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
   const [editingTime, setEditingTime] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const now = new Date();
   const currentHour = now.getHours();
@@ -82,19 +85,20 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const handleSave = () => {
-    if (mode.type === 'medicine') {
-      if (!caregiver) return;
-      mode.onSave({ medicine_id: mode.medicineId, ...doseTimeFields(doseTime), recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate });
-    } else {
-      if (!caregiver) return;
-      mode.onSave(fieldValues, caregiver.display_name, selectedDate, { hour, amPm }, caregiver.caregiver_id);
-    }
-    onOpenChange(false);
+  const handleSave = async () => {
+    if (!caregiver || saving) return;
+    setSaving(true);
+    try {
+      const result = await withUpdateWork(() => Promise.resolve(mode.type === 'medicine'
+        ? mode.onSave({ medicine_id: mode.medicineId, ...doseTimeFields(doseTime), recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate })
+        : mode.onSave(fieldValues, caregiver.display_name, selectedDate, { hour, amPm }, caregiver.caregiver_id)));
+      if (result !== false) onOpenChange(false);
+    } catch { toast.error('Could not save. Try again.'); }
+    finally { setSaving(false); }
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={value => { if (!saving) onOpenChange(value); }}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
@@ -105,7 +109,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
           )}
         </DrawerHeader>
 
-        <div className="px-4 pb-2 space-y-4">
+        <fieldset disabled={saving} className="min-w-0 px-4 pb-2 space-y-4">
           {/* Recorder */}
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Recorded by</Label>
@@ -168,7 +172,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
               />
             </div>
           ))}
-        </div>
+        </fieldset>
 
         <DrawerFooter>
           {!caregiver && (
@@ -176,7 +180,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
               Choose who's logging above to enable Save
             </p>
           )}
-          <Button onClick={handleSave} disabled={!caregiver} className="w-full">Save</Button>
+          <Button onClick={handleSave} disabled={!caregiver || saving} className="w-full">{saving ? 'Saving…' : 'Save'}</Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

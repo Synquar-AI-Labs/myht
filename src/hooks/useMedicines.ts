@@ -28,6 +28,9 @@ export interface MedicineLog {
   medicine_id: string;
   hour: number;
   minute?: number;
+  for_date?: string | null;
+  for_minute?: number | null;
+  is_extra?: boolean;
   am_pm: string;
   recorded_by: string;
   caregiver_id?: string | null;
@@ -50,12 +53,23 @@ export async function fetchMedicinesList(householdId: string) {
     .order('name').order('id').range(from, to));
 }
 
+/** Linked records resolve their scheduled day, independent of administration date. */
+export function useLinkedDoseLogs(fromDate: string, toDate: string) {
+  const { householdId } = useHousehold();
+  return useQuery({
+    queryKey: [...medicineKeys.logs(householdId), 'linked', fromDate, toDate], enabled: !!householdId,
+    queryFn: () => fetchAllRows<MedicineLog>((from, to) => supabase.from('medicine_logs')
+      .select('*, medicine:medicines(*)', { count: 'exact' }).eq('household_id', householdId!)
+      .gte('for_date', fromDate).lte('for_date', toDate).order('for_date').order('id').range(from, to)),
+  });
+}
+
 export function useMedicines(viewDate: string) {
   const queryClient = useQueryClient();
   const { householdId, caregivers } = useHousehold();
   const { caregiver } = useCaregiverChoice();
 
-  const { data: medicines = [] } = useQuery({
+  const { data: medicines = [], isLoading: medicinesLoading, isError: medicinesError } = useQuery({
     queryKey: medicineKeys.list(householdId),
     queryFn: () => fetchMedicinesList(householdId),
     enabled: !!householdId,
@@ -85,13 +99,13 @@ export function useMedicines(viewDate: string) {
     queryClient.invalidateQueries({ queryKey: medicineKeys.reports(householdId) });
   }, [queryClient, householdId]);
 
-  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; minute?: number; am_pm: string; recorded_by: string; caregiver_id?: string; date?: string }) => {
+  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; minute?: number; am_pm: string; recorded_by: string; caregiver_id?: string; date?: string; for_date?: string | null; for_minute?: number | null; is_extra?: boolean }) => {
     const saver = log.caregiver_id ? caregivers.find(p => p.is_active && p.caregiver_id === log.caregiver_id) : caregiver;
-    if (!householdId || !saver) { toast.error("Choose who's logging"); return; }
+    if (!householdId || !saver) { toast.error("Choose who's logging"); return false; }
     const parsed = medicineLogSchema.safeParse({ ...log, date: log.date || viewDate });
     if (!parsed.success) {
       toast.error(parsed.error.errors[0]?.message || 'Invalid input');
-      return;
+      return false;
     }
     const { error } = await supabase.from('medicine_logs').insert({
       household_id: householdId,
@@ -102,13 +116,18 @@ export function useMedicines(viewDate: string) {
       minute: parsed.data.minute,
       am_pm: parsed.data.am_pm,
       recorded_by: saver.display_name,
+      for_date: log.for_date ?? null,
+      for_minute: log.for_minute ?? null,
+      is_extra: log.is_extra ?? false,
     });
     if (error) {
       toast.error('Failed to add medicine log');
       console.error(error);
+      return false;
     } else {
       toast.success('Medicine logged');
       invalidateLogs();
+      return true;
     }
   }, [viewDate, invalidateLogs, householdId, caregiver, caregivers]);
 
@@ -180,6 +199,7 @@ export function useMedicines(viewDate: string) {
       hour: log.hour,
       minute: log.minute,
       am_pm: log.am_pm,
+      is_extra: log.is_extra,
       recorded_by: caregiver.display_name,
     }));
     const { error: insertError } = await supabase.from('medicine_logs').insert(inserts);
@@ -192,5 +212,5 @@ export function useMedicines(viewDate: string) {
     }
   }, [viewDate, invalidateLogs, householdId, caregiver]);
 
-  return { medicines, logs, loading, loadError, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay };
+  return { medicines, medicinesLoading, medicinesError, logs, loading, loadError, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay };
 }

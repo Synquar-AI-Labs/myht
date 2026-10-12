@@ -72,8 +72,9 @@ try {
  A=await family('A'); B=await family('B');
  for(const [t,s] of Object.entries(samples)) fixtures[t]=good(await insert(A.admin,t,{...s,household_id:A.hid}))[0];
  samples.medicine_logs={date:'2026-01-01',medicine_id:fixtures.medicines.id};
+ samples.dose_skips={for_date:'2026-01-01',for_minute:480,medicine_id:fixtures.medicines.id};
  samples.custom_action_logs={date:'2026-01-01',action_id:fixtures.custom_actions.id,value:1};
- for(const t of ['medicine_logs','custom_action_logs']) fixtures[t]=good(await insert(A.admin,t,{...samples[t],household_id:A.hid}))[0];
+ for(const t of ['medicine_logs','dose_skips','custom_action_logs']) fixtures[t]=good(await insert(A.admin,t,{...samples[t],household_id:A.hid}))[0];
  fixtures.caregivers=good(await rows(A.admin,'caregivers','&household_id=eq.'+A.hid))[0];
  fixtures.household_invites=good(await rows(A.admin,'household_invites','&household_id=eq.'+A.hid))[0];
  fixtures.audit_log=good(await rows(A.admin,'audit_log','&household_id=eq.'+A.hid))[0];
@@ -101,7 +102,7 @@ await check('2 cross-family mutations and reading RPCs',async()=>{
   assert.equal(good(await rows(A.admin,t,'&id=eq.'+fixtures[t].id)).length,1);
   assert.equal(snapshot(t,A.hid),before);
   // Identical operations succeed for the rightful family on a disposable row.
-  const control=good(await insert(A.admin,t,{...s,household_id:A.hid,...(t==='health_records'?{date:'2026-12-01'}:{})}))[0];
+  const control=good(await insert(A.admin,t,{...s,household_id:A.hid,...(t==='health_records'?{date:'2026-12-01'}:t==='dose_skips'?{for_date:'2026-12-01'}:{})}))[0];
   assert.equal(good(await request(A.admin.token,'/rest/v1/'+t+'?id=eq.'+control.id,'PATCH',{household_id:A.hid}))[0].id,control.id);
   assert.equal(good(await request(A.admin.token,'/rest/v1/'+t+'?id=eq.'+control.id,'DELETE'))[0].id,control.id);
  }
@@ -142,10 +143,11 @@ await check('4 transcribe-audio tenant boundary and malformed paths',async()=>{
 });
 await check('5 composite medicine and caregiver foreign keys',async()=>{
  denied(await insert(B.member,'medicine_logs',{household_id:B.hid,date:'2026-01-01',medicine_id:fixtures.medicines.id}));
- for(const t of ['health_records','bp_readings','medicine_logs','custom_action_logs','written_notes','audio_transcripts','hospital_stays']){
-  const s={...samples[t]}; if(t==='medicine_logs') s.medicine_id=good(await insert(B.admin,'medicines',{household_id:B.hid,name:'B med'}))[0].id;
+ denied(await insert(B.member,'dose_skips',{...samples.dose_skips,household_id:B.hid}));
+ for(const t of ['health_records','bp_readings','medicine_logs','dose_skips','custom_action_logs','written_notes','audio_transcripts','hospital_stays']){
+  const s={...samples[t]}; if(t==='medicine_logs'||t==='dose_skips') s.medicine_id=good(await insert(B.admin,'medicines',{household_id:B.hid,name:'B med'}))[0].id;
   if(t==='custom_action_logs') s.action_id=good(await insert(B.admin,'custom_actions',{household_id:B.hid,name:'B action'}))[0].id;
-  denied(await insert(B.member,t,{...s,date:'2026-01-03',household_id:B.hid,caregiver_id:A.caregiver}));
+  denied(await insert(B.member,t,{...s,...(t==='dose_skips'?{for_date:'2026-01-03'}:{date:'2026-01-03'}),household_id:B.hid,caregiver_id:A.caregiver}));
  }
 });
 await check('6 anonymous access and private-schema API',async()=>{
@@ -432,6 +434,24 @@ await check('25 transcription quota, concurrency and private usage table',async(
   for(const r of forbidden) {assert.equal(r.status,token===anon?401:403,JSON.stringify(r));assert.equal(r.data?.code,'42501');}
  }
  assert.equal(sql(`SELECT count(*) FROM public.transcription_usage`),before);
+});
+await check('26 dose skips are unique, audited, ticker-backed and links are well-formed',async()=>{
+ const payload={household_id:A.hid,medicine_id:fixtures.medicines.id,for_date:'2026-06-01',for_minute:600,caregiver_id:A.caregiver,recorded_by:'Synthetic saver'};
+ const skip=good(await insert(A.admin,'dose_skips',payload))[0];
+ assert.equal(good(await rows(A.admin,'household_sync','&household_id=eq.'+A.hid))[0].table_name,'dose_skips');
+ const duplicate=await insert(A.admin,'dose_skips',payload);
+ assert.equal(duplicate.status,409);assert.equal(duplicate.data.code,'23505');
+ good(await request(A.admin.token,'/rest/v1/dose_skips?id=eq.'+skip.id,'PATCH',{reason:'Not needed'}));
+ good(await request(A.admin.token,'/rest/v1/dose_skips?id=eq.'+skip.id,'DELETE'));
+ const events=good(await rows(A.admin,'audit_log','&table_name=eq.dose_skips&row_key=eq.'+skip.id));
+ assert.deepEqual(events.map(e=>e.action).sort(),['delete','insert','update']);
+ assert(events.every(e=>e.actor_user_id===A.admin.id));
+ const invalid=[{for_date:'2026-06-01'}, {for_minute:600}, {for_date:'2026-06-01',for_minute:600,is_extra:true}, {for_date:'2026-06-01',for_minute:1440}];
+ for(const fields of invalid) {
+  const r=await insert(A.admin,'medicine_logs',{household_id:A.hid,date:'2026-06-01',medicine_id:fixtures.medicines.id,...fields});
+  assert.equal(r.status,400);assert.equal(r.data.code,'23514');
+ }
+ assert.deepEqual(good(await rows(A.admin,'medicine_logs','&date=eq.2026-06-01')),[]);
 });
 console.log('Failures: '+failures);
 process.exitCode=failures;

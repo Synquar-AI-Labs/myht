@@ -15,6 +15,7 @@ import { format, parseISO, addDays, subDays } from 'date-fns';
 import { Copy, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatBp } from '@/lib/utils';
+import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
 interface DailyRecordTabProps {
   records: HealthRecord[];
@@ -54,6 +55,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   // While ANY write is in flight, every competing control locks — a save and
   // a delete of the same record must never race.
   const busy = saving || deleting;
+  useUpdateBusy(busy || dirty.current);
   useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
 
   const viewRecord = useMemo(() => getRecordByDate(viewDate), [viewDate, records]);
@@ -134,7 +136,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
   const isToday = viewDate === format(new Date(), 'yyyy-MM-dd');
 
   return (
-    <div className="space-y-4 pb-4">
+    <div className="space-y-4 pb-4" data-update-busy={busy || dirty.current}>
       {/* Date header — in dayOnly mode there are no arrows: this screen
           edits exactly the day it was opened for. */}
       <Card className="border-none shadow-sm">

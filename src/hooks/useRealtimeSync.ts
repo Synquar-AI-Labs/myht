@@ -6,6 +6,7 @@ import { useHousehold } from '@/hooks/HouseholdProvider';
 import { medicineKeys } from '@/hooks/useMedicines';
 import { healthKeys } from '@/hooks/useHealthRecords';
 import { domainKeys } from '@/lib/domainKeys';
+import { skipKeys } from '@/hooks/useDoseSkips';
 
 /**
  * Only the household ticker is published; medical rows never travel over
@@ -42,6 +43,7 @@ export function useRealtimeSync() {
           household_invites: [domainKeys.invites(householdId)],
           medicines: [medicineKeys.list(householdId)],
           medicine_logs: [medicineKeys.logs(householdId), medicineKeys.reports(householdId)],
+          dose_skips: [skipKeys(householdId)],
           health_records: [healthKeys.records(householdId)],
           bp_readings: [healthKeys.bp(householdId)],
           appointments: [domainKeys.appointments(householdId)],

@@ -11,6 +11,7 @@ import { RecordingProvider } from "@/hooks/RecordingProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { AppUpdate } from '@/components/AppUpdate';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <AppUpdate />
       <BrowserRouter>
         <Routes>
           <Route path="/auth" element={<Auth />} />

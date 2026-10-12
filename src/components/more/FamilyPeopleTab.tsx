@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { accountError } from '@/lib/accountSetup';
 import { familyInviteMessage } from '@/lib/familyInvite';
 import { domainKeys } from '@/lib/domainKeys';
+import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
 export function FamilyPeopleTab() {
   const { householdId, caregivers, role, user, refresh } = useHousehold();
@@ -22,6 +23,7 @@ export function FamilyPeopleTab() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [shareText, setShareText] = useState('');
+  useUpdateBusy(busy || !!email || !!name || !!target);
   const admin = role === 'admin';
   const run = async (action: () => Promise<void>) => {
     if (busy) return;

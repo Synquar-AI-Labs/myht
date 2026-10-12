@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Plus, Trash2, Pencil, Copy, Pill } from 'lucide-react';
 import { format, subDays, parseISO } from 'date-fns';
+import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
 interface MedicineTrackerProps {
   viewDate: string;
@@ -36,6 +37,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const [originalCaregiverId, setOriginalCaregiverId] = useState<string | null>(null);
   const editPeople = caregivers.filter(p => p.is_active || p.caregiver_id === originalCaregiverId);
   const [showNewMedicineDialog, setShowNewMedicineDialog] = useState(false);
+  useUpdateBusy(showForm || showNewMedicineDialog);
   const [newMedName, setNewMedName] = useState('');
   const [newMedNote, setNewMedNote] = useState('');
 

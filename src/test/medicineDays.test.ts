@@ -44,10 +44,10 @@ describe('urgency boundaries and visibility', () => {
   it.each([[-15 * 60_000 - 1, 'scheduled'], [-15 * 60_000, 'soon'], [-1, 'soon'], [0, 'due'], [15 * 60_000, 'due'], [15 * 60_000 + 1, 'late'], [120 * 60_000, 'late']] as const)('classifies elapsed milliseconds %i as %s', (elapsed, state) => {
     expect(slotStateAt(at, new Date(at.getTime() + elapsed))).toBe(state);
   });
-  it('keeps the unchanged 2-hour drop-off', () => {
+  it('changes late to missed after 2 hours', () => {
     const med = { id: 'm', category: 'medicine', frequency: 'daily', schedule_time: '12:00 PM', show_in_quick_log: true } as Medicine;
     expect(buildUpcomingList([med], [], new Date(at.getTime() + 120 * 60_000))).toHaveLength(1);
-    expect(buildUpcomingList([med], [], new Date(at.getTime() + 120 * 60_000 + 1))).toHaveLength(0);
+    expect(buildUpcomingList([med], [], new Date(at.getTime() + 120 * 60_000 + 1))[0].state).toBe('missed');
   });
   it('never hides an urgent group beyond six rows', () => {
     const groups = Array.from({ length: 10 }, (_, i) => ({ at: new Date(at.getTime() + i * 60_000), state: i === 9 ? 'late' as const : 'scheduled' as const }));

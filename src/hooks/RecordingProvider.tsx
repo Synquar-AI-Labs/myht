@@ -13,6 +13,7 @@ import {
 } from '@/lib/recordingJob';
 import { persistJob, loadPersistedJob, clearPersistedJob } from '@/lib/recordingJobStore';
 import { useHousehold } from '@/hooks/HouseholdProvider';
+import { useUpdateBusy, holdUpdateWork, withUpdateWork } from '@/hooks/useUpdateBusy';
 import { domainKeys } from '@/lib/domainKeys';
 import { transcriptionError } from '@/lib/transcriptionError';
 
@@ -66,6 +67,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   const [job, reduceDispatch] = useReducer(recordingJobReducer, idleJob);
   const [elapsed, setElapsed] = useState(0);
   const [restoring, setRestoring] = useState(true);
+  useUpdateBusy(restoring || isBusy(job.status));
 
   // Async callbacks read the LATEST job (fixes stale title/recordedBy at stop).
   const jobRef = useRef(job);
@@ -77,6 +79,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const finishCaptureRef = useRef<(() => void) | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -133,7 +136,7 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     return session;
   }, [identity]);
 
-  const transcribeAndSave = useCallback(async (current: RecordingJob) => {
+  const transcribeAndSave = useCallback(async (current: RecordingJob) => withUpdateWork(async () => {
     dispatch({ type: 'TRANSCRIBE_START' });
     const { storagePath, ext, metadata } = current;
     let result: { transcript: string; summary: string; action_items: string[]; follow_ups: string[] };
@@ -179,9 +182,9 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     await clearPersistedJob(identity);
     dispatch({ type: 'SAVED' });
     if (mounted.current) { invalidate(); toast.success('Transcript saved.'); }
-  }, [invalidate, checkIdentity, dispatch, identity]);
+  }), [invalidate, checkIdentity, dispatch, identity]);
 
-  const uploadAndProcess = useCallback(async (blob: Blob, ext: string, metadata: JobMetadata) => {
+  const uploadAndProcess = useCallback(async (blob: Blob, ext: string, metadata: JobMetadata) => withUpdateWork(async () => {
     if (runningRef.current) return;
     runningRef.current = true;
     const current = jobRef.current;
@@ -208,11 +211,13 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     } finally {
       runningRef.current = false;
     }
-  }, [transcribeAndSave, checkIdentity, dispatch, identity]);
+  }), [transcribeAndSave, checkIdentity, dispatch, identity]);
 
   // ── Recording ──────────────────────────────────────────────────────
 
   const finalizeRecording = useCallback((mimeType: string | undefined) => {
+    const releaseCapture = finishCaptureRef.current ?? (() => {});
+    finishCaptureRef.current = null;
     streamRef.current?.getTracks().forEach(t => t.stop());
     streamRef.current = null;
     stopTimer();
@@ -226,24 +231,28 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
     if (blob.size === 0) {
       if (mounted.current) toast.error('No audio was captured. Please try again.');
       dispatch({ type: 'DISCARD' });
+      releaseCapture();
       return;
     }
 
     const ext = extFromMime(type);
     const metadata = jobRef.current.metadata; // current at STOP, not record time
     if (!mounted.current) {
-      void persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      void withUpdateWork(() => persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() }))
+        .catch(error => { console.error(error); toast.error('Could not keep the audio on this device.'); }).finally(releaseCapture);
       return;
     }
     if (blob.size > MAX_TRANSCRIBABLE_BYTES) {
       dispatch({ type: 'TOO_LARGE', blob, bytes: blob.size, ext });
-      persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() });
+      void withUpdateWork(() => persistJob({ ...identity, id: jobRef.current.id, metadata, ext, bytes: blob.size, blob, savedAt: Date.now() }))
+        .catch(error => { console.error(error); toast.error('Could not keep the audio on this device.'); }).finally(releaseCapture);
       toast.error(`Recording is ${describeBytes(blob.size)} — over the ${describeBytes(MAX_TRANSCRIBABLE_BYTES)} transcription limit. You can download the audio and split it.`);
       return;
     }
 
     dispatch({ type: 'CAPTURED', blob, bytes: blob.size, ext });
     uploadAndProcess(blob, ext, metadata);
+    releaseCapture();
   }, [releaseWakeLock, stopTimer, uploadAndProcess, dispatch, identity]);
 
   const startRecording = useCallback(async (metadata: JobMetadata) => {
@@ -398,7 +407,11 @@ export function RecordingProvider({ children }: { children: ReactNode }) {
       cancelled = true;
       mounted.current = false;
       stopTimer(); releaseWakeLock();
-      if (recorderRef.current && recorderRef.current.state !== 'inactive') recorderRef.current.stop();
+      if (recorderRef.current && recorderRef.current.state !== 'inactive') {
+        finishCaptureRef.current = holdUpdateWork();
+        try { recorderRef.current.stop(); }
+        catch { finishCaptureRef.current(); finishCaptureRef.current = null; }
+      }
       streamRef.current?.getTracks().forEach(t => t.stop());
     };
   }, [identity, dispatch, stopTimer, releaseWakeLock]);

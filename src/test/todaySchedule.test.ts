@@ -78,10 +78,10 @@ describe('buildUpcomingList — scheduling scope', () => {
     const meds = [
       med({ id: 'm1', name: 'A', schedule_time: '9:00 PM' }),
       med({ id: 'm2', name: 'B', schedule_time: '8:00 AM' }), // tomorrow morning, inside 12h
-      med({ id: 'm3', name: 'C', schedule_time: '2:00 PM' }), // today too old, tomorrow too far
+      med({ id: 'm3', name: 'C', schedule_time: '2:00 PM' }), // today missed, tomorrow too far
     ];
     const result = buildUpcomingList(meds, [], NOW);
-    expect(result.map(r => r.medicine.name)).toEqual(['A', 'B']);
+    expect(result.map(r => r.medicine.name)).toEqual(['C', 'A', 'B']);
   });
 
   it('never auto-schedules PRN or every-N-day medicines, even with parseable times', () => {
@@ -125,9 +125,9 @@ describe('buildUpcomingList — states', () => {
     expect(byName['Later']).toBe('scheduled');
   });
 
-  it('drops overdue doses after the 2-hour trail', () => {
+  it('keeps overdue doses as missed after the 2-hour trail', () => {
     const meds = [med({ id: 'm1', schedule_time: '6:00 PM' })]; // 2h47m ago
-    expect(buildUpcomingList(meds, [], NOW)).toHaveLength(0);
+    expect(buildUpcomingList(meds, [], NOW)[0].state).toBe('missed');
   });
 });
 
@@ -160,8 +160,8 @@ describe('buildUpcomingList — one-to-one log matching', () => {
   it('handles multi-slot schedules across the window', () => {
     const meds = [med({ id: 'm1', name: 'Multi', schedule_time: '10:00 AM / 9:00 PM' })];
     const result = buildUpcomingList(meds, [], NOW);
-    // 10 AM today is >2h past, 10 AM tomorrow is >12h away → only 9 PM shows.
-    expect(result).toHaveLength(1);
-    expect(result[0].state).toBe('soon');
+    // 10 AM today is now missed; tomorrow's 10 AM remains outside 12h.
+    expect(result).toHaveLength(2);
+    expect(result.map(item => item.state)).toEqual(['missed', 'soon']);
   });
 });

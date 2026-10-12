@@ -1,13 +1,14 @@
 import { format } from 'date-fns';
 import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
 import type { CustomAction, CustomActionLog } from '@/hooks/useCustomActions';
-import { logDateTime, doseLabel } from '@/components/today/todaySchedule';
+import { logDateTime, doseLabel, scheduledDoseDetail, occurrenceTime, visibleSkips, type DoseSkip } from '@/components/today/todaySchedule';
 
 /** One line in the day's diary, newest first. */
 export interface DiaryEntry {
   id: string;
   at: Date;
-  kind: 'medicine' | 'bp' | 'custom' | 'note' | 'transcript';
+  kind: 'medicine' | 'bp' | 'custom' | 'note' | 'transcript' | 'skip';
+  skipId?: string;
   /**
    * event   → the caregiver chose this time (medicine/custom hour picker)
    * entered → we only know when it was typed in (BP, notes, transcripts)
@@ -49,6 +50,8 @@ interface DiaryInputs {
   date: string;
   medLogs: MedicineLog[];
   medicines: Medicine[];
+  skips?: DoseSkip[];
+  resolutionLogs?: MedicineLog[];
   bpReadings: { id: string; date: string; systolic: number; diastolic: number; recorded_by: string; created_at: string }[];
   customActions: CustomAction[];
   customLogs: CustomActionLog[];
@@ -77,10 +80,18 @@ export function buildDiaryEntries(inputs: DiaryInputs): DiaryEntry[] {
       timeKind: 'event',
       untimed: false,
       title: isRealMedicine ? `${med?.name ?? 'Medicine'} given` : (med?.name ?? 'Activity'),
-      detail: doseLabel(med) || undefined,
+      detail: [doseLabel(med), scheduledDoseDetail(log)].filter(Boolean).join(' · ') || undefined,
       by: log.recorded_by || undefined,
       createdAt: log.created_at,
     });
+  });
+
+  (inputs.skips ?? []).forEach(skip => {
+    const at = occurrenceTime(skip);
+    if (!visibleSkips([skip], [...inputs.medLogs, ...(inputs.resolutionLogs ?? [])], inputs.medicines, at).length) return;
+    entries.push({ id: `skip-${skip.id}`, skipId: skip.id, at, kind: 'skip', timeKind: 'event', untimed: false,
+      title: `Skipped: ${medById.get(skip.medicine_id)?.name ?? 'Medicine'} (${format(at, 'h:mm a')})`,
+      detail: skip.reason || undefined, by: skip.recorded_by, createdAt: skip.created_at });
   });
 
   inputs.customLogs.forEach(log => {

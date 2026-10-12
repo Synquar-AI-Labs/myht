@@ -191,6 +191,9 @@ only by adding an explicit link that wins over the time match.
   smallint NULL CHECK (for_minute BETWEEN 0 AND 1439)`; both set or both null.
   Together they name the scheduled dose in wall-clock terms ("Oct 11, 8:00 AM"),
   the same way slots are built from the medicine's times.
+- Also `is_extra boolean NOT NULL DEFAULT false`: true only when the person
+  chose "An extra dose, not on the schedule". It is what tells a deliberate
+  extra dose apart from an older record that simply has no link.
 
 ### 9.2 Recording
 
@@ -201,16 +204,23 @@ only by adding an explicit link that wins over the time match.
   choices and no default: "At 8:00 AM, on time" · "Just now" · "At another
   time" (date and quarter-hour). Save is enabled after a choice. Soon and due
   rows ask nothing; the time is now, rounded down, as today.
-- From the "Record a medicine" list: if that medicine has unrecorded scheduled
-  doses in the soon, due, late or missed states, ask **"Which dose is this?"**:
-  one choice per such dose ("The 8:00 AM dose, 2 hours late") plus "An extra
-  dose, not on the schedule". With none, ask nothing and store no link.
+- From the "Record a medicine" list. Candidates are that medicine's scheduled
+  doses, not yet recorded or skipped, from 12 hours ago to 2 hours ahead.
+  - Exactly one candidate, and it is soon or due: link to it and ask nothing.
+  - Otherwise, with at least one candidate, ask **"Which dose is this?"**: one
+    choice per candidate ("The 8:00 AM dose, 2 hours late") plus "An extra
+    dose, not on the schedule" (stored with `is_extra`).
+  - No candidate: ask nothing, store no link, not extra.
+- Never two questions for one record. A row under "Coming up" that is late or
+  missed asks only "When was it given?". The list asks only "Which dose is
+  this?"; the time is then now, with the sheet's existing Change control.
 
 ### 9.3 Pairing (the only rule that changes)
 
 - A slot is satisfied by a record whose `for_date` / `for_minute` equal the
   slot, whatever time the record carries. A linked record never satisfies any
   other slot.
+- A record marked `is_extra` never satisfies any slot.
 - Records without a link keep today's rule (nearest free slot within 1 hour,
   one-to-one), applied to the slots and records that remain. Every existing
   pairing test must stay green unchanged.
