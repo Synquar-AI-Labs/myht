@@ -10,6 +10,9 @@ import type { HealthRecord, Appointment } from '@/types/health';
 import type { GivenItem, UpcomingItem } from '@/components/today/todaySchedule';
 import { timeLabel, doseLabel, logDateTime } from '@/components/today/todaySchedule';
 import { READING_TYPES, ReadingType } from '@/components/today/readingTypes';
+import { urgencyFor, urgencyStyle } from '@/lib/medicineUrgency';
+import { UrgencyBadge } from '@/components/today/UrgencyBadge';
+import { relativeDoseTime } from '@/lib/doseGroups';
 import { TrendsOpenPanel } from '@/components/today/TrendsCharts';
 import type { CustomActionLog } from '@/hooks/useCustomActions';
 
@@ -126,10 +129,11 @@ interface MedicineSectionProps {
   todayLogs: MedicineLog[];
   given: GivenItem[];
   upcoming: UpcomingItem[];
+  now: Date;
   onPickMedicine: (med: Medicine) => void;
 }
 
-export function MedicineSection({ medicines, todayLogs, given, upcoming, onPickMedicine }: MedicineSectionProps) {
+export function MedicineSection({ medicines, todayLogs, given, upcoming, now, onPickMedicine }: MedicineSectionProps) {
   const visible = medicines.filter(m => m.show_in_quick_log !== false);
   const last = given[0];
   const subtitle = last?.medicine
@@ -162,13 +166,15 @@ export function MedicineSection({ medicines, todayLogs, given, upcoming, onPickM
           const lastToday = todayTimes[todayTimes.length - 1];
           const next = nextSlotByMed.get(med.id);
           const dose = doseLabel(med);
+          const urgency = urgencyFor(next?.state);
           return (
             <button
               key={med.id}
               onClick={() => onPickMedicine(med)}
+              style={urgencyStyle(next?.state)}
               className={`flex w-full items-center gap-3 rounded-xl px-1 py-3 text-left ${
                 i < visible.length - 1 ? 'border-b border-[#f3ede2]' : ''
-              } ${next?.state === 'due' ? 'animate-due-flash-row' : next?.state === 'overdue' ? 'bg-[rgba(194,65,12,0.08)]' : ''}`}
+              } ${urgency?.motion ?? ''}`}
             >
               <span className="min-w-0 flex-1">
                 <span className="block text-[16px] font-bold text-[#26201a]">{med.name}</span>
@@ -180,19 +186,11 @@ export function MedicineSection({ medicines, todayLogs, given, upcoming, onPickM
                     </span>
                   )}
                   {next && next.state === 'scheduled' && ` · next ${timeLabel(next.at)}`}
+                  {next && urgency && <span style={{ color: urgency.color }}> · {relativeDoseTime(next.at, now)}</span>}
                   {!lastToday && !next && !med.schedule_time && `${dose ? ' · ' : ''}as needed`}
                 </span>
               </span>
-              {next?.state === 'due' && (
-                <span className="animate-due-pulse flex-none rounded-lg bg-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-wide text-white">
-                  Due
-                </span>
-              )}
-              {next?.state === 'overdue' && (
-                <span className="flex-none rounded-lg border border-[#c2410c] px-2 py-1 text-xs font-extrabold uppercase tracking-wide text-[#c2410c]">
-                  Overdue
-                </span>
-              )}
+              <UrgencyBadge state={next?.state} />
             </button>
           );
         })}

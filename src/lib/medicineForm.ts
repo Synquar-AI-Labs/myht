@@ -1,5 +1,7 @@
 import { parseScheduleTime } from '@/lib/medicineAlerts';
 import { doseTimeLabel } from '@/lib/doseTime';
+import { format, parseISO } from 'date-fns';
+import { medicineIntervalDays, nextMedicineDay } from '@/lib/medicineDays';
 
 export const MAX_MEDICINE_TIMES = 24;
 export const FREQUENCY_LABELS: Record<string, string> = {
@@ -38,13 +40,20 @@ export function fillMedicineTimes(hours: number, start: number): number[] {
   return [...new Set(times)].sort((a, b) => a - b);
 }
 
-export function medicineReadBack(frequency: string, times: number[]): string {
+export function medicineReadBack(frequency: string, times: number[], start_date?: string | null, now = new Date()): string {
   if (frequency === 'as needed') return 'Given only when needed.';
   const labels = canonicalSchedule(times).split(' / ').filter(Boolean);
   const at = labels.length ? ` at ${labels.length === 1 ? labels[0] : `${labels.slice(0, -1).join(', ')} and ${labels.at(-1)}`}` : '';
   const days = frequency === 'daily' || !frequency ? 'every day' : frequency;
   let sentence = `Given ${days}${at}.`;
   if ((frequency === 'daily' || !frequency) && !labels.length) sentence += ' No times set, so it will not appear under Coming up.';
-  if (/^every [2-7] days$/.test(frequency)) sentence += ' Medicines given every few days are not listed under Coming up yet; record them from Record a medicine.';
+  if (medicineIntervalDays(frequency)) {
+    const next = nextMedicineDay({ frequency, start_date }, times, now);
+    if (!next) sentence += ' Pick a start day to see this under Coming up.';
+    else {
+      sentence = `Given ${days}${at}, starting ${format(parseISO(start_date!), 'EEEE, MMMM d')}. Next: ${format(next, 'EEEE, MMMM d')}.`;
+      if (!labels.length) sentence += ' No times set, so it will not appear under Coming up.';
+    }
+  }
   return sentence;
 }

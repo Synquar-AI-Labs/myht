@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { urgencyFor, urgencyStyle } from '@/lib/medicineUrgency';
+import { UrgencyBadge } from './UrgencyBadge';
 import { groupGiven, groupUpcoming, relativeDoseTime, elapsedDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
 import { doseLabel, timeLabel, type GivenItem, type UpcomingItem, type SlotState } from './todaySchedule';
 
@@ -15,13 +17,18 @@ export function DoseTimeGroups({ given, upcoming, now, onGiven, onUpcoming }: {
     {(expanded ? groups : visibleDoseGroups(groups, now, !!upcoming)).map(group => {
       const key = group.at.getTime();
       const state = group.state ?? 'scheduled';
-      const isOpen = open[key] ?? key === nearest;
+      const urgency = urgencyFor(state);
+      const isOpen = open[key] ?? (!!urgency || key === nearest);
       return <div key={key} className="border-b border-[#f3ede2] last:border-b-0">
-        <button className={`flex min-h-11 w-full flex-wrap items-center justify-between gap-2 py-3 text-left ${state === 'due' ? 'animate-due-flash-row' : state === 'overdue' ? 'text-[#c2410c]' : ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
-          <span className="font-bold">{timeLabel(group.at)}</span>
-          <span className="text-sm">{upcoming ? relativeDoseTime(group.at, now) : elapsedDoseTime(group.at, now)}</span>
-          <span className="text-sm">{group.items.length} {upcoming ? (group.items.length === 1 ? 'medicine' : 'medicines') : 'given'}{state === 'due' ? ' · Due' : state === 'overdue' ? ' · Overdue' : ''}</span>
-          <ChevronDown aria-hidden="true" className={`h-4 w-4 flex-none transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <button style={urgencyStyle(state)} className={`flex min-h-11 w-full flex-col gap-2 rounded-xl px-2 py-3 text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
+          <span className="flex w-full items-center justify-between gap-2">
+            <span className="whitespace-nowrap font-bold">{timeLabel(group.at)}</span>
+            <span className="flex flex-none items-center gap-2"><UrgencyBadge state={state} /><ChevronDown aria-hidden="true" className={`h-4 w-4 flex-none transition-transform ${isOpen ? 'rotate-180' : ''}`} /></span>
+          </span>
+          <span className="flex w-full items-center justify-between gap-2 text-sm">
+            <span>{upcoming ? relativeDoseTime(group.at, now) : elapsedDoseTime(group.at, now)}</span>
+            <span>{group.items.length} {upcoming ? (group.items.length === 1 ? 'medicine' : 'medicines') : 'given'}</span>
+          </span>
         </button>
         {isOpen && <div className="pb-2">{group.items.map(item => {
           const medicine = item.medicine;
@@ -35,6 +42,6 @@ export function DoseTimeGroups({ given, upcoming, now, onGiven, onUpcoming }: {
         })}</div>}
       </div>;
     })}
-    {groups.length > 6 && <button className="min-h-11 w-full text-sm font-semibold" onClick={() => setExpanded(value => !value)}>{expanded ? 'Show less' : `Show ${groups.length - 6} more times`}</button>}
+    {(expanded || visibleDoseGroups(groups, now, !!upcoming).length < groups.length) && <button className="min-h-11 w-full text-sm font-semibold" onClick={() => setExpanded(value => !value)}>{expanded ? 'Show less' : `Show ${groups.length - visibleDoseGroups(groups, now, !!upcoming).length} more times`}</button>}
   </>;
 }

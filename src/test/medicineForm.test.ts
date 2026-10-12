@@ -40,7 +40,7 @@ describe('medicine form schedule', () => {
   it('reads back daily, no-time, every-few-days and PRN accurately', () => {
     expect(medicineReadBack('daily', [360, 600, 840])).toBe('Given every day at 6:00 AM, 10:00 AM and 2:00 PM.');
     expect(medicineReadBack('daily', [])).toBe('Given every day. No times set, so it will not appear under Coming up.');
-    expect(medicineReadBack('every 3 days', [540])).toBe('Given every 3 days at 9:00 AM. Medicines given every few days are not listed under Coming up yet; record them from Record a medicine.');
+    expect(medicineReadBack('every 3 days', [540])).toBe('Given every 3 days at 9:00 AM. Pick a start day to see this under Coming up.');
     expect(medicineReadBack('as needed', [540])).toBe('Given only when needed.');
   });
   it('does not reinterpret unknown frequencies or off-quarter times', () => {

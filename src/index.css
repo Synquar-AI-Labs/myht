@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Urgency pulses only the outline: badge contrast stays steady throughout. */
+@keyframes medicineUrgencyPulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 4px var(--medicine-pulse); }
+}
+.medicine-pulse-slow { animation: medicineUrgencyPulse 2.4s ease-in-out infinite; }
+.medicine-pulse-fast { animation: medicineUrgencyPulse 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .medicine-pulse-slow, .medicine-pulse-fast { animation: none; }
+}
+
 /* Fonts are loaded via <link> in index.html — a CSS @import placed after the
    Tailwind directives gets dropped by the production build. */
 

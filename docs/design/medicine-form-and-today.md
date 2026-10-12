@@ -120,3 +120,181 @@ alone unless the person picks another.
   charts pill closed then opened at a phone and a tablet size.
 - The screens run again for Today, Medicine cabinet, the dose sheet and Edit
   this day at all 14 sizes.
+
+## 8. Batch M2a (owner, 2026-10-11)
+
+### 8.1 Due and late must be loud again
+
+The regrouping kept the flashing row but dropped the strong badge, so "due" is
+now a faint tint with small text. Restore it:
+
+The owner wants urgency shown by colour as well as by blinking, growing with
+lateness. Three urgent states for an unrecorded scheduled dose, one source of
+truth in `todaySchedule.ts` used by "Coming up" AND the "Record a medicine"
+list (today's single `due` state, 15 minutes either side, is split in two):
+
+| State | When | Colour | Badge | Motion |
+| --- | --- | --- | --- | --- |
+| soon | from 15 minutes before, up to the time | amber `#b45309` on `#fef3c7` | SOON | slow pulse (2.4s) |
+| due | from the time, up to 15 minutes after | red `#c2410c` | DUE NOW | pulse (1.2s) |
+| late | 15 minutes to 2 hours after | dark red `#7f1d1d` | LATE | pulse (1.2s) |
+
+- Green is NOT used here: in this app green already means "given".
+- Each state changes the row tint, the badge and the relative label ("in 10
+  minutes", "now", "25 minutes late"); never colour alone. Badge text is white
+  on the state colour (amber badge: dark text on the light amber), contrast at
+  least 4.5:1.
+- The colours live in one place (CSS variables or one constants file) so they
+  can be changed in a minute.
+- The dot beside "Coming up" takes the colour of the most urgent row.
+- Pairing, windows and the 2-hour drop-off do not change. Only the naming of
+  the state inside the existing 15-minute and 2-hour marks changes.
+- Remove the plain " · Due" / " · Overdue" suffixes.
+- The time row itself (the line with the time) carries the tint, the badge and
+  the blinking, so it shows whether the row is open or closed. A soon, due or
+  late row opens by default, the person may close it and it keeps blinking, and
+  it is never hidden behind "Show N more times".
+- Reduced motion: no animation, the steady tint and badge remain.
+- Tests: unit tests for the three states at their boundaries; a component test
+  for each state's class and badge; a browser test that sees SOON for a
+  medicine 5 minutes ahead and LATE for one 30 minutes past, at a phone and a
+  tablet size. The blinking must not be lost again unnoticed.
+
+### 8.2 Medicines given every few days get a start day
+
+- Additive migration: `medicines.start_date date NULL`.
+- Form: when "Every 2…7 days" is chosen, a third question appears: **"Which day
+  does it start?"** (a date, today by default). Read-back: "Given every 3 days
+  at 9:00 AM, starting Sunday, October 11. Next: Wednesday, October 14."
+- Scheduling: such a medicine is scheduled like a daily one, but only on days
+  where the number of calendar days since `start_date` is zero or a positive
+  multiple of N. Nothing else in `buildUpcomingList` changes (pairing, due,
+  late, windows). Calendar days in local time, safe across clock changes.
+- Without a start day (older entries): not scheduled, as today. The cabinet
+  card and the form say: "Pick a start day to see this under Coming up."
+- The cabinet card shows the next day ("Every 3 days · next Wed, Oct 14").
+- "Only when needed" is unchanged.
+- Tests: unit tests for the day rule (start day, day N, day N−1, before the
+  start, weekly, across a clock change, across midnight); a browser test: every
+  2 days starting today with a time inside the next 12 hours shows under
+  Coming up, starting tomorrow does not show today.
+
+## 9. Batch M2b: a record knows which dose it is for, and missed doses stay visible
+
+Owner's idea, 2026-10-11: when a dose is recorded late, ask the person about the
+original dose. Built after M2a. This is the one batch that changes pairing, and
+only by adding an explicit link that wins over the time match.
+
+### 9.1 Stored data
+
+- Additive migration on `medicine_logs`: `for_date date NULL` and `for_minute
+  smallint NULL CHECK (for_minute BETWEEN 0 AND 1439)`; both set or both null.
+  Together they name the scheduled dose in wall-clock terms ("Oct 11, 8:00 AM"),
+  the same way slots are built from the medicine's times.
+
+### 9.2 Recording
+
+- From a "Coming up" row, in any state: the record stores that row's
+  `for_date` / `for_minute` automatically.
+- If the row is late or missed (more than 15 minutes past its time) the sheet
+  first asks: **"This dose was due at 8:00 AM. When was it given?"** with three
+  choices and no default: "At 8:00 AM, on time" · "Just now" · "At another
+  time" (date and quarter-hour). Save is enabled after a choice. Soon and due
+  rows ask nothing; the time is now, rounded down, as today.
+- From the "Record a medicine" list: if that medicine has unrecorded scheduled
+  doses in the soon, due, late or missed states, ask **"Which dose is this?"**:
+  one choice per such dose ("The 8:00 AM dose, 2 hours late") plus "An extra
+  dose, not on the schedule". With none, ask nothing and store no link.
+
+### 9.3 Pairing (the only rule that changes)
+
+- A slot is satisfied by a record whose `for_date` / `for_minute` equal the
+  slot, whatever time the record carries. A linked record never satisfies any
+  other slot.
+- Records without a link keep today's rule (nearest free slot within 1 hour,
+  one-to-one), applied to the slots and records that remain. Every existing
+  pairing test must stay green unchanged.
+
+### 9.4 Missed
+
+- New state `missed`: an unrecorded slot more than 2 hours past its time stays
+  under "Coming up" until 12 hours after its time, then leaves Today. Steady
+  dark red, badge MISSED, no blinking. It is recorded like any other row.
+
+### 9.5 Display
+
+- "Given" stays grouped by the time the dose was given. Where that differs from
+  the scheduled time, the line also says "due 8:00 AM". History the same.
+
+### 9.6 Skipped on purpose (owner asked for it, 2026-10-11)
+
+- A scheduled dose can be skipped on purpose. A skip is NOT a dose: it lives in
+  its own table so that nothing that counts given doses (Given, History totals,
+  reports, PDFs, "last given", Copy previous day) can ever count it.
+- New table `dose_skips`: `id`, `household_id`, `medicine_id` (composite FK to
+  `medicines` like `medicine_logs`), `for_date`, `for_minute` (the scheduled
+  dose, both required), `reason text NOT NULL DEFAULT ''`, `caregiver_id`,
+  `recorded_by`, `created_at`; unique on (household_id, medicine_id, for_date,
+  for_minute). Same treatment as every data table: RLS `household_access`,
+  explicit grants, the audit and ticker trigger, and it joins the table list of
+  the isolation suite.
+- Where: the dose sheet opened from a "Coming up" row (soon, due, late or
+  missed) has a second action under Save: **"Skip this dose"**. It asks **"Why
+  is it skipped?"**: Doctor's advice · Not needed · Refused · None left ·
+  Other (free text, up to 80 characters); the reason may be left empty. It
+  uses the same "Recorded by" person. Not offered for doses that are not on the
+  schedule.
+- Effect: a skip for a slot resolves that slot exactly like a linked record
+  does, so the row leaves "Coming up" and never becomes MISSED. A slot with both
+  a record and a skip counts as given.
+- Display: in "Given · last 12 hours" the time group of the scheduled time
+  shows a muted line "Skipped: Morning tablet (8:00 AM), doctor's advice, by
+  Asha" with **Undo**. The History day view lists it the same way, separate
+  from given doses. Undo deletes the skip; the row returns if its time is still
+  inside the window.
+- Reports and PDFs keep counting given doses only.
+
+### 9.6b Not in this batch
+
+Missed doses in History, skips in the PDF reports, reminders.
+
+### 9.7 Tests
+
+- Unit: a linked record 3 hours late clears its slot; an unlinked one does not;
+  a linked record cannot clear a second slot; precedence of linked over
+  unlinked; the missed window (2 hours to 12 hours); across midnight.
+- Browser: a late row asks the question and "on time" stores the scheduled
+  time; a missed row recorded "just now" leaves the list and shows under Given
+  with "due …"; an extra dose from the list clears nothing; a skipped dose
+  leaves "Coming up", shows as skipped with its reason, is not counted in the
+  day's "meds given" or the medicine report, and Undo brings the row back.
+- Isolation: `dose_skips` is covered by the same cross-family checks as the
+  other data tables.
+- Screens: the question sheet at a phone and a tablet size, both text sizes.
+
+### 9.8 The owner's rule for everything in this batch: simple to understand, simple to operate
+
+- Ask a question only when the answer is needed. A dose recorded on time asks
+  nothing new. Never more than one extra question per record.
+- Every choice is a large button with plain words; no jargon, no codes.
+- One tap must be enough for the common case: on time → "At 8:00 AM, on time".
+- If a screen needs explaining, the wording is wrong: fix the wording.
+
+### 9.9 The app keeps itself up to date
+
+People leave the app open for days (a bedside tablet, a home-screen icon), so
+they never get a new version unless they reload by hand.
+
+- Each build writes a `version.json` (the commit hash and build time) next to
+  `index.html`; the running app knows its own version.
+- The app checks `version.json` (no caching) when the tab becomes visible and
+  every 10 minutes. If the version differs: when nothing is in progress (no
+  open sheet, dialog or form with unsaved input, no recording or upload
+  running) it reloads by itself; otherwise it shows a small bar "A new version
+  is ready" with one button **Update now** and reloads as soon as the work in
+  progress ends.
+- A failed check does nothing. Local development and the e2e runs never reload.
+- Tests: unit tests for the decision (same version, new version while idle,
+  new version while busy, failed check); a browser test that a changed
+  `version.json` reloads an idle page and shows the bar on a page with an open
+  form.

@@ -47,12 +47,12 @@ describe('dose time grouping', () => {
     expect(elapsedDoseTime(new Date('2026-10-11T11:59:00'), now)).toBe('1 minute ago');
   });
   it('combines same instants and takes the most urgent state', () => {
-    const items = [{ at: now, medicine: { id: 'a' }, state: 'overdue' }, { at: now, medicine: { id: 'b' }, state: 'due' }] as UpcomingItem[];
+    const items = [{ at: now, medicine: { id: 'a' }, state: 'late' }, { at: now, medicine: { id: 'b' }, state: 'due' }] as UpcomingItem[];
     const groups = groupUpcoming(items);
     expect(groups).toHaveLength(1);
     expect(groups[0].items).toHaveLength(2);
-    expect(groups[0].state).toBe('due');
-    expect(items[0].state).toBe('overdue');
+    expect(groups[0].state).toBe('late');
+    expect(items[0].state).toBe('late');
   });
   it('keeps newest-first Given input order and does not merge separate dates', () => {
     const older = new Date('2026-10-10T12:00:00');

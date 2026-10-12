@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { test, expect, family, checked, person, signIn, today, tomorrow } from './helpers';
+import { test, expect, family, checked, person, signIn, today, tomorrow, choose } from './helpers';
 import type { Page } from '@playwright/test';
 
 const sizes = [[320,568],[360,800],[375,667],[393,852],[412,915],[430,932],[844,390],[600,960],[768,1024],[800,1280],[820,1180],[1024,768],[1280,800],[1366,1024]];
@@ -8,10 +8,12 @@ type Finding = { type: string; element: string; detail: string };
 const results: { screen: string; viewport: string; scale: number; path: string; findings: Finding[] }[] = [];
 let seeded: Awaited<ReturnType<typeof family>>;
 let newPerson: Awaited<ReturnType<typeof person>>;
+let urgencyNow: Date;
 
 test.beforeAll(async () => {
   seeded = await family();
   newPerson = await person('Setup helper');
+  urgencyNow = new Date();
   const caregiver = seeded.people.find(p => p.user_id === seeded.admin.id)!;
   const hour = Number(new Intl.DateTimeFormat('en-US', { timeZone: 'America/Toronto', hour: 'numeric', hour12: false }).format(new Date())) % 24;
   const upcoming = (hour + 2) % 24;
@@ -19,6 +21,13 @@ test.beforeAll(async () => {
   for (const name of ['Synthetic morning medicine', 'Synthetic evening medicine', 'Synthetic as-needed medicine']) {
     const medicine = await checked(seeded.admin.client.from('medicines').insert({ household_id: seeded.id, name, amount: '1 tablet', frequency: 'daily', schedule_time: label }).select().single());
     await checked(seeded.admin.client.from('medicine_logs').insert({ household_id: seeded.id, medicine_id: medicine.id, date: today(), hour: hour % 12 || 12, am_pm: hour < 12 ? 'AM' : 'PM', caregiver_id: caregiver.caregiver_id, recorded_by: caregiver.display_name }));
+  }
+  if (process.env.SCREEN_URGENCY === '1') {
+    for (const [name, offset] of [['Synthetic SOON', 5], ['Synthetic DUE NOW', 0], ['Synthetic LATE', -30]] as const) {
+      const time = new Date(urgencyNow.getTime() + offset * 60_000);
+      const label = `${time.getHours() % 12 || 12}:${String(time.getMinutes()).padStart(2, '0')} ${time.getHours() < 12 ? 'AM' : 'PM'}`;
+      await checked(seeded.admin.client.from('medicines').insert({ household_id: seeded.id, name, frequency: 'daily', schedule_time: label }));
+    }
   }
   await checked(seeded.admin.client.rpc('log_reading', { p_household_id: seeded.id, p_date: today(), p_feed_bags: 3, p_urine_count: 2, p_vomit_count: 1, p_flush_ml: 500, p_caregiver_id: caregiver.caregiver_id, p_recorded_by: caregiver.display_name }));
   await checked(seeded.admin.client.rpc('log_bp_reading', { p_household_id: seeded.id, p_date: today(), p_systolic: 120, p_diastolic: 80, p_caregiver_id: caregiver.caregiver_id, p_recorded_by: caregiver.display_name }));
@@ -122,6 +131,7 @@ async function capture(page: Page, screen: string, viewport: string, scale: numb
 for (const [width,height] of sizes) test(`${width}x${height} screen audit`, async ({ page, sessions }) => {
   void sessions;
   await page.setViewportSize({ width, height });
+  if (process.env.SCREEN_URGENCY === '1') await page.clock.setFixedTime(urgencyNow);
   for (const scale of [100,130]) {
     await page.goto('/auth');
     await capture(page, 'first-screen', `${width}x${height}`, scale);
@@ -141,6 +151,10 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
     await signIn(page, seeded.admin, undefined, false);
     await expect(page.getByText(/Given · last 12 hours/)).toBeVisible();
     await expect(page.locator('section').filter({ hasText: 'Coming up · next 12 hours' }).getByRole('button', { name: /3 medicines/ })).toBeVisible();
+    if (process.env.SCREEN_URGENCY === '1') {
+      const upcoming = page.locator('section').filter({ hasText: 'Coming up · next 12 hours' });
+      for (const badge of ['SOON', 'DUE NOW', 'LATE']) await expect(upcoming.getByText(badge, { exact: true })).toBeVisible();
+    }
     await capture(page, 'today', `${width}x${height}`, scale);
     if (process.env.SCREEN_ONLY === 'today') {
       await page.getByRole('button', { name: 'More', exact: true }).click();
@@ -178,6 +192,10 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
         await page.getByRole('button', { name: 'Add', exact: true }).click();
         const form = page.getByRole('dialog');
         await form.getByPlaceholder('Medicine name').fill('Synthetic form medicine');
+        if (process.env.SCREEN_URGENCY === '1') {
+          await choose(page, form.getByRole('combobox', { name: 'Which days is it given?' }), 'Every 2 days');
+          await expect(form.getByLabel('Which day does it start?')).toHaveValue(today());
+        }
         await form.getByRole('button', { name: 'Add another time' }).click();
         await form.getByRole('combobox', { name: 'Medicine time 1' }).click();
         await page.getByRole('option', { name: '8:00 AM', exact: true }).click();

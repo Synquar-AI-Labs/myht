@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Plus, Pencil } from 'lucide-react';
 import { DoseTimePicker } from '@/components/DoseTimePicker';
+import { format } from 'date-fns';
+import { medicineIntervalDays, nextMedicineDay } from '@/lib/medicineDays';
 import { canonicalSchedule, readStoredSchedule, preserveEarlierNote, fillMedicineTimes, medicineReadBack, FREQUENCY_LABELS, MAX_MEDICINE_TIMES } from '@/lib/medicineForm';
 
 const MED_TYPES = ['Pain Killer', 'Pain Relief', 'Blood Thinner', 'Digestive', 'Anti-Nausea', 'Diabetes', 'Nerve Pain', 'Thyroid', 'Psych', 'Cancer', 'Vitamin', 'Antibiotic', 'Other'];
@@ -32,6 +34,7 @@ const TYPE_COLORS: Record<string, string> = {
 const emptyForm: MedicineScheduleInsert = {
   name: '', potency: '', amount: '', med_type: '', category: 'medicine',
   schedule_time: '', frequency: 'daily', schedule_note: '', show_in_quick_log: true,
+  start_date: null,
 };
 
 export function MedicineScheduleTab() {
@@ -56,7 +59,7 @@ export function MedicineScheduleTab() {
   };
   const openEdit = (med: typeof medicines[0]) => {
     setEditId(med.id);
-    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log });
+    setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log, start_date: med.start_date ?? null });
     const stored = readStoredSchedule(med.schedule_time);
     setTimes(stored.times); setEarlier(stored.earlier);
     setOtherType(MED_TYPES.includes(med.med_type) ? '' : med.med_type);
@@ -93,6 +96,7 @@ export function MedicineScheduleTab() {
   const setField = (k: keyof MedicineScheduleInsert, v: string) => {
     setForm(f => {
       const updated = { ...f, [k]: v };
+      if (k === 'frequency' && medicineIntervalDays(v) && !f.start_date) updated.start_date = format(new Date(), 'yyyy-MM-dd');
       // Auto-toggle quick log: medicine defaults to yes, non-medicine to no (only on category change for new items)
       if (k === 'category' && !editId) {
         updated.show_in_quick_log = v === 'medicine';
@@ -128,7 +132,9 @@ export function MedicineScheduleTab() {
                   <div className="flex flex-wrap gap-1.5 text-[11px]">
                     <Badge className={`text-[10px] px-1.5 py-0 border-0 ${TYPE_COLORS[med.med_type] || 'bg-muted text-muted-foreground'}`}>{med.med_type || 'Other'}</Badge>
                     {med.schedule_time && <span className="text-muted-foreground">⏰ {med.schedule_time}</span>}
-                    <span className="text-muted-foreground capitalize">({med.frequency})</span>
+                    {medicineIntervalDays(med.frequency) ? <span className="text-muted-foreground">
+                      {nextMedicineDay(med, readStoredSchedule(med.schedule_time).times) ? `${FREQUENCY_LABELS[med.frequency]} · next ${format(nextMedicineDay(med, readStoredSchedule(med.schedule_time).times)!, 'EEE, MMM d')}` : <>{FREQUENCY_LABELS[med.frequency]} · <span>Pick a start day to see this under Coming up.</span></>}
+                    </span> : <span className="text-muted-foreground capitalize">({med.frequency})</span>}
                   </div>
                   {med.schedule_note && <p className="text-[11px] text-muted-foreground italic">{med.schedule_note}</p>}
                 </div>
@@ -163,6 +169,11 @@ export function MedicineScheduleTab() {
                 </SelectContent>
               </Select>
             </div>
+            {medicineIntervalDays(form.frequency) && <div>
+              <Label htmlFor="medicine-start-date" className="text-sm font-semibold">Which day does it start?</Label>
+              <Input id="medicine-start-date" type="date" value={form.start_date ?? ''} onChange={event => setForm(previous => ({ ...previous, start_date: event.target.value || null }))} />
+              {!form.start_date && <p className="text-sm">Pick a start day to see this under Coming up.</p>}
+            </div>}
             {form.frequency !== 'as needed' && <div className="space-y-2">
               <Label className="text-sm font-semibold">At what times?</Label>
               {times.map((time, index) => <div key={index} className="flex items-center gap-2">
@@ -220,7 +231,7 @@ export function MedicineScheduleTab() {
               />
               <Label htmlFor="show_in_quick_log" className="inline-flex min-h-11 min-w-11 items-center text-xs cursor-pointer">Show in Quick Log</Label>
             </div>
-            <p role="status" className="text-sm">{medicineReadBack(form.frequency, times.filter(time => time !== undefined) as number[])}</p>
+            <p role="status" className="text-sm">{medicineReadBack(form.frequency, times.filter(time => time !== undefined) as number[], form.start_date)}</p>
             <Button className="w-full" disabled={saving || !form.name.trim() || (form.frequency !== 'as needed' && (times.includes(undefined) || times.length > MAX_MEDICINE_TIMES))} onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
           </div>
         </SheetContent>

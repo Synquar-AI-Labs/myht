@@ -1,6 +1,7 @@
 import { format, subDays } from 'date-fns';
 import { parseScheduleTime } from '@/lib/medicineAlerts';
 import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
+import { isMedicineScheduledOnDate, medicineIntervalDays } from '@/lib/medicineDays';
 
 /** A medicine dose already administered, positioned in real time. */
 export interface GivenItem {
@@ -10,7 +11,7 @@ export interface GivenItem {
   at: Date;
 }
 
-export type SlotState = 'scheduled' | 'due' | 'overdue';
+export type SlotState = 'scheduled' | 'soon' | 'due' | 'late';
 
 /** A scheduled, not-yet-administered dose inside the upcoming window. */
 export interface UpcomingItem {
@@ -18,8 +19,9 @@ export interface UpcomingItem {
   /** Scheduled occurrence. */
   at: Date;
   /**
-   * due      → now is within ±15 min of the slot (flashes)
-   * overdue  → slot passed 15 min–2 h ago, still unlogged (static highlight)
+   * soon     → up to 15 min before the slot
+   * due      → from the slot until 15 min after
+   * late     → more than 15 min–2 h after
    * scheduled→ later today/tonight
    */
   state: SlotState;
@@ -30,7 +32,7 @@ const UPCOMING_WINDOW_MS = 12 * 60 * 60 * 1000;
 /** Flash window around the scheduled time. */
 const DUE_BEFORE_MS = 15 * 60 * 1000;
 const DUE_AFTER_MS = 15 * 60 * 1000;
-/** How long an unlogged dose stays visible as OVERDUE after its time. */
+/** How long an unlogged dose stays visible after its time (LATE after 15 min). */
 const OVERDUE_TRAIL_MS = 120 * 60 * 1000;
 /** A log within this distance of a slot marks that slot as administered. */
 const MATCH_TOLERANCE_MS = 60 * 60 * 1000;
@@ -79,24 +81,32 @@ export function buildGivenList(
     );
 }
 
-/** Only medicines we can safely auto-schedule: real medicines, shown in quick log, explicitly daily. */
+/** Real medicines shown in quick log, daily or anchored every-N-days. */
 function isAutoScheduled(med: Medicine): boolean {
   const isMedicine = med.category === 'medicine' || !med.category;
-  const isDaily = !med.frequency || med.frequency === 'daily';
-  return isMedicine && isDaily && med.show_in_quick_log !== false;
+  const scheduledFrequency = !med.frequency || med.frequency === 'daily' || (!!medicineIntervalDays(med.frequency) && !!med.start_date);
+  return isMedicine && scheduledFrequency && med.show_in_quick_log !== false;
+}
+
+export function slotStateAt(at: Date, now: Date): SlotState {
+  const delta = at.getTime() - now.getTime();
+  if (delta > DUE_BEFORE_MS) return 'scheduled';
+  if (delta > 0) return 'soon';
+  if (delta >= -DUE_AFTER_MS) return 'due';
+  return 'late';
 }
 
 /**
  * Scheduled occurrences within (now - 2h … now + 12h), soonest first.
  *
  * Rules (per adversarial review):
- * - Only explicitly daily medicines are auto-scheduled. PRN and every-N-day
- *   medicines never appear here — they are manual actions elsewhere.
+ * - Daily medicines and anchored every-N-day medicines are auto-scheduled.
+ *   PRN and older interval medicines without a start day remain manual.
  * - Logs match slots ONE-TO-ONE: each log satisfies at most one slot (the
  *   nearest unmatched slot within ±1 h). One administration can never clear
  *   two expected administrations.
- * - An unlogged slot flashes DUE only within ±15 min of its time, then stays
- *   visible as a static OVERDUE row for 2 h, then drops off.
+ * - An unlogged slot is SOON in the 15 min lead, DUE NOW until 15 min after,
+ *   then LATE until 2 h after, when it drops off.
  */
 export function buildUpcomingList(
   medicines: Medicine[],
@@ -128,6 +138,7 @@ export function buildUpcomingList(
       for (let dayOffset = -1; dayOffset <= 1; dayOffset++) {
         const day = new Date(now);
         day.setDate(day.getDate() + dayOffset);
+        if (!isMedicineScheduledOnDate(med, day)) continue;
         const at = new Date(
           `${format(day, 'yyyy-MM-dd')}T${String(slot.hour24).padStart(2, '0')}:${String(slot.minute).padStart(2, '0')}:00`,
         );
@@ -159,10 +170,7 @@ export function buildUpcomingList(
 
       if (t < windowStart || t > windowEnd) continue;
 
-      let state: SlotState;
-      if (t <= nowMs + DUE_BEFORE_MS && t >= nowMs - DUE_AFTER_MS) state = 'due';
-      else if (t < nowMs) state = 'overdue';
-      else state = 'scheduled';
+      const state = slotStateAt(new Date(t), now);
 
       items.push({ medicine: med, at: new Date(t), state });
     }

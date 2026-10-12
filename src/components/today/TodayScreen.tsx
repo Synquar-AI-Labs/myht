@@ -22,11 +22,12 @@ import {
 import { AppointmentForm } from '@/types/health';
 import {
   buildGivenList, buildUpcomingList, previousDay, timeLabel,
-  GivenItem,
+  GivenItem, UpcomingItem,
 } from '@/components/today/todaySchedule';
 import { ReadingSection, MedicineSection, ApptNotesSection, TranscriptsSection, TrendsSection } from '@/components/today/TodaySections';
 import { ReadingType } from '@/components/today/readingTypes';
 import { DoseTimeGroups } from '@/components/today/DoseTimeGroups';
+import { URGENCY_RANK, urgencyFor } from '@/lib/medicineUrgency';
 
 type SheetState =
   | { type: 'medicine'; medicine: Medicine }
@@ -69,7 +70,8 @@ export function TodayScreen() {
   const allLogs = useMemo(() => [...todayLogs, ...yesterdayLogs], [todayLogs, yesterdayLogs]);
   const given = useMemo(() => buildGivenList(allLogs, medicines, now), [allLogs, medicines, now]);
   const upcoming = useMemo(() => buildUpcomingList(medicines, allLogs, now), [medicines, allLogs, now]);
-  const hasDue = upcoming.some(u => u.state === 'due');
+  const urgentState = upcoming.reduce((state, item) => URGENCY_RANK[item.state] > URGENCY_RANK[state] ? item.state : state, 'scheduled' as UpcomingItem['state']);
+  const urgency = urgencyFor(urgentState);
 
   const todayRecord = getRecordByDate(todayStr);
   // "Next" must respect time-of-day: a 9 AM appointment is not "next" at 4 PM.
@@ -124,7 +126,7 @@ export function TodayScreen() {
   const upcomingCard = (
     <section>
       <div className="mb-2.5 flex items-center gap-2">
-        {hasDue && <span className="animate-due-dot h-2.5 w-2.5 rounded-full bg-[#c2410c]" />}
+        {urgency && <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: urgency.color }} />}
         <span className="text-sm font-bold uppercase tracking-[0.06em] text-[#c2410c]">
           Coming up · next 12 hours
         </span>
@@ -159,6 +161,7 @@ export function TodayScreen() {
         todayLogs={todayLogs}
         given={given}
         upcoming={upcoming}
+        now={now}
         onPickMedicine={med => setSheet({ type: 'medicine', medicine: med })}
       />
       <ApptNotesSection

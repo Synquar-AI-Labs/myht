@@ -13,6 +13,7 @@ export interface MedicineSchedule {
   category: string;
   schedule_time: string;
   frequency: string;
+  start_date?: string | null;
   schedule_note: string;
   show_in_quick_log: boolean;
   created_at: string;

@@ -109,18 +109,18 @@ describe('buildUpcomingList — scheduling scope', () => {
 });
 
 describe('buildUpcomingList — states', () => {
-  it('splits due (±15 min, flashing) from overdue (static, up to 2h) from scheduled', () => {
+  it('splits soon, due now and late inside the unchanged alert windows', () => {
     const meds = [
-      med({ id: 'm1', name: 'DueNow', schedule_time: '9:00 PM' }),   // 13 min ahead → due
-      med({ id: 'm2', name: 'Missed', schedule_time: '7:30 PM' }),   // 77 min ago → overdue
+      med({ id: 'm1', name: 'DueNow', schedule_time: '9:00 PM' }),   // 13 min ahead → soon
+      med({ id: 'm2', name: 'Missed', schedule_time: '7:30 PM' }),   // 77 min ago → late
       med({ id: 'm3', name: 'JustPast', schedule_time: '8:45 PM' }), // 2 min ago → due
       med({ id: 'm4', name: 'Later', schedule_time: '11:00 PM' }),   // 2h+ ahead → scheduled
     ];
     const byName = Object.fromEntries(
       buildUpcomingList(meds, [], NOW).map(r => [r.medicine.name, r.state]),
     );
-    expect(byName['DueNow']).toBe('due');
-    expect(byName['Missed']).toBe('overdue');
+    expect(byName['DueNow']).toBe('soon');
+    expect(byName['Missed']).toBe('late');
     expect(byName['JustPast']).toBe('due');
     expect(byName['Later']).toBe('scheduled');
   });
@@ -162,6 +162,6 @@ describe('buildUpcomingList — one-to-one log matching', () => {
     const result = buildUpcomingList(meds, [], NOW);
     // 10 AM today is >2h past, 10 AM tomorrow is >12h away → only 9 PM shows.
     expect(result).toHaveLength(1);
-    expect(result[0].state).toBe('due');
+    expect(result[0].state).toBe('soon');
   });
 });

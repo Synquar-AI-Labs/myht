@@ -46,11 +46,13 @@ test('k. Medicine form times, filler replacement, read-back, Other and legacy va
   expect(medicine.frequency).toBe('daily'); expect(medicine.med_type).toBe('Support medicine');
   await page.getByRole('button', { name: 'Edit Round medicine', exact: true }).click();
   await choose(page, form.getByRole('combobox', { name: 'Which days is it given?' }), 'Every 3 days');
+  await expect(form.getByLabel('Which day does it start?')).toHaveValue(today());
+  await form.getByLabel('Which day does it start?').fill('');
   await form.getByRole('button', { name: 'Given every few hours? Fill the times in for me.' }).click();
   await form.getByRole('button', { name: 'Fill times', exact: true }).click();
   await form.getByRole('button', { name: 'Replace times', exact: true }).click();
   await expect(form.getByRole('combobox', { name: 'Which days is it given?' })).toHaveText('Every 3 days');
-  await expect(form.getByRole('status')).toContainText('Medicines given every few days are not listed under Coming up yet');
+  await expect(form.getByRole('status')).toContainText('Pick a start day to see this under Coming up.');
   await form.getByRole('button', { name: 'Save Changes' }).click();
   await expect(form).toHaveCount(0);
   await page.getByRole('button', { name: 'Today', exact: true }).click();

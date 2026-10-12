@@ -1,4 +1,5 @@
 import type { GivenItem, UpcomingItem, SlotState } from '@/components/today/todaySchedule';
+import { URGENCY_RANK } from '@/lib/medicineUrgency';
 
 export function relativeDoseTime(at: Date, now: Date): string {
   const minutes = Math.round((at.getTime() - now.getTime()) / 60_000);
@@ -24,9 +25,8 @@ export function groupDoseTimes<T extends { at: Date }>(items: T[]) {
 }
 
 export function groupUpcoming(items: UpcomingItem[]) {
-  const rank: Record<SlotState, number> = { scheduled: 0, overdue: 1, due: 2 };
   return groupDoseTimes(items).map(group => ({ ...group,
-    state: group.items.reduce<SlotState>((state, item) => rank[item.state] > rank[state] ? item.state : state, 'scheduled'),
+    state: group.items.reduce<SlotState>((state, item) => URGENCY_RANK[item.state] > URGENCY_RANK[state] ? item.state : state, 'scheduled'),
   }));
 }
 
@@ -37,10 +37,10 @@ export function elapsedDoseTime(at: Date, now: Date): string {
 }
 
 /** Keep the nearest upcoming time visible even when many overdue times precede it. */
-export function visibleDoseGroups<T extends { at: Date }>(groups: T[], now: Date, upcoming: boolean) {
+export function visibleDoseGroups<T extends { at: Date; state?: SlotState }>(groups: T[], now: Date, upcoming: boolean) {
   if (!upcoming) return groups.slice(0, 6);
   const nearest = new Set([...groups]
     .sort((a, b) => Math.abs(a.at.getTime() - now.getTime()) - Math.abs(b.at.getTime() - now.getTime()))
     .slice(0, 6));
-  return groups.filter(group => nearest.has(group));
+  return groups.filter(group => nearest.has(group) || (group.state && group.state !== 'scheduled'));
 }

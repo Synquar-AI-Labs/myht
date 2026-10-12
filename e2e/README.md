@@ -54,6 +54,8 @@ truncation and dense calendar/timeline controls are not automatically redesigned
 For a focused pass, use `SCREEN_ONLY=today,medicine-cabinet,medicine-form,dose-sheet,edit-day npm run test:screens`.
 It keeps all viewport and text-scale checks, but captures only the named screens.
 Selecting `medicine-form` includes top and bottom views of the scrollable form.
+Add `SCREEN_URGENCY=1` to freeze the clock and include SOON, DUE NOW and LATE
+fixtures, plus the interval start-day question in the medicine form.
 
 ## Later
 

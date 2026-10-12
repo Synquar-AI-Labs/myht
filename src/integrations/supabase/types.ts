@@ -717,6 +717,7 @@ export type Database = {
           schedule_note: string
           schedule_time: string
           show_in_quick_log: boolean
+          start_date: string | null
         }
         Insert: {
           amount?: string
@@ -731,6 +732,7 @@ export type Database = {
           schedule_note?: string
           schedule_time?: string
           show_in_quick_log?: boolean
+          start_date?: string | null
         }
         Update: {
           amount?: string
@@ -745,6 +747,7 @@ export type Database = {
           schedule_note?: string
           schedule_time?: string
           show_in_quick_log?: boolean
+          start_date?: string | null
         }
         Relationships: [
           {
