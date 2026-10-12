@@ -652,6 +652,7 @@ export type Database = {
           household_id: string
           id: string
           medicine_id: string
+          minute: number
           recorded_by: string
         }
         Insert: {
@@ -663,6 +664,7 @@ export type Database = {
           household_id: string
           id?: string
           medicine_id: string
+          minute?: number
           recorded_by?: string
         }
         Update: {
@@ -674,6 +676,7 @@ export type Database = {
           household_id?: string
           id?: string
           medicine_id?: string
+          minute?: number
           recorded_by?: string
         }
         Relationships: [
@@ -1083,4 +1086,4 @@ export const Constants = {
   public: {
     Enums: {},
   },
-}
+} as const

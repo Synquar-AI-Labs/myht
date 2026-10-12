@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { DoseTimePicker } from '@/components/DoseTimePicker';
+import { currentQuarter, doseTimeFields, doseTimeValue, doseTimeLabel } from '@/lib/doseTime';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { useMedicines, MedicineLog } from '@/hooks/useMedicines';
 import { useHousehold } from '@/hooks/HouseholdProvider';
@@ -18,15 +20,14 @@ interface MedicineTrackerProps {
   viewDate: string;
 }
 
-const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+
 
 export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const { medicines, logs, loading, addMedicineLog, deleteMedicineLog, updateMedicineLog, addNewMedicine, copyFromPreviousDay } = useMedicines(viewDate);
 
   const [showForm, setShowForm] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState('');
-  const [hour, setHour] = useState(12);
-  const [amPm, setAmPm] = useState<'AM' | 'PM'>('AM');
+  const [doseTime, setDoseTime] = useState(() => currentQuarter());
   const { activeCaregivers, caregiver, selectCaregiver } = useCaregiverChoice();
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -40,8 +41,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
 
   const resetForm = () => {
     setSelectedMedicine('');
-    setHour(12);
-    setAmPm('AM');
+    setDoseTime(currentQuarter());
     setEditingId(null);
     setShowForm(false);
   };
@@ -49,17 +49,16 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
   const handleSubmit = async () => {
     if (!selectedMedicine || (!editingId && !caregiver)) return;
     if (editingId) {
-      await updateMedicineLog(editingId, { medicine_id: selectedMedicine, hour, am_pm: amPm, caregiver_id: changedCaregiverId(editCaregiverId, originalCaregiverId) });
+      await updateMedicineLog(editingId, { medicine_id: selectedMedicine, ...doseTimeFields(doseTime), caregiver_id: changedCaregiverId(editCaregiverId, originalCaregiverId) });
     } else {
-      await addMedicineLog({ medicine_id: selectedMedicine, hour, am_pm: amPm, recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id });
+      await addMedicineLog({ medicine_id: selectedMedicine, ...doseTimeFields(doseTime), recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id });
     }
     resetForm();
   };
 
   const handleEdit = (log: MedicineLog) => {
     setSelectedMedicine(log.medicine_id);
-    setHour(log.hour);
-    setAmPm(log.am_pm === 'PM' ? 'PM' : 'AM');
+    setDoseTime(doseTimeValue(log));
     setEditingId(log.id);
     setEditCaregiverId(log.caregiver_id ?? null);
     setOriginalCaregiverId(log.caregiver_id ?? null);
@@ -118,7 +117,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium break-words">{getMedicineName(log.medicine_id)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {log.hour}:00 {log.am_pm}
+                    {doseTimeLabel(doseTimeValue(log))}
                     {getMedicineNote(log.medicine_id) && ` · ${getMedicineNote(log.medicine_id)}`}
                     {log.recorded_by && ` · by ${log.recorded_by}`}
                   </p>
@@ -127,7 +126,7 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
                   <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleEdit(log)}>
                     <Pencil className="h-3 w-3" />
                   </Button>
-                  <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this dose log?" description={`${getMedicineName(log.medicine_id)} · ${log.hour}:00 ${log.am_pm}. This permanently removes it from the record.`} onConfirm={() => deleteMedicineLog(log.id)}>
+                  <ConfirmDeleteButton variant="ghost" size="icon" className="h-7 w-7 text-destructive" title="Delete this dose log?" description={`${getMedicineName(log.medicine_id)} · ${doseTimeLabel(doseTimeValue(log))}. This permanently removes it from the record.`} onConfirm={() => deleteMedicineLog(log.id)}>
                     <Trash2 className="h-3 w-3" />
                   </ConfirmDeleteButton>
                 </div>
@@ -164,32 +163,9 @@ export function MedicineTracker({ viewDate }: MedicineTrackerProps) {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">Hour</Label>
-                <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {HOURS.map(h => (
-                      <SelectItem key={h} value={String(h)}>{h}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">AM/PM</Label>
-                <Select value={amPm} onValueChange={v => setAmPm(v as 'AM' | 'PM')}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Time</Label>
+              <DoseTimePicker value={doseTime} onChange={setDoseTime} />
             </div>
 
             <div>

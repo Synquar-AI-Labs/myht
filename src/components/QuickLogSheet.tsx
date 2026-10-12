@@ -7,13 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
 import { CaregiverPicker } from '@/components/CaregiverPicker';
+import { DoseTimePicker } from '@/components/DoseTimePicker';
+import { currentQuarter, doseTimeFields, doseTimeLabel } from '@/lib/doseTime';
 
 type MedicineMode = {
   type: 'medicine';
   medicineName: string;
   medicineId: string;
   medicineAmount?: string;
-  onSave: (data: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; caregiver_id: string; date: string }) => void;
+  onSave: (data: { medicine_id: string; hour: number; minute: number; am_pm: string; recorded_by: string; caregiver_id: string; date: string }) => void;
 };
 
 type HealthMode = {
@@ -53,8 +55,9 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const [amPm, setAmPm] = useState<string>(currentHour >= 12 ? 'PM' : 'AM');
   const [selectedDate, setSelectedDate] = useState(format(now, 'yyyy-MM-dd'));
   const [fieldValues, setFieldValues] = useState<Record<string, number>>({});
+  const [doseTime, setDoseTime] = useState(() => currentQuarter());
 
-  const displayTime = `${hour}:00 ${amPm}`;
+  const displayTime = mode.type === 'medicine' ? doseTimeLabel(doseTime) : `${hour}:00 ${amPm}`;
   const parsedDate = selectedDate ? new Date(selectedDate + 'T00:00') : null;
   const displayDate = parsedDate && !isNaN(parsedDate.getTime()) ? format(parsedDate, 'EEE, MMM d') : '—';
 
@@ -64,6 +67,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   useEffect(() => {
     if (open) {
       const n = new Date();
+      setDoseTime(currentQuarter(n));
       const h = n.getHours();
       setHour(h > 12 ? h - 12 : h === 0 ? 12 : h);
       setAmPm(h >= 12 ? 'PM' : 'AM');
@@ -81,7 +85,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
   const handleSave = () => {
     if (mode.type === 'medicine') {
       if (!caregiver) return;
-      mode.onSave({ medicine_id: mode.medicineId, hour, am_pm: amPm, recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate });
+      mode.onSave({ medicine_id: mode.medicineId, ...doseTimeFields(doseTime), recorded_by: caregiver.display_name, caregiver_id: caregiver.caregiver_id, date: selectedDate });
     } else {
       if (!caregiver) return;
       mode.onSave(fieldValues, caregiver.display_name, selectedDate, { hour, amPm }, caregiver.caregiver_id);
@@ -125,7 +129,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
                   <Label className="text-xs text-muted-foreground">Date</Label>
                   <Input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
                 </div>
-                <div className="flex gap-3">
+                {mode.type === 'medicine' ? <DoseTimePicker value={doseTime} onChange={setDoseTime} /> : <div className="flex gap-3">
                   <div className="flex-1 space-y-1">
                     <Label className="text-xs text-muted-foreground">Hour</Label>
                     <Select value={String(hour)} onValueChange={v => setHour(Number(v))}>
@@ -147,7 +151,7 @@ export function QuickLogSheet({ open, onOpenChange, mode }: Props) {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
+                </div>}
               </div>
             )}
           </div>

@@ -26,6 +26,7 @@ export interface MedicineLog {
   date: string;
   medicine_id: string;
   hour: number;
+  minute?: number;
   am_pm: string;
   recorded_by: string;
   caregiver_id?: string | null;
@@ -83,7 +84,7 @@ export function useMedicines(viewDate: string) {
     queryClient.invalidateQueries({ queryKey: medicineKeys.reports(householdId) });
   }, [queryClient, householdId]);
 
-  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; am_pm: string; recorded_by: string; caregiver_id?: string; date?: string }) => {
+  const addMedicineLog = useCallback(async (log: { medicine_id: string; hour: number; minute?: number; am_pm: string; recorded_by: string; caregiver_id?: string; date?: string }) => {
     const saver = log.caregiver_id ? caregivers.find(p => p.is_active && p.caregiver_id === log.caregiver_id) : caregiver;
     if (!householdId || !saver) { toast.error("Choose who's logging"); return; }
     const parsed = medicineLogSchema.safeParse({ ...log, date: log.date || viewDate });
@@ -97,6 +98,7 @@ export function useMedicines(viewDate: string) {
       date: parsed.data.date,
       medicine_id: parsed.data.medicine_id,
       hour: parsed.data.hour,
+      minute: parsed.data.minute,
       am_pm: parsed.data.am_pm,
       recorded_by: saver.display_name,
     });
@@ -121,7 +123,7 @@ export function useMedicines(viewDate: string) {
     }
   }, [invalidateLogs, householdId]);
 
-  const updateMedicineLog = useCallback(async (id: string, updates: { medicine_id?: string; hour?: number; am_pm?: string; recorded_by?: string; caregiver_id?: string }) => {
+  const updateMedicineLog = useCallback(async (id: string, updates: { medicine_id?: string; hour?: number; minute?: number; am_pm?: string; recorded_by?: string; caregiver_id?: string }) => {
     if (!householdId) return;
     const { recorded_by: _name, caregiver_id: selected, ...fields } = updates;
     let attribution = {};
@@ -175,6 +177,7 @@ export function useMedicines(viewDate: string) {
       date: viewDate,
       medicine_id: log.medicine_id,
       hour: log.hour,
+      minute: log.minute,
       am_pm: log.am_pm,
       recorded_by: caregiver.display_name,
     }));

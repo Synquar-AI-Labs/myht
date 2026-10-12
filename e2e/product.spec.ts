@@ -92,11 +92,11 @@ test('d. Medicine realtime, dose picker and attribution-preserving edits', async
   await page.getByRole('button', { name: 'Edit this day' }).click();
   const row = page.getByText(/9:00 AM.*by Member person/).locator('../..');
   await row.getByRole('button').first().click();
-  const hour = page.getByText('Hour', { exact: true }).locator('..').getByRole('combobox');
-  await choose(page, hour, '10');
+  await choose(page, page.getByRole('combobox', { name: 'Dose time' }), '10:15 AM');
   await page.getByRole('button', { name: 'Update', exact: true }).click();
   await expect.poll(async () => (await checked(f.admin.client.from('medicine_logs').select('*').eq('id', log.id).single())).hour).toBe(10);
   const saved = await checked(f.admin.client.from('medicine_logs').select('*').eq('id', log.id).single());
+  expect(saved.minute).toBe(15);
   expect(saved.caregiver_id).toBe(other.caregiver_id); expect(saved.recorded_by).toBe(other.display_name);
   expect(await page.evaluate(id => localStorage.getItem('ht_caregiver:' + id), f.id)).toBe(remembered);
 });

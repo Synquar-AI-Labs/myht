@@ -38,10 +38,10 @@ const MATCH_TOLERANCE_MS = 60 * 60 * 1000;
 const CLOCK_SKEW_MS = 5 * 60 * 1000;
 
 /** Convert a log's 12-hour clock fields to a Date on the log's day. */
-export function logDateTime(log: { date: string; hour: number; am_pm: string }): Date {
+export function logDateTime(log: { date: string; hour: number; am_pm: string; minute?: number }): Date {
   let hour24 = log.hour % 12;
   if (log.am_pm === 'PM') hour24 += 12;
-  return new Date(`${log.date}T${String(hour24).padStart(2, '0')}:00:00`);
+  return new Date(`${log.date}T${String(hour24).padStart(2, '0')}:${String(log.minute ?? 0).padStart(2, '0')}:00`);
 }
 
 /** "potency · amount" dose text (e.g. "1mg · 1.5 pills") — potency is medically meaningful. */

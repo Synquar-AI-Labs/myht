@@ -33,19 +33,21 @@ export function useMedicineSchedule() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: medicineKeys.list(householdId) });
 
   const addMedicine = async (med: MedicineScheduleInsert) => {
-    if (!householdId) return;
+    if (!householdId) return false;
     const { error } = await supabase.from('medicines').insert({ ...med, household_id: householdId });
-    if (error) { toast.error('Failed to add medicine'); return; }
+    if (error) { toast.error('Failed to add medicine'); return false; }
     toast.success(`Added ${med.name}`);
     invalidate();
+    return true;
   };
 
   const updateMedicine = async (id: string, med: Partial<MedicineScheduleInsert>) => {
-    if (!householdId) return;
+    if (!householdId) return false;
     const { error } = await supabase.from('medicines').update(med).eq('household_id', householdId).eq('id', id);
-    if (error) { toast.error('Failed to update medicine'); return; }
+    if (error) { toast.error('Failed to update medicine'); return false; }
     toast.success('Updated');
     invalidate();
+    return true;
   };
 
   // Deleting a medicine is intentionally not supported: its dose logs are the

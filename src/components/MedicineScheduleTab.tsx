@@ -9,10 +9,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Plus, Pencil } from 'lucide-react';
+import { DoseTimePicker } from '@/components/DoseTimePicker';
+import { canonicalSchedule, readStoredSchedule, preserveEarlierNote, fillMedicineTimes, medicineReadBack, FREQUENCY_LABELS, MAX_MEDICINE_TIMES } from '@/lib/medicineForm';
 
 const MED_TYPES = ['Pain Killer', 'Pain Relief', 'Blood Thinner', 'Digestive', 'Anti-Nausea', 'Diabetes', 'Nerve Pain', 'Thyroid', 'Psych', 'Cancer', 'Vitamin', 'Antibiotic', 'Other'];
 const CATEGORIES = ['medicine', 'non-medicine'];
-const FREQUENCIES = ['daily', 'as needed', 'every 2 days', 'every 3 days', 'every 4 days', 'every 5 days', 'every 6 days', 'every 7 days'];
+const FREQUENCIES = Object.keys(FREQUENCY_LABELS);
 
 const TYPE_COLORS: Record<string, string> = {
   'Pain Killer': 'bg-red-100 text-red-800',
@@ -38,18 +40,47 @@ export function MedicineScheduleTab() {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState<MedicineScheduleInsert>(emptyForm);
 
-  const openAdd = () => { setEditId(null); setForm(emptyForm); setOpen(true); };
+  const [times, setTimes] = useState<(number | undefined)[]>([]);
+  const [earlier, setEarlier] = useState('');
+  const [otherType, setOtherType] = useState('');
+  const [helperOpen, setHelperOpen] = useState(false);
+  const [intervalHours, setIntervalHours] = useState(4);
+  const [startTime, setStartTime] = useState(480);
+  const [replacePending, setReplacePending] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const resetHelpers = () => { setHelperOpen(false); setReplacePending(false); setIntervalHours(4); setStartTime(480); };
+  const openAdd = () => {
+    setEditId(null); setForm(emptyForm); setTimes([]); setEarlier(''); setOtherType('');
+    resetHelpers(); setOpen(true);
+  };
   const openEdit = (med: typeof medicines[0]) => {
     setEditId(med.id);
     setForm({ name: med.name, potency: med.potency, amount: med.amount, med_type: med.med_type, category: med.category, schedule_time: med.schedule_time, frequency: med.frequency, schedule_note: med.schedule_note, show_in_quick_log: med.show_in_quick_log });
-    setOpen(true);
+    const stored = readStoredSchedule(med.schedule_time);
+    setTimes(stored.times); setEarlier(stored.earlier);
+    setOtherType(MED_TYPES.includes(med.med_type) ? '' : med.med_type);
+    resetHelpers(); setOpen(true);
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) return;
-    if (editId) await updateMedicine(editId, form);
-    else await addMedicine(form);
-    setOpen(false);
+    if (!form.name.trim() || (form.frequency !== 'as needed' && (times.includes(undefined) || times.length > MAX_MEDICINE_TIMES)) || saving) return;
+    const input = {
+      ...form,
+      med_type: MED_TYPES.includes(form.med_type) && form.med_type !== 'Other' ? form.med_type : otherType || 'Other',
+      schedule_time: form.frequency === 'as needed' ? '' : canonicalSchedule(times as number[]),
+      schedule_note: preserveEarlierNote(form.schedule_note, earlier),
+    };
+    setSaving(true);
+    try {
+      const saved = editId ? await updateMedicine(editId, input) : await addMedicine(input);
+      if (saved) setOpen(false);
+    } finally { setSaving(false); }
+  };
+
+  const fillTimes = () => {
+    setTimes(fillMedicineTimes(intervalHours, startTime));
+    setReplacePending(false);
   };
 
   // Group by med_type
@@ -102,7 +133,7 @@ export function MedicineScheduleTab() {
                   {med.schedule_note && <p className="text-[11px] text-muted-foreground italic">{med.schedule_note}</p>}
                 </div>
                 <div className="flex flex-col gap-1 shrink-0">
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(med)}><Pencil className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={`Edit ${med.name}`} onClick={() => openEdit(med)}><Pencil className="h-3.5 w-3.5" /></Button>
                 </div>
               </CardContent>
             </Card>
@@ -111,7 +142,7 @@ export function MedicineScheduleTab() {
       ))}
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl [&>button]:flex [&>button]:h-11 [&>button]:w-11 [&>button]:items-center [&>button]:justify-center">
           <SheetHeader>
             <SheetTitle>{editId ? 'Edit Medicine' : 'Add Medicine'}</SheetTitle>
             <SheetDescription>Fill in the medicine details below.</SheetDescription>
@@ -122,11 +153,45 @@ export function MedicineScheduleTab() {
               <div><Label className="text-xs">Potency</Label><Input value={form.potency} onChange={e => setField('potency', e.target.value)} placeholder="e.g. 500mg" /></div>
               <div><Label className="text-xs">Amount</Label><Input value={form.amount} onChange={e => setField('amount', e.target.value)} placeholder="e.g. 2 pills" /></div>
             </div>
+            <div>
+              <Label className="text-sm font-semibold">Which days is it given?</Label>
+              <Select value={form.frequency || 'daily'} onValueChange={v => { setField('frequency', v); setReplacePending(false); }}>
+                <SelectTrigger aria-label="Which days is it given?"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {form.frequency && !FREQUENCIES.includes(form.frequency) && <SelectItem value={form.frequency}>{form.frequency}</SelectItem>}
+                  {FREQUENCIES.map(f => <SelectItem key={f} value={f}>{FREQUENCY_LABELS[f]}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            {form.frequency !== 'as needed' && <div className="space-y-2">
+              <Label className="text-sm font-semibold">At what times?</Label>
+              {times.map((time, index) => <div key={index} className="flex items-center gap-2">
+                <div className="min-w-0 flex-1"><DoseTimePicker label={`Medicine time ${index + 1}`} value={time} excluded={times.filter((_, i) => i !== index && times[i] !== undefined) as number[]} onChange={value => setTimes(previous => previous.map((old, i) => i === index ? value : old))} /></div>
+                <Button variant="ghost" aria-label={`Remove time ${index + 1}`} onClick={() => setTimes(previous => previous.filter((_, i) => i !== index))}>Remove</Button>
+              </div>)}
+              <Button variant="outline" disabled={times.length >= MAX_MEDICINE_TIMES} onClick={() => setTimes(previous => [...previous, undefined])}>Add another time</Button>
+              {times.length > MAX_MEDICINE_TIMES && <p role="alert" className="text-sm">Keep at most 24 times before saving.</p>}
+              <Button variant="link" className="h-auto whitespace-normal text-left" onClick={() => setHelperOpen(value => !value)}>Given every few hours? Fill the times in for me.</Button>
+              {helperOpen && <div className="space-y-2 rounded-lg border p-3">
+                <Label className="text-xs">Every</Label>
+                <Select value={String(intervalHours)} onValueChange={value => { setIntervalHours(Number(value)); setReplacePending(false); }}>
+                  <SelectTrigger aria-label="Every how many hours"><SelectValue /></SelectTrigger>
+                  <SelectContent>{Array.from({ length: 12 }, (_, i) => i + 1).map(hours => <SelectItem key={hours} value={String(hours)}>{hours} {hours === 1 ? 'hour' : 'hours'}</SelectItem>)}</SelectContent>
+                </Select>
+                <Label className="text-xs">Starting at</Label>
+                <DoseTimePicker label="Starting at" value={startTime} onChange={value => { setStartTime(value); setReplacePending(false); }} />
+                {24 % intervalHours !== 0 && <p className="text-sm">{intervalHours} hours does not fit evenly into a day, so the gap overnight will be different. Change the times if you need to.</p>}
+                {replacePending ? <div className="space-y-2">
+                  <p className="text-sm">Replace the times you picked?</p>
+                  <div className="flex flex-wrap gap-2"><Button onClick={fillTimes}>Replace times</Button><Button variant="outline" onClick={() => setReplacePending(false)}>Keep my times</Button></div>
+                </div> : <Button onClick={() => times.length ? setReplacePending(true) : fillTimes()}>Fill times</Button>}
+              </div>}
+            </div>}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs">Type</Label>
-                <Select value={form.med_type} onValueChange={v => setField('med_type', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <Select value={MED_TYPES.includes(form.med_type) ? form.med_type : form.med_type ? 'Other' : ''} onValueChange={v => setField('med_type', v)}>
+                  <SelectTrigger aria-label="Type"><SelectValue placeholder="Select type" /></SelectTrigger>
                   <SelectContent>{MED_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
@@ -138,17 +203,11 @@ export function MedicineScheduleTab() {
                 </Select>
               </div>
             </div>
-            <div>
-              <Label className="text-xs">Schedule Time</Label>
-              <Input value={form.schedule_time} onChange={e => setField('schedule_time', e.target.value)} placeholder="e.g. 10:00 AM / 9:00 PM" />
-            </div>
-            <div>
-              <Label className="text-xs">Frequency</Label>
-              <Select value={form.frequency} onValueChange={v => setField('frequency', v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{FREQUENCIES.map(f => <SelectItem key={f} value={f} className="capitalize">{f}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
+            {(form.med_type === 'Other' || (form.med_type && !MED_TYPES.includes(form.med_type))) && <div>
+              <Label htmlFor="other-medicine-type" className="text-xs">What kind of medicine is it?</Label>
+              <Input id="other-medicine-type" value={otherType} maxLength={30} onChange={e => setOtherType(e.target.value)} />
+            </div>}
+            {earlier && <p className="break-words text-sm text-muted-foreground">Earlier entry: {earlier}</p>}
             <div>
               <Label className="text-xs">Notes</Label>
               <Input value={form.schedule_note} onChange={e => setField('schedule_note', e.target.value)} placeholder="Optional notes" />
@@ -159,9 +218,10 @@ export function MedicineScheduleTab() {
                 checked={form.show_in_quick_log}
                 onCheckedChange={(checked) => setForm(f => ({ ...f, show_in_quick_log: !!checked }))}
               />
-              <Label htmlFor="show_in_quick_log" className="text-xs cursor-pointer">Show in Quick Log</Label>
+              <Label htmlFor="show_in_quick_log" className="inline-flex min-h-11 min-w-11 items-center text-xs cursor-pointer">Show in Quick Log</Label>
             </div>
-            <Button className="w-full" onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
+            <p role="status" className="text-sm">{medicineReadBack(form.frequency, times.filter(time => time !== undefined) as number[])}</p>
+            <Button className="w-full" disabled={saving || !form.name.trim() || (form.frequency !== 'as needed' && (times.includes(undefined) || times.length > MAX_MEDICINE_TIMES))} onClick={handleSave}>{editId ? 'Save Changes' : 'Add Medicine'}</Button>
           </div>
         </SheetContent>
       </Sheet>

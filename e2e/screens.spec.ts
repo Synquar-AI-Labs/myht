@@ -64,6 +64,12 @@ async function inspect(page: Page): Promise<Finding[]> {
 }
 
 async function capture(page: Page, screen: string, viewport: string, scale: number) {
+  const selected = process.env.SCREEN_ONLY?.split(',');
+  if (selected && !selected.includes(screen) && !(screen === 'medicine-form-bottom' && selected.includes('medicine-form'))) {
+    // Preserve the drawer transition wait even when its screenshot is omitted.
+    await page.waitForTimeout(250);
+    return;
+  }
   if (scale === 130) await page.evaluate(() => {
     const elements = [...document.querySelectorAll<HTMLElement>('body *')];
     const fonts = elements.map(el => parseFloat(getComputedStyle(el).fontSize));
@@ -74,6 +80,13 @@ async function capture(page: Page, screen: string, viewport: string, scale: numb
     document.documentElement.style.fontSize = '130%';
   });
   await page.evaluate(() => document.fonts.ready);
+  if (screen === 'medicine-form') {
+    await page.getByRole('dialog').evaluate(element => { element.scrollTop = 0; });
+  } else if (screen === 'medicine-form-bottom') {
+    const save = page.getByRole('dialog').getByRole('button', { name: 'Add Medicine', exact: true });
+    await save.scrollIntoViewIfNeeded();
+    await expect(save).toBeInViewport({ ratio: 1 });
+  }
   await page.waitForTimeout(250);
   await page.evaluate(() => window.scrollTo(0, 0));
   const findings = await inspect(page);
@@ -127,7 +140,14 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
     await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toBeVisible();
     await signIn(page, seeded.admin, undefined, false);
     await expect(page.getByText(/Given · last 12 hours/)).toBeVisible();
+    await expect(page.locator('section').filter({ hasText: 'Coming up · next 12 hours' }).getByRole('button', { name: /3 medicines/ })).toBeVisible();
     await capture(page, 'today', `${width}x${height}`, scale);
+    if (process.env.SCREEN_ONLY === 'today') {
+      await page.getByRole('button', { name: 'More', exact: true }).click();
+      await page.getByRole('button', { name: /^Sign out/ }).click();
+      await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toBeVisible();
+      continue;
+    }
     await page.getByRole('button', { name: /^Record a reading/ }).click();
     await capture(page, 'reading-tiles', `${width}x${height}`, scale);
     await page.getByRole('button', { name: /^Feed / }).click();
@@ -154,6 +174,22 @@ for (const [width,height] of sizes) test(`${width}x${height} screen audit`, asyn
       await page.getByRole('button', { name: new RegExp('^' + destination) }).click();
       await expect(page.getByRole('button', { name: 'Back', exact: true })).toBeVisible();
       await capture(page, screen, `${width}x${height}`, scale);
+      if (destination === 'Medicine cabinet') {
+        await page.getByRole('button', { name: 'Add', exact: true }).click();
+        const form = page.getByRole('dialog');
+        await form.getByPlaceholder('Medicine name').fill('Synthetic form medicine');
+        await form.getByRole('button', { name: 'Add another time' }).click();
+        await form.getByRole('combobox', { name: 'Medicine time 1' }).click();
+        await page.getByRole('option', { name: '8:00 AM', exact: true }).click();
+        await form.getByRole('button', { name: 'Given every few hours? Fill the times in for me.' }).click();
+        await form.getByRole('button', { name: 'Fill times', exact: true }).click();
+        await form.evaluate(element => { element.scrollTop = 0; });
+        await capture(page, 'medicine-form', `${width}x${height}`, scale);
+        await form.getByRole('button', { name: 'Add Medicine', exact: true }).scrollIntoViewIfNeeded();
+        await capture(page, 'medicine-form-bottom', `${width}x${height}`, scale);
+        await page.keyboard.press('Escape');
+        await expect(page.getByRole('dialog')).toHaveCount(0);
+      }
       await page.getByRole('button', { name: 'Back', exact: true }).click();
     }
     await page.getByRole('button', { name: /^Sign out/ }).click();

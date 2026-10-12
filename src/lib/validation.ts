@@ -33,6 +33,7 @@ export const medicineSchema = z.object({
 });
 
 export const medicineLogSchema = z.object({
+  minute: z.number().int().min(0).max(59).default(0),
   medicine_id: z.string().uuid('Invalid medicine ID'),
   hour: z.number().int().min(1, 'Hour must be 1-12').max(12, 'Hour must be 1-12'),
   am_pm: z.enum(['AM', 'PM'], { errorMap: () => ({ message: 'Must be AM or PM' }) }),

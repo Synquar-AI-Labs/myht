@@ -51,6 +51,10 @@ screenshots by viewport. The 130% pass enlarges all computed fonts (including px
 typography) and the root size. Automated findings need visual triage: intentional
 truncation and dense calendar/timeline controls are not automatically redesigned.
 
+For a focused pass, use `SCREEN_ONLY=today,medicine-cabinet,medicine-form,dose-sheet,edit-day npm run test:screens`.
+It keeps all viewport and text-scale checks, but captures only the named screens.
+Selecting `medicine-form` includes top and bottom views of the scrollable form.
+
 ## Later
 
 - Calendar cells need a layout redesign to reach 44px on small phones; keep the current cells for now.
