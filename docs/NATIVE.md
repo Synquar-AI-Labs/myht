@@ -34,8 +34,24 @@ approved. Android Studio includes its own Java runtime.
 
 `npm run app:android:build` uses Homebrew `openjdk@21` through `JAVA_HOME` in that child
 process only. It does not change the shell's default Java or upgrade Gradle.
-The owner must complete `brew install --cask temurin@21` when its installer
-asks for the Mac password. Do not run the Android build before SDK approval.
+The approved SDK is at `~/Library/Android/sdk` (or set `ANDROID_HOME`).
+
+## TestFlight (owner)
+
+The owner completes Apple Developer enrolment, adds the Apple account in Xcode,
+and creates the app in App Store Connect with bundle id `com.fahadakbar.myht`.
+No account credentials or team id belong in tracked files.
+
+After `npm run app:build:staging`, the owner sets `IOS_TEAM_ID` in the terminal
+and runs `npm run app:ios:archive`. This signs/provisions a Release archive at
+`test-results/native/App.xcarchive`; build number is the current Git commit count.
+Marketing version remains the project's version.
+
+The owner then runs `TESTFLIGHT_CONFIRM=com.fahadakbar.myht npm run app:ios:upload`.
+Both commands re-check the staging assets. Upload uses a temporary, automatically
+removed export plist outside the repository. Neither command runs in tests.
+In App Store Connect, the owner finishes TestFlight processing/compliance and
+adds the tester; the iPhone installs it through Apple's TestFlight app.
 
 `node scripts/native-assets.mjs` regenerates the code-drawn placeholder icons
 and splash images locally, with all browser network requests blocked.
