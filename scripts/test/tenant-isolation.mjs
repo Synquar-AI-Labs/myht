@@ -500,6 +500,18 @@ await check('28 prescription function authentication, membership and bounded pho
  const undeclared=await fetch(api+'/functions/v1/read-prescription',{method:'POST',headers:{apikey:anon,Authorization:'Bearer '+A.admin.token,'Content-Type':'application/octet-stream'},body:stream,duplex:'half'});
  assert.equal(undeclared.status,413,await undeclared.text());
 });
+await check('29 client build hints are global authenticated read-only',async()=>{
+ const before=sql('SELECT jsonb_agg(t ORDER BY platform)::text FROM public.client_builds t');
+ for(const member of [A.admin,B.member]) {
+  assert.deepEqual(good(await rows(member,'client_builds')).map(r=>r.platform).sort(),['android','ios']);
+  rlsDenied(await insert(member,'client_builds',{platform:'ios',min_build:999}));
+  rlsDenied(await request(member.token,'/rest/v1/client_builds?platform=eq.ios','PATCH',{min_build:999}));
+  rlsDenied(await request(member.token,'/rest/v1/client_builds?platform=eq.ios','DELETE'));
+ }
+ const unauth=await rows(anon,'client_builds'); assert.equal(unauth.status,401); assert.equal(unauth.data.code,'42501');
+ assert.equal(sql('SELECT jsonb_agg(t ORDER BY platform)::text FROM public.client_builds t'),before);
+ assert.equal(sql("SELECT count(*) FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='client_builds'"),'0');
+});
 console.log('Failures: '+failures);
 process.exitCode=failures;
 

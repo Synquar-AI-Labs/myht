@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { BuildInfo } from '@/components/BuildInfo';
 import { useNativeBack } from '@/native/back';
 import { format, parseISO } from 'date-fns';
 import { formatAppointmentTime } from '@/lib/reportHelpers';
@@ -236,6 +237,7 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
           </span>
         </button>
       </div>
+      <BuildInfo />
     </div>
   );
 }

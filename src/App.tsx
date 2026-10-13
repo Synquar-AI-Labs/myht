@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { AppUpdate } from '@/components/AppUpdate';
 import { isNativeApp } from '@/native/platform';
+import { NativeUpdateGate } from '@/components/NativeUpdateGate';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,9 +34,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
   if (!session) return <Navigate to="/auth" replace />;
-  return <HouseholdProvider key={session.user.id} user={session.user}>
+  const household = <HouseholdProvider key={session.user.id} user={session.user}>
     <HouseholdSetup><HouseholdRecording>{children}</HouseholdRecording></HouseholdSetup>
   </HouseholdProvider>;
+  return isNativeApp() ? <NativeUpdateGate key={session.user.id}>{household}</NativeUpdateGate> : household;
 }
 const App = () => (
   <QueryClientProvider client={queryClient}>

@@ -12,6 +12,7 @@
     "app:ios:upload": "node scripts/native-ios-release.mjs upload",
     "app:android": "npx --no-install cap open android",
     "app:android:build": "node scripts/native-android.mjs",
+    "app:android:release": "node scripts/native-android-release.mjs",
     "dev": "vite",
     "dev:staging": "node scripts/dev-staging.mjs",
     "build": "vite build",

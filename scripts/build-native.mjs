@@ -3,10 +3,13 @@ import { parseEnv } from 'node:util';
 import { execFileSync } from 'node:child_process';
 import { nativeTarget, scanNative, assertStagingSecurity } from './native-target.mjs';
 import { cleanTrackedTransport } from './native-transport.mjs';
+import { isReleaseTreeClean } from './native-release-tree.mjs';
 
 const target = process.argv[2];
 if (!['local', 'staging'].includes(target)) throw new Error('Use local or staging.');
 rmSync('.native-build.json', { force: true });
+const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const clean = isReleaseTreeClean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }));
 const stack = target === 'local' ? JSON.parse(execFileSync('supabase', ['status', '-o', 'json'], { encoding: 'utf8' })) : null;
 if (stack && stack.API_URL !== 'http://127.0.0.1:54321') throw new Error('Local stack only.');
 const staging = target === 'staging' ? parseEnv(readFileSync('.env.staging.local', 'utf8')) : null;
@@ -31,4 +34,4 @@ if (target === 'staging') {
   }
   console.log('PASS staging native projects: no local addresses or transport allowances.');
 }
-writeFileSync('.native-build.json', JSON.stringify({ target, head: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() }));
+writeFileSync('.native-build.json', JSON.stringify({ target, head, clean: clean && head === execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() && isReleaseTreeClean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' })) }));

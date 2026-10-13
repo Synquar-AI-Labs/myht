@@ -122,9 +122,11 @@ generated types are refreshed.
   a value baked into the screens.
 - It reads its row when a session appears, when the app comes back to the
   front, and every 10 minutes while it is visible (a tablet can stay open for
-  days).
-- Right after start, the signed-in screens wait for the first answer, for a
-  few seconds at most. Later checks never hold the screen.
+  days). After a failed check it asks again every 30 seconds until one
+  succeeds.
+- Right after start, the signed-in screens wait for the first answer, for 3
+  seconds at most. A slower answer still counts when it arrives; one request
+  may take up to 20 seconds. Later checks never hold the screen.
 - Own build below `min_build`: the "Update needed" screen replaces the app.
   Text: "This version is too old to keep your records right. Update the app,
   then open it again." One button: "Open TestFlight" on Apple, "Open Play
@@ -138,9 +140,11 @@ generated types are refreshed.
   cut. These rules are taken out of `AppUpdate` whole (the remembered field
   values and the held work included) and shared, not copied. The website
   behaves exactly as before.
-- If the row cannot be read (offline, an error, a missing row, a value that is
-  not a whole number): the app carries on and asks again at the next moment.
-  A failed check must not lock a family out.
+- A check that fails (offline, an error, no answer in time) changes nothing:
+  an app that was running carries on, and an app that was told to update stays
+  on that screen. A row that is missing, or a value that is not a whole
+  number, means there is no minimum. A failed check must not lock a family
+  out.
 - Signed out: no check. Everything that writes needs a session.
 - No new plugin unless a plain link cannot open TestFlight or the Play Store;
   tell @leader first.
@@ -183,8 +187,10 @@ the refusing; that is a separate design and not built here.
   package `com.fahadakbar.myht`, the expected version code, not debuggable,
   backups off, no plain-http allowance, no local address. A bundle's manifest
   is not plain text, so it is read with the bundletool that already comes
-  with the Android build tools; nothing new is downloaded. A proof tied to the
-  commit is written under `test-results/native/`.
+  with the Android build tools; nothing new is downloaded. The bundle's
+  signing certificate is compared with the upload key's: an unsigned or
+  differently signed bundle fails. A proof tied to the commit is written under
+  `test-results/native/`.
 - No upload command in this step. The bundle is uploaded in Play Console by
   hand.
 - `app:android:build` (the debug build for the emulator) stays as it is.
@@ -201,6 +207,10 @@ the refusing; that is a separate design and not built here.
    testing in Play Console, roll out.
 5. Look: the build shows as available in both places.
 6. Only when the release needs it: raise `min_build` (§4).
+
+Uncommitted work cannot reach a release: the staging build records whether the
+files matched the commit, and the iPhone and Android release commands check it
+again before they sign or upload.
 
 Not every website update needs a phone release. Phones get one when a batch
 changes what people see or fixes something they reported.

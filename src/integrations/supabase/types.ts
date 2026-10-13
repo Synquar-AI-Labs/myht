@@ -257,6 +257,24 @@ export type Database = {
           },
         ]
       }
+      client_builds: {
+        Row: {
+          min_build: number
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          min_build?: number
+          platform: string
+          updated_at?: string
+        }
+        Update: {
+          min_build?: number
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_action_logs: {
         Row: {
           action_id: string

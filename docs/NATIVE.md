@@ -94,3 +94,59 @@ and splash images locally, with all browser network requests blocked.
 
 Use fictional local data for developer tests. Staging is still owner-only
 while email confirmation is off. No other people may be invited yet.
+
+## Remote testers and later releases
+
+Before inviting anyone, complete the email-confirmation/SMTP gate in STAGING.md.
+iOS testers join the external TestFlight group; Android testers join Google
+Play internal testing. The owner manages the tester lists and store accounts.
+
+Release from one audited commit: commit/push, publish the website, run
+`npm run app:build:staging`, then iOS archive/export/upload and add the build to
+the external group. Run `npm run app:android:release` and upload its bundle to
+Play Console by hand. Leader verifies availability to both tester groups.
+Only then raise the relevant `client_builds.min_build` if the release needs it.
+This is a best-effort upgrade prompt, not a server-side write lock. Keep old
+server behaviour until no supported build needs it or a separately reviewed
+server-side cutoff exists; elapsed time alone is insufficient.
+
+Android release uses `ANDROID_KEYSTORE` (an absolute path outside the repo),
+`ANDROID_KEY_ALIAS`, `ANDROID_KEYSTORE_PASSWORD`, and `ANDROID_KEY_PASSWORD`
+from that command's environment. With the owner's yes, @leader creates the
+upload key on this Mac outside the repository and arranges its backup. Google
+can reset a lost upload key.
+No key is created by the script. It uses JDK 21 and the existing SDK, sets
+versionCode to the Git commit count and versionName to 1.0, then checks the
+actual AAB manifest with AGP's bundled bundletool and scans the extracted
+assets. JDK 21 keytool checks that the bundle's SHA-256 signing-certificate
+fingerprint matches the specified upload-key alias; its password is supplied
+by environment reference, never a command-line password. The certificate
+fingerprint and bundle SHA-256/commit proof stay under ignored build outputs
+and `test-results/native/android-release.json`. Missing signing values do not
+affect debug/local builds. There is no Android upload command.
+
+Staging asset builds record whether the tree was clean (only unstaged
+`AGENTS.md` may differ), both before and after building. iOS archive/export/
+upload and Android release require that clean receipt, the same commit, and
+a currently clean tree. Commit and rebuild before releasing uncommitted work.
+
+Read the release hints in the database SQL editor:
+
+```sql
+select platform, min_build, updated_at from public.client_builds order by platform;
+```
+
+After verifying availability to the intended testers, substitute the actual
+build number and platform, then raise that platform's minimum:
+
+```sql
+update public.client_builds set min_build = 372, updated_at = now() where platform = 'ios';
+```
+
+Use `platform = 'android'` for Android. The statement is manual; scripts never
+raise a minimum automatically.
+
+Before replacing the debug Android app with the Play version, stop recording
+and finish pending uploads, or save the audio outside the app and verify it.
+Uninstalling erases device-local recordings and recovery pointers. Server
+records remain, but an unfinished conversation may otherwise be lost.

@@ -1,0 +1,43 @@
+import { execFileSync } from 'node:child_process';
+import { readFileSync, existsSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { homedir, tmpdir } from 'node:os';
+import { join, resolve, dirname, sep } from 'node:path';
+import { scanNative, assertStagingSecurity } from './native-target.mjs';
+import { androidReleaseGuard, checkBundleManifest, compareSigningCertificates } from './android-bundle-check.mjs';
+
+const head = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+androidReleaseGuard(JSON.parse(readFileSync('.native-build.json', 'utf8')), head, process.env, execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }));
+if (!existsSync(process.env.ANDROID_KEYSTORE)) throw new Error('Upload keystore file does not exist.');
+if (resolve(process.env.ANDROID_KEYSTORE).startsWith(process.cwd() + sep)) throw new Error('Keep the upload keystore outside the repository.');
+scanNative('android/app/src/main/assets/public', 'staging', 'android');
+assertStagingSecurity('', readFileSync('android/app/src/main/AndroidManifest.xml', 'utf8'), JSON.parse(readFileSync('android/app/src/main/assets/capacitor.config.json', 'utf8')));
+const javaHome = execFileSync('brew', ['--prefix', 'openjdk@21'], { encoding: 'utf8' }).trim() + '/libexec/openjdk.jdk/Contents/Home';
+const sdk = process.env.ANDROID_HOME ?? join(homedir(), 'Library/Android/sdk');
+if (!existsSync(sdk) || !existsSync(javaHome)) throw new Error('Install the Android SDK and Homebrew openjdk@21 first.');
+const version = execFileSync('git', ['rev-list', '--count', 'HEAD'], { encoding: 'utf8' }).trim();
+const env = { ...process.env, JAVA_HOME: javaHome, ANDROID_HOME: sdk };
+const proof = resolve('test-results/native/android-release.json');
+rmSync(proof, { force: true });
+execFileSync('./gradlew', ['bundleRelease', `-PmyhtVersionCode=${version}`], { cwd: 'android', stdio: 'inherit', env });
+const bundle = resolve('android/app/build/outputs/bundle/release/app-release.aab');
+const output = execFileSync('./gradlew', ['-q', 'dumpReleaseBundleManifest', `-PmyhtBundle=${bundle}`, `-PmyhtVersionCode=${version}`], { cwd: 'android', encoding: 'utf8', env });
+const xml = output.slice(output.indexOf('<manifest'), output.lastIndexOf('</manifest>') + '</manifest>'.length);
+checkBundleManifest(xml, version);
+const temporary = mkdtempSync(join(tmpdir(), 'myht-aab-'));
+try {
+  execFileSync('unzip', ['-q', bundle, 'base/assets/*', '-d', temporary]);
+  const assets = join(temporary, 'base/assets');
+  scanNative(join(assets, 'public'), 'staging', 'android');
+  assertStagingSecurity('', xml, JSON.parse(readFileSync(join(assets, 'capacitor.config.json'), 'utf8')));
+  const hash = createHash('sha256').update(readFileSync(bundle)).digest('hex');
+  const keytool = join(javaHome, 'bin/keytool');
+  const locale = ['-J-Duser.language=en', '-J-Duser.country=US'];
+  const bundleCertificate = execFileSync(keytool, [...locale, '-printcert', '-jarfile', bundle], { encoding: 'utf8', env });
+  const keyCertificate = execFileSync(keytool, [...locale, '-list', '-v', '-keystore', process.env.ANDROID_KEYSTORE, '-alias', process.env.ANDROID_KEY_ALIAS, '-storepass:env', 'ANDROID_KEYSTORE_PASSWORD'], { encoding: 'utf8', env });
+  const certificateSha256 = compareSigningCertificates(bundleCertificate, keyCertificate);
+  mkdirSync(dirname(proof), { recursive: true });
+  writeFileSync(proof, JSON.stringify({ commit: head, versionCode: Number(version), bundle, sha256: hash, certificateSha256 }));
+  console.log('PASS signed bundle: staging assets, correct package/version, backups/debug/cleartext off.');
+  console.log(bundle);
+} finally { rmSync(temporary, { recursive: true, force: true }); }

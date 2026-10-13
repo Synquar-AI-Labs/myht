@@ -5,10 +5,12 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { scanNative, assertStagingSecurity } from './native-target.mjs';
+import { assertReleaseBuild } from './native-release-tree.mjs';
 
-export function releaseGuard(command, receipt, env) {
+export function releaseGuard(command, receipt, env, head = receipt.head, status = '') {
   if (!['archive', 'export', 'upload'].includes(command)) throw new Error('Use archive, export or upload.');
   if (receipt.target !== 'staging') throw new Error('Build the staging native target first.');
+  assertReleaseBuild(receipt, head, status);
   if (!/^[A-Z0-9]{10}$/.test(env.IOS_TEAM_ID ?? '')) throw new Error('Set IOS_TEAM_ID to the 10-character Apple team id.');
   if (command === 'upload' && env.TESTFLIGHT_CONFIRM !== 'com.fahadakbar.myht') throw new Error('Set TESTFLIGHT_CONFIRM=com.fahadakbar.myht to upload.');
   return env.IOS_TEAM_ID;
@@ -49,13 +51,13 @@ function verifyIpa(ipa, temporary) {
 function run() {
   const command = process.argv[2];
   const receipt = JSON.parse(readFileSync('.native-build.json', 'utf8'));
-  const team = releaseGuard(command, receipt, process.env);
+  const commit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  const team = releaseGuard(command, receipt, process.env, commit, execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }));
   scanNative('ios/App/App/public', 'staging', 'ios');
   assertStagingSecurity(readFileSync('ios/App/App/Info.plist', 'utf8'), '', JSON.parse(readFileSync('ios/App/App/capacitor.config.json', 'utf8')));
   const archive = resolve('test-results/native/App.xcarchive');
   const exported = resolve('test-results/native/export');
   const proof = join(exported, 'verified.json');
-  const commit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const version = execFileSync('git', ['rev-list', '--count', 'HEAD'], { encoding: 'utf8' }).trim();
   if (command === 'archive') {
     rmSync(proof, { force: true });
