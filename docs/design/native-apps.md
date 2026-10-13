@@ -13,6 +13,10 @@ other two.
 3. **Going public.** A production database, a proper email service, a website
    address, privacy text, in-app account deletion, store listings and review.
 
+Added on 2026-10-12, between steps 1 and 2: testers who are elsewhere, and
+updates that reach them by themselves. See `docs/design/app-updates.md`. It
+pulls the email service forward from step 3.
+
 ## 1. What must hold
 
 - One codebase. The website, the iPhone app and the Android app are built from
