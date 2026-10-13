@@ -39,17 +39,26 @@ The approved SDK is at `~/Library/Android/sdk` (or set `ANDROID_HOME`).
 ## TestFlight (owner)
 
 The owner completes Apple Developer enrolment, adds the Apple account in Xcode,
-and creates the app in App Store Connect with bundle id `com.fahadakbar.myht`.
+and uses the Apple account in Xcode for the distribution export.
 No account credentials or team id belong in tracked files.
 
 After `npm run app:build:staging`, the owner sets `IOS_TEAM_ID` in the terminal
-and runs `npm run app:ios:archive`. This signs/provisions a Release archive at
+and runs `npm run app:ios:archive`. This creates an unsigned Release archive at
 `test-results/native/App.xcarchive`; build number is the current Git commit count.
 Marketing version remains the project's version.
 
-The owner then runs `TESTFLIGHT_CONFIRM=com.fahadakbar.myht npm run app:ios:upload`.
-Both commands re-check the staging assets. Upload uses a temporary, automatically
-removed export plist outside the repository. Neither command runs in tests.
+Next run `npm run app:ios:export`. Automatic signing uses the team's distribution
+profile without requiring a registered device. Output is `test-results/native/export`.
+The script unzips the IPA and checks its staging assets, encryption declaration
+and absence of a server block or local transport allowance, then records the
+commit and artifact hashes in an ignored verification receipt.
+
+The owner creates the app entry in App Store Connect with bundle id
+`com.fahadakbar.myht`, then runs
+`TESTFLIGHT_CONFIRM=com.fahadakbar.myht npm run app:ios:upload`.
+Upload refuses a missing/stale export or changed IPA/archive and re-checks the IPA.
+All three commands check staging assets. Export/upload use temporary, automatically
+removed options plists outside the repository. None runs in tests.
 In App Store Connect, the owner finishes TestFlight processing/compliance and
 adds the tester; the iPhone installs it through Apple's TestFlight app.
 

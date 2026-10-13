@@ -8,6 +8,7 @@
     "app:build:local": "node scripts/build-native.mjs local",
     "app:ios": "node scripts/native-ios.mjs",
     "app:ios:archive": "node scripts/native-ios-release.mjs archive",
+    "app:ios:export": "node scripts/native-ios-release.mjs export",
     "app:ios:upload": "node scripts/native-ios-release.mjs upload",
     "app:android": "npx --no-install cap open android",
     "app:android:build": "node scripts/native-android.mjs",
