@@ -59,8 +59,12 @@ The owner creates the app entry in App Store Connect with bundle id
 Upload refuses a missing/stale export or changed IPA/archive and re-checks the IPA.
 All three commands check staging assets. Export/upload use temporary, automatically
 removed options plists outside the repository. None runs in tests.
-In App Store Connect, the owner finishes TestFlight processing/compliance and
-adds the tester; the iPhone installs it through Apple's TestFlight app.
+In App Store Connect the app entry is "MyHT Family Health". Its internal group
+"Own devices" has automatic distribution and the owner as its only tester, so
+each uploaded build reaches Apple's TestFlight app on his iPhone without
+another step on Apple's website. A TestFlight build stops opening 90 days after
+upload, so upload a new one before that. Under the icon on the phone the app is
+still called "Health Tracker". Nobody else is added as a tester before step 3.
 
 `node scripts/native-assets.mjs` regenerates the code-drawn placeholder icons
 and splash images locally, with all browser network requests blocked.

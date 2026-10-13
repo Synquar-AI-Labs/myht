@@ -33,10 +33,13 @@ other two.
 
 ## 2. What the owner gets in step 1
 
-- **iPhone and iPad:** the app installed from this Mac onto his own device, and
-  running in the simulator for our checks.
+- **iPhone and iPad:** the app on his own device, and running in the simulator
+  for our checks. He has no cable for the iPhone, so since 2026-10-12 it
+  reaches the phone through Apple's TestFlight as an internal test that only
+  he can install (steps in `docs/NATIVE.md`).
 - **Android:** an installable test file (APK) put onto his phone or tablet by
-  cable.
+  cable, or fetched from a download page on his home Wi-Fi that is switched
+  off again afterwards.
 - Same sign-in, same data, same features as the staging website, including
   the camera for prescription photos, the microphone for doctor conversations
   and the PDF reports.
@@ -136,9 +139,11 @@ notifications in this step.
 
 ## 6. What only the owner can do
 
-- Add his Apple account in Xcode on this Mac (Xcode → Settings → Accounts) and
-  connect his iPhone by cable, with Developer Mode switched on in the phone's
-  privacy settings. Nobody else types his password.
+- Add his Apple account in Xcode on this Mac (Xcode → Settings → Accounts).
+  Nobody else types his password. With a cable: connect the iPhone with
+  Developer Mode switched on in the phone's privacy settings. Without one:
+  accept Apple's current developer agreement, install Apple's TestFlight app
+  on the iPhone and accept the invitation there.
 - For Android: switch on USB debugging on the tablet or phone and connect it,
   or allow installing the test file.
 - Accept, or tell us to accept, the licence terms the Android tools show on
@@ -148,9 +153,10 @@ notifications in this step.
 ## 7. Not in step 1
 
 Reminders and anything that sends a notification. Recording with the screen
-off. TestFlight, Play testing tracks and the stores. Other family members:
-staging still has email confirmation off, so nobody else joins before step 3.
-A final name, icon and app id. Offline use.
+off. Play testing tracks and the stores. TestFlight for anyone but the owner:
+his own iPhone uses a TestFlight internal test, nobody else is added. Other
+family members: staging still has email confirmation off, so nobody else joins
+before step 3. A final name, icon and app id. Offline use.
 
 ## 8. Step 2 and step 3 in outline
 
