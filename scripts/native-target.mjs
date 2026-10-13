@@ -34,6 +34,7 @@ export function scanNative(root, target, platform) {
 }
 
 export function assertStagingSecurity(plist, manifest, capacitor) {
+  if (capacitor.loggingBehavior !== 'none') throw new Error('Staging must disable plugin logging.');
   if (/NSAllowsArbitraryLoads|NSAllowsLocalNetworking|NSExceptionDomains|127\.0\.0\.1|10\.0\.2\.2/.test(plist)) throw new Error('Staging iOS has a local transport allowance.');
   if (/usesCleartextTraffic="true"|networkSecurityConfig|127\.0\.0\.1|10\.0\.2\.2/.test(manifest)) throw new Error('Staging Android has a local transport allowance.');
   if (capacitor.server?.url || capacitor.server?.cleartext || capacitor.server?.allowNavigation?.length) throw new Error('Staging must package its own screens without navigation allowances.');

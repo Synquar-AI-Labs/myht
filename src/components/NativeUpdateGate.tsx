@@ -48,7 +48,9 @@ export function NativeUpdateGate({ children }: { children: ReactNode }) {
         clearTimeout(deadline); checking = false;
         if (!disposed) {
           setStarting(false);
-          nextCheck = setTimeout(() => { void check(); }, succeeded ? 10 * 60_000 : 30_000);
+          const current = answer.current;
+          const needsUpdate = current && nativeUpdateDecision(current.build, current.minimum, false) === 'block';
+          nextCheck = setTimeout(() => { void check(); }, succeeded && !needsUpdate ? 10 * 60_000 : 30_000);
         }
       }
     };

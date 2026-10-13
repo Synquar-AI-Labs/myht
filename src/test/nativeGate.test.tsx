@@ -128,3 +128,19 @@ it('a successfully read missing row removes the previous minimum', async () => {
   await act(async () => { mock.active?.({ isActive: true }); });
   await screen.findByText('Family screen');
 });
+
+it.each([false, true])('rechecks an update requirement in thirty seconds (busy=%s)', async held => {
+  vi.useFakeTimers();
+  const release = held ? holdUpdateWork() : () => {};
+  try {
+    mock.row.mockResolvedValue({ data: { min_build: 373 }, error: null });
+    show(); await act(async () => {});
+    expect(screen.getByText(held ? 'This app needs an update. Finish this first.' : 'Update needed')).toBeInTheDocument();
+    mock.row.mockResolvedValue({ data: { min_build: 0 }, error: null });
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(mock.row).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('Family screen')).toBeInTheDocument();
+    expect(screen.queryByText('Update needed')).not.toBeInTheDocument();
+    expect(screen.queryByText('This app needs an update. Finish this first.')).not.toBeInTheDocument();
+  } finally { act(() => release()); }
+});

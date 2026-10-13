@@ -130,6 +130,7 @@ Name-only caregivers are plain inserts/updates by the admin under RLS. Reading "
 
 ### 5.5 Audit and live updates
 
+- Ticker polling, sequence-gap recovery and channel repair follow [live-sync.md](live-sync.md).
 - One hardened SECURITY DEFINER trigger function `app_private.audit_and_bump()`, `AFTER INSERT OR UPDATE OR DELETE … FOR EACH ROW`, on every data table and on `households`, `household_members`, `caregivers`, `household_invites`. Working from `to_jsonb(coalesce(NEW, OLD))`:
   - household = the row's `household_id`, or its `id` when the table is `households`;
   - `row_key` = the row's `id`, or `household_id:user_id` for `household_members`;

@@ -13,13 +13,16 @@ describe('native target boundary', () => {
     expect(() => nativeTarget('local', 'ios', { VITE_SUPABASE_URL: 'https://lefqfxkvujqnukgzaviz.supabase.co' })).toThrow();
   });
   it('rejects local transport allowances in staging projects', () => {
-    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', {})).not.toThrow();
-    expect(() => assertStagingSecurity('NSAllowsLocalNetworking', '<manifest/>', {})).toThrow();
-    expect(() => assertStagingSecurity('<plist/>', 'android:usesCleartextTraffic="true"', {})).toThrow();
-    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { server: { url: 'http://127.0.0.1' } })).toThrow();
-    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { server: { androidScheme: 'http' } })).toThrow();
-    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { android: { allowMixedContent: true } })).toThrow();
-    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { server: { androidScheme: 'https' }, android: { allowMixedContent: false } })).not.toThrow();
+    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior: 'none' })).not.toThrow();
+    for (const loggingBehavior of [undefined, 'debug', 'production']) {
+      expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior })).toThrow('plugin logging');
+    }
+    expect(() => assertStagingSecurity('NSAllowsLocalNetworking', '<manifest/>', { loggingBehavior: 'none' })).toThrow('transport allowance');
+    expect(() => assertStagingSecurity('<plist/>', 'android:usesCleartextTraffic="true"', { loggingBehavior: 'none' })).toThrow('transport allowance');
+    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior: 'none', server: { url: 'http://127.0.0.1' } })).toThrow('navigation allowances');
+    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior: 'none', server: { androidScheme: 'http' } })).toThrow('HTTP');
+    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior: 'none', android: { allowMixedContent: true } })).toThrow('HTTP');
+    expect(() => assertStagingSecurity('<plist/>', '<manifest/>', { loggingBehavior: 'none', server: { androidScheme: 'https' }, android: { allowMixedContent: false } })).not.toThrow();
   });
   it('scans the artifact itself, refusing foreign hosts and local addresses', () => {
     const root = mkdtempSync(join(tmpdir(), 'myht-native-scan-'));
@@ -53,7 +56,7 @@ describe('native target boundary', () => {
           expect(readFileSync(file, 'utf8')).toBe(clean);
         }
       }
-      assertStagingSecurity(readFileSync('ios/App/App/Info.plist', 'utf8'), readFileSync('android/app/src/main/AndroidManifest.xml', 'utf8'), {});
+      assertStagingSecurity(readFileSync('ios/App/App/Info.plist', 'utf8'), readFileSync('android/app/src/main/AndroidManifest.xml', 'utf8'), { loggingBehavior: 'none' });
     } finally { rmSync(root, { recursive: true, force: true }); }
   });
 });
