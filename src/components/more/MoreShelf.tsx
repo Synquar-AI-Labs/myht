@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2,
+  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2, Heart, Phone,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -21,6 +21,9 @@ const HospitalStaysTab = lazy(() => import('@/components/HospitalStaysTab').then
 const TranscriptsTab = lazy(() => import('@/components/TranscriptsTab').then(m => ({ default: m.TranscriptsTab })));
 const DashboardTab = lazy(() => import('@/components/DashboardTab').then(m => ({ default: m.DashboardTab })));
 const FamilyPeopleTab = lazy(() => import('./FamilyPeopleTab').then(m => ({ default: m.FamilyPeopleTab })));
+const AboutTab = lazy(() => import('@/components/profile/AboutTab').then(m => ({ default: m.AboutTab })));
+const ContactsTab = lazy(() => import('@/components/profile/ContactsTab').then(m => ({ default: m.ContactsTab })));
+const EmergencyCardTab = lazy(() => import('@/components/profile/EmergencyCardTab').then(m => ({ default: m.EmergencyCardTab })));
 
 /** Fetches the full health/BP history only when Reports is actually opened.
  *  Gated hard on load state — a half-loaded dataset must never become a
@@ -45,11 +48,12 @@ function ReportsView() {
   return <DashboardTab records={records} bpReadings={bpReadings} />;
 }
 
-type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family';
+type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family' | 'about' | 'contacts' | 'emergency';
 
 interface MoreShelfProps {
   onPresentationMode: () => void;
   onSignOut: () => void;
+  initialView?: 'about';
 }
 
 interface RowSpec {
@@ -60,13 +64,13 @@ interface RowSpec {
   chip: string;
 }
 
-export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
+export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreShelfProps) {
   const { householdId, careRecipientName, caregivers, role } = useHousehold();
   const invites = useFamilyInvites();
-  const [view, setView] = useState<ShelfView>(null);
+  const [view, setView] = useState<ShelfView>(initialView ?? null);
   useNativeBack(useCallback(() => {
     if (!view) return false;
-    setView(null); return true;
+    setView(view === 'emergency' ? 'about' : null); return true;
   }, [view]));
 
   // Minute tick so "next appointment" can't stay stale on a mounted shelf.
@@ -120,6 +124,8 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   }, [appointmentsData.appointments, now]);
 
   const rows: RowSpec[] = [
+    { view: 'about', title: `About ${careRecipientName}`, subtitle: 'Profile, alerts and emergency card', icon: Heart, chip: 'bg-[#fdecec] text-[#b42318]' },
+    { view: 'contacts', title: 'Contacts', subtitle: 'Emergency, doctors and caretakers', icon: Phone, chip: 'bg-[#eef1f9] text-[#4f6bd6]' },
     {
       view: 'family', title: 'Family & people',
       subtitle: `${caregivers.length} people${role === 'admin' && invites.data ? ` · ${invites.data.length} invited` : ''}`,
@@ -173,8 +179,8 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
   if (view !== null) {
     return (
       <div className={view === 'stays' || view === 'reports' ? 'mx-auto max-w-4xl' : 'mx-auto max-w-[640px]'}>
-        <button onClick={() => setView(null)} className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
-          <ChevronLeft className="h-4 w-4" /> Back
+        <button onClick={() => setView(view === 'emergency' ? 'about' : null)} className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
+          <ChevronLeft className="h-4 w-4" /> {view === 'emergency' ? `About ${careRecipientName}` : 'Back'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
           {view === 'meds' && <MedicineScheduleTab />}
@@ -183,6 +189,9 @@ export function MoreShelf({ onPresentationMode, onSignOut }: MoreShelfProps) {
           {view === 'conversations' && <TranscriptsTab />}
           {view === 'reports' && <ReportsView />}
           {view === 'family' && <FamilyPeopleTab />}
+          {view === 'about' && <AboutTab onContacts={() => setView('contacts')} onEmergency={() => setView('emergency')} />}
+          {view === 'contacts' && <ContactsTab />}
+          {view === 'emergency' && <EmergencyCardTab />}
         </Suspense>
       </div>
     );

@@ -100,6 +100,9 @@ export function useRealtimeSync() {
           queueRefresh();
         }
         const keys = {
+          care_profiles: [domainKeys.profile(householdId)],
+          care_alerts: [domainKeys.alerts(householdId)],
+          contacts: [domainKeys.contacts(householdId)],
           household_invites: [domainKeys.invites(householdId)],
           medicines: [medicineKeys.list(householdId)],
           medicine_logs: [medicineKeys.logs(householdId), medicineKeys.reports(householdId)],

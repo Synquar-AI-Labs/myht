@@ -1,4 +1,7 @@
 export const domainKeys = {
+  profile: (id?: string) => ['household', id, 'care_profiles'] as const,
+  alerts: (id?: string) => ['household', id, 'care_alerts'] as const,
+  contacts: (id?: string) => ['household', id, 'contacts'] as const,
   invites: (id?: string) => ['household', id, 'household_invites'] as const,
   appointments: (id?: string) => ['household', id, 'appointments'] as const,
   stays: (id?: string) => ['household', id, 'hospital-stays'] as const,

@@ -222,6 +222,85 @@ export type Database = {
           },
         ]
       }
+      care_alerts: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          kind: string
+          note: string
+          sort: number
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          kind: string
+          note?: string
+          sort?: number
+          text: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          kind?: string
+          note?: string
+          sort?: number
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_alerts_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_profiles: {
+        Row: {
+          date_of_birth: string | null
+          emergency_notes: string
+          fall_risk: boolean | null
+          fall_risk_note: string
+          household_id: string
+          id: string
+          none_known: string[]
+          updated_at: string
+        }
+        Insert: {
+          date_of_birth?: string | null
+          emergency_notes?: string
+          fall_risk?: boolean | null
+          fall_risk_note?: string
+          household_id: string
+          id?: string
+          none_known?: string[]
+          updated_at?: string
+        }
+        Update: {
+          date_of_birth?: string | null
+          emergency_notes?: string
+          fall_risk?: boolean | null
+          fall_risk_note?: string
+          household_id?: string
+          id?: string
+          none_known?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_profiles_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: true
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       caregivers: {
         Row: {
           created_at: string
@@ -274,6 +353,59 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      contacts: {
+        Row: {
+          address: string
+          created_at: string
+          email: string
+          household_id: string
+          id: string
+          kind: string
+          name: string
+          notes: string
+          phone: string
+          phone2: string
+          role: string
+          sort: number
+        }
+        Insert: {
+          address?: string
+          created_at?: string
+          email?: string
+          household_id: string
+          id?: string
+          kind: string
+          name: string
+          notes?: string
+          phone?: string
+          phone2?: string
+          role?: string
+          sort?: number
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          email?: string
+          household_id?: string
+          id?: string
+          kind?: string
+          name?: string
+          notes?: string
+          phone?: string
+          phone2?: string
+          role?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       custom_action_logs: {
         Row: {

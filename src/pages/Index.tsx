@@ -20,6 +20,7 @@ const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<Tab>('today');
+  const [moreStart, setMoreStart] = useState<'about' | undefined>();
   const [isFullscreen, setIsFullscreen] = useState(false);
   // True while the day editor has a save in flight — switching tabs then
   // would unmount the form and orphan (or lose) the write.
@@ -61,7 +62,7 @@ const Index = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => { setMoreStart(undefined); setActiveTab(tab.id); }}
                 disabled={navLocked}
                 className={`flex min-h-[44px] items-center gap-2 rounded-xl px-4 py-2.5 text-[15px] transition-colors disabled:opacity-40 ${
                   active ? 'bg-[#26201a] font-bold text-white' : 'font-semibold text-[#8b8175] hover:bg-[#f3ede2]'
@@ -77,7 +78,7 @@ const Index = () => {
 
       <main className={`flex-1 overflow-y-auto pb-24 md:pb-10 ${isFullscreen ? 'pt-2' : ''}`}>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
-          {activeTab === 'today' && <TodayScreen />}
+          {activeTab === 'today' && <TodayScreen onOpenAbout={() => { setMoreStart('about'); setActiveTab('more'); }} />}
           {activeTab === 'history' && (
             <div className="px-4 pt-5 md:px-8 md:pt-24">
               <HistoryTab onBusyChange={setNavLocked} />
@@ -85,7 +86,7 @@ const Index = () => {
           )}
           {activeTab === 'more' && (
             <div className="px-4 pt-5 md:px-8 md:pt-24">
-              <MoreShelf onPresentationMode={toggleFullscreen} onSignOut={signOut} />
+              <MoreShelf initialView={moreStart} onPresentationMode={() => { setActiveTab('today'); toggleFullscreen(); }} onSignOut={signOut} />
             </div>
           )}
         </Suspense>
@@ -101,7 +102,7 @@ const Index = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => { setMoreStart(undefined); setActiveTab(tab.id); }}
                   disabled={navLocked}
                   className={`flex flex-1 flex-col items-center gap-[3px] py-3 transition-colors disabled:opacity-40 ${
                     active ? 'text-[#26201a]' : 'text-[#a49a8c]'
@@ -120,7 +121,7 @@ const Index = () => {
       {isFullscreen && (
         <button
           onClick={toggleFullscreen}
-          className="fixed top-3 right-3 z-50 rounded-full border bg-background/80 p-2 shadow-lg transition-colors hover:bg-muted"
+          className="fixed top-3 right-3 z-50 flex min-h-11 min-w-11 items-center justify-center rounded-full border bg-background/80 p-2 shadow-lg transition-colors hover:bg-muted"
           title="Exit Presentation Mode"
         >
           <Minimize className="h-4 w-4" />

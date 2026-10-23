@@ -343,6 +343,13 @@ await check('19 hostile realtime subscriptions with own-family positive control'
   const note=good(await insert(A.admin,'written_notes',{household_id:A.hid,date:'2026-07-02',content:'Realtime control'}))[0];
   good(await request(A.admin.token,'/rest/v1/written_notes?id=eq.'+note.id,'PATCH',{content:'Updated'}));
   good(await request(A.admin.token,'/rest/v1/written_notes?id=eq.'+note.id,'DELETE'));
+  const profileControl=good(await insert(A.admin,'care_profiles',{household_id:A.hid}))[0];
+  const alertControl=good(await insert(A.admin,'care_alerts',{household_id:A.hid,kind:'allergy',text:'Realtime synthetic alert'}))[0];
+  const contactControl=good(await insert(A.admin,'contacts',{household_id:A.hid,kind:'emergency',name:'Realtime synthetic contact'}))[0];
+  for(const [table,row,patch] of [['care_alerts',alertControl,{note:'Updated'}],['contacts',contactControl,{role:'Updated'}],['care_profiles',profileControl,{emergency_notes:'Updated'}]]) {
+   good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch));
+   good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE'));
+  }
   const member=await user('realtime-member');
   const invite=good(await rpc(A.admin,'invite_member',{p_email:member.email}));
   good(await rpc(member,'accept_invite',{p_invite_id:invite,p_display_name:'Realtime member'}));
@@ -511,6 +518,46 @@ await check('29 client build hints are global authenticated read-only',async()=>
  const unauth=await rows(anon,'client_builds'); assert.equal(unauth.status,401); assert.equal(unauth.data.code,'42501');
  assert.equal(sql('SELECT jsonb_agg(t ORDER BY platform)::text FROM public.client_builds t'),before);
  assert.equal(sql("SELECT count(*) FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='client_builds'"),'0');
+});
+await check('30 profile and contacts isolate families, audit profile keys, and distinguish unknown from none',async()=>{
+ const before=Number(sql(`SELECT seq FROM public.household_sync WHERE household_id='${A.hid}'`));
+ const profile=good(await insert(A.admin,'care_profiles',{household_id:A.hid,date_of_birth:'1960-10-22'}))[0];
+ good(await request(A.member.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'PATCH',{emergency_notes:'Synthetic emergency note'}));
+ const alert=good(await insert(A.member,'care_alerts',{household_id:A.hid,kind:'allergy',text:'Synthetic allergy'}))[0];
+ const contact=good(await insert(A.admin,'contacts',{household_id:A.hid,kind:'emergency',name:'Synthetic contact',phone:'+15550101234'}))[0];
+ for(const [table,row,body,patch] of [
+  ['care_profiles',profile,{household_id:A.hid},{emergency_notes:'foreign'}],
+  ['care_alerts',alert,{household_id:A.hid,kind:'allergy',text:'foreign'},{text:'foreign'}],
+  ['contacts',contact,{household_id:A.hid,kind:'doctor',name:'foreign'},{name:'foreign'}],
+ ]) {
+  assert(good(await rows(A.member,table,'&id=eq.'+row.id)).some(r=>r.id===row.id),'rightful member positive control');
+  const snapshotBefore=snapshot(table,A.hid);
+  assert.deepEqual(good(await rows(B.admin,table,'&household_id=eq.'+A.hid)),[]);
+  rlsDenied(await insert(B.admin,table,body));
+  assert.deepEqual(good(await request(B.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch)),[]);
+  assert.deepEqual(good(await request(B.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE')),[]);
+  const anonymous=await rows(anon,table);assert.equal(anonymous.status,401);assert.equal(anonymous.data.code,'42501');
+  assert.equal(snapshot(table,A.hid),snapshotBefore);
+  assert.equal(sql(`SELECT count(*) FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='${table}'`),'0');
+ }
+ good(await request(A.member.token,'/rest/v1/contacts?id=eq.'+contact.id,'PATCH',{role:'Synthetic doctor'}));
+ good(await request(A.member.token,'/rest/v1/care_alerts?id=eq.'+alert.id,'PATCH',{note:'Synthetic note'}));
+ good(await request(A.member.token,'/rest/v1/contacts?id=eq.'+contact.id,'DELETE'));
+ good(await request(A.member.token,'/rest/v1/care_alerts?id=eq.'+alert.id,'DELETE'));
+ good(await request(A.member.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'PATCH',{none_known:['allergy']}));
+ assert.deepEqual(good(await rows(A.admin,'care_profiles','&id=eq.'+profile.id))[0].none_known,['allergy']);
+ const known=good(await insert(A.member,'care_alerts',{household_id:A.hid,kind:'allergy',text:'Actual synthetic alert'}))[0];
+ assert.deepEqual(good(await rows(A.admin,'care_profiles','&id=eq.'+profile.id))[0].none_known,[]);
+ good(await request(A.admin.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'PATCH',{none_known:['allergy']}));
+ assert.deepEqual(good(await rows(A.admin,'care_profiles','&id=eq.'+profile.id))[0].none_known,[]);
+ const invalid=await request(A.admin.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'PATCH',{none_known:['invalid']});assert.equal(invalid.data.code,'23514');
+ good(await request(A.admin.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'DELETE'));
+ const audit=good(await rows(A.admin,'audit_log','&table_name=eq.care_profiles&row_key=eq.'+profile.id));
+ assert(audit.some(e=>e.action==='insert'&&e.actor_user_id===A.admin.id));
+ assert(audit.some(e=>e.action==='update'&&e.actor_user_id===A.member.id));
+ assert(audit.some(e=>e.action==='delete'&&e.actor_user_id===A.admin.id));
+ assert(Number(sql(`SELECT seq FROM public.household_sync WHERE household_id='${A.hid}'`))>before);
+ good(await request(A.admin.token,'/rest/v1/care_alerts?id=eq.'+known.id,'DELETE'));
 });
 console.log('Failures: '+failures);
 process.exitCode=failures;

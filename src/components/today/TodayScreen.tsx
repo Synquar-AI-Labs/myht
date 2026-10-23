@@ -32,13 +32,14 @@ import { MedicineDoseSheet } from '@/components/MedicineDoseSheet';
 import { useDoseSkips } from '@/hooks/useDoseSkips';
 import { doseCandidates } from '@/lib/doseRecording';
 import { occurrenceTime, visibleSkips } from './todaySchedule';
+import { TodayAlerts } from '@/components/profile/TodayAlerts';
 
 type SheetState =
   | { type: 'medicine'; medicine: Medicine; slot?: UpcomingItem }
   | { type: 'health'; reading: ReadingType }
   | null;
 
-export function TodayScreen() {
+export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
   const isMobile = useIsMobile();
 
   // Re-evaluate "now" every 30s: drives the clock, the 12h windows and due flags.
@@ -210,6 +211,7 @@ export function TodayScreen() {
             <h1 className="min-w-0 text-[26px] font-normal text-[#26201a]">{format(now, 'EEEE, MMMM d')}</h1>
             <span data-today-clock className="flex-none whitespace-nowrap text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
+          <div className="px-[20px] pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
           <div className="px-[20px] pt-[18px]">{givenCard}</div>
           <div className="px-[20px] pt-[22px]">{upcomingCard}</div>
           <div className="px-[20px] pb-6 pt-[22px]">
@@ -224,6 +226,7 @@ export function TodayScreen() {
             <span className="text-[19px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
           {/* Independent columns: schedule and given / record and review */}
+          <div className="pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
           <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-7">
             <div className="space-y-8">{upcomingCard}{givenCard}</div>
             <div>
