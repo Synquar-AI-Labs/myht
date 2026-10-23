@@ -20,5 +20,5 @@ export function routinePlannedDetail(log: RoutineLog) {
   planned.setHours(Math.floor(log.for_minute / 60), log.for_minute % 60, 0, 0);
   const done = new Date(log.done_at);
   if (format(done, 'yyyy-MM-dd') === log.for_date && Math.abs(done.getTime() - planned.getTime()) <= PLANNED_DETAIL_GRACE_MS) return '';
-  return `for ${format(planned, 'MMM d, h:mm a')}`;
+  return format(done, 'yyyy-MM-dd') === log.for_date ? `planned ${format(planned, 'h:mm a')}` : `for ${format(planned, 'MMM d, h:mm a')}`;
 }

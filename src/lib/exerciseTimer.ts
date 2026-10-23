@@ -5,11 +5,19 @@ export const elapsedMs = (timer: ExerciseTimer, now = Date.now()) => timer.elaps
 export function pauseTimer(timer: ExerciseTimer, now = Date.now()): ExerciseTimer { return { ...timer, elapsed_ms: elapsedMs(timer, now), running_since: null, state: 'paused' }; }
 export function resumeTimer(timer: ExerciseTimer, now = Date.now()): ExerciseTimer { return timer.state === 'running' ? timer : { ...timer, running_since: now, state: 'running' }; }
 export const timerMinutes = (timer: ExerciseTimer, now = Date.now()) => Math.round(elapsedMs(timer, now) / 6000) / 10;
+export const timerProgress = (timer: ExerciseTimer, now = Date.now()) => Math.min(1, Math.max(0, elapsedMs(timer, now) / (timer.item.target_minutes! * 60_000)));
 export function recoverTimer(raw: string | null, user: string, household: string): ExerciseTimer | null {
   if (!raw) return null;
   const t = JSON.parse(raw) as ExerciseTimer;
-  if (t.user_id !== user || t.household_id !== household || t.item?.household_id !== household || t.item?.kind !== 'exercise' || !t.item.id || !t.caregiver_id || !t.recorded_by || !/^\d{4}-\d{2}-\d{2}$/.test(t.for_date) || !Number.isInteger(t.for_minute) || t.for_minute < 0 || t.for_minute > 1439 || !Number.isFinite(t.elapsed_ms) || t.elapsed_ms < 0 || !['running','paused'].includes(t.state) || (t.state === 'running' ? !Number.isFinite(t.running_since) : t.running_since !== null)) throw new Error('Invalid saved exercise timer');
+  const awaitingPerson = t.caregiver_id === '' && t.recorded_by === '' && t.state === 'paused' && t.elapsed_ms === 0 && t.running_since === null;
+  if (t.user_id !== user || t.household_id !== household || t.item?.household_id !== household || t.item?.kind !== 'exercise' || !t.item.id || !Number.isFinite(t.item.target_minutes) || t.item.target_minutes! <= 0 || ((!t.caregiver_id || !t.recorded_by) && !awaitingPerson) || !/^\d{4}-\d{2}-\d{2}$/.test(t.for_date) || !Number.isInteger(t.for_minute) || t.for_minute < 0 || t.for_minute > 1439 || !Number.isFinite(t.elapsed_ms) || t.elapsed_ms < 0 || !['running','paused'].includes(t.state) || (t.state === 'running' ? !Number.isFinite(t.running_since) : t.running_since !== null)) throw new Error('Invalid saved exercise timer');
   return t;
+}
+export function readStoredTimer(storage: Pick<Storage, 'getItem' | 'removeItem'>, user: string, household: string, onCleared: () => void): ExerciseTimer | null {
+  const key = timerKey(user, household);
+  const raw = storage.getItem(key);
+  try { return recoverTimer(raw, user, household); }
+  catch { storage.removeItem(key); onCleared(); return null; }
 }
 export async function finishTimer(timer: ExerciseTimer, save: (minutes: number) => Promise<boolean>, now = Date.now()) {
   try { return await save(timerMinutes(timer, now)) ? null : timer; } catch { return timer; }

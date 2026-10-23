@@ -16,6 +16,6 @@ export async function routineFamily() {
     {household_id:f.id,item_id:stretch.id,for_date:date,for_minute:540,done_at:new Date(`${date}T09:10:00-04:00`).toISOString(),caregiver_id:caregiver.caregiver_id,recorded_by:caregiver.display_name,kind:'exercise',name:stretch.name,details:stretch.details,minutes:9.8,target_minutes:10},
   ], {defaultToNull:false}));
   await checked(f.admin.client.from('health_records').insert({household_id:f.id,date,food_taken:false}));
-  await checked(f.admin.client.from('care_alerts').insert([{household_id:f.id,kind:'allergy',text:'No peanuts'},{household_id:f.id,kind:'diet',text:'Low sodium'}]));
+  await checked(f.admin.client.from('care_alerts').insert([{household_id:f.id,kind:'allergy',text:'Peanuts'},{household_id:f.id,kind:'diet',text:'Low sodium'}]));
   return {...f,items,date};
 }

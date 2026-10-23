@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { test, expect, signIn } from './helpers';
 import { routineFamily } from './routine-fixtures';
 const sizes=[[320,568],[360,800],[393,852],[800,1280],[1280,800]];
-const names=['today-folded','today-open','meal-sheet','timer-running','timer-paused','history'];
+const names=['today-folded','today-open','meal-sheet','timer-running','timer-paused','timer-target-reached','history'];
 for(const [width,height] of sizes)test(`${width}x${height} routine Today states`,async({page,sessions})=>{
   void sessions;const f=await routineFamily();await page.clock.install({time:new Date(`${f.date}T12:00:00-04:00`)});await page.setViewportSize({width,height});await signIn(page,f.admin);
   const folder=`test-results/routines-today/${width}x${height}`;mkdirSync(folder,{recursive:true});
@@ -31,8 +31,9 @@ for(const [width,height] of sizes)test(`${width}x${height} routine Today states`
   await meals.getByRole('button',{name:/1 done/}).click();await exercise.getByRole('button',{name:/1 done/}).click();await capture('today-open');
   await meals.getByRole('button',{name:'Done',exact:true}).first().click();await expect(page.getByRole('dialog')).toBeVisible();await capture('meal-sheet');
   await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
-  await exercise.getByRole('button',{name:'Start',exact:true}).click();await expect(page.locator('[data-exercise-timer]')).toContainText('Running');await capture('timer-running');
+  await exercise.getByRole('button',{name:'Start',exact:true}).click();await expect(page.locator('[data-exercise-timer]')).toContainText('Running');await page.clock.fastForward(300000);await capture('timer-running');
   await page.locator('[data-exercise-timer]').getByRole('button',{name:'Pause',exact:true}).click();await capture('timer-paused');
+  await page.locator('[data-exercise-timer]').getByRole('button',{name:'Resume',exact:true}).click();await page.clock.fastForward(300000);await expect(page.getByText('Target reached',{exact:true})).toBeVisible();await capture('timer-target-reached');
   await page.locator('[data-exercise-timer]').getByRole('button',{name:'Cancel without saving',exact:true}).click();await page.getByRole('alertdialog').getByRole('button',{name:'Cancel without saving',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.getByRole('button',{name:'History',exact:true}).click();await expect(page.getByText('Meals recorded: 1 · Breakfast all',{exact:true})).toBeVisible();await capture('history');
   if(width>=768){
