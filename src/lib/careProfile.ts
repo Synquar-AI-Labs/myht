@@ -28,11 +28,15 @@ export function fallRiskValue(profile: CareProfile | null) {
   if (profile?.fall_risk == null) return 'Not recorded';
   return [profile.fall_risk ? 'Yes' : 'No', profile.fall_risk_note].filter(Boolean).join(' · ');
 }
-export function alertLine(profile: CareProfile | null, alerts: CareAlert[], cap = 2) {
-  const lines = alerts.filter(a => a.kind === 'allergy').map(a => `Allergic to ${a.text}${a.note ? ` — ${a.note}` : ''}`);
+export function alertLine(profile: CareProfile | null, alerts: CareAlert[]) {
+  const entries = (kind: AlertKind) => alerts.filter(a => a.kind === kind).map(a => `${a.text}${a.note ? ` — ${a.note}` : ''}`).join(', ');
+  const lines: string[] = [];
+  const allergies = entries('allergy');
+  if (allergies) lines.push(`Allergic to ${allergies}`);
   if (profile?.fall_risk) lines.push(`Fall risk: ${profile.fall_risk_note || 'Yes'}`);
-  lines.push(...alerts.filter(a => a.kind === 'contagious').map(a => `Contagious: ${a.text}${a.note ? ` — ${a.note}` : ''}`));
-  return { lines: lines.slice(0, cap), more: Math.max(0, lines.length - cap), full: lines.join(' · ') };
+  const contagious = entries('contagious');
+  if (contagious) lines.push(`Contagious: ${contagious}`);
+  return { lines, full: lines.join(' · ') };
 }
 export function cardReadiness(parts: { loading: boolean; error: boolean }[]): 'failed' | 'loading' | 'ready' {
   if (parts.some(p => p.error)) return 'failed';

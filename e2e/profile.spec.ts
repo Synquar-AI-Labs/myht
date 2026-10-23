@@ -40,6 +40,13 @@ test('profile alerts update another open page; About preserves unknowns and conf
   const pdf = await download;
   expect(pdf.suggestedFilename()).toBe('emergency-card.pdf');
   await pdf.saveAs('test-results/profile/emergency-card.pdf');
+  await page.getByRole('button', { name: 'Synthetic latex allergy', exact: true }).click();
+  await expect(page.getByRole('alertdialog')).toContainText('Remove this alert?');
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Keep it' }).click();
+  await expect(page.getByRole('button', { name: 'Synthetic latex allergy', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Synthetic latex allergy', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Remove', exact: true }).click();
+  await expect.poll(async () => await checked(f.admin.client.from('care_alerts').select('id').eq('household_id', f.id))).toHaveLength(0);
 });
 
 test('contacts have native links, edit/delete work, and a failed source cannot make an emergency card', async ({ page, sessions }) => {
@@ -59,6 +66,8 @@ test('contacts have native links, edit/delete work, and a failed source cannot m
   await dialog.getByLabel('Role', { exact: true }).fill('Updated role');
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByText('Updated role', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Delete', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Edit Synthetic contact' }).click();
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByRole('alertdialog').getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page.getByText('Synthetic contact', { exact: true })).toHaveCount(0);

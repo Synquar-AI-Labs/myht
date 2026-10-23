@@ -13,11 +13,10 @@ it('shows completed years on a birthday and handles 29 February', () => {
   expect(ageOn('2026-02-30')).toBeNull(); expect(ageOn('2999-01-01')).toBeNull();
   expect(ageLabel(null)).toContain('Not recorded');
 });
-it('caps the safety strip at two lines without counting non-safety categories', () => {
+it('keeps every safety kind visible on its own line, combining two allergies', () => {
   const alerts = [alert('allergy', 'Peanuts'), alert('allergy', 'Latex'), alert('contagious', 'Sample infection'), alert('diet', 'Low sodium')];
   const summary = alertLine(profile({ fall_risk: true, fall_risk_note: 'Two people to stand' }), alerts);
-  expect(summary.lines).toEqual(['Allergic to Peanuts', 'Allergic to Latex']);
-  expect(summary.more).toBe(2);
+  expect(summary.lines).toEqual(['Allergic to Peanuts, Latex', 'Fall risk: Two people to stand', 'Contagious: Sample infection']);
   expect(summary.full).toContain('Fall risk: Two people to stand');
   expect(summary.full).toContain('Contagious: Sample infection');
   expect(summary.full).not.toContain('Low sodium');

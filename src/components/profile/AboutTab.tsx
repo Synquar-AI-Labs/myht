@@ -39,15 +39,14 @@ export function AboutTab({ onContacts, onEmergency }: { onContacts: () => void; 
   if (care.loading || care.error) return <ProfileLoad error={care.error} retry={care.retry} />;
   const list = (key: AlertKind) => <div className="space-y-1" key={key}>
     <h3 className="[font-family:inherit] text-sm font-semibold text-[#8b8175]">{ALERT_LABELS[key]}</h3>
-    {care.alerts.filter(a => a.kind === key).map(a => <div key={a.id} className="flex items-start gap-2">
-      <p className="min-w-0 flex-1 break-words py-3">{a.text}{a.note && <span className="text-sm text-[#8b8175]"> · {a.note}</span>}</p>
-      <ConfirmDeleteButton variant="ghost" className="min-h-11 min-w-11 text-sm text-[#8a6240]" disabled={busy} title="Remove this alert?" description={a.text} onConfirm={async () => { await run(() => care.removeAlert(a.id)); }}>Remove</ConfirmDeleteButton>
-    </div>)}
+    <div className="flex flex-wrap items-center gap-2">
+      {care.alerts.filter(a => a.kind === key).map(a => <ConfirmDeleteButton key={a.id} variant="outline" className="h-auto min-h-11 max-w-full whitespace-normal rounded-full px-3 py-2 text-left" disabled={busy} title="Remove this alert?" description={[a.text, a.note].filter(Boolean).join(' · ')} confirmLabel="Remove" onConfirm={async () => { await run(() => care.removeAlert(a.id)); }}><span className="min-w-0 break-words">{a.text}{a.note && <span className="text-sm text-[#8b8175]"> · {a.note}</span>}</span></ConfirmDeleteButton>)}
+      <Button variant="outline" className="min-h-11 rounded-full px-3 text-[#8a6240]" disabled={busy} aria-label={`Add ${ALERT_LABELS[key]}`} onClick={() => { setKind(key); setText(''); setNote(''); }}>+ Add</Button>
+    </div>
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
       {care.alerts.every(a => a.kind !== key) && <><p className="min-w-0 flex-1 text-sm text-[#8b8175]">{alertValue(key, care.profile, care.alerts)}</p>
         {!care.profile?.none_known.includes(key) && <Button variant="outline" className="min-h-11" disabled={busy} aria-label={`None known: ${ALERT_LABELS[key]}`} onClick={() => void run(() => care.saveProfile({ none_known: [...(care.profile?.none_known ?? []), key] }))}>None known</Button>}</>}
-      {care.alerts.every(a => a.kind !== key) && care.profile?.none_known.includes(key) && <Button variant="ghost" disabled={busy} aria-label={`Clear None known: ${ALERT_LABELS[key]}`} onClick={() => void run(() => care.saveProfile({ none_known: care.profile!.none_known.filter(k => k !== key) }))}>Clear</Button>}
-      <Button variant="ghost" className="min-h-11 text-[#8a6240]" disabled={busy} aria-label={`Add ${ALERT_LABELS[key]}`} onClick={() => { setKind(key); setText(''); setNote(''); }}>Add</Button>
+      {care.alerts.every(a => a.kind !== key) && care.profile?.none_known.includes(key) && <Button variant="ghost" className="min-h-11 px-0" disabled={busy} aria-label={`Clear None known: ${ALERT_LABELS[key]}`} onClick={() => void run(() => care.saveProfile({ none_known: care.profile!.none_known.filter(k => k !== key) }))}>Clear</Button>}
     </div>
   </div>;
   return <div className="space-y-4 text-[#26201a]">

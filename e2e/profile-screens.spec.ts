@@ -63,9 +63,12 @@ for (const [width, height] of sizes) test(`${width}x${height} profile and contac
   await capture('contact-edit');
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await page.getByRole('button', { name: 'Today', exact: true }).click();
-  await expect(page.locator('[data-today-alerts]')).toContainText('+2 more');
+  await expect(page.locator('[data-alert-lines] > span').first()).toHaveText(/^Allergic to (Peanuts, Latex|Latex, Peanuts)$/);
+  await expect(page.locator('[data-today-alerts]')).toContainText('Fall risk: Two people to stand');
+  await expect(page.locator('[data-today-alerts]')).toContainText('Contagious: Sample infection');
+  await expect(page.locator('[data-alert-lines] > span')).toHaveCount(3);
   const lines = page.locator('[data-alert-lines]');
-  expect(await lines.evaluate(node => node.getBoundingClientRect().height)).toBeLessThanOrEqual(40.5);
+  expect(await lines.evaluate(node => node.getBoundingClientRect().height)).toBeLessThanOrEqual(60.5);
   await capture('today-alerts');
   // The existing bedside/presentation entry is offered on tablet/desktop.
   // Enter at the intended dimensions: Chromium cannot resize a fullscreen window.
