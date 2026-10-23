@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { routineSection, mealSummary, showDailyFood, routinePlannedDetail } from '@/lib/routineToday';
+import { routineSection, routineBarText, mealSummary, showDailyFood, routinePlannedDetail } from '@/lib/routineToday';
 import { buildDiaryEntries } from '@/components/history/diary';
 import { elapsedMs, pauseTimer, resumeTimer, finishTimer, recoverTimer, readStoredTimer, timerKey, timerMinutes, timerProgress, type ExerciseTimer } from '@/lib/exerciseTimer';
 import type { RoutineItem, RoutineLog } from '@/lib/routineSchedule';
@@ -11,6 +11,12 @@ it('hides empty sections, folds done rows, counts and marks passed pending rows 
   expect(model.planned).toBe(2); expect(model.done).toBe(1); expect(model.folded).toBe('1 done · Breakfast');
   expect(model.pending[0].notDoneYet).toBe(true); expect(model.doneRows[0].log).toEqual(log);
   expect(routineSection([item], [log,{...log,id:'log2',for_minute:780}], '2026-10-22', new Date()).complete).toBe(true);
+});
+it('summarises passed pending rows first, then the next time, then all done', () => {
+  const model = (logs: RoutineLog[], hour: number) => routineSection([item], logs, '2026-10-22', new Date(2026,9,22,hour));
+  expect(routineBarText(model([], 14))).toBe('Breakfast · not done yet');
+  expect(routineBarText(model([log], 12))).toBe('Next: Breakfast · 1:00 PM');
+  expect(routineBarText(model([log,{...log,id:'log2',for_minute:780}], 14))).toBe('All 2 done');
 });
 it('suppresses only Food No when real meal records exist, retaining Food Yes', () => {
   expect(mealSummary([log])).toBe('Meals recorded: 1 · Breakfast all');

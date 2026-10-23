@@ -28,6 +28,7 @@ for(const [width,height] of sizes)test(`${width}x${height} routine Today states`
   };
   const meals=page.locator('[data-routine-section=meal]'), exercise=page.locator('[data-routine-section=exercise]');
   await expect(meals.getByRole('heading')).toHaveText('Meals · 1 of 3 done');await expect(exercise.getByRole('heading')).toHaveText('Exercise · 1 of 2 done');await capture('today-folded');
+  await meals.locator('[data-routine-bar]').click();await exercise.locator('[data-routine-bar]').click();
   await meals.getByRole('button',{name:/1 done/}).click();await exercise.getByRole('button',{name:/1 done/}).click();await capture('today-open');
   await meals.getByRole('button',{name:'Done',exact:true}).first().click();await expect(page.getByRole('dialog')).toBeVisible();await capture('meal-sheet');
   await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);

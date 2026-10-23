@@ -1,5 +1,6 @@
 import { routineDay, type RoutineItem, type RoutineLog } from './routineSchedule';
 import { format, parseISO } from 'date-fns';
+import { doseTimeLabel } from './doseTime';
 export const MEAL_AMOUNTS = { all: 'All', most: 'Most', half: 'Half', little: 'A little', none: 'None' } as const;
 export function routineSection(items: RoutineItem[], logs: RoutineLog[], date: string, now: Date) {
   const day = routineDay(items, logs, date);
@@ -7,6 +8,13 @@ export function routineSection(items: RoutineItem[], logs: RoutineLog[], date: s
     doneRows: day.occurrences.filter(o => o.log),
     pending: day.occurrences.filter(o => !o.log).map(o => ({ ...o, notDoneYet: o.at < now })),
     folded: `${day.done} done · ${day.occurrences.filter(o => o.log).map(o => o.log!.name).join(', ')}` };
+}
+export function routineBarText(model: ReturnType<typeof routineSection>) {
+  const passed = model.pending.find(o => o.notDoneYet);
+  if (passed) return `${passed.item.name} · not done yet`;
+  const next = model.pending[0];
+  if (next) return `Next: ${next.item.name} · ${doseTimeLabel(next.minute)}`;
+  return `All ${model.done} done`;
 }
 export function mealSummary(logs: RoutineLog[]) {
   const meals = logs.filter(l => l.kind === 'meal');

@@ -16,7 +16,6 @@ export function DoseTimeGroups({ given, upcoming, skipped = [], now, onGiven, on
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState<Record<number, boolean>>({});
   const groups: { at: Date; items: (GivenItem | UpcomingItem | SkippedItem)[]; state?: SlotState }[] = upcoming ? groupUpcoming(upcoming) : groupDoseTimes<GivenItem | SkippedItem>([...(given ?? []), ...skipped].sort((a, b) => b.at.getTime() - a.at.getTime()));
-  const nearest = upcoming ? groups.reduce<number | null>((best, group) => best === null || Math.abs(group.at.getTime() - now.getTime()) < Math.abs(best - now.getTime()) ? group.at.getTime() : best, null) : null;
   return <>
     {(expanded ? groups : visibleDoseGroups(groups, now, !!upcoming)).map(group => {
       const key = group.at.getTime();
@@ -25,7 +24,7 @@ export function DoseTimeGroups({ given, upcoming, skipped = [], now, onGiven, on
       const count = upcoming ? group.items.length : group.items.filter(item => 'log' in item).length;
       const skippedCount = group.items.filter(item => 'skip' in item).length;
       const countLabel = upcoming ? `${count} ${count === 1 ? 'medicine' : 'medicines'}` : `${count} given`;
-      const isOpen = open[key] ?? (!!urgency || key === nearest);
+      const isOpen = open[key] ?? false;
       return <div key={key} data-dose-group className="border-b border-[#f3ede2] last:border-b-0">
         <button style={urgencyStyle(state)} className={`dose-time-header ${urgency ? 'dose-tinted' : ''} ${upcoming ? 'dose-upcoming-header' : 'dose-given-header'} min-h-11 w-full rounded-xl text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
           <span className="dose-time whitespace-nowrap font-bold">{timeLabel(group.at)}</span>

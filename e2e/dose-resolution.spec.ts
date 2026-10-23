@@ -34,6 +34,7 @@ test('n. Linked late/missed doses, explicit extras, skips and undo', async ({ pa
   await expect(upcoming.getByText('MISSED', { exact: true })).toBeVisible();
   await expect(upcoming.getByRole('button', { name: /MISSED/ })).toHaveCSS('animation-name', 'none');
   await capture('missed-row');
+  await upcoming.getByRole('button', { name: /11:30 AM.*LATE/ }).click();
   await upcoming.getByRole('button', { name: /^Late tablet/ }).click();
   const sheet = page.getByRole('dialog');
   await expect(sheet.getByText('5 mg · 1 tablet', { exact: true })).toBeVisible();
@@ -54,6 +55,7 @@ test('n. Linked late/missed doses, explicit extras, skips and undo', async ({ pa
   const late = await checked(f.admin.client.from('medicine_logs').select('*').eq('medicine_id', meds['Late tablet']).single());
   expect([late.hour, late.minute, late.for_date, late.for_minute]).toEqual([11, 30, today(), 690]);
   await expect(upcoming.getByText('Late tablet', { exact: true })).toHaveCount(0);
+  await upcoming.getByRole('button', { name: /8:00 AM.*MISSED/ }).click();
   await upcoming.getByRole('button', { name: /^Missed tablet/ }).click();
   await sheet.getByRole('button', { name: 'Just now', exact: true }).click();
   await sheet.getByRole('button', { name: 'Save', exact: true }).click();
@@ -74,7 +76,9 @@ test('n. Linked late/missed doses, explicit extras, skips and undo', async ({ pa
   await expect(sheet).toHaveCount(0);
   const extra = await checked(f.admin.client.from('medicine_logs').select('*').eq('medicine_id', meds['Extra tablet']).single());
   expect(extra.is_extra).toBe(true); expect(extra.for_date).toBeNull();
+  await upcoming.locator('.dose-time-header').filter({hasText:'12:00 PM'}).click();
   await expect(upcoming.getByRole('button', { name: /^Extra tablet/ }).first()).toBeVisible();
+  await upcoming.getByRole('button', { name: /11:45 AM.*DUE NOW/ }).click();
   await upcoming.getByRole('button', { name: /^Skip tablet/ }).click();
   await sheet.getByRole('button', { name: 'Skip this dose', exact: true }).click();
   await expect(sheet.getByRole('heading', { name: 'Why is it skipped?' })).toBeVisible();
@@ -99,6 +103,7 @@ test('n. Linked late/missed doses, explicit extras, skips and undo', async ({ pa
   await page.getByRole('button', { name: 'Today', exact: true }).click();
   await given.getByRole('button', { name: /11:45 AM.*skipped/ }).click();
   await given.getByRole('button', { name: 'Undo', exact: true }).click();
+  await upcoming.getByRole('button', { name: /11:45 AM.*DUE NOW/ }).click();
   await expect(upcoming.getByRole('button', { name: /^Skip tablet/ })).toBeVisible();
 });
 

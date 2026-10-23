@@ -1,11 +1,35 @@
 import { test, expect, signIn, checked } from './helpers';
 import { routineFamily } from './routine-fixtures';
 
+test('Today bars start closed, urgent medicines still blink, and opening shows their rows in every layout',async({page,sessions})=>{
+  void sessions;const f=await routineFamily();
+  const medicine=await checked(f.admin.client.from('medicines').insert({household_id:f.id,name:'Synthetic due medicine',schedule_time:'12:30 PM',amount:'1 tablet'}).select('*').single());
+  await checked(f.admin.client.from('medicine_logs').insert({household_id:f.id,medicine_id:medicine.id,date:f.date,hour:11,minute:0,caregiver_id:f.people[0].caregiver_id,recorded_by:f.people[0].display_name,is_extra:true}));
+  await page.clock.setFixedTime(new Date(`${f.date}T12:30:00-04:00`));
+  await signIn(page,f.admin);
+  for(const [width,height,presentation] of [[393,852,false],[800,1280,false],[1280,800,true]] as const){
+    await page.setViewportSize({width,height});await page.reload();await expect(page.getByRole('button',{name:/^Record a reading/})).toBeVisible();
+    if(presentation){await page.getByRole('button',{name:'More',exact:true}).click();await page.getByRole('button',{name:/^Presentation mode/}).click();}
+    const meals=page.locator('[data-routine-section=meal]'),exercise=page.locator('[data-routine-section=exercise]');
+    await expect(meals.locator('[data-routine-bar]')).toHaveText('Lunch · not done yet');
+    await expect(exercise.locator('[data-routine-bar]')).toHaveText('Next: Ankle pumps · 5:00 PM');
+    await expect(page.locator('.dose-time-header')).toHaveCount(2);
+    for(const bar of await page.locator('.dose-time-header,[data-routine-bar]').all())await expect(bar).toHaveAttribute('aria-expanded','false');
+    await expect(page.locator('.dose-group-rows,[data-routine-content]')).toHaveCount(0);
+    if(!presentation)for(const label of ['Record a reading','Record a medicine','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','false');
+    const urgent=page.locator('.dose-upcoming-header');await expect(urgent).toHaveClass(/medicine-pulse-fast/);await expect(urgent).toHaveCSS('animation-name','medicineUrgencyPulse');
+    await urgent.click();await expect(page.locator('.dose-name').getByText('Synthetic due medicine',{exact:true})).toBeVisible();await urgent.click();
+    for(const section of [meals,exercise]){await section.locator('[data-routine-bar]').click();await expect(section.locator('[data-routine-content]')).toBeVisible();await expect(section.locator('[data-routine-bar]')).toHaveCSS('animation-name','none');}
+    await expect(meals.getByRole('button',{name:'Done',exact:true}).first()).toBeVisible();await expect(exercise.getByRole('button',{name:'Start',exact:true})).toBeVisible();
+  }
+});
+
 test('meals sync live; concurrent sheets keep the first record; edits preserve attribution and undo works',async({page,sessions})=>{
   const f=await routineFamily();await signIn(page,f.admin);
   const other=await sessions();await signIn(other,f.member);
   const meals=page.locator('[data-routine-section=meal]'), second=other.locator('[data-routine-section=meal]');
   await expect(meals.getByRole('heading')).toHaveText('Meals · 1 of 3 done');
+  await meals.locator('[data-routine-bar]').click();await second.locator('[data-routine-bar]').click();
   await meals.getByRole('button',{name:'Done',exact:true}).first().click();
   await second.getByRole('button',{name:'Done',exact:true}).first().click();
   const dialog=page.getByRole('dialog'), theirs=other.getByRole('dialog');
@@ -29,7 +53,7 @@ test('meals sync live; concurrent sheets keep the first record; edits preserve a
 
 test('exercise timer survives reload and failed finish, saves real minutes, and can cancel without a record',async({page,sessions})=>{
   void sessions;const f=await routineFamily();await page.clock.install({time:new Date(`${f.date}T12:00:00-04:00`)});await signIn(page,f.admin);
-  const exercises=page.locator('[data-routine-section=exercise]');await exercises.getByRole('button',{name:'Start',exact:true}).click();
+  const exercises=page.locator('[data-routine-section=exercise]');await exercises.locator('[data-routine-bar]').click();await exercises.getByRole('button',{name:'Start',exact:true}).click();
   await expect(page.locator('[data-exercise-timer]')).toContainText('Running');await page.clock.fastForward(125000);await page.reload();
   const timer=page.locator('[data-exercise-timer]');await expect(timer).toContainText('Running');await expect(timer.getByLabel('Elapsed time')).toHaveText('02:05');
   await timer.getByRole('button',{name:'Pause',exact:true}).click();await expect(timer.getByText('Paused',{exact:true})).toBeVisible();
@@ -41,7 +65,7 @@ test('exercise timer survives reload and failed finish, saves real minutes, and 
   await page.unroute('**/rest/v1/routine_logs?**');await timer.getByRole('button',{name:'Finish',exact:true}).click();await expect(timer).toHaveCount(0);
   const item=f.items.find(i=>i.name==='Ankle pumps')!;const logs=await checked(f.admin.client.from('routine_logs').select('*').eq('item_id',item.id));expect(logs).toHaveLength(1);expect(logs[0].minutes).toBe(2.1);expect(logs[0].recorded_by).toBe('Member person');
   expect(await page.evaluate(()=>Object.keys(localStorage).some(k=>k.startsWith('myht-exercise:')))).toBe(false);
-  await exercises.getByRole('button',{name:/All 2 done/}).click();await exercises.getByRole('button',{name:/5:00 PM · Ankle pumps/}).click();
+  await exercises.locator('[data-routine-bar]').click();await exercises.locator('[data-routine-content]').getByRole('button',{name:/All 2 done/}).click();await exercises.getByRole('button',{name:/5:00 PM · Ankle pumps/}).click();
   await page.getByRole('dialog').getByRole('button',{name:'Undo record'}).click();await page.getByRole('alertdialog').getByRole('button',{name:'Undo',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
   await exercises.getByRole('button',{name:'Start',exact:true}).click();await timer.getByRole('button',{name:'Cancel without saving',exact:true}).click();await page.getByRole('alertdialog').getByRole('button',{name:'Cancel without saving',exact:true}).click();
   await expect(timer).toHaveCount(0);expect(await checked(f.admin.client.from('routine_logs').select('*').eq('item_id',item.id))).toHaveLength(0);

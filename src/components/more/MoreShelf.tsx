@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2, Heart, Phone, Utensils,
+  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2, Heart, Phone, Utensils, Activity,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -14,6 +14,8 @@ import { medicineKeys, fetchMedicinesList } from '@/hooks/useMedicines';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { domainKeys } from '@/lib/domainKeys';
 import { useFamilyInvites } from '@/hooks/useFamilyInvites';
+import { useRoutines } from '@/hooks/useRoutines';
+import { routineMinutes, scheduleForDate } from '@/lib/routineSchedule';
 
 const MedicineScheduleTab = lazy(() => import('@/components/MedicineScheduleTab').then(m => ({ default: m.MedicineScheduleTab })));
 const AppointmentsTab = lazy(() => import('@/components/AppointmentsTab').then(m => ({ default: m.AppointmentsTab })));
@@ -49,7 +51,7 @@ function ReportsView() {
   return <DashboardTab records={records} bpReadings={bpReadings} />;
 }
 
-type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family' | 'about' | 'contacts' | 'emergency' | 'routines';
+type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family' | 'about' | 'contacts' | 'emergency' | 'meals' | 'exercise';
 
 interface MoreShelfProps {
   onPresentationMode: () => void;
@@ -68,6 +70,7 @@ interface RowSpec {
 export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreShelfProps) {
   const { householdId, careRecipientName, caregivers, role } = useHousehold();
   const invites = useFamilyInvites();
+  const routines = useRoutines();
   const [view, setView] = useState<ShelfView>(initialView ?? null);
   const [routineEditing, setRoutineEditing] = useState(false);
   useNativeBack(useCallback(() => {
@@ -125,10 +128,15 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
       .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''))[0];
   }, [appointmentsData.appointments, now]);
 
+  const date = format(now, 'yyyy-MM-dd');
+  const activeRoutines = routines.items.filter(item => item.start_date <= date && (!item.end_date || item.end_date > date));
+  const mealCount = activeRoutines.filter(item => item.kind === 'meal').reduce((total, item) => total + routineMinutes(scheduleForDate(item, date)).length, 0);
+  const exerciseCount = activeRoutines.filter(item => item.kind === 'exercise').length;
   const rows: RowSpec[] = [
     { view: 'about', title: `About ${careRecipientName}`, subtitle: 'Profile, alerts and emergency card', icon: Heart, chip: 'bg-[#fdecec] text-[#b42318]' },
     { view: 'contacts', title: 'Contacts', subtitle: 'Emergency, doctors and caretakers', icon: Phone, chip: 'bg-[#eef1f9] text-[#4f6bd6]' },
-    { view: 'routines', title: 'Meals & exercise', subtitle: 'The daily plan', icon: Utensils, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
+    { view: 'meals', title: 'Meals', subtitle: routines.error ? 'Could not load the plan' : routines.loading ? 'Loading meals…' : mealCount ? `${mealCount} meals a day` : 'Set up the daily meals', icon: Utensils, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
+    { view: 'exercise', title: 'Exercise', subtitle: routines.error ? 'Could not load the plan' : routines.loading ? 'Loading exercises…' : exerciseCount ? `${exerciseCount} exercises` : 'Set up exercises from the guide', icon: Activity, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
     {
       view: 'family', title: 'Family & people',
       subtitle: `${caregivers.length} people${role === 'admin' && invites.data ? ` · ${invites.data.length} invited` : ''}`,
@@ -182,7 +190,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
   if (view !== null) {
     return (
       <div className={view === 'stays' || view === 'reports' ? 'mx-auto max-w-4xl' : 'mx-auto max-w-[640px]'}>
-        <button hidden={view === 'routines' && routineEditing} onClick={() => setView(view === 'emergency' ? 'about' : null)} className={`${view === 'routines' && routineEditing ? 'hidden' : 'flex'} mb-3 min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]`}>
+        <button hidden={(view === 'meals' || view === 'exercise') && routineEditing} onClick={() => setView(view === 'emergency' ? 'about' : null)} className={`${(view === 'meals' || view === 'exercise') && routineEditing ? 'hidden' : 'flex'} mb-3 min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]`}>
           <ChevronLeft className="h-4 w-4" /> {view === 'emergency' ? `About ${careRecipientName}` : 'Back'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
@@ -195,7 +203,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
           {view === 'about' && <AboutTab onContacts={() => setView('contacts')} onEmergency={() => setView('emergency')} />}
           {view === 'contacts' && <ContactsTab />}
           {view === 'emergency' && <EmergencyCardTab />}
-          {view === 'routines' && <RoutinePlan onAbout={() => setView('about')} onEditingChange={setRoutineEditing} />}
+          {(view === 'meals' || view === 'exercise') && <RoutinePlan key={view} kind={view === 'meals' ? 'meal' : 'exercise'} onAbout={() => setView('about')} onEditingChange={setRoutineEditing} />}
         </Suspense>
       </div>
     );

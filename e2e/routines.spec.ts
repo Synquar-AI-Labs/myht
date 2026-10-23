@@ -2,7 +2,9 @@ import { test, expect, family, signIn, more, checked, today, tomorrow } from './
 
 test('routine plans add, change times tomorrow, stop, delete and protect recorded items', async ({ page, sessions }) => {
   void sessions;
-  const f = await family(); await signIn(page, f.admin); await more(page, 'Meals & exercise');
+  const f = await family(); await signIn(page, f.admin); await more(page, 'Meals');
+  await expect(page.getByRole('heading', { name: 'Meals', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add exercise', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Add meal', exact: true }).click();
   await page.getByLabel('Meal name', { exact: true }).fill('Synthetic breakfast');
   await page.getByLabel('Food', { exact: true }).fill('Synthetic oatmeal');
@@ -39,6 +41,11 @@ test('routine plans add, change times tomorrow, stop, delete and protect recorde
   await page.getByRole('button', { name: 'Save stop date' }).click();
   await expect(page.locator('[data-routine-form]')).toHaveCount(0);
   expect((await checked(f.admin.client.from('routine_items').select('*').eq('id', first.id).single())).end_date).toBe(tomorrow());
+  await page.getByRole('button', { name: 'Back', exact: true }).click();
+  await page.getByRole('button', { name: /^Exercise / }).click();
+  await expect(page.getByRole('heading', { name: 'Exercise', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add meal', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Diet cautions from About', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Add exercise', exact: true }).click();
   await page.getByRole('button', { name: 'Knees', exact: true }).click();
   await page.getByRole('button', { name: 'Straight leg raises', exact: true }).click();
@@ -61,7 +68,7 @@ test('routine plans add, change times tomorrow, stop, delete and protect recorde
 test('typical meals are one complete insert with Undo, and diet cautions link to About', async ({ page, sessions }) => {
   void sessions;
   const f = await family(); await checked(f.admin.client.from('care_alerts').insert({ household_id: f.id, kind: 'diet', text: 'Synthetic diet caution' }));
-  await signIn(page, f.admin); await more(page, 'Meals & exercise');
+  await signIn(page, f.admin); await more(page, 'Meals');
   await page.getByRole('button', { name: 'Start from a typical day' }).click();
   await expect(page.getByRole('status')).toContainText('6 meals filled in');
   const meals = await checked(f.admin.client.from('routine_items').select('*').eq('household_id', f.id).order('schedule_time'));

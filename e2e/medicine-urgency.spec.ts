@@ -18,12 +18,12 @@ test('m. Urgency stays loud on phone/tablet; interval start dates control schedu
     const upcoming = page.locator('section').filter({ hasText: 'Coming up · next 12 hours' });
     for (const [badge, motion] of [['SOON', 'medicine-pulse-slow'], ['DUE NOW', 'medicine-pulse-fast'], ['LATE', 'medicine-pulse-fast']]) {
       const row = upcoming.getByRole('button', { name: new RegExp(badge) });
-      await expect(row).toHaveAttribute('aria-expanded', 'true');
+      await expect(row).toHaveAttribute('aria-expanded', 'false');
       await expect(row).toHaveClass(new RegExp(motion));
       await expect(row).toHaveCSS('animation-name', 'medicineUrgencyPulse');
       await expect(row).toHaveCSS('animation-duration', badge === 'SOON' ? '2.4s' : '1.2s');
       await row.click();
-      await expect(row).toHaveAttribute('aria-expanded', 'false');
+      await expect(row).toHaveAttribute('aria-expanded', 'true');
       await expect(row).toHaveClass(new RegExp(motion));
       await expect(row).toHaveCSS('animation-name', 'medicineUrgencyPulse');
       await expect(row.getByText(badge, { exact: true })).toBeVisible();

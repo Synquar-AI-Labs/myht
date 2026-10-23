@@ -26,8 +26,9 @@ describe('dose group controls', () => {
     expect(screen.getByLabelText('1 medicine')).toHaveStyle({ backgroundColor: '#ffffff' });
     expect(row).not.toHaveClass('medicine-pulse-fast', 'medicine-pulse-slow');
     expect(URGENCY.missed.tint).not.toBe(URGENCY.late.tint);
-    fireEvent.click(row);
     expect(row).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(row);
+    expect(row).toHaveAttribute('aria-expanded', 'true');
     expect(row).toHaveStyle({ backgroundColor: '#f3f0ec' });
   });
   it.each(['soon', 'due', 'late'] as const)('keeps %s tinted and pulsing even when closed', state => {
@@ -35,9 +36,10 @@ describe('dose group controls', () => {
     const row = screen.getByRole('button', { name: new RegExp(URGENCY[state].label) });
     expect(row).toHaveClass(URGENCY[state].motion);
     expect(row).toHaveStyle({ backgroundColor: URGENCY[state].tint });
+    expect(row).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(row);
     expect(row).toHaveAttribute('aria-expanded', 'true');
     fireEvent.click(row);
-    expect(row).toHaveAttribute('aria-expanded', 'false');
     expect(row).toHaveClass(URGENCY[state].motion);
     expect(screen.getByText(URGENCY[state].label)).toBeVisible();
   });
@@ -46,6 +48,8 @@ describe('dose group controls', () => {
     const record = vi.fn();
     render(<DoseTimeGroups upcoming={[item]} now={now} onUpcoming={record} />);
     const time = screen.getByRole('button', { name: /12:00 PM.*1 medicine/ });
+    expect(time).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(time);
     expect(time).toHaveAttribute('aria-expanded', 'true');
     expect(time.querySelector('svg')).toHaveClass('rotate-180');
     expect(screen.getByText('Record', { exact: true })).toBeVisible();

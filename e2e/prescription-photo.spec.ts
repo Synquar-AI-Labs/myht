@@ -113,6 +113,8 @@ test('s. Photos are shrunk, ordered, reviewed in the existing form and added wit
   });
   expect(stored).not.toContain(sourceMarker);expect(stored).not.toContain('data:image');expect(stored).not.toContain('blob:');
   await page.getByRole('button', { name: 'Today', exact: true }).click();
+  await expect(page.locator('.dose-upcoming-header').first()).toBeVisible();
+  for (const header of await page.locator('.dose-upcoming-header').all()) await header.click();
   await expect(page.locator('section').filter({ hasText: 'Coming up · next 12 hours' }).getByRole('button', { name: /^Synthetic photo medicine/ }).first()).toBeVisible();
 });
 

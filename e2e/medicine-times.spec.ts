@@ -96,8 +96,9 @@ test('l. Grouped Today times, quarter-hour dose sync and closed charts on phone/
   await page.clock.setFixedTime(fixed);
   await signIn(page, f.admin);
   const upcoming = page.locator('section').filter({ hasText: 'Coming up · next 12 hours' });
-  await expect(upcoming.getByRole('button', { name: /12:15 PM.*2 medicines/ })).toHaveAttribute('aria-expanded', 'true');
+  await expect(upcoming.getByRole('button', { name: /12:15 PM.*2 medicines/ })).toHaveAttribute('aria-expanded', 'false');
   await expect(upcoming.getByRole('button', { name: /2:15 PM.*1 medicine/ })).toHaveAttribute('aria-expanded', 'false');
+  await upcoming.getByRole('button', { name: /12:15 PM.*2 medicines/ }).click();
   await upcoming.getByRole('button', { name: /^Quarter medicine A/ }).click();
   await page.getByRole('button', { name: 'Change', exact: true }).click();
   await choose(page, page.getByRole('combobox', { name: 'Dose time' }), '12:15 PM');

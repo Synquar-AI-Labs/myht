@@ -18,7 +18,7 @@ import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { ProfileLoad } from '@/components/profile/ProfileParts';
 
 const blank = (kind: 'meal' | 'exercise'): RoutineDraft => ({ kind, name: '', details: '', drink: '', target_minutes: kind === 'exercise' ? 10 : null, area: '', move_type: '', times: [], start_date: format(new Date(), 'yyyy-MM-dd') });
-export function RoutinePlan({ onAbout, onEditingChange }: { onAbout: () => void; onEditingChange?: (editing: boolean) => void }) {
+export function RoutinePlan({ kind, onAbout, onEditingChange }: { kind: 'meal' | 'exercise'; onAbout: () => void; onEditingChange?: (editing: boolean) => void }) {
   const data = useRoutines();
   const care = useCareProfile();
   const [editing, setEditing] = useState<RoutineItem | null | undefined>();
@@ -77,9 +77,9 @@ export function RoutinePlan({ onAbout, onEditingChange }: { onAbout: () => void;
   }
   const date = format(new Date(), 'yyyy-MM-dd');
   return <div className="space-y-5 text-[#26201a]">
-    <header><h1 className="text-[30px] font-normal">Meals &amp; exercise</h1><p className="text-sm text-[#8b8175]">The daily plan.</p></header>
+    <header><h1 className="text-[30px] font-normal">{kind === 'meal' ? 'Meals' : 'Exercise'}</h1><p className="text-sm text-[#8b8175]">The daily plan.</p></header>
     {templateIds.length > 0 && <div role="status" className="flex items-center gap-3 rounded-xl border border-[#c9e6d2] bg-[#ecf6ef] p-3 text-sm text-[#1d4d2c]"><span className="flex-1">Started from a typical day: 6 meals filled in. Change any row.</span><Button variant="ghost" className="px-0" disabled={busy} onClick={async () => { if (await run(() => data.remove(templateIds))) setTemplateIds([]); }}>Undo</Button></div>}
-    {(['meal', 'exercise'] as const).map(kind => {
+    {[kind].map(kind => {
       const items = data.items.filter(item => item.kind === kind);
       const rows = items.flatMap(item => routineMinutes(scheduleForDate(item, date)).map(minute => ({ item, minute }))).sort((a, b) => a.minute - b.minute || a.item.name.localeCompare(b.item.name));
       return <section className="space-y-2" key={kind}><div className="flex items-center justify-between gap-2"><h2 className="[font-family:inherit] text-xs font-bold uppercase tracking-wider text-[#8b8175]">{kind === 'meal' ? 'Meals' : 'Exercises'} · {rows.length}</h2><Button variant="ghost" className="px-0 text-[#8a6240]" onClick={() => open(kind)}>Add {kind}</Button></div>
@@ -87,6 +87,6 @@ export function RoutinePlan({ onAbout, onEditingChange }: { onAbout: () => void;
         {kind === 'meal' && items.length === 0 && <Button variant="outline" className="w-full" disabled={busy} onClick={async () => { setBusy(true); try { const result = await data.typical(); if (result.ok) setTemplateIds(result.data.map(row => row.id)); } finally { setBusy(false); } }}>Start from a typical day</Button>}
       </section>;
     })}
-    <section className="space-y-2 rounded-2xl border border-[#e9e2d6] bg-white p-4"><h2 className="[font-family:inherit] text-xs font-bold uppercase text-[#8b8175]">Diet cautions from About</h2>{care.error ? <p className="text-sm">Diet cautions could not load. <Button variant="ghost" className="px-0" onClick={care.retry}>Try again</Button></p> : care.loading ? <p>Loading diet cautions…</p> : <p className="break-words text-sm">{care.alerts.filter(a => a.kind === 'diet').map(a => [a.text, a.note].filter(Boolean).join(' · ')).join('; ') || (care.profile?.none_known.includes('diet') ? 'None known' : 'Not recorded')}</p>}<Button variant="ghost" className="justify-start px-0 text-[#8a6240]" onClick={onAbout}>Open About</Button></section>
+    {kind === 'meal' && <section className="space-y-2 rounded-2xl border border-[#e9e2d6] bg-white p-4"><h2 className="[font-family:inherit] text-xs font-bold uppercase text-[#8b8175]">Diet cautions from About</h2>{care.error ? <p className="text-sm">Diet cautions could not load. <Button variant="ghost" className="px-0" onClick={care.retry}>Try again</Button></p> : care.loading ? <p>Loading diet cautions…</p> : <p className="break-words text-sm">{care.alerts.filter(a => a.kind === 'diet').map(a => [a.text, a.note].filter(Boolean).join(' · ')).join('; ') || (care.profile?.none_known.includes('diet') ? 'None known' : 'Not recorded')}</p>}<Button variant="ghost" className="justify-start px-0 text-[#8a6240]" onClick={onAbout}>Open About</Button></section>}
   </div>;
 }

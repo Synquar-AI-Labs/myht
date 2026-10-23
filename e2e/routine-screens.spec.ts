@@ -7,7 +7,7 @@ for (const [width,height] of sizes) test(`${width}x${height} routine plan screen
   void sessions;
   const f=await family(); await page.setViewportSize({width,height});
   await checked(f.admin.client.from('care_alerts').insert({household_id:f.id,kind:'diet',text:'Cut food into small pieces'}));
-  await signIn(page,f.admin); await more(page,'Meals & exercise');
+  await signIn(page,f.admin); await more(page,'Meals');
   const folder=`test-results/routines/${width}x${height}`; mkdirSync(folder,{recursive:true});
   const capture=async(name:string)=>{
     if(name==='edit-meal'||name==='stop')await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
@@ -33,10 +33,12 @@ for (const [width,height] of sizes) test(`${width}x${height} routine plan screen
   await expect(page.getByRole('status')).toContainText('6 meals filled in');await capture('plan');
   await page.getByRole('button',{name:'Add meal',exact:true}).click();await capture('add-meal');
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
+  await page.getByRole('button',{name:'Back',exact:true}).click();await page.getByRole('button',{name:/^Exercise /}).click();
   await page.getByRole('button',{name:'Add exercise',exact:true}).click();await capture('add-exercise');
   await page.getByRole('button',{name:'Knees',exact:true}).click();await page.getByRole('button',{name:'Straight leg raises',exact:true}).click();
   await page.getByRole('button',{name:'+ Add a time',exact:true}).click();await capture('exercise-picked');
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
+  await page.getByRole('button',{name:'Back',exact:true}).click();await page.getByRole('button',{name:/^Meals /}).click();
   await page.getByRole('button',{name:/8:00 AM Breakfast/}).click();
   await expect(page.getByRole('button',{name:'Back',exact:true})).toHaveCount(0);
   const stop=await page.getByRole('button',{name:'Stop from a date'}).boundingBox(),remove=await page.getByRole('button',{name:'Delete',exact:true}).boundingBox();
