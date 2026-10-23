@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import { AppUpdate } from '@/components/AppUpdate';
 import { isNativeApp } from '@/native/platform';
 import { NativeUpdateGate } from '@/components/NativeUpdateGate';
+import { ExerciseTimerProvider } from '@/hooks/ExerciseTimerProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,7 @@ const queryClient = new QueryClient({
 });
 function HouseholdRecording({ children }: { children: React.ReactNode }) {
   const { user, householdId } = useHousehold();
-  return <RecordingProvider key={user.id + ':' + householdId}>{children}</RecordingProvider>;
+  return <RecordingProvider key={user.id + ':' + householdId}><ExerciseTimerProvider key={user.id + ':' + householdId}>{children}</ExerciseTimerProvider></RecordingProvider>;
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {

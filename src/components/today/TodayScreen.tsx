@@ -27,6 +27,7 @@ import {
 import { ReadingSection, MedicineSection, ApptNotesSection, TranscriptsSection, TrendsSection } from '@/components/today/TodaySections';
 import { ReadingType } from '@/components/today/readingTypes';
 import { DoseTimeGroups } from '@/components/today/DoseTimeGroups';
+import { RoutineTodaySections } from '@/components/routines/RoutineToday';
 import { URGENCY_RANK, urgencyFor } from '@/lib/medicineUrgency';
 import { MedicineDoseSheet } from '@/components/MedicineDoseSheet';
 import { useDoseSkips } from '@/hooks/useDoseSkips';
@@ -214,6 +215,7 @@ export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
           <div className="px-[20px] pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
           <div className="px-[20px] pt-[18px]">{givenCard}</div>
           <div className="px-[20px] pt-[22px]">{upcomingCard}</div>
+          <div className="px-[20px] [&:has([data-routine-section])]:pt-[22px]"><RoutineTodaySections now={now} /></div>
           <div className="px-[20px] pb-6 pt-[22px]">
             {recordPills}
           </div>
@@ -236,6 +238,7 @@ export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
               {recordPills}
             </div>
           </div>
+          <div className="pb-8"><RoutineTodaySections now={now} /></div>
         </>
       )}
 

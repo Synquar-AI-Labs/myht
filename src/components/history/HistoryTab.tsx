@@ -14,6 +14,8 @@ import { fetchTranscriptsForDate } from '@/hooks/useTranscripts';
 import { useHousehold } from '@/hooks/HouseholdProvider';
 import { domainKeys } from '@/lib/domainKeys';
 import { useDoseSkips } from '@/hooks/useDoseSkips';
+import { useRoutineLogs } from '@/hooks/useRoutineRecords';
+import { mealSummary, showDailyFood } from '@/lib/routineToday';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -23,8 +25,14 @@ import { TrendsCharts } from '@/components/today/TrendsCharts';
 import { buildDiaryEntries, groupDiary, DiaryEntry, PeriodKey } from '@/components/history/diary';
 
 const DailyRecordTab = lazy(() => import('@/components/DailyRecordTab').then(m => ({ default: m.DailyRecordTab })));
+function MealCount({ date }: { date: string }) {
+  const logs = useRoutineLogs(date, 'meal');
+  return <p className="mb-1 text-xs text-muted-foreground">Meals recorded today: {logs.isLoading ? '…' : logs.isError ? '—' : logs.data?.length ?? 0}</p>;
+}
 
 const KIND_STYLE: Record<DiaryEntry['kind'], { icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>; chip: string }> = {
+  meal: { icon: Heart, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
+  exercise: { icon: Zap, chip: 'bg-[#eef1f9] text-[#4f6bd6]' },
   skip: { icon: Pill, chip: 'bg-[#f3ede2] text-[#8b8175]' },
   medicine: { icon: Pill, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
   bp: { icon: Heart, chip: 'bg-[#fdecec] text-[#c0392b]' },
@@ -73,6 +81,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   const resolution = useLinkedDoseLogs(selectedDate, selectedDate);
   const { actions: customActions, logs: customLogs, loading: customLoading, loadError: customError } = useCustomActions();
   const { notes, loading: notesLoading, loadError: notesError } = useWrittenNotes();
+  const routineLogs = useRoutineLogs(selectedDate);
 
   // Shares useTranscripts' cache key AND fetcher, so the shapes can't drift.
   const { data: transcripts = [], isLoading: transcriptsLoading, isError: transcriptsError } = useQuery({
@@ -82,8 +91,8 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
   });
 
   // Never present "nothing recorded" (or zeros) while any source is pending.
-  const diaryLoading = medLogsLoading || skipsLoading || resolution.isLoading || customLoading || notesLoading || transcriptsLoading || recordsLoading || bpLoading;
-  const diaryError = medLogsError || skipsError || resolution.isError || customError || notesError || transcriptsError || recordsBpError;
+  const diaryLoading = medLogsLoading || skipsLoading || resolution.isLoading || customLoading || notesLoading || transcriptsLoading || recordsLoading || bpLoading || routineLogs.isLoading;
+  const diaryError = medLogsError || skipsError || resolution.isError || customError || notesError || transcriptsError || recordsBpError || routineLogs.isError;
 
   const dayRecord = useMemo(() => records.find(r => r.date === selectedDate) ?? null, [records, selectedDate]);
   const dayBp = useMemo(() => bpReadings.filter(r => r.date === selectedDate), [bpReadings, selectedDate]);
@@ -101,8 +110,9 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
       customActions, customLogs: dayCustomLogs,
       notes: dayNotes,
       transcripts,
+      routineLogs: routineLogs.data,
     }),
-    [selectedDate, medLogs, medicines, skips, resolution.data, dayBp, customActions, dayCustomLogs, dayNotes, transcripts],
+    [selectedDate, medLogs, medicines, skips, resolution.data, dayBp, customActions, dayCustomLogs, dayNotes, transcripts, routineLogs.data],
   );
   const groups = useMemo(() => groupDiary(entries), [entries]);
 
@@ -153,7 +163,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
     { label: 'Stool', value: String(dayRecord.stool_count ?? 0) },
     { label: 'Urine', value: String(dayRecord.urine_count ?? 0) },
     { label: 'Flush', value: flushParts.length ? flushParts.join(' · ') : '0' },
-    { label: 'Food', value: dayRecord.food_taken ? `Yes${dayRecord.food_description ? ` — ${dayRecord.food_description}` : ''}` : 'No' },
+    ...(dayRecord.food_taken || (!routineLogs.isLoading && !routineLogs.isError && showDailyFood(false, routineLogs.data ?? [])) ? [{ label: 'Food', value: dayRecord.food_taken ? `Yes${dayRecord.food_description ? ` — ${dayRecord.food_description}` : ''}` : 'No' }] : []),
     { label: 'Constipation', value: dayRecord.constipation ? 'Yes' : 'No' },
     ...(dayRecord.misc_notes ? [{ label: 'Notes', value: dayRecord.misc_notes }] : []),
   ] : [];
@@ -180,7 +190,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
           <ChevronLeft className="h-4 w-4" /> {editorBusy ? 'Saving…' : 'Back to the diary'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
-          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly onBusyChange={handleEditorBusy} />
+          <DailyRecordTab {...healthRecords} initialDate={selectedDate} dayOnly onBusyChange={handleEditorBusy} mealCount={date => <MealCount date={date} />} />
         </Suspense>
       </div>
     );
@@ -251,6 +261,7 @@ export function HistoryTab({ onBusyChange }: HistoryTabProps) {
       </div>
 
       {/* Day totals — real data that has no timestamps, shown as totals */}
+      {!routineLogs.isLoading && !routineLogs.isError && mealSummary(routineLogs.data ?? []) && <p className="my-3 break-words rounded-xl border bg-white p-3 text-sm">{mealSummary(routineLogs.data ?? [])}</p>}
       {!recordsLoading && dayTotals.length > 0 && (
         <div className="mt-3 rounded-2xl border border-[#e9e2d6] bg-white p-3.5">
           <div className="mb-1.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#8b8175]">Day totals</div>

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { ChevronRight, Minus, Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -18,7 +18,7 @@ import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { ProfileLoad } from '@/components/profile/ProfileParts';
 
 const blank = (kind: 'meal' | 'exercise'): RoutineDraft => ({ kind, name: '', details: '', drink: '', target_minutes: kind === 'exercise' ? 10 : null, area: '', move_type: '', times: [], start_date: format(new Date(), 'yyyy-MM-dd') });
-export function RoutinePlan({ onAbout }: { onAbout: () => void }) {
+export function RoutinePlan({ onAbout, onEditingChange }: { onAbout: () => void; onEditingChange?: (editing: boolean) => void }) {
   const data = useRoutines();
   const care = useCareProfile();
   const [editing, setEditing] = useState<RoutineItem | null | undefined>();
@@ -27,6 +27,7 @@ export function RoutinePlan({ onAbout }: { onAbout: () => void }) {
   const [stopDate, setStopDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [stopping, setStopping] = useState(false);
   const [templateIds, setTemplateIds] = useState<string[]>([]);
+  useEffect(() => { onEditingChange?.(editing !== undefined); return () => onEditingChange?.(false); }, [editing, onEditingChange]);
   useUpdateBusy(busy || editing !== undefined);
   useNativeBack(useCallback(() => {
     if (busy || editing !== undefined) { toast.info('Save or cancel your changes first.'); return true; }
@@ -65,8 +66,9 @@ export function RoutinePlan({ onAbout }: { onAbout: () => void }) {
           {!exercise && <div className="space-y-1"><Label htmlFor="routine-drink">Drink</Label><Input id="routine-drink" maxLength={500} value={draft.drink} onChange={e => setDraft(p => ({ ...p, drink: e.target.value }))} /></div>}
           {exercise && <p className="text-sm text-[#8b8175]">{EXERCISE_SAFETY}</p>}
           <Button type="submit" className="w-full" disabled={!draft.name.trim() || !draft.times.length || (exercise && !draft.area)}>Save</Button>
-          {editing && <section className="space-y-3 border-t border-[#e9e2d6] pt-4"><Button type="button" variant="outline" onClick={() => setStopping(true)}>Stop from a date</Button>{stopping && <div className="space-y-2"><Label htmlFor="routine-stop">Stop from</Label><Input id="routine-stop" className="min-w-0 max-w-full" type="date" min={editing.start_date} required value={stopDate} onChange={e => setStopDate(e.target.value)} /><p className="text-sm text-[#8b8175]">Nothing planned on or after this date. What was recorded stays.</p><Button type="button" disabled={!stopDate} onClick={() => void run(() => data.stop(editing.id, stopDate), true)}>Save stop date</Button></div>}
-            {!data.logs.some(log => log.item_id === editing.id) && <ConfirmDeleteButton type="button" variant="ghost" className="justify-start px-0 text-destructive" title="Delete this plan item?" description={editing.name} onConfirm={async () => { await run(() => data.remove([editing.id]), true); }}>Delete</ConfirmDeleteButton>}
+          {editing && <section className="space-y-3 border-t border-[#e9e2d6] pt-4"><div className="flex flex-wrap items-center gap-3"><Button type="button" variant="outline" onClick={() => setStopping(true)}>Stop from a date</Button>
+            {!data.logs.some(log => log.item_id === editing.id) && <ConfirmDeleteButton type="button" variant="outline" className="text-destructive" title="Delete this plan item?" description={editing.name} onConfirm={async () => { await run(() => data.remove([editing.id]), true); }}>Delete</ConfirmDeleteButton>}</div>
+            {stopping && <div className="space-y-2"><Label htmlFor="routine-stop">Stop from</Label><Input id="routine-stop" className="min-w-0 max-w-full" type="date" min={editing.start_date} required value={stopDate} onChange={e => setStopDate(e.target.value)} /><p className="text-sm text-[#8b8175]">Nothing planned on or after this date. What was recorded stays.</p><Button type="button" disabled={!stopDate} onClick={() => void run(() => data.stop(editing.id, stopDate), true)}>Save stop date</Button></div>}
             {data.logs.some(log => log.item_id === editing.id) && <p className="text-sm text-[#8b8175]">This item has records. It can be stopped, not deleted.</p>}
           </section>}
         </fieldset>

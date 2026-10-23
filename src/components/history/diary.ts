@@ -1,4 +1,6 @@
 import { format } from 'date-fns';
+import type { RoutineLog } from '@/lib/routineSchedule';
+import { displayedMinutes, MEAL_AMOUNTS, routinePlannedDetail } from '@/lib/routineToday';
 import type { Medicine, MedicineLog } from '@/hooks/useMedicines';
 import type { CustomAction, CustomActionLog } from '@/hooks/useCustomActions';
 import { logDateTime, doseLabel, scheduledDoseDetail, occurrenceTime, visibleSkips, type DoseSkip } from '@/components/today/todaySchedule';
@@ -7,7 +9,7 @@ import { logDateTime, doseLabel, scheduledDoseDetail, occurrenceTime, visibleSki
 export interface DiaryEntry {
   id: string;
   at: Date;
-  kind: 'medicine' | 'bp' | 'custom' | 'note' | 'transcript' | 'skip';
+  kind: 'medicine' | 'bp' | 'custom' | 'note' | 'transcript' | 'skip' | 'meal' | 'exercise';
   skipId?: string;
   /**
    * event   → the caregiver chose this time (medicine/custom hour picker)
@@ -46,6 +48,7 @@ export function periodOf(at: Date): Exclude<PeriodKey, 'untimed'> {
 }
 
 interface DiaryInputs {
+  routineLogs?: RoutineLog[];
   /** The diary day (yyyy-MM-dd); inputs must already be filtered to it. */
   date: string;
   medLogs: MedicineLog[];
@@ -64,6 +67,7 @@ export function buildDiaryEntries(inputs: DiaryInputs): DiaryEntry[] {
   const medById = new Map(inputs.medicines.map(m => [m.id, m]));
   const actionById = new Map(inputs.customActions.map(a => [a.id, a]));
   const entries: DiaryEntry[] = [];
+  (inputs.routineLogs ?? []).forEach(log => entries.push({ id: `routine-${log.id}`, at: new Date(log.done_at), kind: log.kind as 'meal' | 'exercise', timeKind: 'event', untimed: false, title: log.name, detail: [log.kind === 'meal' ? MEAL_AMOUNTS[log.amount as keyof typeof MEAL_AMOUNTS] : `${displayedMinutes(log.minutes!)} min`, log.details, log.drink, routinePlannedDetail(log), log.note].filter(Boolean).join(' · '), by: log.recorded_by, createdAt: log.done_at }));
 
   const enteredSameDay = (createdAt: string) =>
     format(new Date(createdAt), 'yyyy-MM-dd') === inputs.date;

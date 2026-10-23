@@ -1,0 +1,48 @@
+import { expect, it } from 'vitest';
+import { routineSection, mealSummary, showDailyFood, routinePlannedDetail } from '@/lib/routineToday';
+import { buildDiaryEntries } from '@/components/history/diary';
+import { elapsedMs, pauseTimer, resumeTimer, finishTimer, recoverTimer, timerKey, timerMinutes, type ExerciseTimer } from '@/lib/exerciseTimer';
+import type { RoutineItem, RoutineLog } from '@/lib/routineSchedule';
+const item: RoutineItem = { id: 'item', household_id: 'family', kind: 'meal', name: 'Breakfast', details: 'Food', drink: 'Water', target_minutes: null, area: '', move_type: '', schedule_time: '8:00 AM / 1:00 PM', start_date: '2026-01-01', end_date: null, previous_schedule_time: null, schedule_from: null, created_at: '2025-01-01T00:00:00Z' };
+const log: RoutineLog = { id: 'log', household_id: 'family', item_id: 'item', caregiver_id: 'person', for_date: '2026-10-22', for_minute: 480, done_at: '2026-10-22T12:15:00Z', recorded_by: 'Sample caregiver', kind: 'meal', name: 'Breakfast', details: 'Copied food', drink: 'Water', target_minutes: null, amount: 'all', minutes: null, note: '' };
+it('hides empty sections, folds done rows, counts and marks passed pending rows calmly', () => {
+  expect(routineSection([], [], '2026-10-22', new Date()).hidden).toBe(true);
+  const model = routineSection([item], [log], '2026-10-22', new Date(2026,9,22,14));
+  expect(model.planned).toBe(2); expect(model.done).toBe(1); expect(model.folded).toBe('1 done · Breakfast');
+  expect(model.pending[0].notDoneYet).toBe(true); expect(model.doneRows[0].log).toEqual(log);
+  expect(routineSection([item], [log,{...log,id:'log2',for_minute:780}], '2026-10-22', new Date()).complete).toBe(true);
+});
+it('suppresses only Food No when real meal records exist, retaining Food Yes', () => {
+  expect(mealSummary([log])).toBe('Meals recorded: 1 · Breakfast all');
+  expect(showDailyFood(false,[log])).toBe(false); expect(showDailyFood(true,[log])).toBe(true);
+  expect(showDailyFood(false,[])).toBe(true); expect(mealSummary([])).toBeNull();
+});
+it('puts after-midnight completion in History at the actual timestamp, retaining its planned detail', () => {
+  const late = { ...log, for_date:'2026-10-22', for_minute:1410, done_at:new Date(2026,9,23,0,10).toISOString() };
+  expect(routinePlannedDetail(late)).toBe('for Oct 22, 11:30 PM');
+  const entries=buildDiaryEntries({date:'2026-10-23',medLogs:[],medicines:[],bpReadings:[],customActions:[],customLogs:[],notes:[],transcripts:[],routineLogs:[late]});
+  expect(entries[0].at.toISOString()).toBe(late.done_at);expect(entries[0].detail).toContain('for Oct 22, 11:30 PM');expect(entries[0].untimed).toBe(false);
+  const plannedItem={...item,schedule_time:'11:30 PM'};
+  expect(routineSection([plannedItem],[late],'2026-10-22',new Date(2026,9,23)).done).toBe(1);
+  expect(routineSection([plannedItem],[late],'2026-10-23',new Date(2026,9,23)).done).toBe(0);
+});
+it('shows the plan when more than five minutes off, but not for a near-on-time completion', () => {
+  expect(routinePlannedDetail({...log,done_at:new Date(2026,9,22,8,5).toISOString()})).toBe('');
+  expect(routinePlannedDetail({...log,done_at:new Date(2026,9,22,8,6).toISOString()})).toBe('for Oct 22, 8:00 AM');
+});
+const timer: ExerciseTimer = { user_id:'user',household_id:'family',item:{...item,kind:'exercise',drink:'',target_minutes:10},elapsed_ms:0,running_since:1000,state:'running',for_date:'2026-10-22',for_minute:480,caregiver_id:'person',recorded_by:'Sample caregiver' };
+it('pauses, resumes, recovers elapsed time and separates identities', () => {
+  const paused=pauseTimer(timer,61000);expect(elapsedMs(paused,999999)).toBe(60000);
+  const resumed=resumeTimer(paused,100000);expect(elapsedMs(resumed,130000)).toBe(90000);expect(timerMinutes(resumed,130000)).toBe(1.5);
+  expect(recoverTimer(JSON.stringify(resumed),'user','family')).toEqual(resumed);
+  expect(()=>recoverTimer(JSON.stringify(resumed),'other','family')).toThrow();
+  expect(timerKey('user','family')).not.toBe(timerKey('other','family'));expect(recoverTimer(null,'user','family')).toBeNull();
+});
+it('clears on confirmed finish only, and keeps the entire timer after failed saves', async () => {
+  expect(await finishTimer(timer,async minutes=>minutes===1,61000)).toBeNull();
+  expect(await finishTimer(timer,async()=>false,61000)).toEqual(timer);
+  expect(await finishTimer(timer,async()=>{throw new Error('offline');},61000)).toEqual(timer);
+  const finishing = pauseTimer(timer,61000);
+  const retained = await finishTimer(finishing,async()=>false,999999);
+  expect(retained?.state).toBe('paused');expect(elapsedMs(retained!,999999)).toBe(60000);
+});

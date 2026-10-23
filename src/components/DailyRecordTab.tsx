@@ -19,6 +19,7 @@ import { formatBp } from '@/lib/utils';
 import { useUpdateBusy } from '@/hooks/useUpdateBusy';
 
 interface DailyRecordTabProps {
+  mealCount?: (date: string) => React.ReactNode;
   records: HealthRecord[];
   addRecord: (form: HealthRecordForm, baseline: HealthRecordForm) => Promise<boolean>;
   deleteRecord: (id: string) => Promise<boolean>;
@@ -40,7 +41,7 @@ const emptyForm: HealthRecordForm = {
   recordedBy: '', miscNotes: '',
 };
 
-export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly, onBusyChange }: DailyRecordTabProps) {
+export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestRecord, getRecordByDate, initialDate, dayOnly, onBusyChange, mealCount }: DailyRecordTabProps) {
   const { caregiver, activeCaregivers, selectCaregiver } = useCaregiverChoice();
   const { caregivers } = useHousehold();
   const startDate = initialDate ?? format(new Date(), 'yyyy-MM-dd');
@@ -210,7 +211,7 @@ export function DailyRecordTab({ records, addRecord, deleteRecord, getLatestReco
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">Food Taken</Label>
+              <div>{mealCount?.(viewDate)}<Label className="text-xs text-muted-foreground">Food Taken</Label></div>
               <Switch checked={form.foodTaken} onCheckedChange={v => update('foodTaken', v)} />
             </div>
             {form.foodTaken && (

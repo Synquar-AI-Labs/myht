@@ -10,6 +10,7 @@ for (const [width,height] of sizes) test(`${width}x${height} routine plan screen
   await signIn(page,f.admin); await more(page,'Meals & exercise');
   const folder=`test-results/routines/${width}x${height}`; mkdirSync(folder,{recursive:true});
   const capture=async(name:string)=>{
+    if(name==='edit-meal'||name==='stop')await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
     await page.evaluate(()=>document.fonts.ready);
     await expect(page.locator('[data-sonner-toast]')).toHaveCount(0);
     await expect(async()=>{
@@ -36,7 +37,11 @@ for (const [width,height] of sizes) test(`${width}x${height} routine plan screen
   await page.getByRole('button',{name:'Knees',exact:true}).click();await page.getByRole('button',{name:'Straight leg raises',exact:true}).click();
   await page.getByRole('button',{name:'+ Add a time',exact:true}).click();await capture('exercise-picked');
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
-  await page.getByRole('button',{name:/8:00 AM Breakfast/}).click();await capture('edit-meal');
+  await page.getByRole('button',{name:/8:00 AM Breakfast/}).click();
+  await expect(page.getByRole('button',{name:'Back',exact:true})).toHaveCount(0);
+  const stop=await page.getByRole('button',{name:'Stop from a date'}).boundingBox(),remove=await page.getByRole('button',{name:'Delete',exact:true}).boundingBox();
+  expect(Math.abs(stop!.y-remove!.y)).toBeLessThanOrEqual(1);expect(stop!.height).toBe(remove!.height);
+  await capture('edit-meal');
   await page.getByRole('button',{name:'Stop from a date'}).click();await capture('stop');
   writeFileSync('test-results/routines/index.html',`<!doctype html><title>Routine plans</title><style>body{font:16px sans-serif}section{display:flex;flex-wrap:wrap;gap:16px}img{width:300px;border:1px solid #ddd}figure{margin:10px}</style><h1>Meals & exercise</h1>${sizes.map(([w,h])=>`<h2>${w} × ${h}</h2><section>${names.map(n=>`<figure><a href="${w}x${h}/${n}.png"><img src="${w}x${h}/${n}.png"></a><figcaption>${n}</figcaption></figure>`).join('')}</section>`).join('')}`);
 });

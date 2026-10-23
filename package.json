@@ -26,7 +26,8 @@
     "test:screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.screens.config.ts",
     "test:photo-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.photo-screens.config.ts",
     "test:profile-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.profile-screens.config.ts",
-    "test:routine-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.routine-screens.config.ts"
+    "test:routine-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.routine-screens.config.ts",
+    "test:routine-today-screens": "node scripts/test/e2e-preflight.mjs && playwright test --config playwright.routine-today-screens.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",

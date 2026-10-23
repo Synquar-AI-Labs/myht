@@ -69,6 +69,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
   const { householdId, careRecipientName, caregivers, role } = useHousehold();
   const invites = useFamilyInvites();
   const [view, setView] = useState<ShelfView>(initialView ?? null);
+  const [routineEditing, setRoutineEditing] = useState(false);
   useNativeBack(useCallback(() => {
     if (!view) return false;
     setView(view === 'emergency' ? 'about' : null); return true;
@@ -181,7 +182,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
   if (view !== null) {
     return (
       <div className={view === 'stays' || view === 'reports' ? 'mx-auto max-w-4xl' : 'mx-auto max-w-[640px]'}>
-        <button onClick={() => setView(view === 'emergency' ? 'about' : null)} className="mb-3 flex min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]">
+        <button hidden={view === 'routines' && routineEditing} onClick={() => setView(view === 'emergency' ? 'about' : null)} className={`${view === 'routines' && routineEditing ? 'hidden' : 'flex'} mb-3 min-h-[44px] min-w-[44px] items-center gap-1 text-[15px] font-semibold text-[#8a6240]`}>
           <ChevronLeft className="h-4 w-4" /> {view === 'emergency' ? `About ${careRecipientName}` : 'Back'}
         </button>
         <Suspense fallback={<div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>}>
@@ -194,7 +195,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
           {view === 'about' && <AboutTab onContacts={() => setView('contacts')} onEmergency={() => setView('emergency')} />}
           {view === 'contacts' && <ContactsTab />}
           {view === 'emergency' && <EmergencyCardTab />}
-          {view === 'routines' && <RoutinePlan onAbout={() => setView('about')} />}
+          {view === 'routines' && <RoutinePlan onAbout={() => setView('about')} onEditingChange={setRoutineEditing} />}
         </Suspense>
       </div>
     );
