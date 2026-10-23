@@ -2,14 +2,26 @@ import { routineDay, type RoutineItem, type RoutineLog } from './routineSchedule
 import { format, parseISO } from 'date-fns';
 import { doseTimeLabel } from './doseTime';
 export const MEAL_AMOUNTS = { all: 'All', most: 'Most', half: 'Half', little: 'A little', none: 'None' } as const;
+export function routineUrgency(at: Date, now: Date): 'scheduled' | 'soon' | 'due' {
+  const minutes = (now.getTime() - at.getTime()) / 60_000;
+  if (minutes >= 0 && minutes <= 30) return 'due';
+  if (minutes >= -15 && minutes < 0) return 'soon';
+  return 'scheduled';
+}
 export function routineSection(items: RoutineItem[], logs: RoutineLog[], date: string, now: Date) {
   const day = routineDay(items, logs, date);
+  const pending = day.occurrences.filter(o => !o.log).map(o => {
+    const state = routineUrgency(o.at, now);
+    return { ...o, state, notDoneYet: state === 'scheduled' && o.at < now };
+  });
+  const urgent = pending.find(o => o.state === 'due') ?? pending.find(o => o.state === 'soon');
   return { ...day, hidden: !day.planned, complete: !!day.planned && day.done === day.planned,
     doneRows: day.occurrences.filter(o => o.log),
-    pending: day.occurrences.filter(o => !o.log).map(o => ({ ...o, notDoneYet: o.at < now })),
+    pending, urgent, state: urgent?.state ?? 'scheduled',
     folded: `${day.done} done · ${day.occurrences.filter(o => o.log).map(o => o.log!.name).join(', ')}` };
 }
 export function routineBarText(model: ReturnType<typeof routineSection>) {
+  if (model.urgent) return `${model.state === 'soon' ? 'Next: ' : ''}${model.urgent.item.name} · ${doseTimeLabel(model.urgent.minute)}`;
   const passed = model.pending.find(o => o.notDoneYet);
   if (passed) return `${passed.item.name} · not done yet`;
   const next = model.pending[0];

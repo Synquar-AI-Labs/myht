@@ -13,6 +13,7 @@ import { READING_TYPES, ReadingType } from '@/components/today/readingTypes';
 import { urgencyFor, urgencyStyle } from '@/lib/medicineUrgency';
 import { UrgencyBadge } from '@/components/today/UrgencyBadge';
 import { relativeDoseTime } from '@/lib/doseGroups';
+import { useTodayBarGroup } from '@/hooks/useTodayBars';
 import { TrendsOpenPanel } from '@/components/today/TrendsCharts';
 import type { CustomActionLog } from '@/hooks/useCustomActions';
 
@@ -27,13 +28,15 @@ interface SectionCardProps {
   title: string;
   subtitle: string;
   children: ReactNode;
+  nestedBars?: string[];
 }
 
-function SectionCard({ icon, chipClass, title, subtitle, children }: SectionCardProps) {
+function SectionCard({ icon, chipClass, title, subtitle, children, nestedBars = [] }: SectionCardProps) {
+  const bars = useTodayBarGroup(`record:${title}`, ['section', ...nestedBars]);
   return (
-    <Collapsible>
+    <Collapsible open={bars.isOpen('section')} onOpenChange={() => bars.toggle('section')}>
       <div className="bg-white border border-[#e9e2d6] rounded-2xl">
-        <CollapsibleTrigger className="group flex w-full items-center gap-3.5 p-3.5 text-left min-h-[68px]">
+        <CollapsibleTrigger data-record-bar className="group flex w-full items-center gap-3.5 p-3.5 text-left min-h-[68px]">
           <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-xl ${chipClass}`}>
             {icon}
           </span>
@@ -287,6 +290,7 @@ export function TrendsSection({ records, customActions, customLogs }: TrendsSect
       icon={<BarChart3 className="h-[22px] w-[22px]" strokeWidth={2.2} />}
       chipClass="bg-[#fdf0e6] text-[#c2740c]"
       title="Visuals & trends"
+      nestedBars={['charts']}
       subtitle="Feeds, vomit, BP, weight, flush — weekly charts"
     >
       <TrendsOpenPanel records={records} customActions={customActions} customLogs={customLogs} />

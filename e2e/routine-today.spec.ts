@@ -11,23 +11,30 @@ test('Today bars start closed; Expand all, Collapse all and manual taps agree in
     await page.setViewportSize({width,height});await page.reload();await expect(page.getByRole('button',{name:/^Record a reading/})).toBeVisible();
     if(presentation){await page.getByRole('button',{name:'More',exact:true}).click();await page.getByRole('button',{name:/^Presentation mode/}).click();}
     const meals=page.locator('[data-routine-section=meal]'),exercise=page.locator('[data-routine-section=exercise]');
-    await expect(meals.locator('[data-routine-bar]')).toHaveText('Lunch · not done yet');
+    await expect(meals.locator('[data-routine-bar]')).toHaveText('Lunch · 12:00 PMDUE NOW');
+    await expect(meals.locator('[data-routine-bar]')).toHaveClass(/medicine-pulse-fast/);
+    await expect(meals.locator('[data-routine-bar]')).toHaveCSS('animation-name','medicineUrgencyPulse');
     await expect(exercise.locator('[data-routine-bar]')).toHaveText('Next: Ankle pumps · 5:00 PM');
     await expect(page.locator('.dose-time-header')).toHaveCount(2);
     for(const bar of await page.locator('.dose-time-header,[data-routine-bar]').all())await expect(bar).toHaveAttribute('aria-expanded','false');
     await expect(page.locator('.dose-group-rows,[data-routine-content]')).toHaveCount(0);
     if(!presentation)for(const label of ['Record a reading','Record a medicine','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','false');
     const urgent=page.locator('.dose-upcoming-header');await expect(urgent).toHaveClass(/medicine-pulse-fast/);await expect(urgent).toHaveCSS('animation-name','medicineUrgencyPulse');
-    const covered=page.locator('.dose-time-header,[data-routine-bar]');
+    const covered=page.locator('.dose-time-header,[data-routine-bar],[data-record-bar],[data-routine-done-bar],[data-nested-bar]');
+    await expect(page.locator('[data-record-bar]')).toHaveCount(5);
     await page.getByRole('button',{name:'Expand all',exact:true}).click();
     for(const bar of await covered.all())await expect(bar).toHaveAttribute('aria-expanded','true');
     await expect(page.getByRole('button',{name:'Collapse all',exact:true})).toBeVisible();
-    if(!presentation)for(const label of ['Record a reading','Record a medicine','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','false');
+    for(const label of ['Record a reading','Record a medicine','Appointments & notes','Transcribe a visit','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','true');
     await urgent.click();await expect(page.getByRole('button',{name:'Expand all',exact:true})).toBeVisible();
     await urgent.click();await page.getByRole('button',{name:'Collapse all',exact:true}).click();
     for(const bar of await covered.all())await expect(bar).toHaveAttribute('aria-expanded','false');
     await urgent.click();await expect(page.locator('.dose-name').getByText('Synthetic due medicine',{exact:true})).toBeVisible();await urgent.click();
-    for(const section of [meals,exercise]){await section.locator('[data-routine-bar]').click();await expect(section.locator('[data-routine-content]')).toBeVisible();await expect(section.locator('[data-routine-bar]')).toHaveCSS('animation-name','none');}
+    for(const section of [meals,exercise]){await section.locator('[data-routine-bar]').click();await expect(section.locator('[data-routine-content]')).toBeVisible();}
+    await expect(meals.locator('[data-routine-pending]').filter({hasText:'Lunch'})).toHaveClass(/medicine-pulse-fast/);
+    await expect(exercise.locator('[data-routine-bar]')).toHaveCSS('animation-name','none');
+    await meals.locator('[data-routine-done-bar]').click();
+    await expect(meals.getByRole('button',{name:/8:00 AM · Breakfast/})).not.toHaveClass(/medicine-pulse/);
     await expect(meals.getByRole('button',{name:'Done',exact:true}).first()).toBeVisible();await expect(exercise.getByRole('button',{name:'Start',exact:true})).toBeVisible();
   }
 });

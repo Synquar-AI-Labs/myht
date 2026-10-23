@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { routineSection, routineBarText, mealSummary, showDailyFood, routinePlannedDetail } from '@/lib/routineToday';
+import { routineSection, routineUrgency, routineBarText, mealSummary, showDailyFood, routinePlannedDetail } from '@/lib/routineToday';
 import { buildDiaryEntries } from '@/components/history/diary';
 import { elapsedMs, pauseTimer, resumeTimer, finishTimer, recoverTimer, readStoredTimer, timerKey, timerMinutes, timerProgress, type ExerciseTimer } from '@/lib/exerciseTimer';
 import type { RoutineItem, RoutineLog } from '@/lib/routineSchedule';
@@ -22,6 +22,25 @@ it('suppresses only Food No when real meal records exist, retaining Food Yes', (
   expect(mealSummary([log])).toBe('Meals recorded: 1 · Breakfast all');
   expect(showDailyFood(false,[log])).toBe(false); expect(showDailyFood(true,[log])).toBe(true);
   expect(showDailyFood(false,[])).toBe(true); expect(mealSummary([])).toBeNull();
+});
+it.each([[-16,'scheduled'],[-15,'soon'],[0,'due'],[30,'due'],[31,'scheduled']] as const)('uses calm/soon/due boundaries at %i minutes from the planned time', (minutes,state) => {
+  const at=new Date(2026,9,22,12), now=new Date(at.getTime()+minutes*60_000);
+  expect(routineUrgency(at,now)).toBe(state);
+  const model=routineSection([{...item,schedule_time:'12:00 PM'}],[],'2026-10-22',now);
+  expect(model.state).toBe(state);expect(model.pending[0].state).toBe(state);
+  expect(model.pending[0].notDoneYet).toBe(minutes>30);
+});
+it('names the most urgent pending item, not an older unfinished item or a completed one', () => {
+  const now=new Date(2026,9,22,12);
+  const due={...item,id:'due',name:'Lunch',schedule_time:'12:00 PM'};
+  const soon={...item,id:'soon',name:'Snack',schedule_time:'12:10 PM'};
+  const old={...item,id:'old',name:'Breakfast',schedule_time:'8:00 AM'};
+  const both=routineSection([soon,due],[],'2026-10-22',now);
+  expect(both.state).toBe('due');expect(routineBarText(both)).toBe('Lunch · 12:00 PM');
+  const older=routineSection([old,soon],[],'2026-10-22',now);
+  expect(older.state).toBe('soon');expect(routineBarText(older)).toBe('Next: Snack · 12:10 PM');
+  const completed=routineSection([due],[{...log,item_id:'due',for_minute:720}],'2026-10-22',now);
+  expect(completed.state).toBe('scheduled');expect(completed.pending).toEqual([]);expect(routineBarText(completed)).toBe('All 1 done');
 });
 it('puts after-midnight completion in History at the actual timestamp, retaining its planned detail', () => {
   const late = { ...log, for_date:'2026-10-22', for_minute:1410, done_at:new Date(2026,9,23,0,10).toISOString() };

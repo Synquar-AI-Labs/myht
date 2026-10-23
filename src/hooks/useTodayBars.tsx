@@ -26,18 +26,21 @@ export function TodayBarsProvider({ children }: { children: ReactNode }) {
   return <TodayBars.Provider value={{ open, visible, register, toggle, setAll }}>{children}</TodayBars.Provider>;
 }
 
-/** Register only displayed bars, never the hidden "Show more" groups or record cards.
+/** Register the current cards and their folds, never hidden "Show more" groups.
+ * Pass null for a lazy fold already registered by its enclosing card.
  * Standalone cards retain their own state when rendered outside Today. */
-export function useTodayBarGroup(scope: string, keys: string[]) {
+export function useTodayBarGroup(scope: string, keys: string[] | null) {
   const shared = useContext(TodayBars);
   const [local, setLocal] = useState<OpenBars>({});
-  const signature = keys.join('|');
+  const signature = keys?.join('|') ?? '';
+  const registerKeys = keys !== null;
   const ids = useMemo(() => signature ? signature.split('|').map(key => `${scope}:${key}`) : [], [scope, signature]);
   const register = shared?.register;
   useEffect(() => {
+    if (!registerKeys) return;
     register?.(scope, ids);
     return () => register?.(scope, []);
-  }, [register, scope, ids]);
+  }, [register, scope, ids, registerKeys]);
   return {
     isOpen: (key: string) => (shared?.open ?? local)[`${scope}:${key}`] ?? false,
     toggle: (key: string) => {
