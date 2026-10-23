@@ -14,6 +14,20 @@ for(const [width,height] of sizes)test(`${width}x${height} collapsed Today and s
     await page.evaluate(()=>window.scrollTo(0,0));
     await page.evaluate(()=>document.fonts.ready);
     await expect(page.locator('[data-sonner-toast]')).toHaveCount(0);
+    if(width>=768&&(name.startsWith('today-')||name.startsWith('presentation-')))await expect(async()=>{
+      const layout=await page.evaluate(()=>{
+        const upcoming=document.querySelector('.dose-upcoming-header')!.closest('section')!.getBoundingClientRect();
+        const given=document.querySelector('.dose-given-header')!.closest('section')!.getBoundingClientRect();
+        const meal=document.querySelector('[data-routine-section=meal]')!.getBoundingClientRect();
+        const exercise=document.querySelector('[data-routine-section=exercise]')!.getBoundingClientRect();
+        const record=document.querySelector('[data-record-bar]')!.getBoundingClientRect();
+        return {lefts:[upcoming.x,given.x,meal.x,exercise.x],widths:[upcoming.width,given.width,meal.width,exercise.width],gaps:[given.top-upcoming.bottom,meal.top-given.bottom,exercise.top-meal.bottom],recordLeft:record.left,leftRight:meal.right};
+      });
+      expect(Math.max(...layout.lefts)-Math.min(...layout.lefts)).toBeLessThan(1);
+      expect(Math.max(...layout.widths)-Math.min(...layout.widths)).toBeLessThan(1);
+      for(const gap of layout.gaps)expect(gap).toBeCloseTo(32,0);
+      expect(layout.recordLeft).toBeGreaterThan(layout.leftRight);
+    }).toPass();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     await expect(async()=>{
       const issues=await page.evaluate(()=>Array.from(document.querySelectorAll<HTMLElement>('button,input:not([type=file]),textarea,select,a[href]')).filter(e=>e.getClientRects().length&&!e.closest('[aria-hidden=true]')).flatMap(e=>{

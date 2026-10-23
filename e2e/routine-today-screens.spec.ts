@@ -39,7 +39,7 @@ for(const [width,height] of sizes)test(`${width}x${height} routine Today states`
   await page.getByRole('button',{name:'History',exact:true}).click();await expect(page.getByText('Meals recorded: 1 · Breakfast all',{exact:true})).toBeVisible();await capture('history');
   if(width>=768){
     await page.getByRole('button',{name:'More',exact:true}).click();await page.getByRole('button',{name:/^Presentation mode/}).click();await expect(meals).toBeVisible();await expect(exercise).toBeVisible();
-    const a=await meals.boundingBox(),b=await exercise.boundingBox();expect(Math.abs(a!.y-b!.y)).toBeLessThan(2);expect(b!.x).toBeGreaterThan(a!.x+a!.width);
+    const a=await meals.boundingBox(),b=await exercise.boundingBox();expect(Math.abs(a!.x-b!.x)).toBeLessThan(1);expect(Math.abs(a!.width-b!.width)).toBeLessThan(1);expect(b!.y-a!.y-a!.height).toBeCloseTo(32,0);
     await capture('presentation');
   }
   writeFileSync('test-results/routines-today/index.html',`<!doctype html><title>Routines on Today</title><style>body{font:16px sans-serif}section{display:flex;gap:16px;flex-wrap:wrap}img{width:300px;border:1px solid #ddd}figure{margin:10px}</style><h1>Routines on Today</h1>${sizes.map(([w,h])=>`<h2>${w} × ${h}</h2><section>${[...names,...(w>=768?['presentation']:[])].map(n=>`<figure><a href="${w}x${h}/${n}.png"><img src="${w}x${h}/${n}.png"></a><figcaption>${n}</figcaption></figure>`).join('')}</section>`).join('')}`);

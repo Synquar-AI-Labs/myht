@@ -237,7 +237,7 @@ function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
           <div className="pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
           <TodayBarsButton />
           <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-7">
-            <div className="space-y-8">{upcomingCard}{givenCard}</div>
+            <div className="space-y-8">{upcomingCard}{givenCard}<RoutineTodaySections now={now} stacked /></div>
             <div>
               <div className="mb-2.5 text-sm font-bold uppercase tracking-[0.06em] text-[#8b8175]">
                 Record & review
@@ -245,7 +245,6 @@ function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
               {recordPills}
             </div>
           </div>
-          <div className="pb-8"><RoutineTodaySections now={now} /></div>
         </>
       )}
 

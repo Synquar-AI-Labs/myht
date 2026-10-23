@@ -44,4 +44,4 @@ export function RoutineToday({ kind, now }: { kind: 'meal' | 'exercise'; now: Da
     {selected && <RoutineRecordSheet occurrence={selected} onClose={() => setSelected(null)} />}
   </section>;
 }
-export function RoutineTodaySections({ now }: { now: Date }) { return <div className="grid min-w-0 grid-cols-1 items-start gap-6 md:grid-cols-2" data-routine-sections><RoutineToday kind="meal" now={now} /><RoutineToday kind="exercise" now={now} /></div>; }
+export function RoutineTodaySections({ now, stacked = false }: { now: Date; stacked?: boolean }) { return <div className={`grid min-w-0 grid-cols-1 items-start ${stacked ? 'gap-8' : 'gap-6 md:grid-cols-2'}`} data-routine-sections><RoutineToday kind="meal" now={now} /><RoutineToday kind="exercise" now={now} /></div>; }
