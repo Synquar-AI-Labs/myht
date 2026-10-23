@@ -1,7 +1,7 @@
 import { test, expect, signIn, checked } from './helpers';
 import { routineFamily } from './routine-fixtures';
 
-test('Today bars start closed, urgent medicines still blink, and opening shows their rows in every layout',async({page,sessions})=>{
+test('Today bars start closed; Expand all, Collapse all and manual taps agree in every layout',async({page,sessions})=>{
   void sessions;const f=await routineFamily();
   const medicine=await checked(f.admin.client.from('medicines').insert({household_id:f.id,name:'Synthetic due medicine',schedule_time:'12:30 PM',amount:'1 tablet'}).select('*').single());
   await checked(f.admin.client.from('medicine_logs').insert({household_id:f.id,medicine_id:medicine.id,date:f.date,hour:11,minute:0,caregiver_id:f.people[0].caregiver_id,recorded_by:f.people[0].display_name,is_extra:true}));
@@ -18,6 +18,14 @@ test('Today bars start closed, urgent medicines still blink, and opening shows t
     await expect(page.locator('.dose-group-rows,[data-routine-content]')).toHaveCount(0);
     if(!presentation)for(const label of ['Record a reading','Record a medicine','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','false');
     const urgent=page.locator('.dose-upcoming-header');await expect(urgent).toHaveClass(/medicine-pulse-fast/);await expect(urgent).toHaveCSS('animation-name','medicineUrgencyPulse');
+    const covered=page.locator('.dose-time-header,[data-routine-bar]');
+    await page.getByRole('button',{name:'Expand all',exact:true}).click();
+    for(const bar of await covered.all())await expect(bar).toHaveAttribute('aria-expanded','true');
+    await expect(page.getByRole('button',{name:'Collapse all',exact:true})).toBeVisible();
+    if(!presentation)for(const label of ['Record a reading','Record a medicine','Visuals & trends'])await expect(page.getByRole('button',{name:new RegExp(`^${label}`)})).toHaveAttribute('aria-expanded','false');
+    await urgent.click();await expect(page.getByRole('button',{name:'Expand all',exact:true})).toBeVisible();
+    await urgent.click();await page.getByRole('button',{name:'Collapse all',exact:true}).click();
+    for(const bar of await covered.all())await expect(bar).toHaveAttribute('aria-expanded','false');
     await urgent.click();await expect(page.locator('.dose-name').getByText('Synthetic due medicine',{exact:true})).toBeVisible();await urgent.click();
     for(const section of [meals,exercise]){await section.locator('[data-routine-bar]').click();await expect(section.locator('[data-routine-content]')).toBeVisible();await expect(section.locator('[data-routine-bar]')).toHaveCSS('animation-name','none');}
     await expect(meals.getByRole('button',{name:'Done',exact:true}).first()).toBeVisible();await expect(exercise.getByRole('button',{name:'Start',exact:true})).toBeVisible();

@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { ChevronDown } from 'lucide-react';
 import { useRoutineSection } from '@/hooks/useRoutineRecords';
 import { useCaregiverChoice } from '@/hooks/useCaregiverChoice';
+import { useTodayBarGroup } from '@/hooks/useTodayBars';
 import { useExerciseTimer } from '@/hooks/ExerciseTimerProvider';
 import { routineSection, routineBarText, MEAL_AMOUNTS, displayedMinutes } from '@/lib/routineToday';
 import type { RoutineOccurrence } from '@/lib/routineSchedule';
@@ -16,17 +17,18 @@ export function RoutineToday({ kind, now }: { kind: 'meal' | 'exercise'; now: Da
   const choice = useCaregiverChoice();
   const timer = useExerciseTimer();
   const [expanded, setExpanded] = useState(false);
-  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<RoutineOccurrence | null>(null);
   const title = kind === 'meal' ? 'Meals' : 'Exercise';
+  const model = routineSection(data.items, data.logs, date, now);
+  const bars = useTodayBarGroup(`routine:${kind}`, !data.loading && !data.error && !model.hidden ? ['section'] : []);
+  const open = bars.isOpen('section');
   if (data.loading) return <p data-routine-section={kind} role="status" className="text-sm text-[#8b8175]">Loading {title.toLowerCase()}…</p>;
   if (data.error) return <div data-routine-section={kind} role="alert" className="text-sm text-[#8b8175]">{title} could not load. <Button variant="ghost" onClick={data.retry}>Try again</Button></div>;
-  const model = routineSection(data.items, data.logs, date, now);
   if (model.hidden) return null;
   return <section className="min-w-0 space-y-2" data-routine-section={kind}>
     <h2 className="[font-family:inherit] text-sm font-bold uppercase tracking-wider text-[#8b8175]">{title} · {model.done} of {model.planned} done</h2>
     <div className="rounded-2xl border border-[#e9e2d6] bg-white px-3">
-      <button data-routine-bar className="flex min-h-11 w-full items-center gap-2 py-3 text-left text-sm text-[#8b8175]" aria-expanded={open} onClick={() => setOpen(v => !v)}><span className="min-w-0 flex-1 break-words">{routineBarText(model)}</span><ChevronDown aria-hidden="true" className={`h-4 w-4 flex-none transition-transform ${open ? 'rotate-180' : ''}`} /></button>
+      <button data-routine-bar className="flex min-h-11 w-full items-center gap-2 py-3 text-left text-sm text-[#8b8175]" aria-expanded={open} onClick={() => bars.toggle('section')}><span className="min-w-0 flex-1 break-words">{routineBarText(model)}</span><ChevronDown aria-hidden="true" className={`h-4 w-4 flex-none transition-transform ${open ? 'rotate-180' : ''}`} /></button>
       {open && <div data-routine-content>
       {model.done > 0 && <button className="min-h-11 w-full truncate py-3 text-left text-sm text-[#2e7d4f]" aria-expanded={expanded} onClick={() => setExpanded(v => !v)}>{model.complete ? `All ${model.done} done` : model.folded} {expanded ? '▴' : '▾'}</button>}
       {expanded && model.doneRows.map(o => <button key={o.minute + o.item.id} className="min-h-11 w-full border-t border-[#f3ede2] py-3 text-left" onClick={() => setSelected(o)}><span className="block break-words font-semibold">{doseTimeLabel(o.minute)} · {o.log!.name}</span><span className="block break-words text-sm text-[#8b8175]">{kind === 'meal' ? MEAL_AMOUNTS[o.log!.amount as keyof typeof MEAL_AMOUNTS] : `${displayedMinutes(o.log!.minutes!)} min`} · {o.log!.recorded_by} · {format(new Date(o.log!.done_at), 'h:mm a')}</span></button>)}

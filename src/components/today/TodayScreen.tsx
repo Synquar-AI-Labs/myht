@@ -34,6 +34,7 @@ import { useDoseSkips } from '@/hooks/useDoseSkips';
 import { doseCandidates } from '@/lib/doseRecording';
 import { occurrenceTime, visibleSkips } from './todaySchedule';
 import { TodayAlerts } from '@/components/profile/TodayAlerts';
+import { TodayBarsProvider, TodayBarsButton } from '@/hooks/useTodayBars';
 
 type SheetState =
   | { type: 'medicine'; medicine: Medicine; slot?: UpcomingItem }
@@ -41,6 +42,10 @@ type SheetState =
   | null;
 
 export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
+  return <TodayBarsProvider><TodayContent onOpenAbout={onOpenAbout} /></TodayBarsProvider>;
+}
+
+function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
   const isMobile = useIsMobile();
 
   // Re-evaluate "now" every 30s: drives the clock, the 12h windows and due flags.
@@ -213,6 +218,7 @@ export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
             <span data-today-clock className="flex-none whitespace-nowrap text-[17px] font-semibold text-[#8a6240]">{format(now, 'h:mm a')}</span>
           </div>
           <div className="px-[20px] pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
+          <div className="px-[20px]"><TodayBarsButton /></div>
           <div className="px-[20px] pt-[18px]">{givenCard}</div>
           <div className="px-[20px] pt-[22px]">{upcomingCard}</div>
           <div className="px-[20px] [&:has([data-routine-section])]:pt-[22px]"><RoutineTodaySections now={now} /></div>
@@ -229,6 +235,7 @@ export function TodayScreen({ onOpenAbout }: { onOpenAbout?: () => void }) {
           </div>
           {/* Independent columns: schedule and given / record and review */}
           <div className="pt-3"><TodayAlerts onOpen={() => onOpenAbout?.()} /></div>
+          <TodayBarsButton />
           <div className="grid grid-cols-2 items-start gap-8 pb-10 pt-7">
             <div className="space-y-8">{upcomingCard}{givenCard}</div>
             <div>

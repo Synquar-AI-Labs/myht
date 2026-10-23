@@ -5,6 +5,7 @@ import { UrgencyBadge } from './UrgencyBadge';
 import { groupDoseTimes, groupUpcoming, headerDoseTime, visibleDoseGroups } from '@/lib/doseGroups';
 import { doseLabel, timeLabel, scheduledDoseDetail, type GivenItem, type UpcomingItem, type SlotState, type DoseSkip } from './todaySchedule';
 import type { Medicine } from '@/hooks/useMedicines';
+import { useTodayBarGroup } from '@/hooks/useTodayBars';
 
 type SkippedItem = { skip: DoseSkip; at: Date; medicine: Medicine | undefined };
 
@@ -14,19 +15,20 @@ export function DoseTimeGroups({ given, upcoming, skipped = [], now, onGiven, on
   skipped?: SkippedItem[]; onUndoSkip?: (id: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [open, setOpen] = useState<Record<number, boolean>>({});
   const groups: { at: Date; items: (GivenItem | UpcomingItem | SkippedItem)[]; state?: SlotState }[] = upcoming ? groupUpcoming(upcoming) : groupDoseTimes<GivenItem | SkippedItem>([...(given ?? []), ...skipped].sort((a, b) => b.at.getTime() - a.at.getTime()));
+  const shown = expanded ? groups : visibleDoseGroups(groups, now, !!upcoming);
+  const bars = useTodayBarGroup(upcoming ? 'upcoming' : 'given', shown.map(group => String(group.at.getTime())));
   return <>
-    {(expanded ? groups : visibleDoseGroups(groups, now, !!upcoming)).map(group => {
+    {shown.map(group => {
       const key = group.at.getTime();
       const state = group.state ?? 'scheduled';
       const urgency = urgencyFor(state);
       const count = upcoming ? group.items.length : group.items.filter(item => 'log' in item).length;
       const skippedCount = group.items.filter(item => 'skip' in item).length;
       const countLabel = upcoming ? `${count} ${count === 1 ? 'medicine' : 'medicines'}` : `${count} given`;
-      const isOpen = open[key] ?? false;
+      const isOpen = bars.isOpen(String(key));
       return <div key={key} data-dose-group className="border-b border-[#f3ede2] last:border-b-0">
-        <button style={urgencyStyle(state)} className={`dose-time-header ${urgency ? 'dose-tinted' : ''} ${upcoming ? 'dose-upcoming-header' : 'dose-given-header'} min-h-11 w-full rounded-xl text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => setOpen(previous => ({ ...previous, [key]: !isOpen }))}>
+        <button style={urgencyStyle(state)} className={`dose-time-header ${urgency ? 'dose-tinted' : ''} ${upcoming ? 'dose-upcoming-header' : 'dose-given-header'} min-h-11 w-full rounded-xl text-left ${urgency?.motion ?? ''}`} aria-expanded={isOpen} onClick={() => bars.toggle(String(key))}>
           <span className="dose-time whitespace-nowrap font-bold">{timeLabel(group.at)}</span>
           <span className="dose-relative text-sm">{headerDoseTime(group.at, now, upcoming ? state : undefined)}</span>
           <span className="dose-controls flex items-center justify-end gap-[6px]">

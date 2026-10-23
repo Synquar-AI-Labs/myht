@@ -24,8 +24,9 @@ for(const [width,height] of sizes)test(`${width}x${height} collapsed Today and s
   const assertClosed=async()=>{
     await expect(page.locator('[data-routine-bar]')).toHaveCount(2);await expect(page.locator('.dose-time-header')).toHaveCount(2);
     for(const bar of await page.locator('.dose-time-header,[data-routine-bar]').all())await expect(bar).toHaveAttribute('aria-expanded','false');
+    await expect(page.getByRole('button',{name:'Expand all',exact:true})).toBeVisible();
   };
-  const openAll=async()=>{for(const bar of await page.locator('.dose-time-header,[data-routine-bar]').all())await bar.click();};
+  const openAll=async()=>{await page.getByRole('button',{name:'Expand all',exact:true}).click();await expect(page.getByRole('button',{name:'Collapse all',exact:true})).toBeVisible();};
   await assertClosed();await capture('today-closed');await openAll();await capture('today-open');
   await page.getByRole('button',{name:'More',exact:true}).click();await expect(page.getByRole('button',{name:/^Meals 3 meals a day/})).toBeVisible();await expect(page.getByRole('button',{name:/^Exercise 2 exercises/})).toBeVisible();await capture('more');
   await page.getByRole('button',{name:/^Meals /}).click();await expect(page.getByRole('button',{name:'Add meal',exact:true})).toBeVisible();await capture('meals');
