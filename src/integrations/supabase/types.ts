@@ -979,6 +979,147 @@ export type Database = {
           },
         ]
       }
+      routine_items: {
+        Row: {
+          area: string
+          created_at: string
+          details: string
+          drink: string
+          end_date: string | null
+          household_id: string
+          id: string
+          kind: string
+          move_type: string
+          name: string
+          previous_schedule_time: string | null
+          schedule_from: string | null
+          schedule_time: string
+          start_date: string
+          target_minutes: number | null
+        }
+        Insert: {
+          area?: string
+          created_at?: string
+          details?: string
+          drink?: string
+          end_date?: string | null
+          household_id: string
+          id?: string
+          kind: string
+          move_type?: string
+          name: string
+          previous_schedule_time?: string | null
+          schedule_from?: string | null
+          schedule_time: string
+          start_date: string
+          target_minutes?: number | null
+        }
+        Update: {
+          area?: string
+          created_at?: string
+          details?: string
+          drink?: string
+          end_date?: string | null
+          household_id?: string
+          id?: string
+          kind?: string
+          move_type?: string
+          name?: string
+          previous_schedule_time?: string | null
+          schedule_from?: string | null
+          schedule_time?: string
+          start_date?: string
+          target_minutes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_items_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routine_logs: {
+        Row: {
+          amount: string | null
+          caregiver_id: string
+          details: string
+          done_at: string
+          drink: string
+          for_date: string
+          for_minute: number
+          household_id: string
+          id: string
+          item_id: string
+          kind: string
+          minutes: number | null
+          name: string
+          note: string
+          recorded_by: string
+          target_minutes: number | null
+        }
+        Insert: {
+          amount?: string | null
+          caregiver_id: string
+          details?: string
+          done_at: string
+          drink?: string
+          for_date: string
+          for_minute: number
+          household_id: string
+          id?: string
+          item_id: string
+          kind: string
+          minutes?: number | null
+          name: string
+          note?: string
+          recorded_by: string
+          target_minutes?: number | null
+        }
+        Update: {
+          amount?: string | null
+          caregiver_id?: string
+          details?: string
+          done_at?: string
+          drink?: string
+          for_date?: string
+          for_minute?: number
+          household_id?: string
+          id?: string
+          item_id?: string
+          kind?: string
+          minutes?: number | null
+          name?: string
+          note?: string
+          recorded_by?: string
+          target_minutes?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_logs_household_id_caregiver_id_fkey"
+            columns: ["household_id", "caregiver_id"]
+            isOneToOne: false
+            referencedRelation: "caregivers"
+            referencedColumns: ["household_id", "id"]
+          },
+          {
+            foreignKeyName: "routine_logs_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routine_logs_household_id_item_id_fkey"
+            columns: ["household_id", "item_id"]
+            isOneToOne: false
+            referencedRelation: "routine_items"
+            referencedColumns: ["household_id", "id"]
+          },
+        ]
+      }
       transcription_usage: {
         Row: {
           at: string

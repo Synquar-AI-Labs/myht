@@ -346,6 +346,12 @@ await check('19 hostile realtime subscriptions with own-family positive control'
   const profileControl=good(await insert(A.admin,'care_profiles',{household_id:A.hid}))[0];
   const alertControl=good(await insert(A.admin,'care_alerts',{household_id:A.hid,kind:'allergy',text:'Realtime synthetic alert'}))[0];
   const contactControl=good(await insert(A.admin,'contacts',{household_id:A.hid,kind:'emergency',name:'Realtime synthetic contact'}))[0];
+  const routineControl=good(await insert(A.admin,'routine_items',{household_id:A.hid,kind:'meal',name:'Realtime meal',schedule_time:'8:00 AM',start_date:'2026-01-01'}))[0];
+  const routineLog=good(await insert(A.admin,'routine_logs',{household_id:A.hid,item_id:routineControl.id,caregiver_id:A.caregiver,for_date:'2026-01-01',for_minute:480,done_at:new Date().toISOString(),recorded_by:'Synthetic caregiver',kind:'meal',name:'Realtime meal',amount:'all'}))[0];
+  for(const [table,row,patch] of [['routine_logs',routineLog,{note:'Updated'}],['routine_items',routineControl,{details:'Updated'}]]) {
+   good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch));
+   good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE'));
+  }
   for(const [table,row,patch] of [['care_alerts',alertControl,{note:'Updated'}],['contacts',contactControl,{role:'Updated'}],['care_profiles',profileControl,{emergency_notes:'Updated'}]]) {
    good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch));
    good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE'));
@@ -558,6 +564,40 @@ await check('30 profile and contacts isolate families, audit profile keys, and d
  assert(audit.some(e=>e.action==='delete'&&e.actor_user_id===A.admin.id));
  assert(Number(sql(`SELECT seq FROM public.household_sync WHERE household_id='${A.hid}'`))>before);
  good(await request(A.admin.token,'/rest/v1/care_alerts?id=eq.'+known.id,'DELETE'));
+});
+await check('31 routine plans and records isolate families, enforce kind/FKs, and audit all writes',async()=>{
+ const before=Number(sql(`SELECT seq FROM public.household_sync WHERE household_id='${A.hid}'`));
+ const itemBody={household_id:A.hid,kind:'meal',name:'Synthetic breakfast',schedule_time:'8:00 AM',start_date:'2026-01-01'};
+ const item=good(await insert(A.member,'routine_items',itemBody))[0];
+ const logBody={household_id:A.hid,item_id:item.id,caregiver_id:A.caregiver,for_date:'2026-01-01',for_minute:480,done_at:'2026-01-01T13:05:00Z',recorded_by:'Synthetic caregiver',kind:'meal',name:item.name,amount:'all'};
+ const log=good(await insert(A.member,'routine_logs',logBody))[0];
+ const blockedDelete=await request(A.admin.token,'/rest/v1/routine_items?id=eq.'+item.id,'DELETE');assert.equal(blockedDelete.data.code,'23503');
+ const duplicate=await insert(A.admin,'routine_logs',logBody);assert.equal(duplicate.data.code,'23505');
+ for(const [table,row,body,patch] of [['routine_items',item,itemBody,{name:'foreign'}],['routine_logs',log,logBody,{note:'foreign'}]]) {
+  assert(good(await rows(A.admin,table,'&id=eq.'+row.id)).some(r=>r.id===row.id));
+  const beforeRows=snapshot(table,A.hid);
+  assert.deepEqual(good(await rows(B.member,table,'&household_id=eq.'+A.hid)),[]);
+  rlsDenied(await insert(B.member,table,body));
+  assert.deepEqual(good(await request(B.member.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch)),[]);
+  assert.deepEqual(good(await request(B.member.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE')),[]);
+  assert.equal(snapshot(table,A.hid),beforeRows);
+  const anonymous=await rows(anon,table);assert.equal(anonymous.status,401);assert.equal(anonymous.data.code,'42501');
+  assert.equal(sql(`SELECT count(*) FROM pg_publication_tables WHERE pubname='supabase_realtime' AND tablename='${table}'`),'0');
+ }
+ const foreignItem=good(await insert(B.admin,'routine_items',{...itemBody,household_id:B.hid}))[0];
+ for(const bad of [{item_id:foreignItem.id},{caregiver_id:B.caregiver}]) {
+  const result=await insert(A.admin,'routine_logs',{...logBody,for_minute:600,...bad});assert.equal(result.data.code,'23503');
+ }
+ for(const [table,body] of [['routine_items',{...itemBody,target_minutes:10}],['routine_items',{...itemBody,kind:'exercise',target_minutes:10,drink:'Water'}],['routine_logs',{...logBody,for_minute:1440}],['routine_logs',{...logBody,minutes:10}],['routine_logs',{...logBody,kind:'exercise',amount:null,minutes:10,target_minutes:10,drink:'Water'}]]) {
+  assert.equal((await insert(A.admin,table,body)).data.code,'23514');
+ }
+ for(const [table,row,patch] of [['routine_logs',log,{note:'Synthetic correction'}],['routine_items',item,{details:'Synthetic food'}]]) {
+  good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'PATCH',patch));
+  good(await request(A.admin.token,'/rest/v1/'+table+'?id=eq.'+row.id,'DELETE'));
+  const audit=good(await rows(A.admin,'audit_log','&table_name=eq.'+table+'&row_key=eq.'+row.id));
+  for(const [action,actor] of [['insert',A.member.id],['update',A.admin.id],['delete',A.admin.id]])assert(audit.some(e=>e.action===action&&e.actor_user_id===actor));
+ }
+ assert(Number(sql(`SELECT seq FROM public.household_sync WHERE household_id='${A.hid}'`))>=before+6);
 });
 console.log('Failures: '+failures);
 process.exitCode=failures;

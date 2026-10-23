@@ -101,6 +101,8 @@ export function useRealtimeSync() {
         }
         const keys = {
           care_profiles: [domainKeys.profile(householdId)],
+          routine_items: [domainKeys.routines(householdId)],
+          routine_logs: [domainKeys.routineLogs(householdId)],
           care_alerts: [domainKeys.alerts(householdId)],
           contacts: [domainKeys.contacts(householdId)],
           household_invites: [domainKeys.invites(householdId)],

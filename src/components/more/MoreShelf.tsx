@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { formatAppointmentTime } from '@/lib/reportHelpers';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2, Heart, Phone,
+  Pill, CalendarDays, Users, Mic, FileText, Maximize, LogOut, ChevronLeft, ChevronRight, Loader2, Heart, Phone, Utensils,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -24,6 +24,7 @@ const FamilyPeopleTab = lazy(() => import('./FamilyPeopleTab').then(m => ({ defa
 const AboutTab = lazy(() => import('@/components/profile/AboutTab').then(m => ({ default: m.AboutTab })));
 const ContactsTab = lazy(() => import('@/components/profile/ContactsTab').then(m => ({ default: m.ContactsTab })));
 const EmergencyCardTab = lazy(() => import('@/components/profile/EmergencyCardTab').then(m => ({ default: m.EmergencyCardTab })));
+const RoutinePlan = lazy(() => import('@/components/routines/RoutinePlan').then(m => ({ default: m.RoutinePlan })));
 
 /** Fetches the full health/BP history only when Reports is actually opened.
  *  Gated hard on load state — a half-loaded dataset must never become a
@@ -48,7 +49,7 @@ function ReportsView() {
   return <DashboardTab records={records} bpReadings={bpReadings} />;
 }
 
-type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family' | 'about' | 'contacts' | 'emergency';
+type ShelfView = null | 'meds' | 'visits' | 'stays' | 'conversations' | 'reports' | 'family' | 'about' | 'contacts' | 'emergency' | 'routines';
 
 interface MoreShelfProps {
   onPresentationMode: () => void;
@@ -126,6 +127,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
   const rows: RowSpec[] = [
     { view: 'about', title: `About ${careRecipientName}`, subtitle: 'Profile, alerts and emergency card', icon: Heart, chip: 'bg-[#fdecec] text-[#b42318]' },
     { view: 'contacts', title: 'Contacts', subtitle: 'Emergency, doctors and caretakers', icon: Phone, chip: 'bg-[#eef1f9] text-[#4f6bd6]' },
+    { view: 'routines', title: 'Meals & exercise', subtitle: 'The daily plan', icon: Utensils, chip: 'bg-[#eaf3ec] text-[#2e7d4f]' },
     {
       view: 'family', title: 'Family & people',
       subtitle: `${caregivers.length} people${role === 'admin' && invites.data ? ` · ${invites.data.length} invited` : ''}`,
@@ -192,6 +194,7 @@ export function MoreShelf({ onPresentationMode, onSignOut, initialView }: MoreSh
           {view === 'about' && <AboutTab onContacts={() => setView('contacts')} onEmergency={() => setView('emergency')} />}
           {view === 'contacts' && <ContactsTab />}
           {view === 'emergency' && <EmergencyCardTab />}
+          {view === 'routines' && <RoutinePlan onAbout={() => setView('about')} />}
         </Suspense>
       </div>
     );

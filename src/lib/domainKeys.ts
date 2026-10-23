@@ -1,4 +1,6 @@
 export const domainKeys = {
+  routines: (id?: string) => ['household', id, 'routine_items'] as const,
+  routineLogs: (id?: string) => ['household', id, 'routine_logs'] as const,
   profile: (id?: string) => ['household', id, 'care_profiles'] as const,
   alerts: (id?: string) => ['household', id, 'care_alerts'] as const,
   contacts: (id?: string) => ['household', id, 'contacts'] as const,
