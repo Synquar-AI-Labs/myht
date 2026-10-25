@@ -4,7 +4,7 @@ import { localStack } from './e2e/local';
 const stack = localStack();
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: ['**/screens.spec.ts', '**/photo-screens.spec.ts', '**/profile-screens.spec.ts', '**/routine-screens.spec.ts', '**/routine-today-screens.spec.ts', '**/collapsed-screens.spec.ts'],
+  testIgnore: ['**/screens.spec.ts', '**/photo-screens.spec.ts', '**/profile-screens.spec.ts', '**/routine-screens.spec.ts', '**/routine-today-screens.spec.ts', '**/collapsed-screens.spec.ts', '**/r5-screens.spec.ts'],
   outputDir: 'test-results/e2e',
   fullyParallel: false,
   workers: 1,

@@ -7,7 +7,7 @@ export type CareProfile = Tables<'care_profiles'>;
 export type CareAlert = Tables<'care_alerts'>;
 export type Contact = Tables<'contacts'>;
 export const ALERT_LABELS: Record<AlertKind, string> = { allergy: 'Allergies', contagious: 'Contagious disease', condition: 'Current conditions', disability: 'Disabilities', diet: 'Diet cautions' };
-export const CONTACT_GROUPS = [{ kind: 'emergency', label: 'Emergency', color: '#b42318' }, { kind: 'doctor', label: 'Doctors', color: '#4f6bd6' }, { kind: 'caretaker', label: 'Caretakers', color: '#0f766e' }, { kind: 'other', label: 'Pharmacy and other', color: '#8b8175' }] as const;
+export const CONTACT_GROUPS = [{ kind: 'emergency', label: 'Emergency', color: '#b42318' }, { kind: 'doctor', label: 'Doctors', color: '#4f6bd6' }, { kind: 'caretaker', label: 'Caretakers', color: '#0f766e' }, { kind: 'hospital', label: 'Hospitals & clinics', color: '#8b5cf6' }, { kind: 'other', label: 'Pharmacy and other', color: '#8b8175' }] as const;
 
 export function ageOn(birth: string | null | undefined, now = new Date()): number | null {
   if (!birth || !/^\d{4}-\d{2}-\d{2}$/.test(birth)) return null;

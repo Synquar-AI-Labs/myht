@@ -15,6 +15,10 @@ import { getMonthOptions, countRecordedDays } from '@/lib/reportHelpers';
 import { cn } from '@/lib/utils';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { useCustomActions } from '@/hooks/useCustomActions';
+import { otherReadings } from '@/lib/otherReadings';
+import { appendOtherReadings } from '@/lib/otherReadingsPdf';
+import { toast } from 'sonner';
 
 interface DashboardTabProps {
   records: HealthRecord[];
@@ -86,7 +90,7 @@ function buildRows(
   return { rows, totals };
 }
 
-function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string, careRecipientName: string) {
+function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], totals: ReturnType<typeof buildRows>['totals'], filename: string, careRecipientName: string, custom: ReturnType<typeof otherReadings>) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
   doc.setFontSize(18);
@@ -142,11 +146,14 @@ function generatePdf(title: string, rows: ReturnType<typeof buildRows>['rows'], 
     },
   });
 
+  appendOtherReadings(doc, custom);
   void savePdf(doc, filename);
 }
 
 export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
   const { careRecipientName } = useHousehold();
+  const custom = useCustomActions();
+  const customBusy = custom.loading || custom.refreshing;
   const monthOptions = useMemo(() => getMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(monthOptions[0]?.value ?? format(new Date(), 'yyyy-MM'));
   const [weekDate, setWeekDate] = useState<Date>(new Date());
@@ -167,9 +174,20 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
 
   const monthLabel = monthOptions.find(m => m.value === selectedMonth)?.label ?? selectedMonth;
   const weekLabel = `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`;
+  const customReport = (from: string, to: string) => otherReadings(custom.actions, custom.logs, from, to);
+  const download = (period: 'week' | 'month') => {
+    try {
+      if (period === 'week') generatePdf(`Weekly Health Report — ${weekLabel}`, weeklyData.rows, weeklyData.totals, `weekly-report-${format(weekStart,'yyyy-MM-dd')}.pdf`, careRecipientName, customReport(format(weekStart,'yyyy-MM-dd'),format(weekEnd,'yyyy-MM-dd')));
+      else generatePdf(`Monthly Health Report — ${monthLabel}`, monthlyData.rows, monthlyData.totals, `monthly-report-${selectedMonth}.pdf`, careRecipientName, customReport(`${selectedMonth}-01`,format(endOfMonth(parseISO(`${selectedMonth}-01`)),'yyyy-MM-dd')));
+    } catch { toast.error('Could not create the report. Check the readings and try again.'); }
+  };
+  const customCount = (from: string, to: string) => custom.logs.filter(log => log.date >= from && log.date <= to).length;
+  const hasCustom = (from: string, to: string) => customCount(from,to)>0;
 
   return (
     <div className="space-y-6 pb-4">
+      {customBusy && <p role="status" className="text-sm text-muted-foreground">{custom.loading ? 'Loading' : 'Updating'} other readings…</p>}
+      {custom.loadError && <p role="alert" className="text-sm text-muted-foreground">Other readings could not load. <Button variant="ghost" onClick={custom.retry}>Try again</Button></p>}
       {/* Weekly PDF */}
       <Card className="border-none shadow-sm">
         <CardHeader className="px-4 pb-2 pt-4">
@@ -198,14 +216,10 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
           <p className="text-xs text-muted-foreground">
             {countRecordedDays(weeklyData.rows)} record(s) found for this week
           </p>
+          {!customBusy&&!custom.loadError&&<p className="text-xs text-muted-foreground">{customCount(format(weekStart,'yyyy-MM-dd'),format(weekEnd,'yyyy-MM-dd'))} other reading(s) for this week</p>}
           <Button
-            onClick={() => generatePdf(
-              `Weekly Health Report — ${weekLabel}`,
-              weeklyData.rows,
-              weeklyData.totals,
-              `weekly-report-${format(weekStart, 'yyyy-MM-dd')}.pdf`, careRecipientName
-            )}
-            disabled={countRecordedDays(weeklyData.rows) === 0}
+            onClick={() => download('week')}
+            disabled={customBusy || custom.loadError || (countRecordedDays(weeklyData.rows) === 0 && !hasCustom(format(weekStart,'yyyy-MM-dd'),format(weekEnd,'yyyy-MM-dd')))}
             className="w-full"
           >
             <Download className="mr-2 h-4 w-4" />
@@ -233,14 +247,10 @@ export function DashboardTab({ records, bpReadings = [] }: DashboardTabProps) {
           <p className="text-xs text-muted-foreground">
             {countRecordedDays(monthlyData.rows)} record(s) found for {monthLabel}
           </p>
+          {!customBusy&&!custom.loadError&&<p className="text-xs text-muted-foreground">{customCount(`${selectedMonth}-01`,format(endOfMonth(parseISO(`${selectedMonth}-01`)),'yyyy-MM-dd'))} other reading(s) for this month</p>}
           <Button
-            onClick={() => generatePdf(
-              `Monthly Health Report — ${monthLabel}`,
-              monthlyData.rows,
-              monthlyData.totals,
-              `monthly-report-${selectedMonth}.pdf`, careRecipientName
-            )}
-            disabled={countRecordedDays(monthlyData.rows) === 0}
+            onClick={() => download('month')}
+            disabled={customBusy || custom.loadError || (countRecordedDays(monthlyData.rows) === 0 && !hasCustom(`${selectedMonth}-01`,format(endOfMonth(parseISO(`${selectedMonth}-01`)),'yyyy-MM-dd')))}
             className="w-full"
           >
             <Download className="mr-2 h-4 w-4" />

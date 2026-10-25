@@ -19,7 +19,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { AppointmentForm } from '@/types/health';
+import { AppointmentDialog } from '@/components/AppointmentDialog';
 import {
   buildGivenList, buildUpcomingList, previousDay, timeLabel,
   GivenItem, UpcomingItem,
@@ -81,7 +81,6 @@ function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
   const [customActionOpen, setCustomActionOpen] = useState(false);
   const [undoTarget, setUndoTarget] = useState<GivenItem | null>(null);
 
-  const [apptForm, setApptForm] = useState<AppointmentForm>({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [newAction, setNewAction] = useState({ name: '', unit: '', color: 'bg-teal-500', default_value: 1, show_graph: false });
@@ -197,10 +196,7 @@ function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
       />
       <ApptNotesSection
         nextAppointments={upcomingAppointments}
-        onAddAppointment={() => {
-          setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
-          setApptOpen(true);
-        }}
+        onAddAppointment={() => setApptOpen(true)}
         onAddNote={() => { setNoteTitle(''); setNoteContent(''); setNoteOpen(true); }}
       />
       <TranscriptsSection />
@@ -304,30 +300,7 @@ function TodayContent({ onOpenAbout }: { onOpenAbout?: () => void }) {
       </AlertDialog>
 
       {/* Appointment dialog */}
-      <Dialog open={apptOpen} onOpenChange={setApptOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Add Appointment</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1"><Label className="text-xs">Date</Label><Input type="date" value={apptForm.date} onChange={e => setApptForm(p => ({ ...p, date: e.target.value }))} /></div>
-              <div className="space-y-1"><Label className="text-xs">Time</Label><Input type="time" value={apptForm.time} onChange={e => setApptForm(p => ({ ...p, time: e.target.value }))} /></div>
-            </div>
-            <div className="space-y-1"><Label className="text-xs">Doctor Name</Label><Input value={apptForm.doctorName} onChange={e => setApptForm(p => ({ ...p, doctorName: e.target.value }))} placeholder="Dr. Smith" /></div>
-            <div className="space-y-1"><Label className="text-xs">Reason</Label><Input value={apptForm.reason} onChange={e => setApptForm(p => ({ ...p, reason: e.target.value }))} placeholder="Check-up" /></div>
-            <div className="space-y-1"><Label className="text-xs">Address</Label><Input value={apptForm.address} onChange={e => setApptForm(p => ({ ...p, address: e.target.value }))} placeholder="Optional" /></div>
-            <div className="space-y-1"><Label className="text-xs">Description</Label><Textarea value={apptForm.description} onChange={e => setApptForm(p => ({ ...p, description: e.target.value }))} placeholder="Optional notes" rows={2} /></div>
-          </div>
-          <DialogFooter>
-            <Button className="w-full" disabled={!apptForm.doctorName || !apptForm.reason} onClick={async () => {
-              if (await addAppointment(apptForm)) {
-                toast.success('Appointment added');
-                setApptOpen(false);
-                setApptForm({ date: todayStr, time: '09:00', doctorName: '', address: '', reason: '', description: '' });
-              }
-            }}>Save Appointment</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AppointmentDialog open={apptOpen} onOpenChange={setApptOpen} initialDate={todayStr} appointments={appointments} onSave={addAppointment} title="Add Appointment" />
 
       {/* Note dialog */}
       <Dialog open={noteOpen} onOpenChange={setNoteOpen}>

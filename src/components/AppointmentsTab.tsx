@@ -1,13 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { ConfirmDeleteButton } from '@/components/ConfirmDeleteButton';
 import { Appointment, AppointmentForm } from '@/types/health';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AppointmentDialog } from '@/components/AppointmentDialog';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { Plus, MapPin, Clock, Trash2, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
@@ -21,15 +18,9 @@ interface AppointmentsTabProps {
   getUpcoming: () => Appointment[];
 }
 
-const emptyAppt: AppointmentForm = {
-  date: format(new Date(), 'yyyy-MM-dd'),
-  time: '09:00', doctorName: '', address: '', reason: '', description: '',
-};
-
 export function AppointmentsTab({ appointments, addAppointment, deleteAppointment, getUpcoming }: AppointmentsTabProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState<AppointmentForm>(emptyAppt);
 
   const today = new Date();
   const todayStr = format(today, 'yyyy-MM-dd');
@@ -38,22 +29,9 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
   const dayAppointments = appointments.filter(a => isSameDay(parseISO(a.date), selectedDate));
   const appointmentDates = appointments.map(a => parseISO(a.date));
 
-  const update = <K extends keyof AppointmentForm>(key: K, value: string) => {
-    setForm(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleAdd = async () => {
-    if (!form.doctorName.trim() || !form.reason.trim()) { toast.error('Please fill in doctor name and reason'); return; }
-    if (!await addAppointment(form)) return;
-    setForm({ ...emptyAppt, date: format(selectedDate, 'yyyy-MM-dd') });
-    setDialogOpen(false);
-    toast.success('Appointment added');
-  };
-
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
-      setForm(prev => ({ ...prev, date: format(date, 'yyyy-MM-dd') }));
     }
   };
 
@@ -94,25 +72,7 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
         <CardContent className="p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">Calendar</span>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="gap-1.5 text-xs"><Plus className="h-3.5 w-3.5" /> Add</Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[360px]">
-                <DialogHeader><DialogTitle>New Appointment</DialogTitle></DialogHeader>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div><Label className="text-xs">Date</Label><Input type="date" value={form.date} onChange={e => update('date', e.target.value)} className="mt-1" /></div>
-                    <div><Label className="text-xs">Time</Label><Input type="time" value={form.time} onChange={e => update('time', e.target.value)} className="mt-1" /></div>
-                  </div>
-                  <div><Label className="text-xs">Doctor Name</Label><Input value={form.doctorName} onChange={e => update('doctorName', e.target.value)} placeholder="Dr. Smith" className="mt-1" maxLength={100} /></div>
-                  <div><Label className="text-xs">Address</Label><Input value={form.address} onChange={e => update('address', e.target.value)} placeholder="Clinic address" className="mt-1" maxLength={300} /></div>
-                  <div><Label className="text-xs">Reason</Label><Input value={form.reason} onChange={e => update('reason', e.target.value)} placeholder="Check-up, follow-up..." className="mt-1" maxLength={200} /></div>
-                  <div><Label className="text-xs">Notes (optional)</Label><Textarea value={form.description} onChange={e => update('description', e.target.value)} placeholder="Additional notes..." className="mt-1 min-h-[60px]" maxLength={500} /></div>
-                  <Button onClick={handleAdd} className="w-full">Save Appointment</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" className="gap-1.5 text-xs" onClick={() => setDialogOpen(true)}><Plus className="h-3.5 w-3.5" /> Add</Button>
           </div>
           <div className="flex justify-center">
           <Calendar
@@ -143,6 +103,7 @@ export function AppointmentsTab({ appointments, addAppointment, deleteAppointmen
       </Card>
 
 
+      <AppointmentDialog open={dialogOpen} onOpenChange={setDialogOpen} initialDate={format(selectedDate,'yyyy-MM-dd')} appointments={appointments} onSave={addAppointment} />
       {/* Upcoming / Filtered by selected date */}
       {(() => {
         const isSelectedToday = isSameDay(selectedDate, today);

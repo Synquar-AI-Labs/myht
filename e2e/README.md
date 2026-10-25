@@ -84,6 +84,12 @@ Photo-import captures: `npm run test:photo-screens` checks eleven states at 320,
 normal e2e suite also checks the real local function's missing-key response.
 No test calls OpenAI.
 
+R5 report/contact captures: `npm run test:r5-screens` writes the appointment
+pickers, contact prompt, hospital group and rendered PDF pages to `test-results/r5/`.
+PDF browser assertions use `pdftotext`; page captures use `pdftoppm`. Both come
+from Poppler (`brew install poppler` on macOS). No PDF parser or runtime
+dependency is added to the app.
+
 ## Later
 
 - Calendar cells need a layout redesign to reach 44px on small phones; keep the current cells for now.

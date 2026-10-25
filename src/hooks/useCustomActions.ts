@@ -31,7 +31,7 @@ export function useCustomActions() {
   const queryClient = useQueryClient();
   const { householdId, caregivers } = useHousehold();
 
-  const { data: actions = [], isLoading: actionsLoading, isError: actionsError } = useQuery({
+  const { data: actions = [], isLoading: actionsLoading, isFetching: actionsFetching, isError: actionsError } = useQuery({
     queryKey: domainKeys.actions(householdId),
     enabled: !!householdId,
     queryFn: async (): Promise<CustomAction[]> => {
@@ -44,7 +44,7 @@ export function useCustomActions() {
     },
   });
 
-  const { data: logs = [], isLoading: logsLoading, isError: logsError } = useQuery({
+  const { data: logs = [], isLoading: logsLoading, isFetching: logsFetching, isError: logsError } = useQuery({
     queryKey: domainKeys.actionLogs(householdId),
     enabled: !!householdId,
     queryFn: async (): Promise<CustomActionLog[]> => {
@@ -96,5 +96,5 @@ export function useCustomActions() {
 
   const getLogCountForAction = (actionId: string, date?: string) => logs.filter(l => l.action_id === actionId && (!date || l.date === date)).length;
 
-  return { actions, logs, loading, loadError, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: invalidateLogs };
+  return { actions, logs, loading, refreshing: actionsFetching || logsFetching, loadError, addAction, deleteAction, addLog, getLogCountForAction, refetchLogs: invalidateLogs, retry: () => { invalidateActions(); invalidateLogs(); } };
 }

@@ -531,10 +531,13 @@ await check('30 profile and contacts isolate families, audit profile keys, and d
  good(await request(A.member.token,'/rest/v1/care_profiles?id=eq.'+profile.id,'PATCH',{emergency_notes:'Synthetic emergency note'}));
  const alert=good(await insert(A.member,'care_alerts',{household_id:A.hid,kind:'allergy',text:'Synthetic allergy'}))[0];
  const contact=good(await insert(A.admin,'contacts',{household_id:A.hid,kind:'emergency',name:'Synthetic contact',phone:'+15550101234'}))[0];
+ const hospital=good(await insert(A.admin,'contacts',{household_id:A.hid,kind:'hospital',name:'Synthetic clinic',address:'123 Sample Street'}))[0];
+ const invalidKind=await insert(A.admin,'contacts',{household_id:A.hid,kind:'not-a-group',name:'Invalid group'});assert.equal(invalidKind.data.code,'23514');
  for(const [table,row,body,patch] of [
   ['care_profiles',profile,{household_id:A.hid},{emergency_notes:'foreign'}],
   ['care_alerts',alert,{household_id:A.hid,kind:'allergy',text:'foreign'},{text:'foreign'}],
   ['contacts',contact,{household_id:A.hid,kind:'doctor',name:'foreign'},{name:'foreign'}],
+  ['contacts',hospital,{household_id:A.hid,kind:'hospital',name:'foreign clinic'},{address:'foreign'}],
  ]) {
   assert(good(await rows(A.member,table,'&id=eq.'+row.id)).some(r=>r.id===row.id),'rightful member positive control');
   const snapshotBefore=snapshot(table,A.hid);
